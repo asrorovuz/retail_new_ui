@@ -1,0 +1,27 @@
+/* 1️⃣ Font import */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap");
+
+@import "./tailwind/tailwind.css";
+@import "./components/index.css";
+
+.input-suffix-end {
+  right: 0.625rem !important;
+}
+
+.close-button {
+  right: 1.5rem !important;
+}
+
+.menu-horizontal{
+  @apply flex  items-center
+}
+
+/* scrollbar hide */
+.no-scrollbar::-webkit-scrollbar {
+  height: 0; /* horizontal scrollbar uchun */
+  width: 0;  /* vertical scrollbar uchun */
+}
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE, Edge */
+  scrollbar-width: none;    /* Firefox */
+}

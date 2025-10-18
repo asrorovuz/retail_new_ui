@@ -1,0 +1,86 @@
+import { useAuthContext } from "@/app/providers/AuthProvider";
+import { Button } from "@/shared/ui/kit";
+import Menu from "@/shared/ui/kit/Menu/Menu";
+import MenuItem from "@/shared/ui/kit/Menu/MenuItem";
+import { LogoutSvg } from "@/shared/ui/svg/LogoutSvg";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
+const Header = () => {
+  const [activeKey, setActiveKey] = useState("sales");
+  const navigate = useNavigate();
+
+  const { logout } = useAuthContext();
+
+  const handleSelect = (eventKey: string) => {
+    navigate(eventKey);
+    setActiveKey(eventKey);
+  };
+
+  return (
+    <header className="bg-white rounded-3xl p-2 flex justify-between items-center">
+      <Menu
+        className="menu-horizontal"
+        onSelect={handleSelect}
+        menuItemHeight={40}
+      >
+        <MenuItem eventKey="sales">
+          <div
+            className={`px-4 py-2 rounded-md cursor-pointer text-[16px] transition-colors duration-200 ${
+              activeKey === "sales" ? "text-blue-500" : "hover:bg-gray-100 text-gray-700"
+            }`}
+          >
+            <span>Продажа</span>
+          </div>
+        </MenuItem>
+        <MenuItem eventKey="refund">
+          <div
+            className={`px-4 py-2 rounded-md cursor-pointer text-[16px] transition-colors duration-200 ${
+              activeKey === "refund" ? "text-blue-500" : "hover:bg-gray-100 text-gray-700"
+            }`}
+          >
+            <span>Возврат</span>
+          </div>
+        </MenuItem>
+        <MenuItem eventKey="products">
+          <div
+            className={`px-4 py-2 rounded-md cursor-pointer text-[16px] transition-colors duration-200 ${
+              activeKey === "products" ? "text-blue-500" : "hover:bg-gray-100 text-gray-700"
+            }`}
+          >
+            <span>Товары</span>
+          </div>
+        </MenuItem>
+        {/* <MenuItem eventKey="settings">
+          <div
+            className={`px-4 py-2 rounded-md cursor-pointer text-[16px] transition-colors duration-200 ${
+              activeKey === "settings" ? "text-blue-500" : "hover:bg-gray-100 text-gray-700"
+            }`}
+          >
+            <span>Настройка</span>
+          </div>
+        </MenuItem> */}
+        <MenuItem eventKey="history-check">
+          <div
+            className={`px-4 py-2 rounded-md cursor-pointer text-[16px] transition-colors duration-200 ${
+              activeKey === "history-check" ? "text-blue-500" : "hover:bg-gray-100 text-gray-700"
+            }`}
+          >
+            <span>История чека</span>
+          </div>
+        </MenuItem>
+      </Menu>
+
+      <Button
+        onClick={logout}
+        className="bg-red-100 text-red-500 text-base font-semibold active:bg-red-200 transition duration-300"
+        variant="plain"
+        icon={<LogoutSvg height={20} width={20} />}
+      >
+        Выход
+      </Button>
+    </header>
+  );
+};
+
+export default Header;
