@@ -13,3 +13,4 @@ export const getPrinterApi = async (): Promise<string[]> => {
   return data;
 };
 
+

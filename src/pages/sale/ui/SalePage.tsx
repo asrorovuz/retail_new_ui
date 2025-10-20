@@ -6,7 +6,7 @@ const SalePage = () => {
 
   return (
     <div className="flex justify-between gap-x-2">
-      <div className="bg-white p-4 rounded-3xl w-full max-w-[790px]">
+      <div className="bg-white p-4 rounded-3xl w-full max-w-[882px]">
         <Cashbox drafts={draftSales} addNewDraft={addDraftSale} activateDraft={activateDraftSale}/>
       </div>
     </div>

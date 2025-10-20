@@ -1,5 +1,5 @@
 .select-control {
-  @apply flex items-center justify-between bg-white border border-gray-100 dark:border-gray-700 rounded-xl transition duration-150;
+  @apply flex items-center justify-between bg-white border border-gray-100 dark:border-gray-400 rounded-xl transition duration-150;
 }
 
 .select-control-focused {
@@ -16,7 +16,7 @@
 }
 
 .select-input-container {
-  @apply inline-grid flex-auto text-gray-800 dark:text-gray-100 font-semibold;
+  @apply inline-grid flex-auto text-gray-800 font-semibold;
   grid-area: 1 / 1 / 2 / 3;
   grid-template-columns: 0 min-content;
 }
@@ -27,11 +27,11 @@
 
 .select-single-value {
   grid-area: 1 / 1 / 2 / 3;
-  @apply max-w-full overflow-hidden text-ellipsis whitespace-nowrap text-gray-800 dark:text-gray-100 font-semibold;
+  @apply max-w-full overflow-hidden text-ellipsis whitespace-nowrap text-gray-800 font-semibold;
 }
 
 .select-multi-value {
-  @apply flex rounded-lg mx-0.5 font-bold border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-800 dark:text-gray-100;
+  @apply flex rounded-lg mx-0.5 font-bold border border-gray-300 dark:border-gray-400 bg-gray-50 text-gray-800;
 }
 
 .select-multi-value-label {
@@ -43,7 +43,7 @@
 }
 
 .select-menu {
-  @apply bg-white dark:bg-gray-900 rounded-xl my-2 px-2 py-1 min-h-[50px] border ring-1 border-gray-100 ring-gray-100 dark:border-gray-700 dark:ring-gray-700 shadow-[0px_48px_64px_-16px_rgba(0,0,0,0.25)];
+  @apply bg-white rounded-xl my-2 px-2 py-1 min-h-[50px] border ring-1 border-gray-100 ring-gray-100 shadow-[0px_48px_64px_-16px_rgba(0,0,0,0.25)];
 }
 
 .select-option {

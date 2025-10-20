@@ -8,4 +8,13 @@ export const pathServices = {
     getSettingsPath: `/api/settings/organization/get`,
     getPrinterName: `/api/print/printers/get`,
   },
+  products: {
+    // GET
+    getAllProductsPath: "/api/product/get",
+    getAllProductsCountPath: "/api/product/get/count",
+    getTableSettingsPath: "api/settings/account/get",
+
+    //UPDATE
+    updateTableSettingsPath: "api/settings/account/product/data-table/column/update"
+  }
 };

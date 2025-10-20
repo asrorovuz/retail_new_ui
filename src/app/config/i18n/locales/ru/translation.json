@@ -1,0 +1,24 @@
+{
+  "common": {
+    "save": "Сохранить",
+    "cancel": "Отменить"
+  },
+  "tableSettings": {
+    "name": "Название",
+    "totalRemainder": "Общий остаток",
+    "packInCount": "Кол-во в уп.",
+    "package": "Ед. изм.",
+    "sku": "Артикул",
+    "code": "Код",
+    "purchesPrice": "Приходная цена",
+    "price": "Цена"
+  },
+  "color": "Цвет",
+  "colors": {
+    "!bg-green-100": "Зеленый",
+    "!bg-red-100": "Красный",
+    "!bg-yellow-100": "Желтый",
+    "!bg-blue-100": "Синий",
+    "!bg-pink-100": "Розовый"
+  }
+}

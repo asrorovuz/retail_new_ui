@@ -41,7 +41,7 @@ export default function Tabs({ drafts, activateDraft, addNewDraft }: TabsType) {
   };
 
   return (
-    <div className="flex items-center gap-x-2 w-[630px]">
+    <div className="flex items-center gap-x-2 w-[662px]">
       {/* Tabs */}
       <div
         ref={scrollRef}

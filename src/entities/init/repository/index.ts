@@ -8,10 +8,3 @@ export const useSettingsApi = () => {
   });
 };
 
-// export const useSettingsPrinterApi = () => {
-//   return useQuery({
-//     queryKey: ["init-settings-printer"],
-//     queryFn: getPrinterApi,
-//   });
-// };
-

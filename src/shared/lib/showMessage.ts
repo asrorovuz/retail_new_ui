@@ -15,7 +15,7 @@ export const showSuccessMessage = (msgUz: string, msgRu?: string) => {
   const message = lang === "ru" ? msgRu || msgUz : msgUz;
 
   toast.success(message, {
-    position: "bottom-right",
+    position: "top-right",
     autoClose: 3000,
   });
 };
@@ -49,13 +49,21 @@ export const showErrorMessage = (err: unknown) => {
       return toast.error(
         lang === "ru"
           ? "Неверный логин или пароль"
-          : "Login yoki parol noto‘g‘ri"
+          : "Login yoki parol noto‘g‘ri",
+        {
+          position: "bottom-left",
+          autoClose: 3000,
+        }
       );
     }
 
     if (e.name_exsist) {
       return toast.error(
-        lang === "ru" ? "Имя уже существует" : "Bunday nom allaqachon mavjud"
+        lang === "ru" ? "Имя уже существует" : "Bunday nom allaqachon mavjud",
+        {
+          position: "bottom-left",
+          autoClose: 3000,
+        }
       );
     }
 
@@ -63,17 +71,28 @@ export const showErrorMessage = (err: unknown) => {
       return toast.error(
         lang === "ru"
           ? "Штрихкод уже существует"
-          : "Bu shtrixkod allaqachon mavjud"
+          : "Bu shtrixkod allaqachon mavjud",
+        {
+          position: "bottom-left",
+          autoClose: 3000,
+        }
       );
     }
 
     if (e.message) {
       return toast.error(
-        lang === "ru" ? `Ошибка: ${e.message}` : `Xatolik: ${e.message}`
+        lang === "ru" ? `Ошибка: ${e.message}` : `Xatolik: ${e.message}`,
+        {
+          position: "bottom-left",
+          autoClose: 3000,
+        }
       );
     }
   }
 
   // 3️⃣ - noma’lum xatolik
-  toast.error(lang === "ru" ? "Неизвестная ошибка" : "Noma’lum xatolik");
+  toast.error(lang === "ru" ? "Неизвестная ошибка" : "Noma’lum xatolik", {
+    position: "bottom-left",
+    autoClose: 3000,
+  });
 };
