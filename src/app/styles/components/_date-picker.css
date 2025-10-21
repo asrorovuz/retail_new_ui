@@ -1,5 +1,5 @@
 .date-picker {
-  @apply z-40 max-w-xs shadow-xl dark:shadow-2xl bg-white dark:bg-gray-800 rounded-xl p-4;
+  @apply z-40 max-w-xs shadow-xl bg-white rounded-xl p-4;
 }
 
 .date-picker-panel {
@@ -7,15 +7,15 @@
 }
 
 .date-picker-header-label {
-  @apply cursor-pointer mx-0.5 select-none text-gray-900 dark:text-gray-100;
+  @apply cursor-pointer mx-0.5 select-none text-gray-900;
 }
 
 .date-picker-current-month {
-  @apply text-gray-700 dark:text-gray-100;
+  @apply text-gray-700;
 }
 
 .date-picker-other-month {
-  @apply text-gray-400 dark:text-gray-600;
+  @apply text-gray-400 ;
 }
 
 .date-picker-selected-date {
@@ -59,7 +59,7 @@
 }
 
 .picker-panel {
-  @apply shadow-xl dark:shadow-2xl bg-white dark:bg-gray-900 rounded-2xl p-4 dark:border-2 dark:border-gray-700;
+  @apply shadow-xl bg-white rounded-2xl p-4;
 }
 
 .picker-view {
@@ -75,11 +75,11 @@
 }
 
 .picker-direction-button {
-  @apply text-2xl rounded-full h-10 w-10 flex items-center justify-center hover:text-gray-800 hover:dark:text-gray-100 hover:bg-gray-100 hover:dark:bg-gray-700;
+  @apply text-2xl rounded-full h-10 w-10 flex items-center justify-center hover:text-gray-800 hover:bg-gray-100;
 }
 
 .picker-header-label {
-  @apply cursor-pointer mx-0.5 select-none text-gray-900 dark:text-gray-100 text-lg font-semibold;
+  @apply cursor-pointer mx-0.5 select-none text-gray-900 text-lg font-semibold;
 }
 
 .year-table,
@@ -112,11 +112,11 @@
 }
 
 .date-picker-cell-current-month {
-  @apply text-gray-700 dark:text-gray-400;
+  @apply text-gray-700;
 }
 
 .date-picker-cell-hoverable {
-  @apply hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-gray-300;
+  @apply hover:bg-gray-100;
 }
 
 .date-picker-cell-disabled {

@@ -40,7 +40,7 @@ const Dialog = (props: DialogProps) => {
   };
 
   const renderCloseButton = (
-    <CloseButton className="!bg-white" onClick={onCloseClick} />
+    <CloseButton className="!bg-transparent !text-2xl hover:!text-gray-600 !active:scale-110" onClick={onCloseClick} />
   );
 
   const contentStyle = {
@@ -98,7 +98,7 @@ const Dialog = (props: DialogProps) => {
       >
         {/* Header (title + close) */}
         {(title || closable) && (
-          <div className="flex items-start justify-between mb-4 pb-2 relative">
+          <div className={`flex items-start ${title ? "justify-between mb-4" : "justify-end"} pb-2 relative`}>
             {title && (
               <h2 className="text-xl font-semibold text-gray-800 m-0">
                 {title}

@@ -1,5 +1,5 @@
 .drawer-content {
-  @apply bg-white dark:bg-gray-800 shadow-xl absolute flex flex-col;
+  @apply bg-white shadow-xl absolute flex flex-col;
 }
 
 .drawer-content.vertical {
@@ -11,7 +11,7 @@
 }
 
 .drawer-header {
-  @apply flex items-center justify-between py-4 px-6 border-b border-gray-200 dark:border-gray-700;
+  @apply flex items-center justify-between py-4 px-6 border-b border-gray-200;
 }
 
 .drawer-body {
@@ -19,7 +19,7 @@
 }
 
 .drawer-footer {
-  @apply flex items-center justify-between py-4 px-6 border-t border-gray-200 dark:border-gray-700;
+  @apply flex items-center justify-between py-4 px-6 border-t border-gray-200;
 }
 
 .drawer-open.drawer-lock-scroll {

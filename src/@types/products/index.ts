@@ -88,3 +88,4 @@ export type ProductColumnVisibility = {
   purchase_price: { visible: boolean, color?: string };
   total_warehouses_state: { visible: boolean, color?: string };
 };
+

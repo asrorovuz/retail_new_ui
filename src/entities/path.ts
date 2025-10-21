@@ -12,9 +12,17 @@ export const pathServices = {
     // GET
     getAllProductsPath: "/api/product/get",
     getAllProductsCountPath: "/api/product/get/count",
-    getTableSettingsPath: "api/settings/account/get",
+    getTableSettingsPath: "/api/settings/account/get",
+    getPriceTypesList: '/api/product/price-type/get',
 
     //UPDATE
-    updateTableSettingsPath: "api/settings/account/product/data-table/column/update"
+    updateTableSettingsPath: "/api/settings/account/product/data-table/column/update",
+
+    // CREATE 
+    createProductPath: '/api/product/create',
+    createFavouriteProductPath: "/api/favorite-product/add",
+
+    // DELETE 
+    deleteProductPath: `/api/product/delete`
   }
 };

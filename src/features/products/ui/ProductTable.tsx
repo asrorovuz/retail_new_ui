@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState } from "react";
 import {
   useReactTable,
   getCoreRowModel,
@@ -8,8 +8,9 @@ import {
 import {
   useAllProductApi,
   useAllProductCountApi,
+  useDeleteTransacton,
 } from "@/entities/products/repository";
-import { Pagination, Table } from "@/shared/ui/kit";
+import { Button, Dropdown, Pagination, Table } from "@/shared/ui/kit";
 import THead from "@/shared/ui/kit/Table/THead";
 import Tr from "@/shared/ui/kit/Table/Tr";
 import Th from "@/shared/ui/kit/Table/Th";
@@ -19,35 +20,59 @@ import type { Product } from "@/@types/products";
 import Loading from "@/shared/ui/loading";
 import Empty from "@/shared/ui/kit-pro/empty/Empty";
 import TableSettingsModal from "./TableSettingsModal";
+import DropdownItem from "@/shared/ui/kit/Dropdown/DropdownItem";
+import { FaRegEdit } from "react-icons/fa";
+import { IoTrashOutline } from "react-icons/io5";
+import { HiOutlineDotsHorizontal } from "react-icons/hi";
+import ShtrixCod from "@/shared/ui/svg/ShtrixCod";
+import { showErrorMessage, showSuccessMessage } from "@/shared/lib/showMessage";
+import { messages } from "@/app/constants/message.request";
+import ConfirmDialog from "@/shared/ui/kit-pro/confirm-dialog/ConfirmDialog";
 
 const ProductTable = ({ search }: { search: string }) => {
+  const [confirmProductId, setConfirmProductId] = useState<number | null>(null);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+
   const [pagination, setPagination] = useState({
     pageIndex: 1,
     pageSize: 20,
   });
 
   // 🚀 API chaqiruv
-  const { data, isPending, refetch } = useAllProductApi(
+  const { data, isPending } = useAllProductApi(
     pagination.pageSize,
     pagination.pageIndex,
     search || ""
   );
   const { data: countData } = useAllProductCountApi();
+  const { mutate: deleteProduct, isPending: productDeleteLoading } =
+    useDeleteTransacton();
 
   const columnHelper = createColumnHelper<Product>();
 
-  // const productTableColumnsKey = useMemo(() => {
-  //   return [
-  //     { key: "name" },
-  //     { key: "totalRemainder", defaultColor: "!bg-green-100" },
-  //     { key: "packInCount" },
-  //     { key: "package" },
-  //     { key: "price" },
-  //     { key: "purchasePrice" },
-  //     { key: "sku" },
-  //     { key: "code" },
-  //   ];
-  // }, []);
+  // 🧱 Mahsulot o‘chirish
+  const onDeleteProduct = () => {
+    if (!confirmProductId) return;
+    deleteProduct(confirmProductId, {
+      onSuccess: () => {
+        showSuccessMessage(
+          messages.uz.SUCCESS_MESSAGE,
+          messages.ru.SUCCESS_MESSAGE
+        );
+        setDeleteModalOpen(false);
+        setConfirmProductId(null);
+      },
+      onError: (error) => {
+        showErrorMessage(error);
+        setDeleteModalOpen(false);
+      },
+    });
+  };
+
+  const onCloseDeleteProductDialog = () => {
+    setDeleteModalOpen(false);
+    setConfirmProductId(null);
+  };
 
   // 🧱 Ustunlar
   const columns = useMemo(
@@ -111,37 +136,60 @@ const ProductTable = ({ search }: { search: string }) => {
         size: 100,
       }),
 
-      // 🧩 Yangi ustun — Actions
+      // 🧩 Actions ustuni
       columnHelper.display({
         id: "actions",
-        header: () => <TableSettingsModal />,
-        size: 50,
-        cell: (info) => (
-          <div className="flex items-center justify-center gap-3">
-            <button
-              className="text-blue-600 hover:text-blue-800"
-              onClick={() => console.log("Edit:", info.row.original)}
-            >
-              ✏️
-            </button>
+        header: () => (
+          <div className="text-2xl flex justify-center">
+            <TableSettingsModal />
           </div>
         ),
+        size: 50,
+        cell: (info) => {
+          const productId = info.row.original.id;
+          return (
+            <Dropdown
+              toggleClassName="text-2xl text-gray-600 flex justify-center"
+              renderTitle={<HiOutlineDotsHorizontal />}
+            >
+              <DropdownItem className="!h-auto">
+                <div className="flex items-center gap-2 text-gray-700 hover:bg-gray-50 py-3 px-5 rounded-xl">
+                  <ShtrixCod />
+                  Печать штрих код товара
+                </div>
+              </DropdownItem>
+              <DropdownItem className="!h-auto">
+                <div className="flex items-center gap-2 text-orange-500 hover:bg-gray-50 py-3 px-5 rounded-xl">
+                  <FaRegEdit />
+                  Редактировать
+                </div>
+              </DropdownItem>
+              <DropdownItem className="!h-auto">
+                <Button
+                  variant="plain"
+                  onClick={() => {
+                    setConfirmProductId(productId);
+                    setDeleteModalOpen(true);
+                  }}
+                  className="w-full bg-transparent flex items-center gap-2 text-red-500 hover:bg-gray-50 active:bg-gray-100 py-3 px-5 rounded-xl"
+                >
+                  <IoTrashOutline />
+                  Удалить
+                </Button>
+              </DropdownItem>
+            </Dropdown>
+          );
+        },
       }),
     ],
     [pagination]
   );
 
-  // 📋 Jadval
   const table = useReactTable({
     data: (data as unknown as Product[]) || [],
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
-
-  // 🔁 Sahifa o‘zgarganda qayta so‘rov yuborish
-  useEffect(() => {
-    refetch();
-  }, [pagination.pageIndex, pagination.pageSize, refetch]);
 
   if (isPending)
     return (
@@ -152,16 +200,16 @@ const ProductTable = ({ search }: { search: string }) => {
 
   return (
     <div className="h-[calc(100%_-_44px)] flex flex-col">
-      {/* 🔹 Jadval qismi */}
+      {/* 🔹 Jadval */}
       <div className="flex-1 mb-3 border border-gray-300 rounded-3xl overflow-y-auto">
         {data && data.length > 0 ? (
-          <Table className="w-full">
+          <Table className="w-full table-fixed">
             <THead className="bg-white sticky top-0 z-10">
               {table.getHeaderGroups().map((headerGroup) => (
                 <Tr key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
                     <Th key={header.id}>
-                      <div className="px-4 py-3 text-left font-medium text-sm text-gray-800">
+                      <div className="px-4 text-left font-medium text-sm text-gray-800">
                         {flexRender(
                           header.column.columnDef.header,
                           header.getContext()
@@ -213,6 +261,27 @@ const ProductTable = ({ search }: { search: string }) => {
           })
         }
       />
+
+      {/* 🔹 ConfirmDialog */}
+      <ConfirmDialog
+        type="danger"
+        className={"w-[600px]"}
+        title="Вы уверены, что хотите удалить этот продукт?"
+        isOpen={deleteModalOpen}
+        confirmButtonProps={{
+          loading: productDeleteLoading,
+          onClick: onDeleteProduct,
+        }}
+        cancelText="Отмена"
+        confirmText="Удалить"
+        onClose={onCloseDeleteProductDialog}
+        onRequestClose={onCloseDeleteProductDialog}
+        onCancel={onCloseDeleteProductDialog}
+      >
+        <p className="text-gray-600">
+          После удаления, восстановить продукт будет невозможно.
+        </p>
+      </ConfirmDialog>
     </div>
   );
 };

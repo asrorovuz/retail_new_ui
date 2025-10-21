@@ -1,4 +1,5 @@
 import { Input } from "@/shared/ui/kit";
+import { BsSearch } from "react-icons/bs";
 
 const SearchProduct = ({
   search,
@@ -8,15 +9,14 @@ const SearchProduct = ({
   setSearch: (v: string) => void;
 }) => {
   return (
-    <div className="relative w-full max-w-sm">
-      <Input
-        className="!border-gray-300 pl-10 py-3 text-xs font-medium" // chap tomonda icon uchun joy
-        type="search"
-        placeholder="Поиск по любому товару"
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-      />
-    </div>
+    <Input
+      className="w-full text-sm font-medium bg-transparent border-none outline-none ring-0 !focus:ring-0 !focus:border-none !focus:outline-none"
+      type="search"
+      suffix={<BsSearch />}
+      placeholder="Поиск по любому товару"
+      value={search}
+      onChange={(e) => setSearch(e.target.value)}
+    />
   );
 };
 
