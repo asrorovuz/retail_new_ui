@@ -19,6 +19,7 @@
 }
 
 .input.input-invalid {
+  @apply border-error ring-1 ring-error bg-error-subtle;
   @apply focus:ring-1 focus:ring-error focus:border-error
     focus:bg-transparent bg-error-subtle
     focus-within:ring-1 focus-within:ring-error

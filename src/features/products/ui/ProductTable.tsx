@@ -44,7 +44,7 @@ const ProductTable = ({ search }: { search: string }) => {
     pagination.pageIndex,
     search || ""
   );
-  const { data: countData } = useAllProductCountApi();
+  const { data: countData } = useAllProductCountApi(search || "");
   const { mutate: deleteProduct, isPending: productDeleteLoading } =
     useDeleteTransacton();
 

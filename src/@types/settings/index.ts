@@ -23,9 +23,18 @@ export type TableColumnSetting = {
 export type SettingsStoreInitialState = {
   settings: SettingsType | null;
   tableSettings: TableColumnSetting[];
+  wareHouseId: null | number;
 };
 
 export type SettingsStoreActions = {
   setSettings: (payload: SettingsType | null) => void;
   setTableSettings: (payload: TableColumnSetting[]) => void;
+  setWareHouseId: (payload: number) => void;
+};
+
+export type WareHouseDataType = {
+  id: number;
+  created_at: string;
+  updated_at: string;
+  name: string;
 };

@@ -1,25 +1,17 @@
-import { useState, useEffect, useRef } from "react";
-import classNames from "classnames";
-import { useConfig } from "../ConfigProvider";
-import { useForm, useFormItem } from "../Form/context";
-import { useInputGroup } from "../InputGroup/context";
-import { CONTROL_SIZES } from "../utils/constants";
-import type { CommonProps, TypeAttributes } from "../@types/common";
-import type {
-  InputHTMLAttributes,
-  ElementType,
-  ReactNode,
-  HTMLInputTypeAttribute,
-  ClassAttributes,
-  Ref,
-  ChangeEvent,
-} from "react";
+import { useEffect, useRef, useState, type ChangeEvent, type ElementType, type HTMLInputTypeAttribute, type InputHTMLAttributes, type ReactNode, type Ref } from "react";
+import type { CommonProps, TypeAttributes } from "../../kit/@types/common";
+import { useConfig } from "../../kit/ConfigProvider";
+import { useForm, useFormItem } from "../../kit/Form/context";
+import { useInputGroup } from "../../kit/InputGroup/context";
+import classNames from "@/shared/lib/classNames";
+import { CONTROL_SIZES } from "../../kit/utils/constants";
+
 
 export interface InputProps
   extends CommonProps,
     Omit<
       InputHTMLAttributes<HTMLInputElement | HTMLTextAreaElement>,
-      "size" | "prefix" | "value"
+      "size" | "prefix" | "value" | "onChange"
     > {
   startSuffixClassName?: string;
   endSuffixClassName?: string;
@@ -33,12 +25,11 @@ export interface InputProps
   suffix?: string | ReactNode;
   textArea?: boolean;
   type?: HTMLInputTypeAttribute;
-  value?: string | readonly string[] | number | undefined | null;
+  value?: string | number;
   unstyle?: boolean;
-  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
-  /** 🔥 Yangi props — agar true bo‘lsa, 0 bilan boshlangan raqamni almashtiradi */
-  replaceLeadingZero?: boolean;
-  space?: boolean;
+  /** 🔥 Custom qo‘shilgan */
+  numeric?: boolean;
+  onChange?: (value: string) => void;
 }
 
 const Input = (props: InputProps) => {
@@ -58,16 +49,13 @@ const Input = (props: InputProps) => {
     startSuffixClassName,
     endSuffixClassName,
     unstyle = false,
+    numeric = false,
     value,
     onChange,
-    replaceLeadingZero = false,
-    space = true,
     ...rest
   } = props;
 
-  const [displayValue, setDisplayValue] = useState<string>(
-    value ? String(value) : ""
-  );
+  const [displayValue, setDisplayValue] = useState("");
 
   // 🔹 Faqat raqamlarni olish
   const onlyDigits = (val: string) => val.replace(/\D/g, "");
@@ -80,45 +68,24 @@ const Input = (props: InputProps) => {
 
   // 🔹 Dastlabki qiymatni formatlab qo‘yish
   useEffect(() => {
-    if (type === "number" && value !== undefined && value !== null) {
+    if (numeric && value !== undefined) {
       setDisplayValue(formatValue(String(value)));
-    } else if (value !== undefined && value !== null) {
+    } else if (!numeric && value !== undefined) {
       setDisplayValue(String(value));
     }
-  }, [value, type]);
+  }, [value, numeric]);
 
-  // 🔹 onChange boshqarish
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     let val = e.target.value;
 
-    if (type === "number" && space) {
-      let raw = onlyDigits(val);
-
-      // 🔥 0 bilan boshlansa va replaceLeadingZero = true bo‘lsa, olib tashlaymiz
-      if (replaceLeadingZero && raw.length > 1 && raw.startsWith("0")) {
-        raw = raw.replace(/^0+/, "");
-      }
-
+    if (numeric) {
+      const raw = onlyDigits(val);
       const formatted = formatValue(raw);
       setDisplayValue(formatted);
-
-      const fakeEvent = {
-        ...e,
-        target: { ...e.target, value: raw },
-      };
-
-      onChange?.(fakeEvent as unknown as ChangeEvent<HTMLInputElement>);
+      if (onChange) onChange(raw); // backendga toza raqam
     } else {
-      // 🧹 Agar space = false bo‘lsa, barcha bo‘sh joylarni olib tashlaymiz
-      if (!space) {
-        val = val.replace(/\s+/g, "");
-      }
-
       setDisplayValue(val);
-      onChange?.({
-        ...e,
-        target: { ...e.target, value: val },
-      } as ChangeEvent<HTMLInputElement>);
+      if (onChange) onChange(val);
     }
   };
 
@@ -149,18 +116,17 @@ const Input = (props: InputProps) => {
 
   const prefixNode = useRef<HTMLDivElement>(null);
   const suffixNode = useRef<HTMLDivElement>(null);
-  const [prefixGutter, setPrefixGutter] = useState(0);
-  const [suffixGutter, setSuffixGutter] = useState(0);
 
   const getAffixSize = () => {
     if (!prefixNode.current && !suffixNode.current) return;
-
     const prefixNodeWidth = prefixNode?.current?.offsetWidth;
     const suffixNodeWidth = suffixNode?.current?.offsetWidth;
-
     if (prefixNodeWidth) setPrefixGutter(prefixNodeWidth);
     if (suffixNodeWidth) setSuffixGutter(suffixNodeWidth);
   };
+
+  const [prefixGutter, setPrefixGutter] = useState(0);
+  const [suffixGutter, setSuffixGutter] = useState(0);
 
   useEffect(() => {
     getAffixSize();
@@ -171,17 +137,12 @@ const Input = (props: InputProps) => {
   const affixGutterStyle = () => {
     const leftGutter = `${remToPxConvertion(prefixGutter) + 1}rem`;
     const rightGutter = `${remToPxConvertion(suffixGutter) + 1}rem`;
-    const gutterStyle: {
-      paddingLeft?: string;
-      paddingRight?: string;
-    } = {};
+    const gutterStyle: { paddingLeft?: string; paddingRight?: string } = {};
 
     if (direction === "ltr") {
       if (prefix) gutterStyle.paddingLeft = leftGutter;
       if (suffix) gutterStyle.paddingRight = rightGutter;
-    }
-
-    if (direction === "rtl") {
+    } else {
       if (prefix) gutterStyle.paddingRight = leftGutter;
       if (suffix) gutterStyle.paddingLeft = rightGutter;
     }
@@ -192,53 +153,41 @@ const Input = (props: InputProps) => {
   const inputProps = {
     className: !unstyle ? inputClass : "",
     disabled,
-    type: type === "number" ? "text" : type,
+    type: numeric ? "text" : type, // 🔥 number emas, text, lekin raqamli nazorat
     ref,
     value: displayValue,
     onChange: handleChange,
-    inputMode: type === "number" ? "numeric" : undefined,
+    inputMode: numeric ? "numeric" : undefined,
     ...rest,
   };
-
-  const renderTextArea = (
-    <textarea
-      style={style}
-      rows={rows}
-      {...(inputProps as ClassAttributes<HTMLTextAreaElement>)}
-    ></textarea>
-  );
 
   const renderInput = (
     <Component style={{ ...affixGutterStyle(), ...style }} {...inputProps} />
   );
 
-  const renderAffixInput = (
+  return prefix || suffix ? (
     <span className={inputWrapperClass}>
-      {prefix && (
+      {prefix ? (
         <div
           ref={prefixNode}
           className={"input-suffix-start " + startSuffixClassName}
         >
           {prefix}
         </div>
-      )}
+      ) : null}
       {renderInput}
-      {suffix && (
+      {suffix ? (
         <div
           ref={suffixNode}
           className={"input-suffix-end " + endSuffixClassName}
         >
           {suffix}
         </div>
-      )}
+      ) : null}
     </span>
+  ) : (
+    renderInput
   );
-
-  return textArea
-    ? renderTextArea
-    : prefix || suffix
-    ? renderAffixInput
-    : renderInput;
 };
 
 export default Input;

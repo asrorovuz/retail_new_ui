@@ -1,5 +1,5 @@
 .select-control {
-  @apply flex items-center justify-between bg-white border border-gray-100 dark:border-gray-400 rounded-xl transition duration-150;
+  @apply flex items-center justify-between bg-white border border-gray-800 rounded-xl transition duration-150;
 }
 
 .select-control-focused {
@@ -11,8 +11,18 @@
   @apply font-semibold;
 }
 
+.select--no-indicator .select-value-container {
+  @apply px-3; /* ikkala tomondan teng padding */
+}
+
+/* Odatiy holatda */
 .select-value-container {
-  @apply items-center flex-1 flex-wrap relative overflow-hidden px-3 py-2 gap-y-2;
+  @apply items-center flex-1 flex-wrap relative overflow-hidden pl-3 pr-0 py-2 gap-y-2;
+}
+
+/* indikator mavjud bo‘lgan holatda o‘ng tomonga joy qoldirish */
+.select-indicators-container {
+  @apply px-3 text-2xl;
 }
 
 .select-input-container {
@@ -21,17 +31,13 @@
   grid-template-columns: 0 min-content;
 }
 
-.select-indicators-container {
-  @apply px-3 text-2xl;
-}
-
 .select-single-value {
   grid-area: 1 / 1 / 2 / 3;
   @apply max-w-full overflow-hidden text-ellipsis whitespace-nowrap text-gray-800 font-semibold;
 }
 
 .select-multi-value {
-  @apply flex rounded-lg mx-0.5 font-bold border border-gray-300 dark:border-gray-400 bg-gray-50 text-gray-800;
+  @apply flex rounded-lg mx-0.5 font-bold border border-gray-300 bg-gray-50 text-gray-800;
 }
 
 .select-multi-value-label {
@@ -56,4 +62,8 @@
 
 .select-sm .select-indicators-container {
   @apply px-1;
+}
+
+.select-control-invalid, .border-error, .ring-error{
+  @apply border border-red-500 right-1 ring-red-500
 }

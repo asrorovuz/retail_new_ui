@@ -17,6 +17,7 @@ const initialState: SettingsStoreInitialState = {
     { key: "sku", visible: true, color: "" },
     { key: "code", visible: true, color: "" },
   ],
+  wareHouseId: null
 };
 
 export const useSettingsStore = create<SettingsStoreInitialState & SettingsStoreActions>(
@@ -25,5 +26,6 @@ export const useSettingsStore = create<SettingsStoreInitialState & SettingsStore
     setSettings: (payload) => set({ settings: payload }),
     setTableSettings: (payload: TableColumnSetting[]) =>
       set(() => ({ tableSettings: payload })),
+    setWareHouseId: (payload: number) => set({wareHouseId: payload})
   })
 );
