@@ -1,6 +1,15 @@
+import type { WarehouseItem } from "@/@types/products";
+
 export type FavouriteProduct = {
   product_id: number | null;
   product_package_id: number | null;
+};
+
+export type ProductPriceType = {
+  id: number;
+  name: string;
+  is_primary: boolean;
+  is_bulk: boolean;
 };
 
 export type ProductModalProps = {
@@ -8,6 +17,7 @@ export type ProductModalProps = {
   setType: (value: "add" | "edit") => void;
   barcode: string | null;
   setBarcode: (val: string | null) => void;
+  productPriceType: ProductPriceType[];
 };
 
 // 🪙 Valyuta tipi
@@ -73,13 +83,14 @@ interface PackageType {
 
 // 🏷️ Asosiy mahsulot tipi
 export interface ProductDefaultValues {
-  id?: number;
+  id?: number | null;
   name: string;
+  state?: number;
   purchase_price: {
     amount: number | null;
     currency: CurrencyType;
   };
+  warehouse_items?: WarehouseItem[];
   vat_rate?: number | null;
   packages: PackageType[];
 }
-

@@ -54,9 +54,6 @@ const TableSettingsModal = () => {
   };
 
   const handleSave = () => {
-    setTableSettings(tempHiddenColumns);
-    setIsOpen(false);
-
     const result = convertArrayToBackendSettings(
       tempHiddenColumns
     ) as ProductColumnVisibility;
@@ -67,6 +64,8 @@ const TableSettingsModal = () => {
           messages.uz.SUCCESS_MESSAGE,
           messages.ru.SUCCESS_MESSAGE
         );
+        setTableSettings(tempHiddenColumns);
+        setIsOpen(false);
       },
       onError: (error) => {
         showErrorMessage(error);

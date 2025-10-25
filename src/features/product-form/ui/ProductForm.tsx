@@ -18,15 +18,17 @@ import type {
 } from "@/features/modals/model";
 import {
   useCreateProduct,
+  useCreateregister,
   useCurrancyApi,
   useUpdateAlertOn,
+  useUpdateProduct,
 } from "@/entities/products/repository";
 import CategorySelect from "@/features/category/CategorySelect";
 import {
   CatalogPackageSelector,
   CatalogSelector,
 } from "@/features/catalog-selector";
-import type { VatRateSelectorOption } from "@/@types/products";
+import type { Product, VatRateSelectorOption } from "@/@types/products";
 import ImageForm from "@/features/image-form";
 import BarcodeForm from "@/features/barcode-form/ui/BarcodeForm";
 import { convertImageObjectsToBase64 } from "@/shared/lib/convertFilesToBase64";
@@ -36,19 +38,21 @@ import { useSettingsStore } from "@/app/store/useSettingsStore";
 
 const ProductForm: FC<ProductFormType> = ({
   type,
+  productId,
   isOpen,
   setIsOpen,
   defaultValue,
   setBarcode,
   barcode,
+  setProductId,
 }) => {
-  console.log(defaultValue);
-  const { handleSubmit, control, getValues, reset } =
-    useForm<ProductDefaultValues>({
-      defaultValues: defaultValue,
-    });
+  const { handleSubmit, control, getValues, reset, watch } = useForm<
+    Product | ProductDefaultValues
+  >({
+    defaultValues: defaultValue,
+  });
   const inputWrapperRef = useRef<HTMLDivElement>(null);
-  const [remainder, setRemainder] = useState<number>(0);
+  const [remainder, setRemainder] = useState<number>(defaultValue?.state || 0);
   const [alertOn, setAlertOn] = useState<string | number>(0);
   const [isShow, setIsShow] = useState(false);
   const [packageNames, setPackageNames] = useState<Package[] | []>([]);
@@ -58,7 +62,10 @@ const ProductForm: FC<ProductFormType> = ({
   const { data: currencies } = useCurrancyApi();
   const { mutate: createProduct, isPending: createProductPending } =
     useCreateProduct();
+  const { mutate: updateProduct, isPending: updateLoading } =
+    useUpdateProduct();
   const { mutate: alertOnUpdate } = useUpdateAlertOn();
+  const { mutate: createRegister } = useCreateregister();
 
   const onClose = () => {
     setBarcode(null);
@@ -67,6 +74,10 @@ const ProductForm: FC<ProductFormType> = ({
     reset(defaultValue || {});
     setIsShow(false);
     setIsOpen(false);
+
+    if (setProductId) {
+      setProductId(null);
+    }
   };
 
   const handleClick = (value: boolean) => {
@@ -88,7 +99,28 @@ const ProductForm: FC<ProductFormType> = ({
     []
   );
 
-  const onSubmit = async (values: ProductDefaultValues) => {
+  const remenderSubmit = async (id: number | null) => {
+    if (id && remainder > 0) {
+      const reminderData = {
+        is_approved: true,
+        items: [
+          {
+            product_package_id: id,
+            warehouse_id: wareHouseId,
+            quantity: remainder,
+          },
+        ],
+      };
+
+      try {
+        createRegister(reminderData);
+      } catch (error) {
+        console.log(error, "error remender");
+      }
+    }
+  };
+
+  const onSubmit: any = async (values: ProductDefaultValues) => {
     const transformatedData = await Promise.all(
       values?.packages?.map(async (pkg: any) => {
         const images = await convertImageObjectsToBase64(
@@ -142,7 +174,33 @@ const ProductForm: FC<ProductFormType> = ({
       packages: transformatedData,
     };
 
-    if (type === "edit") {
+    if (type === "edit" && productId) {
+      updateProduct(
+        { productId, data },
+        {
+          onSuccess(res) {
+            showSuccessMessage(
+              messages.uz.SUCCESS_MESSAGE,
+              messages.ru.SUCCESS_MESSAGE
+            );
+
+            if (alertOn && wareHouseId) {
+              alertOnUpdate({
+                warehouse_id: wareHouseId,
+                product_id: res?.product?.id,
+                alert_on: +alertOn,
+              });
+            }
+            if (res && res?.package) {
+              remenderSubmit(res?.package[0]?.id);
+            }
+            onClose();
+          },
+          onError(error) {
+            showErrorMessage(error);
+          },
+        }
+      );
     } else {
       createProduct(data, {
         onSuccess(res) {
@@ -158,6 +216,9 @@ const ProductForm: FC<ProductFormType> = ({
               alert_on: +alertOn,
             });
           }
+          if (res && res?.package) {
+            remenderSubmit(res?.package[0]?.id);
+          }
           onClose();
         },
         onError(error) {
@@ -165,13 +226,35 @@ const ProductForm: FC<ProductFormType> = ({
         },
       });
     }
-
-    console.log(data, "data");
   };
 
   useEffect(() => {
+    const [purchase_price] = defaultValue?.warehouse_items || [];
+    if (purchase_price?.alert_on) {
+      setAlertOn(purchase_price?.alert_on);
+    }
+  }, [defaultValue?.warehouse_items]);
+
+  useEffect(() => {
+    const values = getValues(`packages.0`) || {};
+
+    const shouldShow =
+      !!values.catalog || !!values.package || !!values.vat_rate;
+
+    setIsShow(shouldShow);
+  }, [
+    watch(`packages.0.catalog_code`),
+    watch(`packages.0.package`),
+    watch(`packages.0.vat_rate`),
+  ]);
+
+  useEffect(() => {
+    setRemainder(defaultValue?.state || 0);
+  }, [defaultValue?.state]);
+
+  useEffect(() => {
     if (isOpen && defaultValue) {
-      reset(defaultValue); // <-- form ichiga default qiymatlarni qayta yuklaydi
+      reset(defaultValue);
     }
   }, [isOpen, defaultValue, reset]);
 
@@ -473,11 +556,11 @@ const ProductForm: FC<ProductFormType> = ({
           <ImageForm fieldName={`packages.0.images`} control={control} />
         </div>
         <div className="mt-5 flex justify-end gap-x-3">
-          <Button variant="plain" onClick={onClose}>
+          <Button type="button" variant="plain" onClick={onClose}>
             Отменить
           </Button>
           <Button
-            loading={createProductPending}
+            loading={createProductPending || updateLoading}
             type="submit"
             variant="solid"
             className="self-end"

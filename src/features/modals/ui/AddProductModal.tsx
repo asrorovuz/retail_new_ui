@@ -2,17 +2,15 @@ import { Button } from "@/shared/ui/kit";
 import { useMemo, useState, type FC } from "react";
 import type { ProductDefaultValues, ProductModalProps } from "../model";
 import ProductForm from "@/features/product-form";
-import { usePriceTypeApi } from "@/entities/products/repository";
 import {
   CurrencyCodeUZS,
   CurrencyCodeUZSText,
   CurrencyRateUZS,
 } from "@/app/constants/paymentType";
+import type { ProductPriceType } from "@/@types/products";
 
-const AddProductModal: FC<ProductModalProps> = ({ type, setType, setBarcode, barcode }) => {
+const AddProductModal: FC<ProductModalProps> = ({ type, setType, setBarcode, barcode, productPriceType }) => {
   const [isOpen, setIsOpen] = useState(false);
-
-  const { data: productPriceType } = usePriceTypeApi();
 
   const openModal = () => {
     setType("add");
@@ -20,7 +18,7 @@ const AddProductModal: FC<ProductModalProps> = ({ type, setType, setBarcode, bar
   };
 
   const defaultValues: ProductDefaultValues = useMemo(() => {
-    const prices = productPriceType?.map((i: any, inx: number) => {
+    const prices = productPriceType?.map((i: ProductPriceType, inx: number) => {
       return {
         amount: inx ? 0 : null,
         price_type: i,

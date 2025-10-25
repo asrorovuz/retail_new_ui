@@ -7,6 +7,7 @@ import type {
   Product,
   ProductColumnVisibility,
   ProductResponse,
+  RegisterType,
 } from "@/@types/products";
 import type { TableColumnSetting } from "@/@types/settings";
 import { AxiosBase } from "@/app/config/axios";
@@ -35,6 +36,13 @@ export const getAllProductApi = async (
 
   return data;
 };
+
+export const getAllFavoritProductApi = async (): Promise<Product[] | []> => {
+  const { data } = await AxiosBase.get(pathServices.products.getFavoritProduct);
+
+  return data;
+};
+
 export const getAllProductCountApi = async (
   search?: string
 ): Promise<number> => {
@@ -80,6 +88,15 @@ export const getCatalogSearchApi = async (query: string): Promise<any> => {
   return data;
 };
 
+export const getProductByIdApi = async (
+  productId: number | null
+): Promise<any> => {
+  const { data } = await AxiosBase.get(
+    `${pathServices.products.getByIdPath}${productId}`
+  );
+  return data;
+};
+
 //UPDATE
 export const updateTableSettingsApi = async (
   payload: ProductColumnVisibility
@@ -96,6 +113,17 @@ export const updateAlertOnApi = async (
 ): Promise<AlertOntypeResponse> => {
   const { data }: AxiosResponse<AlertOntypeResponse> = await AxiosBase.post(
     pathServices.products.updateAlertOn,
+    payload
+  );
+  return data;
+};
+
+export const updateProductApi = async (
+  productId: number | null,
+  payload: ProductFormType
+): Promise<ProductResponse> => {
+  const { data }: AxiosResponse<ProductResponse> = await AxiosBase.post(
+    `${pathServices.products.updateProduct}${productId}`,
     payload
   );
   return data;
@@ -118,6 +146,16 @@ export const createFavouriteProductApi = async (
 ): Promise<FavouriteProduct> => {
   const { data }: AxiosResponse<FavouriteProduct> = await AxiosBase.post(
     pathServices.products.createFavouriteProductPath,
+    payload
+  );
+  return data;
+};
+
+export const createRegisterApi = async (
+  payload: RegisterType
+): Promise<any> => {
+  const { data }: AxiosResponse<any> = await AxiosBase.post(
+    pathServices.products.createRegister,
     payload
   );
   return data;
@@ -147,6 +185,13 @@ export const createProductApi = async (
 export const deleteProductApi = async (id: number) => {
   const response = await AxiosBase.post(
     `${pathServices.products.deleteProductPath}/${id}`
+  );
+  return response;
+};
+
+export const deleteFavoritProductApi = async (id: number) => {
+  const response = await AxiosBase.post(
+    `${pathServices.products.deleteFavoritProductPath}/${id}`
   );
   return response;
 };

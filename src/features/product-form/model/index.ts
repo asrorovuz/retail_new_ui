@@ -3,9 +3,11 @@ import type { ProductDefaultValues } from "@/features/modals/model";
 
 export type ProductFormType = {
   type: "add" | "edit";
+  productId?: number | null;
   isOpen: boolean;
   setIsOpen: (val: boolean) => void;
   defaultValue: Product | ProductDefaultValues;
   barcode: string | null;
   setBarcode: (val: string | null) => void;
+  setProductId?: (val: number | null) => void;
 };

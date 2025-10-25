@@ -6,6 +6,7 @@ export interface Product {
   is_deleted: boolean;
   name: string;
   vat_rate: number | null;
+  state?: number;
   product_packages?: ProductPackage[];
   warehouse_items?: WarehouseItem[];
 }
@@ -19,7 +20,15 @@ export interface ProductPackage {
   product_id: number;
   category: string | null;
   barcodes?: Barcode[];
-  images?: any[];
+  is_default?: number;
+  images?:
+    | {
+        id: number;
+        img?: string;
+        name: string;
+        fs_url?: string;
+      }[]
+    | [];
   prices?: Price[];
   catalog_code: string | null;
   catalog_name: string | null;
@@ -148,3 +157,11 @@ export type AlertOntypeResponse = {
   purchase_price_currency_code: number;
 };
 
+export type RegisterType = {
+  is_approved: boolean;
+  items: {
+    product_package_id: number;
+    warehouse_id: number | null;
+    quantity: number;
+  }[];
+};

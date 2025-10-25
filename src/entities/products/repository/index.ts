@@ -3,22 +3,28 @@ import {
   createCategoryApi,
   createFavouriteProductApi,
   createProductApi,
+  createRegisterApi,
+  deleteFavoritProductApi,
   deleteProductApi,
+  getAllFavoritProductApi,
   getAllProductApi,
   getAllProductCountApi,
   getCatalogSearchApi,
   getCategoryApi,
   getCurrencyApi,
   getPriceTypeApi,
+  getProductByIdApi,
   getTableSettingsApi,
   updateAlertOnApi,
   updateCategoryApi,
+  updateProductApi,
   updateTableSettingsApi,
 } from "../api";
 import type {
   AlertOntype,
   CategoryTypeModal,
   ProductColumnVisibility,
+  RegisterType,
 } from "@/@types/products";
 import type { FavouriteProduct } from "@/features/modals/model";
 
@@ -34,10 +40,25 @@ export const useAllProductApi = (
   });
 };
 
+export const useAllFavoritProductApi = () => {
+  return useQuery({
+    queryKey: ["all-favorit"],
+    queryFn: () => getAllFavoritProductApi(),
+  });
+};
+
 export const useAllProductCountApi = (search?: string) => {
   return useQuery({
     queryKey: ["all-products-count", search],
     queryFn: () => getAllProductCountApi(search),
+  });
+};
+
+export const useProductByIdApi = (productId: number | null) => {
+  return useQuery({
+    queryKey: ["product-by-id", productId],
+    queryFn: () => getProductByIdApi(productId),
+    enabled: !!productId,
   });
 };
 
@@ -61,7 +82,7 @@ export const useCatalogSearchApi = (query: string) => {
     queryFn: () => getCatalogSearchApi(query),
     enabled: !!query,
     staleTime: 0,
-    gcTime: 0
+    gcTime: 0,
   });
 };
 
@@ -97,6 +118,24 @@ export const useUpdateAlertOn = () => {
   });
 };
 
+export const useCreateregister = () => {
+  return useMutation({
+    mutationFn: (data: RegisterType) => createRegisterApi(data),
+  });
+};
+
+export const useUpdateProduct = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ productId, data }: { productId: number; data: any }) =>
+      updateProductApi(productId, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["all-products"] });
+    },
+  });
+};
+
 export const useUpdateCategory = () => {
   const queryClient = useQueryClient();
 
@@ -116,7 +155,7 @@ export const useAddFavouriteProduct = () => {
   return useMutation({
     mutationFn: (data: FavouriteProduct) => createFavouriteProductApi(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [""] });
+      queryClient.invalidateQueries({ queryKey: ["all-favorit"] });
     },
   });
 };
@@ -144,9 +183,8 @@ export const useCreateProduct = () => {
   });
 };
 
-
 // DELETE
-export const useDeleteTransacton = () => {
+export const useDeleteProduct = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -154,6 +192,17 @@ export const useDeleteTransacton = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["all-products"] });
       queryClient.invalidateQueries({ queryKey: ["all-products-count"] });
+    },
+  });
+};
+
+export const useDeleteFavoritproduct = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: number) => deleteFavoritProductApi(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["all-favorit"] });
     },
   });
 };

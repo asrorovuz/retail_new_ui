@@ -5,4 +5,6 @@ export const RefundPage = lazy(() => import("@/pages/refund"));
 export const ProductsPage = lazy(() => import("@/pages/products"));
 // export const SettingsPage = lazy(() => import("@/pages/settings"));
 export const HistoryCheckPage = lazy(() => import("@/pages/history-check"));
-export const LoginPage = lazy(() => import("@/pages/login"))
+export const LoginPage = lazy(() => import("@/pages/login"));
+export const RegisterPage = lazy(() => import("@/pages/login"))
+export const PavouriteProductPage = lazy(() => import("@/pages/favoutite-product"))

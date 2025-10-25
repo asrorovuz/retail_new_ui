@@ -32,7 +32,7 @@ export interface InputProps
   onChange?: (value: string) => void;
 }
 
-const Input = (props: InputProps) => {
+const PhoneInput = (props: InputProps) => {
   const {
     asElement: Component = "input",
     className,
@@ -190,4 +190,4 @@ const Input = (props: InputProps) => {
   );
 };
 
-export default Input;
+export default PhoneInput;

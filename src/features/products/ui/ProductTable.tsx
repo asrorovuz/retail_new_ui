@@ -8,7 +8,7 @@ import {
 import {
   useAllProductApi,
   useAllProductCountApi,
-  useDeleteTransacton,
+  useDeleteProduct,
 } from "@/entities/products/repository";
 import { Button, Dropdown, Pagination, Table } from "@/shared/ui/kit";
 import THead from "@/shared/ui/kit/Table/THead";
@@ -28,15 +28,28 @@ import ShtrixCod from "@/shared/ui/svg/ShtrixCod";
 import { showErrorMessage, showSuccessMessage } from "@/shared/lib/showMessage";
 import { messages } from "@/app/constants/message.request";
 import ConfirmDialog from "@/shared/ui/kit-pro/confirm-dialog/ConfirmDialog";
+import { EditProductModal } from "@/features/modals";
+import type { ProductModalProps } from "@/features/modals/model";
+import { useSettingsStore } from "@/app/store/useSettingsStore";
 
-const ProductTable = ({ search }: { search: string }) => {
+const ProductTable = ({
+  search,
+  type,
+  setType,
+  setBarcode,
+  barcode,
+  productPriceType,
+}: { search: string } & ProductModalProps) => {
   const [confirmProductId, setConfirmProductId] = useState<number | null>(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const { tableSettings } = useSettingsStore((s) => s);
 
   const [pagination, setPagination] = useState({
     pageIndex: 1,
     pageSize: 20,
   });
+
+  console.log(confirmProductId);
 
   // 🚀 API chaqiruv
   const { data, isPending } = useAllProductApi(
@@ -46,7 +59,7 @@ const ProductTable = ({ search }: { search: string }) => {
   );
   const { data: countData } = useAllProductCountApi(search || "");
   const { mutate: deleteProduct, isPending: productDeleteLoading } =
-    useDeleteTransacton();
+    useDeleteProduct();
 
   const columnHelper = createColumnHelper<Product>();
 
@@ -89,29 +102,48 @@ const ProductTable = ({ search }: { search: string }) => {
         header: "НАЗВАНИЕ",
         cell: (info) => info.getValue() || "-",
         size: 180,
+        meta: {
+          color:
+            tableSettings?.find((i) => i.key === "name")?.color ||
+            "#fff",
+        },
       }),
       columnHelper.display({
-        id: "total",
+        id: "totalReminder",
         header: "ОБЩАЯ ОСТАТОК",
         cell: (info) => {
-          const total =
-            info.row.original.warehouse_items?.[0]?.purchase_price_amount;
+          const total = info.row.original.warehouse_items?.[0]?.state;
           return total !== undefined ? total?.toFixed(2) : "0.00";
         },
         size: 100,
+        meta: {
+          color:
+            tableSettings?.find((i) => i.key === "totalRemainder")?.color ||
+            "#fff",
+        },
       }),
       columnHelper.display({
-        id: "count",
+        id: "packInCount",
         header: "КОЛ-ВО В УП.",
         cell: (info) => info.row.original.product_packages?.[0]?.count || "-",
         size: 100,
+        meta: {
+          color:
+            tableSettings?.find((i) => i.key === "packInCount")?.color ||
+            "#fff",
+        },
       }),
       columnHelper.display({
-        id: "unit",
+        id: "package",
         header: "ЕД. ИЗМ.",
         cell: (info) =>
           info.row.original.product_packages?.[0]?.measurement_name || "-",
         size: 100,
+        meta: {
+          color:
+            tableSettings?.find((i) => i.key === "package")?.color ||
+            "#fff",
+        },
       }),
       columnHelper.display({
         id: "price",
@@ -122,18 +154,33 @@ const ProductTable = ({ search }: { search: string }) => {
           return price ? `${price.toLocaleString()} сум` : "-";
         },
         size: 100,
+        meta: {
+          color:
+            tableSettings?.find((i) => i.key === "price")?.color ||
+            "#fff",
+        },
       }),
       columnHelper.display({
         id: "sku",
         header: "АРТИКУЛ",
         cell: (info) => info.row.original.product_packages?.[0]?.sku || "-",
         size: 100,
+        meta: {
+          color:
+            tableSettings?.find((i) => i.key === "sku")?.color ||
+            "#fff",
+        },
       }),
       columnHelper.display({
         id: "code",
         header: "КОД",
         cell: (info) => info.row.original.product_packages?.[0]?.code || "-",
         size: 100,
+        meta: {
+          color:
+            tableSettings?.find((i) => i.key === "code")?.color ||
+            "#fff",
+        },
       }),
 
       // 🧩 Actions ustuni
@@ -159,7 +206,13 @@ const ProductTable = ({ search }: { search: string }) => {
                 </div>
               </DropdownItem>
               <DropdownItem className="!h-auto">
-                <div className="flex items-center gap-2 text-orange-500 hover:bg-gray-50 py-3 px-5 rounded-xl">
+                <div
+                  onClick={() => {
+                    setConfirmProductId(productId);
+                    setType("edit");
+                  }}
+                  className="flex items-center gap-2 text-orange-500 hover:bg-gray-50 py-3 px-5 rounded-xl"
+                >
                   <FaRegEdit />
                   Редактировать
                 </div>
@@ -202,7 +255,7 @@ const ProductTable = ({ search }: { search: string }) => {
     <div className="h-[calc(100%_-_44px)] flex flex-col">
       {/* 🔹 Jadval */}
       <div className="flex-1 mb-3 border border-gray-300 rounded-3xl overflow-y-auto">
-        {data && data.length > 0 ? (
+        {data && data.length > 0 && !isPending ? (
           <Table className="w-full table-fixed">
             <THead className="bg-white sticky top-0 z-10">
               {table.getHeaderGroups().map((headerGroup) => (
@@ -282,6 +335,16 @@ const ProductTable = ({ search }: { search: string }) => {
           После удаления, восстановить продукт будет невозможно.
         </p>
       </ConfirmDialog>
+
+      <EditProductModal
+        productId={confirmProductId}
+        setProductId={setConfirmProductId}
+        barcode={barcode}
+        type={type}
+        setType={setType}
+        setBarcode={setBarcode}
+        productPriceType={productPriceType}
+      />
     </div>
   );
 };

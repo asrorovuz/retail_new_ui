@@ -59,6 +59,17 @@ const Header = () => {
             <span>Товары</span>
           </div>
         </MenuItem>
+         <MenuItem eventKey="favoutite-products">
+          <div
+            className={`px-4 py-2 rounded-md cursor-pointer text-[16px] transition-colors duration-200 ${
+              activeKey === "favoutite-products"
+                ? "text-blue-500"
+                : "hover:bg-gray-100 text-gray-700"
+            }`}
+          >
+            <span>Фаворит товар</span>
+          </div>
+        </MenuItem>
         <MenuItem eventKey="history-check">
           <div
             className={`px-4 py-2 rounded-md cursor-pointer text-[16px] transition-colors duration-200 ${

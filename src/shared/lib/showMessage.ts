@@ -20,9 +20,13 @@ export const showSuccessMessage = (msgUz: string, msgRu?: string) => {
   });
 };
 
-export const showErrorMessage = (err: unknown) => {
+export const showErrorMessage = (err: ErrorResponse | any) => {
   const lang = i18next.language;
-  let error: any = err;
+
+  const error: ErrorResponse = err?.response?.data ||
+    err?.data ||
+    err || { message: "Unknown error" };
+  console.log(error, "errrrrr55");
 
   // 🔹 err.data yoki err.data.message bo‘lishi mumkin
   // if (typeof err === "object" && err !== null) {
@@ -43,9 +47,7 @@ export const showErrorMessage = (err: unknown) => {
 
   // 2️⃣ - API dan kelgan javob
   if (typeof error === "object" && error !== null) {
-    const e = (error?.response?.data as ErrorResponse) || error;
-
-    if (e.invalid_username_or_password) {
+    if (error.invalid_username_or_password) {
       return toast.error(
         lang === "ru"
           ? "Неверный логин или пароль"
@@ -57,21 +59,11 @@ export const showErrorMessage = (err: unknown) => {
       );
     }
 
-    if (e.name_exsist) {
-      return toast.error(
-        lang === "ru" ? "Имя уже существует" : "Bunday nom allaqachon mavjud",
-        {
-          position: "bottom-left",
-          autoClose: 3000,
-        }
-      );
-    }
-
-    if (e.barcode_exsist) {
+    if (error.name_exist) {
       return toast.error(
         lang === "ru"
-          ? "Штрихкод уже существует"
-          : "Bu shtrixkod allaqachon mavjud",
+          ? "Такое название товара уже существует"
+          : "Bunday mahsulot nomi allaqachon mavjud",
         {
           position: "bottom-left",
           autoClose: 3000,
@@ -79,9 +71,47 @@ export const showErrorMessage = (err: unknown) => {
       );
     }
 
-    if (e.message) {
+    if (error.barcode_exist) {
       return toast.error(
-        lang === "ru" ? `Ошибка: ${e.message}` : `Xatolik: ${e.message}`,
+        lang === "ru"
+          ? "Товар с таким штрих-кодом уже существует"
+          : "Bu shtrix-kodli mahsulot allaqachon mavjud",
+        {
+          position: "bottom-left",
+          autoClose: 3000,
+        }
+      );
+    }
+
+    if (error.product_sku_duplicated) {
+      return toast.error(
+        lang === "ru"
+          ? "Такой артикул уже существует"
+          : "Bunday artikul allaqachon mavjud",
+        {
+          position: "bottom-left",
+          autoClose: 3000,
+        }
+      );
+    }
+
+    if (error.code_exist) {
+      return toast.error(
+        lang === "ru"
+          ? "Такой артикул уже существует"
+          : "Bunday kod allaqachon mavjud",
+        {
+          position: "bottom-left",
+          autoClose: 3000,
+        }
+      );
+    }
+
+    if (error.message) {
+      return toast.error(
+        lang === "ru"
+          ? `Ошибка: ${error.message}`
+          : `Xatolik: ${error.message}`,
         {
           position: "bottom-left",
           autoClose: 3000,
