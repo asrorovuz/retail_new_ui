@@ -1,5 +1,5 @@
 import { Button } from "@/shared/ui/kit";
-import { useMemo, useState, type FC } from "react";
+import { useMemo, type FC } from "react";
 import type { ProductDefaultValues, ProductModalProps } from "../model";
 import ProductForm from "@/features/product-form";
 import {
@@ -9,8 +9,7 @@ import {
 } from "@/app/constants/paymentType";
 import type { ProductPriceType } from "@/@types/products";
 
-const AddProductModal: FC<ProductModalProps> = ({ type, setType, setBarcode, barcode, productPriceType }) => {
-  const [isOpen, setIsOpen] = useState(false);
+const AddProductModal: FC<ProductModalProps> = ({ type, setType, setBarcode, barcode, productPriceType, setIsOpen, isOpen }) => {
 
   const openModal = () => {
     setType("add");
@@ -45,7 +44,7 @@ const AddProductModal: FC<ProductModalProps> = ({ type, setType, setBarcode, bar
           is_default: true,
           isActive: true,
           category: null,
-          barcodes: [new Date().getTime().toString().slice(5, 13)],
+          barcodes: [new Date().getTime().toString().slice(0, 13)],
           images: [],
           catalog_code: null,
           catalog_name: null,

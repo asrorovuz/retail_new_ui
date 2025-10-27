@@ -1,6 +1,6 @@
 import ProductForm from "@/features/product-form";
 import { useEffect, useMemo, useState, type FC } from "react";
-import type { ProductDefaultValues, ProductModalProps, ProductPriceType } from "../model";
+import type { ProductDefaultValues, ProductPriceType, ProductTableProps } from "../model";
 import {
   CurrencyCodeUZS,
   CurrencyCodeUZSText,
@@ -14,7 +14,7 @@ type EXtraPropsType = {
   setProductId: (val: number | null) => void;
 };
 
-const EditProductModal: FC<ProductModalProps & EXtraPropsType> = ({
+const EditProductModal: FC<ProductTableProps & EXtraPropsType> = ({
   type,
   setBarcode,
   barcode,
@@ -125,10 +125,20 @@ const EditProductModal: FC<ProductModalProps & EXtraPropsType> = ({
   }, [product, productPriceType]);
 
   useEffect(() => {
-    if (productId) {
+    if (productId && type === "edit") {
       setIsOpen(true);
     }
   }, [productId, isOpen]);
+
+  // useEffect(() => {
+  //   const onScan = EventBus.on("BARCODE_SCANNED", (code) => {
+  //     console.log("🛒 Barcode in Prodaja:", code);
+  //     // shu yerda modal ochish, yoki tovarni topish
+  //     // openModal(code)
+  //   });
+
+  //   return () => EventBus.remove("BARCODE_SCANNED", onScan);
+  // }, []);
 
   return (
     <div>

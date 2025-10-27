@@ -13,8 +13,18 @@ export type ProductPriceType = {
 };
 
 export type ProductModalProps = {
-  type: "add" | "edit";
-  setType: (value: "add" | "edit") => void;
+  type: "add" | "edit" | "print";
+  setType: (value: "add" | "edit" | "print") => void;
+  barcode: string | null;
+  setBarcode: (val: string | null) => void;
+  productPriceType: ProductPriceType[];
+  setIsOpen: (val: boolean) => void;
+  isOpen: boolean;
+};
+
+export type ProductTableProps = {
+  type: "add" | "edit" | "print";
+  setType: (value: "add" | "edit" | "print") => void;
   barcode: string | null;
   setBarcode: (val: string | null) => void;
   productPriceType: ProductPriceType[];

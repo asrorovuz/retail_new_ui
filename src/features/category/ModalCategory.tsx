@@ -12,7 +12,7 @@ import type { CategoryResponse } from "@/@types/products";
 
 interface ModalCategoryProps {
   id: number;
-  type: "add" | "edit";
+  type: "add" | "edit" | "print";
   isOpen: boolean;
   parent_id: number | null;
   parentName: string | null;

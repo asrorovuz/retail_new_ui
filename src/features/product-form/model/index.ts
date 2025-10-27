@@ -2,7 +2,7 @@ import type { Product } from "@/@types/products";
 import type { ProductDefaultValues } from "@/features/modals/model";
 
 export type ProductFormType = {
-  type: "add" | "edit";
+  type: "add" | "edit" | "print";
   productId?: number | null;
   isOpen: boolean;
   setIsOpen: (val: boolean) => void;

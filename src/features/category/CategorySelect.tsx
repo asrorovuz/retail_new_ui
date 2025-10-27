@@ -61,7 +61,7 @@ const CategorySelect = ({
     parent_id: number | null;
     parentName: string | null;
     defaultName?: string | null;
-    type?: "add" | "edit";
+    type?: "add" | "edit" | "print";
     editId?: number | null;
     chainDepth?: number;
   }) => {

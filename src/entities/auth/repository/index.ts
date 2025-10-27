@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query"
-import { fetchAuthStatus, login } from "../api"
-import type { LoginPayload, LoginResponse } from "@/@types/auth/login";
+import { fetchAuthStatus, globalLogin, login, register } from "../api"
+import type { GlobalLogin, LoginPayload, LoginResponse, Organizationtype } from "@/@types/auth/login";
 
 export const useLogin = () => {
   return useMutation<LoginResponse, Error, LoginPayload>({
@@ -14,3 +14,15 @@ export const useAuthStatus = () => {
     queryFn: fetchAuthStatus,
   });
 };
+
+export const useGlobalLogin = () => {
+  return useMutation<Organizationtype, Error, GlobalLogin>({
+    mutationFn: globalLogin,
+  })
+}
+
+export const useRegister = () => {
+  return useMutation<Organizationtype, Error, GlobalLogin>({
+    mutationFn: register,
+  })
+}

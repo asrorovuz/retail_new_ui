@@ -15,3 +15,19 @@ export type LoginResponse = {
   name: string;
   username: string;
 };
+
+export type GlobalLogin = {
+  username: string;
+  password: string;
+};
+
+export type Organizationtype = {
+  token: string;
+  organizations: {
+    id: string | number;
+    inn: string;
+    name: string;
+    pinfl: string;
+    organization_code: string;
+  }[];
+};

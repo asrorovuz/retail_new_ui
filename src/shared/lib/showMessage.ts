@@ -23,6 +23,7 @@ export const showSuccessMessage = (msgUz: string, msgRu?: string) => {
 export const showErrorMessage = (err: ErrorResponse | any) => {
   const lang = i18next.language;
 
+  const status_code = err?.response?.status || err?.status_code
   const error: ErrorResponse = err?.response?.data ||
     err?.data ||
     err || { message: "Unknown error" };
@@ -45,6 +46,12 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
   //   );
   // }
 
+  if(status_code >= 500){
+    console.log(status_code);
+    
+    return
+  }
+
   // 2️⃣ - API dan kelgan javob
   if (typeof error === "object" && error !== null) {
     if (error.invalid_username_or_password) {
@@ -64,6 +71,30 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
         lang === "ru"
           ? "Такое название товара уже существует"
           : "Bunday mahsulot nomi allaqachon mavjud",
+        {
+          position: "bottom-left",
+          autoClose: 3000,
+        }
+      );
+    }
+
+    if (error.login_or_password_incorrect) {
+      return toast.error(
+        lang === "ru"
+          ? "Логин или пароль неверный."
+          : "Login yoki parol noto‘g‘ri.",
+        {
+          position: "bottom-left",
+          autoClose: 3000,
+        }
+      );
+    }
+
+    if (error.organization_already_exist) {
+      return toast.error(
+        lang === "ru"
+          ? "Организация с таким наименованием уже существует!"
+          : "",
         {
           position: "bottom-left",
           autoClose: 3000,

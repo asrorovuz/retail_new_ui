@@ -19,7 +19,7 @@ export const AuthLayout = () => {
         <img className="w-full object-cover" src={logoHippo} alt="Hippo" />
       </div>
       <>
-        <Outlet />
+        <Outlet context={{ register_status: data?.is_registered ?? false }}/>
       </>
     </div>
   );

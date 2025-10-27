@@ -29,8 +29,9 @@ import { showErrorMessage, showSuccessMessage } from "@/shared/lib/showMessage";
 import { messages } from "@/app/constants/message.request";
 import ConfirmDialog from "@/shared/ui/kit-pro/confirm-dialog/ConfirmDialog";
 import { EditProductModal } from "@/features/modals";
-import type { ProductModalProps } from "@/features/modals/model";
+import type { ProductTableProps } from "@/features/modals/model";
 import { useSettingsStore } from "@/app/store/useSettingsStore";
+import PrintCheckProduct from "@/features/print-modal";
 
 const ProductTable = ({
   search,
@@ -39,17 +40,16 @@ const ProductTable = ({
   setBarcode,
   barcode,
   productPriceType,
-}: { search: string } & ProductModalProps) => {
+}: { search: string } & ProductTableProps) => {
   const [confirmProductId, setConfirmProductId] = useState<number | null>(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [item, setItem] = useState<Product | null>(null)
   const { tableSettings } = useSettingsStore((s) => s);
 
   const [pagination, setPagination] = useState({
     pageIndex: 1,
     pageSize: 20,
   });
-
-  console.log(confirmProductId);
 
   // 🚀 API chaqiruv
   const { data, isPending } = useAllProductApi(
@@ -87,6 +87,11 @@ const ProductTable = ({
     setConfirmProductId(null);
   };
 
+  const onClosePrintModal = () => {
+    setType("add");
+    setConfirmProductId(null);
+  };
+
   // 🧱 Ustunlar
   const columns = useMemo(
     () => [
@@ -103,9 +108,7 @@ const ProductTable = ({
         cell: (info) => info.getValue() || "-",
         size: 180,
         meta: {
-          color:
-            tableSettings?.find((i) => i.key === "name")?.color ||
-            "#fff",
+          color: tableSettings?.find((i) => i.key === "name")?.color || "#fff",
         },
       }),
       columnHelper.display({
@@ -141,8 +144,7 @@ const ProductTable = ({
         size: 100,
         meta: {
           color:
-            tableSettings?.find((i) => i.key === "package")?.color ||
-            "#fff",
+            tableSettings?.find((i) => i.key === "package")?.color || "#fff",
         },
       }),
       columnHelper.display({
@@ -155,9 +157,7 @@ const ProductTable = ({
         },
         size: 100,
         meta: {
-          color:
-            tableSettings?.find((i) => i.key === "price")?.color ||
-            "#fff",
+          color: tableSettings?.find((i) => i.key === "price")?.color || "#fff",
         },
       }),
       columnHelper.display({
@@ -166,9 +166,7 @@ const ProductTable = ({
         cell: (info) => info.row.original.product_packages?.[0]?.sku || "-",
         size: 100,
         meta: {
-          color:
-            tableSettings?.find((i) => i.key === "sku")?.color ||
-            "#fff",
+          color: tableSettings?.find((i) => i.key === "sku")?.color || "#fff",
         },
       }),
       columnHelper.display({
@@ -177,9 +175,7 @@ const ProductTable = ({
         cell: (info) => info.row.original.product_packages?.[0]?.code || "-",
         size: 100,
         meta: {
-          color:
-            tableSettings?.find((i) => i.key === "code")?.color ||
-            "#fff",
+          color: tableSettings?.find((i) => i.key === "code")?.color || "#fff",
         },
       }),
 
@@ -200,7 +196,14 @@ const ProductTable = ({
               renderTitle={<HiOutlineDotsHorizontal />}
             >
               <DropdownItem className="!h-auto">
-                <div className="flex items-center gap-2 text-gray-700 hover:bg-gray-50 py-3 px-5 rounded-xl">
+                <div
+                  onClick={() => {
+                    setItem(info?.row?.original)
+                    setConfirmProductId(productId);
+                    setType("print");
+                  }}
+                  className="flex items-center gap-2 text-gray-700 hover:bg-gray-50 py-3 px-5 rounded-xl"
+                >
                   <ShtrixCod />
                   Печать штрих код товара
                 </div>
@@ -345,6 +348,8 @@ const ProductTable = ({
         setBarcode={setBarcode}
         productPriceType={productPriceType}
       />
+
+      <PrintCheckProduct item={item} type={type} onClosePrintModal={onClosePrintModal}/>
     </div>
   );
 };

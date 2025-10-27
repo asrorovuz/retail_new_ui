@@ -2,6 +2,8 @@ export const pathServices = {
   auth: {
     auth: "/public/auth/status",
     login: "/public/auth/login",
+    globalLogin: "/public/auth/global-login",
+    register: "/public/auth/register"
   },
   settings: {
     // GET

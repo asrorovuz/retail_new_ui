@@ -1,5 +1,5 @@
 .select-control {
-  @apply flex items-center justify-between bg-white border border-gray-800 rounded-xl transition duration-150;
+  @apply flex items-center justify-between bg-white border border-gray-600 rounded-xl transition duration-150;
 }
 
 .select-control-focused {
@@ -33,11 +33,11 @@
 
 .select-single-value {
   grid-area: 1 / 1 / 2 / 3;
-  @apply max-w-full overflow-hidden text-ellipsis whitespace-nowrap text-gray-800 font-semibold;
+  @apply max-w-full overflow-hidden text-ellipsis whitespace-nowrap text-gray-600 font-semibold;
 }
 
 .select-multi-value {
-  @apply flex rounded-lg mx-0.5 font-bold border border-gray-300 bg-gray-50 text-gray-800;
+  @apply flex rounded-lg mx-0.5 font-bold border border-gray-300 bg-gray-50 text-gray-600;
 }
 
 .select-multi-value-label {

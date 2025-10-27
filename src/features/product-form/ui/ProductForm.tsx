@@ -263,7 +263,7 @@ const ProductForm: FC<ProductFormType> = ({
       width={630}
       title={type === "add" ? "Добавить товар" : "Редактировать товар"}
       onClose={onClose}
-      isOpen={isOpen}
+      isOpen={isOpen && (type === "add" || type === "edit")}
     >
       <Form onSubmit={handleSubmit(onSubmit)}>
         <div className="grid grid-cols-2 gap-x-4 max-h-[60vh] overflow-y-auto">

@@ -1,6 +1,6 @@
 const Empty = () => {
   return (
-    <div className="flex justify-center items-center">
+    <div className="h-full flex flex-col justify-center items-center">
       <span>
         <svg
           width="215"
@@ -43,7 +43,7 @@ const Empty = () => {
           />
         </svg>
       </span>
-      <p className="text-base font-normal text-gray-400">Нет данных</p>
+      <p className="text-2xl font-normal text-gray-400">Нет данных</p>
     </div>
   );
 };

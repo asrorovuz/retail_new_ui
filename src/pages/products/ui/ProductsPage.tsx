@@ -2,14 +2,30 @@ import { usePriceTypeApi } from "@/entities/products/repository";
 import AddProductModal from "@/features/modals/ui/AddProductModal";
 import ProductTable from "@/features/products";
 import SearchProduct from "@/features/search-product";
-import { useState } from "react";
+import eventBus from "@/shared/lib/eventBus";
+import { handleBarcodeScanned } from "@/shared/lib/handleScannedBarcode";
+import { useEffect, useState } from "react";
 
 const ProductsPage = () => {
   const [search, setSearch] = useState("");
   const [barcode, setBarcode] = useState<string | null>(null);
-  const [modalType, setModalType] = useState<"add" | "edit">("add");
+  const [isOpen, setIsOpen] = useState(false);
+  const [modalType, setModalType] = useState<"add" | "edit" | "print">("add");
 
   const { data: productPriceType } = usePriceTypeApi();
+
+  useEffect(() => {
+    const onScan = eventBus.on("BARCODE_SCANNED", (code) => {
+      const val: string = handleBarcodeScanned(code)
+      console.log("🛒 Barcode in Prodaja:", val);
+      // shu yerda modal ochish, yoki tovarni topish
+      // openModal(code)
+      // if()
+      setSearch(val)
+    });
+
+    return () => eventBus.remove("BARCODE_SCANNED", onScan);
+  }, []);
 
   return (
     <div className="bg-white rounded-3xl p-6 h-[calc(100vh_-_120px)]">
@@ -20,6 +36,8 @@ const ProductsPage = () => {
           setType={setModalType}
           setBarcode={setBarcode}
           barcode={barcode}
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
           productPriceType={productPriceType}
         />
       </div>
