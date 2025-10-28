@@ -128,7 +128,7 @@ const FavoritTable = () => {
     );
 
   return (
-    <div className="h-[calc(100%_-_44px)] flex flex-col">
+    <div className="h-[calc(100%-44px)] flex flex-col">
       <div className="flex-1 mb-3 border border-gray-300 rounded-3xl overflow-y-auto">
         {data && data.length > 0 && !isPending ? (
           <Table className="w-full">

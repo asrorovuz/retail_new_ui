@@ -92,8 +92,8 @@ const Register = () => {
   };
 
   return (
-    <div className="w-full max-w-[512px] bg-white rounded-lg p-6 shadow-sm">
-      <h3 className="font-bold text-2xl mb-6 !text-gray-700 border-t-4 border-blue-500 pt-4">
+    <div className="w-full max-w-lg bg-white rounded-lg p-6 shadow-sm">
+      <h3 className="font-bold text-2xl mb-6 text-gray-700! border-t-4 border-blue-500 pt-4">
         Добро пожаловать
       </h3>
 

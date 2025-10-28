@@ -4,6 +4,7 @@ import type {
   CategoryResponse,
   CategoryTypeModal,
   Currency,
+  FavouriteProductType,
   Product,
   ProductColumnVisibility,
   ProductResponse,
@@ -37,7 +38,7 @@ export const getAllProductApi = async (
   return data;
 };
 
-export const getAllFavoritProductApi = async (): Promise<Product[] | []> => {
+export const getAllFavoritProductApi = async (): Promise<FavouriteProductType[] | []> => {
   const { data } = await AxiosBase.get(pathServices.products.getFavoritProduct);
 
   return data;

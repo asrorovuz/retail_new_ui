@@ -1,10 +1,20 @@
-const Empty = () => {
+type EmptyProps = {
+  size?: number; // SVG o‘lchami
+  textSize?: string; // matn o‘lchami (Tailwind class)
+  text?: string; // matnni o‘zgartirish uchun
+};
+
+const Empty = ({
+  size = 200,
+  textSize = "text-2xl",
+  text = "Нет данных",
+}: EmptyProps) => {
   return (
     <div className="h-full flex flex-col justify-center items-center">
       <span>
         <svg
-          width="215"
-          height="212"
+          width={size}
+          height={size}
           viewBox="0 0 215 212"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
@@ -43,7 +53,7 @@ const Empty = () => {
           />
         </svg>
       </span>
-      <p className="text-2xl font-normal text-gray-400">Нет данных</p>
+      <p className={`${textSize} font-normal text-gray-400`}>{text}</p>
     </div>
   );
 };

@@ -1,6 +1,7 @@
 import { immer } from "zustand/middleware/immer";
 import { create } from "zustand";
 import type {
+  DraftRefundItemSchema,
   RefundStoreActions,
   RefundStoreInitialState,
 } from "@/@types/refund";
@@ -49,6 +50,42 @@ export const useDraftRefundStore = create<
 
         state.draftRefunds[draftRefundIndex].isActive = true;
       }),
+    updateDraftRefundItem: (draftItem: DraftRefundItemSchema) =>
+      set((state) => {
+        const activeRefund = state.draftRefunds.find((s) => s.isActive);
+        if (activeRefund) {
+          const draftRefundItem = activeRefund.items.find((i) => {
+            return (
+              i.productId === draftItem.productId &&
+              i.productPackageId === draftItem.productPackageId
+            );
+          });
+
+          if (draftRefundItem) {
+            draftRefundItem.priceAmount = draftItem.priceAmount;
+            draftRefundItem.priceTypeId = draftItem.priceTypeId;
+
+            if (draftItem.quantity <= 0) {
+              const draftRefundItemIndex = activeRefund.items.findIndex((i) => {
+                return (
+                  i.productId === draftItem.productId &&
+                  i.productPackageId === draftItem.productPackageId
+                );
+              });
+              if (draftRefundItemIndex >= 0) {
+                activeRefund.items.splice(draftRefundItemIndex, 1);
+              }
+            } else {
+              draftRefundItem.quantity = draftItem.quantity;
+            }
+          } else {
+            if (draftItem.quantity < 0) {
+              return;
+            }
+            activeRefund.items.unshift(draftItem);
+          }
+        }
+      })
     // deleteDraftRefund: (draftRefundIndex) => set((state) => {
     //     if (state.draftRefunds.length === 1 && draftRefundIndex === 0) {
     //         const newDraftRefund: DraftRefundSchema = {
@@ -177,35 +214,7 @@ export const useDraftRefundStore = create<
     //     }
 
     // }),
-    // updateDraftRefundItem:(draftItem) => set((state) => {
-    //     const activeRefund = state.draftRefunds.find(s => s.isActive)
-    //     if (activeRefund) {
-    //         const draftRefundItem = activeRefund.items.find(i => {
-    //             return i.productId === draftItem.productId && i.productPackageId === draftItem.productPackageId
-    //         })
 
-    //         if (draftRefundItem) {
-    //             draftRefundItem.priceAmount = draftItem.priceAmount
-    //             draftRefundItem.priceTypeId = draftItem.priceTypeId
-
-    //             if (draftItem.quantity <= 0) {
-    //                 const draftRefundItemIndex = activeRefund.items.findIndex(i => {
-    //                     return i.productId === draftItem.productId && i.productPackageId === draftItem.productPackageId
-    //                 })
-    //                 if (draftRefundItemIndex >= 0) {
-    //                     activeRefund.items.splice(draftRefundItemIndex, 1);
-    //                 }
-    //             } else {
-    //                 draftRefundItem.quantity = draftItem.quantity
-    //             }
-    //         } else {
-    //             if (draftItem.quantity < 0) {
-    //                 return
-    //             }
-    //             activeRefund.items.unshift(draftItem)
-    //         }
-    //     }
-    // }),
     // deleteDraftRefundItem: (draftRefundItemIndex) => set((state) => {
     //     const activeRefund = state.draftRefunds.find(s => s.isActive)
     //     if (activeRefund) {

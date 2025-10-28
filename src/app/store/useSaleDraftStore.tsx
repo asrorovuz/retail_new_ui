@@ -2,6 +2,7 @@ import type {
   DraftSaleSchema,
   SaleStoreActions,
   SaleStoreInitialState,
+  DraftSaleItemSchema,
 } from "@/@types/sale";
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
@@ -76,16 +77,72 @@ export const useDraftSaleStore = create<
           state.draftSales = items;
         }
       }),
-    activateDraftSale: (draftSaleIndex: number) => set((state) => {
+    activateDraftSale: (draftSaleIndex: number) =>
+      set((state) => {
         if (state.draftSales.length > 0) {
-            const activeSale = state.draftSales.find(s => s.isActive)
-            if (activeSale) {
-                activeSale.isActive = false
-            }
+          const activeSale = state.draftSales.find((s) => s.isActive);
+          if (activeSale) {
+            activeSale.isActive = false;
+          }
         }
 
-        state.draftSales[draftSaleIndex].isActive = true
-    }),
+        state.draftSales[draftSaleIndex].isActive = true;
+      }),
+    updateDraftSaleItem: (draftItem: DraftSaleItemSchema) =>
+      set((state) => {
+        const activeSale = state.draftSales?.find((s) => s.isActive);
+        if (activeSale) {
+          const draftSaleItem = activeSale.items.find((i) => {
+            return (
+              i.productId === draftItem.productId &&
+              i.productPackageId === draftItem.productPackageId
+            );
+          });
+
+          if (draftSaleItem) {
+            draftSaleItem.priceAmount = draftItem.priceAmount;
+            draftSaleItem.priceTypeId = draftItem.priceTypeId;
+
+            if (draftItem.quantity <= 0) {
+              const draftSaleItemIndex = activeSale.items.findIndex((i) => {
+                return (
+                  i.productId === draftItem.productId &&
+                  i.productPackageId === draftItem.productPackageId
+                );
+              });
+              if (draftSaleItemIndex >= 0) {
+                activeSale.items.splice(draftSaleItemIndex, 1);
+              }
+            } else {
+              draftSaleItem.quantity = draftItem.quantity;
+              draftSaleItem.totalAmount = draftItem.totalAmount;
+            }
+          } else {
+            if (draftItem.quantity < 0) {
+              return;
+            }
+            activeSale.items.unshift(draftItem);
+          }
+        }
+      }),
+    resetActiveDraftSale: () =>
+      set((state) => {
+        const activeSale = state.draftSales.find((s) => s.isActive);
+        if (activeSale) {
+          activeSale.items = [];
+          activeSale.discountAmount = 0;
+          if (activeSale.payment) {
+            activeSale.payment.amounts.forEach((a) => (a.amount = 0));
+          }
+        }
+      }),
+    deleteDraftSaleItem: (draftSaleItemIndex: number) =>
+      set((state) => {
+        const activeSale = state.draftSales.find((s) => s.isActive);
+        if (activeSale) {
+          activeSale.items.splice(draftSaleItemIndex, 1);
+        }
+      }),
     // completeActiveDraftSale: () => set((state) => {
     //     const activeSaleIndex = state.draftSales.findIndex(s => s.isActive)
 
@@ -116,16 +173,6 @@ export const useDraftSaleStore = create<
     //                     activeSale.payment.amounts.forEach(a => a.amount = 0)
     //                 }
     //             }
-    //         }
-    //     }
-    // }),
-    // resetActiveDraftSale: () => set((state) => {
-    //     const activeSale = state.draftSales.find(s => s.isActive)
-    //     if (activeSale) {
-    //         activeSale.items = []
-    //         activeSale.discountAmount = 0
-    //         if (activeSale.payment) {
-    //             activeSale.payment.amounts.forEach(a => a.amount = 0)
     //         }
     //     }
     // }),
@@ -194,42 +241,7 @@ export const useDraftSaleStore = create<
     //     }
 
     // }),
-    // updateDraftSaleItem:(draftItem) => set((state) => {
-    //     const activeSale = state.draftSales.find(s => s.isActive)
-    //     if (activeSale) {
-    //         const draftSaleItem = activeSale.items.find(i => {
-    //             return i.productId === draftItem.productId && i.productPackageId === draftItem.productPackageId
-    //         })
 
-    //         if (draftSaleItem) {
-    //             draftSaleItem.priceAmount = draftItem.priceAmount
-    //             draftSaleItem.priceTypeId = draftItem.priceTypeId
-
-    //             if (draftItem.quantity <= 0) {
-    //                 const draftSaleItemIndex = activeSale.items.findIndex(i => {
-    //                     return i.productId === draftItem.productId && i.productPackageId === draftItem.productPackageId
-    //                 })
-    //                 if (draftSaleItemIndex >= 0) {
-    //                     activeSale.items.splice(draftSaleItemIndex, 1);
-    //                 }
-    //             } else {
-    //                 draftSaleItem.quantity = draftItem.quantity
-    //                 draftSaleItem.totalAmount = draftItem.totalAmount
-    //             }
-    //         } else {
-    //             if (draftItem.quantity < 0) {
-    //                 return
-    //             }
-    //             activeSale.items.unshift(draftItem)
-    //         }
-    //     }
-    // }),
-    // deleteDraftSaleItem: (draftSaleItemIndex) => set((state) => {
-    //     const activeSale = state.draftSales.find(s => s.isActive)
-    //     if (activeSale) {
-    //         activeSale.items.splice(draftSaleItemIndex, 1)
-    //     }
-    // }),
     // incrementDraftSaleItemQuantity: (index) => set((state) => {
     //     const active = state.draftSales.find(s => s.isActive)
     //     if (!active) return

@@ -29,7 +29,7 @@ const Step2 = ({ item }: {item: any[]}) => {
               {...field}
               options={item|| []}
               getOptionLabel={(option) => option?.name}
-              value={item?.find((i) => i.id === field.value) || null}
+              value={item?.find((i) => i?.id === field?.value) || null}
               placeholder="Введите название организации."
               onChange={(selectedOption) => field?.onChange(selectedOption?.id)}
             />

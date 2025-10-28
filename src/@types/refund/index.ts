@@ -34,6 +34,7 @@ export type DraftRefundPayoutAmountSchema = {
 export interface RefundStoreActions {
   addDraftRefund: (payload: DraftRefundSchema) => void;
   activateDraftRefund: (index: number) => void;
+  updateDraftRefundItem: (payload: DraftRefundItemSchema) => void;
   //   deleteDraftRefund: (draftRefundIndex: number) => void;
   //   completeActiveDraftRefund: () => void;
   //   resetActiveDraftRefund: () => void;
@@ -43,7 +44,6 @@ export interface RefundStoreActions {
   //     paymentAmounts: DraftRefundPayoutAmountSchema[]
   //   ) => void;
   //   addDraftRefundItem: (payload: DraftRefundItemSchema) => void;
-  //   updateDraftRefundItem: (payload: DraftRefundItemSchema) => void;
   //   deleteDraftRefundItem: (draftRefundItemIndex: number) => void;
   //   incrementDraftRefundItemQuantity: (draftRefundItemIndex: number) => void;
   //   decrementDraftRefundItemQuantity: (draftRefundItemIndex: number) => void;

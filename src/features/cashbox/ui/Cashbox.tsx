@@ -12,7 +12,7 @@ const Cashbox: FC<CashboxPropsType> = ({
   const activeIndex = drafts?.findIndex((item) => item?.isActive);
 
   return (
-    <div className="p-2 bg-gray-200 rounded-2xl shadow-sm flex items-center justify-between gap-x-2">
+    <div className="p-2 bg-gray-100 rounded-2xl flex items-center justify-between gap-x-2 mb-4">
       <Button
         disabled={!activeIndex}
         onClick={() => activateDraft(activeIndex - 1)}

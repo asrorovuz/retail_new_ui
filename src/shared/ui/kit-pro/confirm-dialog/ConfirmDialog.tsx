@@ -75,13 +75,13 @@ const ConfirmDialog = (props: ConfirmDialogProps) => {
   } = props;
 
   return (
-    <Dialog title="" contentClassName="pb-0 px-0 rounded-2xl overflow-hidden" {...rest}>
+    <Dialog title={title} contentClassName="pb-0 px-0 rounded-2xl overflow-hidden" {...rest}>
       <div className="flex items-start gap-4 mb-5">
         <StatusIcon status={type} />
         <div className="flex-1">
-          <h4 className="text-lg font-semibold text-gray-900 mb-1">{title}</h4>
+          {/* <h4 className="text-lg font-semibold text-gray-900 mb-1">{title}</h4> */}
           {description && (
-            <p className="text-sm text-gray-600 leading-snug">{description}</p>
+            <p className="text-[16px] text-gray-600 leading-snug">{description}</p>
           )}
           {children && <div className="mt-3 text-sm text-gray-700">{children}</div>}
         </div>

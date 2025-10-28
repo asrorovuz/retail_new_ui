@@ -61,8 +61,8 @@ const AddProductModal: FC<ProductModalProps> = ({ type, setType, setBarcode, bar
         },
       ],
     };
-  }, [productPriceType, isOpen]);
-
+  }, [productPriceType, isOpen, Date.now()]);
+  
   return (
     <div>
       <Button onClick={openModal} variant="solid">

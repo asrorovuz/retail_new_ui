@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import { FaPlus } from "react-icons/fa";
 import Button from "../../kit/Button";
 import type { DraftSaleSchema } from "@/@types/sale";
@@ -12,6 +12,8 @@ type TabsType = {
 
 export default function Tabs({ drafts, activateDraft, addNewDraft }: TabsType) {
   const scrollRef = useRef<HTMLDivElement | null>(null);
+  const btnRefs = useRef<(HTMLButtonElement | null)[]>([]);
+
   let isDown = false;
   let startX = 0;
   let scrollLeft = 0;
@@ -36,12 +38,24 @@ export default function Tabs({ drafts, activateDraft, addNewDraft }: TabsType) {
     if (!isDown) return;
     e.preventDefault();
     const x = e.pageX - (scrollRef.current?.offsetLeft || 0);
-    const walk = (x - startX) * 1.5; // tezlik
+    const walk = (x - startX) * 1.5;
     if (scrollRef.current) scrollRef.current.scrollLeft = scrollLeft - walk;
   };
 
+  // 👉 Active bo‘lgan kassaga scroll qilish
+  useEffect(() => {
+    const activeIndex = drafts.findIndex((d) => d.isActive);
+    if (activeIndex !== -1 && btnRefs.current[activeIndex]) {
+      btnRefs.current[activeIndex]?.scrollIntoView({
+        behavior: "smooth",
+        inline: "center",
+        block: "nearest",
+      });
+    }
+  }, [drafts]); // drafts o‘zgarganda ishlaydi
+
   return (
-    <div className="flex items-center gap-x-2 w-[662px]">
+    <div className="w-full max-w-[calc(100%-130px)] flex items-center gap-x-2">
       {/* Tabs */}
       <div
         ref={scrollRef}
@@ -49,15 +63,20 @@ export default function Tabs({ drafts, activateDraft, addNewDraft }: TabsType) {
         onMouseLeave={handleMouseLeave}
         onMouseUp={handleMouseUp}
         onMouseMove={handleMouseMove}
-        className="flex gap-2 overflow-x-auto no-scrollbar cursor-grab active:cursor-grabbing select-none"
+        className="w-full flex gap-2 overflow-x-auto no-scrollbar cursor-grab active:cursor-grabbing select-none"
       >
         {drafts?.map((draft, index) => (
           <Button
             key={index}
+            ref={(el) => {
+              btnRefs.current[index] = el;
+            }}
             variant="plain"
             onClick={() => activateDraft(index)}
-            className={`px-[17.5px] py-[14px] text-sm font-medium rounded-lg transition-colors ${
-              draft?.isActive ? "bg-white text-primary" : "text-gray-500"
+            className={`p-2 px-5 text-sm font-medium rounded-lg transition-colors ${
+              draft?.isActive
+                ? "bg-white text-primary"
+                : "text-gray-500 bg-transparent"
             }`}
           >
             Касса {index > 9 ? index + 1 : "0" + (index + 1)}

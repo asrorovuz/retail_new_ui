@@ -11,6 +11,20 @@ export interface Product {
   warehouse_items?: WarehouseItem[];
 }
 
+export interface FavouriteProductType {
+  id: number;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string | null;
+  is_deleted: boolean;
+  key_code: null | number | string;
+  ctrl: boolean;
+  alt: boolean;
+  shift: boolean;
+  product_package: ProductPackage;
+  product: Product;
+}
+
 export interface ProductPackage {
   id: number;
   created_at: string;

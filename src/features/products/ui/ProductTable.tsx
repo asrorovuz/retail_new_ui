@@ -195,7 +195,7 @@ const ProductTable = ({
               toggleClassName="text-2xl text-gray-600 flex justify-center"
               renderTitle={<HiOutlineDotsHorizontal />}
             >
-              <DropdownItem className="!h-auto">
+              <DropdownItem className="h-auto!">
                 <div
                   onClick={() => {
                     setItem(info?.row?.original)
@@ -208,7 +208,7 @@ const ProductTable = ({
                   Печать штрих код товара
                 </div>
               </DropdownItem>
-              <DropdownItem className="!h-auto">
+              <DropdownItem className="h-auto!">
                 <div
                   onClick={() => {
                     setConfirmProductId(productId);
@@ -220,7 +220,7 @@ const ProductTable = ({
                   Редактировать
                 </div>
               </DropdownItem>
-              <DropdownItem className="!h-auto">
+              <DropdownItem className="h-auto!">
                 <Button
                   variant="plain"
                   onClick={() => {
@@ -255,7 +255,7 @@ const ProductTable = ({
     );
 
   return (
-    <div className="h-[calc(100%_-_44px)] flex flex-col">
+    <div className="h-[calc(100%-44px)] flex flex-col">
       {/* 🔹 Jadval */}
       <div className="flex-1 mb-3 border border-gray-300 rounded-3xl overflow-y-auto">
         {data && data.length > 0 && !isPending ? (
