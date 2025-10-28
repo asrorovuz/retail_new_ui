@@ -152,7 +152,7 @@ const SaleAndRefunTable = ({
               <Tr>
                 <Td colSpan={table.getAllColumns().length}>
                   <div className="py-10 flex justify-center">
-                    <Empty textSize="text-lg" size={100} />
+                    <Empty textSize="text-lg" size={60} />
                   </div>
                 </Td>
               </Tr>

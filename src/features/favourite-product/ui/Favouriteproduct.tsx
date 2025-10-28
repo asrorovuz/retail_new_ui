@@ -66,7 +66,7 @@ const FavouriteProduct = ({
 
   return (
     <div className="h-[150px] overflow-y-auto rounded-2xl">
-      <div className=" bg-gray-100 p-2 grid grid-cols-4 gap-2">
+      <div className=" bg-gray-50 p-2 grid grid-cols-4 gap-2">
         {isPending && <Loading />}
 
         {!isPending && favoriteProducts?.length ? (
