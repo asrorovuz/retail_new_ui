@@ -64,8 +64,6 @@ const Register = () => {
             nextStep();
           },
           onError(err) {
-            console.log(err);
-
             onErrors(err);
           },
         }

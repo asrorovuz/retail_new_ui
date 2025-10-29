@@ -5,7 +5,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { columns } from "./table/columns";
-import { Button, Table } from "@/shared/ui/kit";
+import { Button, Input, Table } from "@/shared/ui/kit";
 import THead from "@/shared/ui/kit/Table/THead";
 import Tr from "@/shared/ui/kit/Table/Tr";
 import Th from "@/shared/ui/kit/Table/Th";
@@ -14,44 +14,70 @@ import TBody from "@/shared/ui/kit/Table/TBody";
 import type { DraftSaleSchema } from "@/@types/sale";
 import Td from "@/shared/ui/kit/Table/Td";
 import { useEffect, useMemo, useState } from "react";
-import TFoot from "@/shared/ui/kit/Table/TFoot";
 import FormattedNumber from "@/shared/ui/kit-pro/numeric-format/NumericFormat";
 import { HiTrash } from "react-icons/hi";
 import Empty from "@/shared/ui/kit-pro/empty/Empty";
 import ConfirmDialog from "@/shared/ui/kit-pro/confirm-dialog/ConfirmDialog";
+import type { DraftRefundSchema } from "@/@types/refund";
 
 type PropsType = {
   type: "sale" | "refund";
-  draftSales: DraftSaleSchema[];
+  draft: DraftSaleSchema[] | DraftRefundSchema[];
   expandedRow: string | null;
   expendedId: number | null;
   setExpandedRow: React.Dispatch<React.SetStateAction<string | null>>;
   setExpandedId: React.Dispatch<React.SetStateAction<number | null>>;
-  resetActiveDraft: () => void;
-  deleteDraft: (val: number) => void;
   deleteDraftItem: (val: number) => void;
+  updateDraftItemPrice: (index: number, amount: number) => void;
+  updateDraftItemTotalPrice: (ind: number, total: number) => void;
+  updateDraftItemQuantity: (ind: number, quantity: number) => void;
 };
 
 const SaleAndRefunTable = ({
-  type,
-  draftSales,
+  draft,
   expendedId,
   setExpandedId,
   setExpandedRow,
   expandedRow,
-  resetActiveDraft,
-  deleteDraft,
   deleteDraftItem,
+  updateDraftItemPrice,
+  updateDraftItemTotalPrice,
+  updateDraftItemQuantity,
 }: PropsType) => {
   const [deleteDraftItemModal, setDeleteDraftItemModal] = useState(false);
+  const [isEditing, setIsEditing] = useState({
+    isOpen: false,
+    type: "price",
+  });
   const activeDraft: DraftSaleSchema =
-    draftSales.find((s) => s.isActive) ?? draftSales[0];
+    draft?.find((s) => s.isActive) ?? draft[0];
+  const currentItem = activeDraft?.items?.[Number(expandedRow)] ?? null;
 
   const onDeleteDraftItem = () => {
     if (expandedRow) {
       deleteDraftItem(+expandedRow);
       setExpandedRow(null);
     }
+  };
+
+  const decrease = () => {
+    const newVal = (currentItem?.quantity || 0) - 1;
+    if (newVal > 0) {
+      updateDraftItemQuantity(Number(expandedRow), newVal);
+      updateDraftItemTotalPrice(
+        Number(expandedRow),
+        newVal * (currentItem?.priceAmount || 0)
+      );
+    }
+  };
+
+  const increase = () => {
+    const newVal = (currentItem?.quantity || 0) + 1;
+    updateDraftItemQuantity(Number(expandedRow), newVal);
+    updateDraftItemTotalPrice(
+      Number(expandedRow),
+      newVal * (currentItem?.priceAmount || 0)
+    );
   };
 
   const totalPrice = useMemo(() => {
@@ -62,6 +88,16 @@ const SaleAndRefunTable = ({
       ) ?? 0
     );
   }, [activeDraft]);
+
+  useEffect(() => {
+    if (expendedId) {
+      let itemId = table
+        .getRowModel()
+        .rows.find((item) => item.original?.productId === expendedId)?.id;
+      setExpandedId(null);
+      setExpandedRow(itemId!);
+    }
+  }, [expendedId]);
 
   const table = useReactTable({
     data: activeDraft?.items ?? [],
@@ -74,22 +110,15 @@ const SaleAndRefunTable = ({
     },
   });
 
-  console.log(expendedId);
-
-  useEffect(() => {
-    if (expendedId) {
-      let itemId = table
-        .getRowModel()
-        .rows.find((item) => item.original?.productId === expendedId)?.id;
-      setExpandedId(null);
-      setExpandedRow(itemId!);
-    }
-  }, [expendedId]);
-
   return (
-    <div className="bg-gray-50 rounded-2xl border overflow-auto border-gray-300 mb-4 h-[40vh]">
+    <div className="bg-gray-50 rounded-2xl border overflow-auto border-gray-300 mb-3 h-[42vh]">
       <div className="flex flex-col justify-between h-full">
-        <Table overflow={false} compact={true}>
+        <Table
+          tabIndex={Number(expandedRow)}
+          key={activeDraft?.id}
+          overflow={false}
+          compact={true}
+        >
           <THead className={"sticky top-0 bg-white"}>
             {table.getHeaderGroups().map((headerGroup) => (
               <Tr key={headerGroup.id}>
@@ -123,7 +152,9 @@ const SaleAndRefunTable = ({
                 return (
                   <Tr
                     key={row.id}
-                    onClick={() => setExpandedRow(String(rowIndex))}
+                    onClick={() => {
+                      setExpandedRow(String(rowIndex));
+                    }}
                     className={classNames(
                       oddEven ? "bg-gray-50" : "bg-white",
                       expandedRow?.toString() === row.id && "text-primary"
@@ -180,9 +211,153 @@ const SaleAndRefunTable = ({
               icon={<HiTrash />}
               className="bg-red-100 text-red-500 hover:text-red-400 active:scale-90 active:bg-red-200 transition-all duration-300"
             ></Button>
-            <div></div>
-            <div></div>
-            <div></div>
+
+            {isEditing?.isOpen && isEditing?.type === "price" ? (
+              <Input
+                size="sm"
+                type="number"
+                autoFocus
+                className="w-[200px]!"
+                value={currentItem?.priceAmount}
+                onChange={(val) => {
+                  updateDraftItemPrice(
+                    Number(expandedRow),
+                    Number(val?.target?.value)
+                  ),
+                    updateDraftItemTotalPrice(
+                      Number(expandedRow),
+                      Number(val?.target?.value) * currentItem?.quantity
+                    );
+                  console.log(val);
+                }}
+                onBlur={() => {
+                  setIsEditing({ isOpen: false, type: "" });
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === "Escape") {
+                    (e.target as HTMLInputElement).blur();
+                  }
+                }}
+              />
+            ) : (
+              <div className="bg-white px-3 py-3 flex items-center justify-between gap-2 rounded-lg w-[200px]">
+                <span className="text-base font-normal">Цена:</span>
+                <div
+                  onDoubleClick={() =>
+                    setIsEditing({ isOpen: true, type: "price" })
+                  }
+                  className="text-base font-medium text-gray-800"
+                >
+                  <FormattedNumber value={currentItem?.priceAmount} />
+                  <span className="ml-1">сум</span>
+                </div>
+              </div>
+            )}
+
+            <div className="flex items-center gap-x-2">
+              {isEditing?.type !== "quantity" && (
+                <Button
+                  variant="solid"
+                  className={classNames(
+                    "w-12 h-12 p-3 flex items-center justify-center bg-white hover:bg-gray-50 rounded-lg active:bg-gray-400 text-gray-800"
+                  )}
+                  onClick={decrease}
+                >
+                  -
+                </Button>
+              )}
+
+              {isEditing?.isOpen && isEditing?.type === "quantity" ? (
+                <Input
+                  size="md"
+                  type="number"
+                  autoFocus
+                  value={currentItem?.quantity}
+                  onChange={(val) => {
+                    updateDraftItemQuantity(
+                      Number(expandedRow),
+                      Number(val?.target?.value)
+                    ),
+                      updateDraftItemTotalPrice(
+                        Number(expandedRow),
+                        Number(val?.target?.value) * currentItem?.priceAmount
+                      );
+                    console.log(val);
+                  }}
+                  onBlur={() => {
+                    setIsEditing({ isOpen: false, type: "" });
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === "Escape") {
+                      (e.target as HTMLInputElement).blur();
+                    }
+                  }}
+                />
+              ) : (
+                <div
+                  onDoubleClick={() =>
+                    setIsEditing({ isOpen: true, type: "quantity" })
+                  }
+                  className="w-[100px] h-12 text-base font-medium text-gray-800 flex items-center justify-center bg-white rounded-lg"
+                >
+                  <FormattedNumber value={currentItem?.quantity} />
+                </div>
+              )}
+
+              {isEditing?.type !== "quantity" && (
+                <Button
+                  variant="solid"
+                  className={classNames(
+                    "w-12 h-12 p-3 flex items-center justify-center bg-white hover:bg-gray-50 rounded-lg active:bg-gray-400 text-gray-800"
+                  )}
+                  onClick={increase}
+                >
+                  +
+                </Button>
+              )}
+            </div>
+
+            {isEditing?.isOpen && isEditing?.type === "totalPrice" ? (
+              <Input
+                size="sm"
+                type="number"
+                autoFocus
+                className="w-[200px]!"
+                value={currentItem?.totalAmount}
+                onChange={(val) => {
+                  const recalculatedQuantity = Number(val?.target?.value) / currentItem?.priceAmount;
+                  updateDraftItemQuantity(
+                    Number(expandedRow),
+                    recalculatedQuantity
+                  ),
+                    updateDraftItemTotalPrice(
+                      Number(expandedRow),
+                      Number(val?.target?.value)
+                    );
+                }}
+                onBlur={() => {
+                  setIsEditing({ isOpen: false, type: "" });
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === "Escape") {
+                    (e.target as HTMLInputElement).blur();
+                  }
+                }}
+              />
+            ) : (
+              <div className="bg-white px-3 py-3 flex items-center justify-between gap-2 rounded-lg w-[200px]">
+                <span className="text-base font-normal">Сумма:</span>
+                <div
+                  onDoubleClick={() =>
+                    setIsEditing({ isOpen: true, type: "totalPrice" })
+                  }
+                  className="text-base font-medium text-gray-800"
+                >
+                  <FormattedNumber value={currentItem?.totalAmount} />
+                  <span className="ml-1">сум</span>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

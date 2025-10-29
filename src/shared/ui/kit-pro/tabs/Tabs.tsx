@@ -2,7 +2,7 @@ import { useRef, useEffect } from "react";
 import { FaPlus } from "react-icons/fa";
 import Button from "../../kit/Button";
 import type { DraftSaleSchema } from "@/@types/sale";
-import { addNewSaleAndActivate } from "@/shared/lib/createNewDraft";
+import { PaymentTypes } from "@/app/constants/payment.types";
 
 type TabsType = {
   drafts: DraftSaleSchema[];
@@ -18,7 +18,19 @@ export default function Tabs({ drafts, activateDraft, addNewDraft }: TabsType) {
   let startX = 0;
   let scrollLeft = 0;
 
-  const addDrafts = () => addNewSaleAndActivate({ addDrafts: addNewDraft });
+  const addDrafts = () => {
+    const newDraftSale: DraftSaleSchema = {
+      items: [],
+      isActive: true,
+      discountAmount: 0,
+      payment: {
+        amounts: PaymentTypes.map((paymentType) => {
+          return { amount: 0, paymentType: paymentType.type };
+        }),
+      },
+    };
+    addNewDraft(newDraftSale);
+  };
 
   const handleMouseDown = (e: React.MouseEvent) => {
     isDown = true;

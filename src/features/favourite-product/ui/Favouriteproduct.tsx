@@ -35,6 +35,8 @@ const FavouriteProduct = ({
   const { active, update } = getActiveDraft();
 
   const onChange = (item: any) => {
+    console.log(item, "item");
+    
     const operationItem = active?.items?.find(
       (p) =>
         p.productId === item.product.id &&
@@ -65,14 +67,12 @@ const FavouriteProduct = ({
   };
 
   return (
-    <div className="h-[150px] overflow-y-auto rounded-2xl">
+    <div className="h-[165px] overflow-y-auto rounded-2xl">
       <div className=" bg-gray-50 p-2 grid grid-cols-4 gap-2">
         {isPending && <Loading />}
 
         {!isPending && favoriteProducts?.length ? (
           favoriteProducts?.map((item) => {
-            console.log(item);
-
             return (
               <FavouriteCard
                 name={item?.product?.name}

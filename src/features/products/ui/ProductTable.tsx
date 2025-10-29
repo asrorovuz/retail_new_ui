@@ -32,6 +32,7 @@ import { EditProductModal } from "@/features/modals";
 import type { ProductTableProps } from "@/features/modals/model";
 import { useSettingsStore } from "@/app/store/useSettingsStore";
 import PrintCheckProduct from "@/features/print-modal";
+import { useDebounce } from "@/shared/lib/useDebounce";
 
 const ProductTable = ({
   search,
@@ -41,6 +42,7 @@ const ProductTable = ({
   barcode,
   productPriceType,
 }: { search: string } & ProductTableProps) => {
+  const debouncedSearch = useDebounce(search, 500);
   const [confirmProductId, setConfirmProductId] = useState<number | null>(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [item, setItem] = useState<Product | null>(null)
@@ -55,9 +57,9 @@ const ProductTable = ({
   const { data, isPending } = useAllProductApi(
     pagination.pageSize,
     pagination.pageIndex,
-    search || ""
+    debouncedSearch || ""
   );
-  const { data: countData } = useAllProductCountApi(search || "");
+  const { data: countData } = useAllProductCountApi(debouncedSearch || "");
   const { mutate: deleteProduct, isPending: productDeleteLoading } =
     useDeleteProduct();
 

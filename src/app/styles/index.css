@@ -3,6 +3,7 @@
 
 @import "./tailwind/tailwind.css";
 @import "./components/index.css";
+@import "./loading.css";
 
 .input-suffix-end {
   right: 0.625rem !important;

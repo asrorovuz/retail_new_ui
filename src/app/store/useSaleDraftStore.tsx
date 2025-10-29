@@ -143,6 +143,36 @@ export const useDraftSaleStore = create<
           activeSale.items.splice(draftSaleItemIndex, 1);
         }
       }),
+    updateDraftSaleItemPrice: (
+      draftSaleItemIndex: number,
+      priceAmount: number
+    ) =>
+      set((state) => {
+        const activeSale = state.draftSales.find((s) => s.isActive);
+        if (activeSale) {
+          activeSale.items[draftSaleItemIndex].priceAmount = priceAmount;
+        }
+      }),
+    updateDraftSaleItemTotalPrice: (
+      draftSaleItemIndex: number,
+      totalPrice: number
+    ) =>
+      set((state) => {
+        const activeSale = state.draftSales.find((s) => s.isActive);
+        if (activeSale) {
+          activeSale.items[draftSaleItemIndex].totalAmount = totalPrice;
+        }
+      }),
+    updateDraftSaleItemQuantity: (
+      draftSaleItemIndex: number,
+      quantity: number
+    ) =>
+      set((state) => {
+        const activeSale = state.draftSales.find((s) => s.isActive);
+        if (activeSale) {
+          activeSale.items[draftSaleItemIndex].quantity = quantity;
+        }
+      }),
     // completeActiveDraftSale: () => set((state) => {
     //     const activeSaleIndex = state.draftSales.findIndex(s => s.isActive)
 
@@ -258,24 +288,7 @@ export const useDraftSaleStore = create<
     //         item.totalAmount = item.priceAmount * item.quantity
     //     }
     // }),
-    // updateDraftSaleItemQuantity: (draftSaleItemIndex, quantity) => set((state) => {
-    //     const activeSale = state.draftSales.find(s => s.isActive)
-    //     if (activeSale) {
-    //         activeSale.items[draftSaleItemIndex].quantity = quantity
-    //     }
-    // }),
-    // updateDraftSaleItemPrice: (draftSaleItemIndex, priceAmount) => set((state) => {
-    //     const activeSale = state.draftSales.find(s => s.isActive)
-    //     if (activeSale) {
-    //         activeSale.items[draftSaleItemIndex].priceAmount = priceAmount
-    //     }
-    // }),
-    // updateDraftSaleItemTotalPrice: (draftSaleItemIndex, totalPrice) => set((state) => {
-    //     const activeSale = state.draftSales.find(s => s.isActive)
-    //     if (activeSale) {
-    //         activeSale.items[draftSaleItemIndex].totalAmount = totalPrice
-    //     }
-    // }),
+
     // updateDraftSalePayment: payment => set(state => {
     //     const activeSale = state.draftSales.find(s => s.isActive)
     //     if (activeSale) {

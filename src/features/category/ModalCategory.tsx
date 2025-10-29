@@ -106,7 +106,6 @@ const ModalCategory = ({
       } else {
         // UPDATE
         const idToUpdate = editId ?? parent_id;
-        console.log(idToUpdate);
 
         if (!idToUpdate) throw new Error("Update uchun ID topilmadi.");
 

@@ -39,6 +39,9 @@ export interface SaleStoreActions {
   resetActiveDraftSale: () => void;
   deleteDraftSale: (draftSaleIndex: number) => void;
   deleteDraftSaleItem: (draftSaleItemIndex: number) => void
+  updateDraftSaleItemPrice: (draftSaleItemIndex: number, priceAmount: number) => void
+  updateDraftSaleItemQuantity: (draftSaleItemIndex: number, quantity: number) => void
+  updateDraftSaleItemTotalPrice: (draftSaleItemIndex: number, totalPrice: number) => void
   // completeActiveDraftSale: () => void
 
   // updateDraftSaleDiscount: (discountAmount: number) => void
@@ -49,9 +52,6 @@ export interface SaleStoreActions {
   // addDraftSaleItem: (payload: DraftSaleItemSchema) => void
   // incrementDraftSaleItemQuantity: (draftSaleItemIndex: number) => void
   // decrementDraftSaleItemQuantity: (draftSaleItemIndex: number) => void
-  // updateDraftSaleItemQuantity: (draftSaleItemIndex: number, quantity: number) => void
-  // updateDraftSaleItemPrice: (draftSaleItemIndex: number, priceAmount: number) => void
-  // updateDraftSaleItemTotalPrice: (draftSaleItemIndex: number, totalPrice: number) => void
   // updateDraftSalePayment: (payment: DraftSalePaymentAmountSchema[]) => void
   // deleteDraftSaleMark: (item: { productId: number, index: number }) => void
 }
