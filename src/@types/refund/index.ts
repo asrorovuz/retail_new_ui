@@ -35,10 +35,10 @@ export interface RefundStoreActions {
   addDraftRefund: (payload: DraftRefundSchema) => void;
   activateDraftRefund: (index: number) => void;
   updateDraftRefundItem: (payload: DraftRefundItemSchema) => void;
+  updateDraftRefundDiscount: (discountAmount: number) => void;
   //   deleteDraftRefund: (draftRefundIndex: number) => void;
   //   completeActiveDraftRefund: () => void;
   //   resetActiveDraftRefund: () => void;
-  //   updateDraftRefundDiscount: (discountAmount: number) => void;
   //   addDraftRefundPaymentAmount: (payload: DraftRefundPayoutAmountSchema) => void;
   //   updateDraftRefundPaymentAmounts: (
   //     paymentAmounts: DraftRefundPayoutAmountSchema[]

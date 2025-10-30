@@ -13,6 +13,7 @@ import {
   getCategoryApi,
   getCurrencyApi,
   getPriceTypeApi,
+  getProductBarcodeApi,
   getProductByIdApi,
   getTableSettingsApi,
   updateAlertOnApi,
@@ -59,6 +60,14 @@ export const useProductByIdApi = (productId: number | null) => {
     queryKey: ["product-by-id", productId],
     queryFn: () => getProductByIdApi(productId),
     enabled: !!productId,
+  });
+};
+
+export const useFindBarcode = (barcode: string | null) => {
+  return useQuery({
+    queryKey: ["find-barcode", barcode],
+    queryFn: () => getProductBarcodeApi(barcode),
+    // enabled: !!barcode,
   });
 };
 

@@ -23,7 +23,7 @@ export const showSuccessMessage = (msgUz: string, msgRu?: string) => {
 export const showErrorMessage = (err: ErrorResponse | any) => {
   const lang = i18next.language;
 
-  const status_code = err?.response?.status || err?.status_code;
+  // const status_code = err?.response?.status || err?.status_code;
   const error: ErrorResponse = err?.response?.data ||
     err?.data ||
     err || { message: "Unknown error" };

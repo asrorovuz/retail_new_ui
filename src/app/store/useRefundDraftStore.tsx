@@ -85,7 +85,14 @@ export const useDraftRefundStore = create<
             activeRefund.items.unshift(draftItem);
           }
         }
-      })
+      }),
+    updateDraftRefundDiscount: (discountAmount: number) =>
+      set((state) => {
+        const activeRefund = state.draftRefunds.find((s) => s.isActive);
+        if (activeRefund) {
+          activeRefund.discountAmount = discountAmount;
+        }
+      }),
     // deleteDraftRefund: (draftRefundIndex) => set((state) => {
     //     if (state.draftRefunds.length === 1 && draftRefundIndex === 0) {
     //         const newDraftRefund: DraftRefundSchema = {
@@ -153,12 +160,7 @@ export const useDraftRefundStore = create<
     //         }
     //     }
     // }),
-    // updateDraftRefundDiscount: (discountAmount) => set((state) => {
-    //     const activeRefund = state.draftRefunds.find(s => s.isActive)
-    //     if (activeRefund) {
-    //         activeRefund.discountAmount = discountAmount
-    //     }
-    // }),
+
     // addDraftRefundPaymentAmount: (payload: DraftRefundPayoutAmountSchema) => set((state) => {
 
     // }),

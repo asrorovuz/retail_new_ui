@@ -98,6 +98,15 @@ export const getProductByIdApi = async (
   return data;
 };
 
+export const getProductBarcodeApi = async (
+  barcode: string | null
+): Promise<any> => {
+  const { data } = await AxiosBase.get(
+    `${pathServices.products.findByBarcode}${barcode}`
+  );
+  return data;
+};
+
 //UPDATE
 export const updateTableSettingsApi = async (
   payload: ProductColumnVisibility

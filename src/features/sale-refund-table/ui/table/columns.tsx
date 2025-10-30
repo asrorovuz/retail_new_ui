@@ -1,4 +1,16 @@
-export const columns = () => {
+import type { ColumnDef } from "@tanstack/react-table";
+import FormattedNumber from "@/shared/ui/kit-pro/numeric-format/NumericFormat";
+
+// 🔹 Jadvaldagi qatorlar uchun type
+export interface ProductRow {
+  productName: string;
+  priceAmount: number;
+  quantity: number;
+  totalAmount: number;
+}
+
+// 🔹 Ustunlarni qaytaruvchi funksiya
+export const columns = (): ColumnDef<any>[] => {
   return [
     {
       header: () => (
@@ -16,8 +28,9 @@ export const columns = () => {
       ),
       accessorKey: "priceAmount",
       meta: {
-        bodyCellClassName: "text-start min-w-full max-w-full",
+        bodyCellClassName: "text-right min-w-full max-w-full",
       },
+      cell: ({ row }) => <FormattedNumber value={row.original.priceAmount} />,
     },
     {
       header: () => (
@@ -25,7 +38,7 @@ export const columns = () => {
       ),
       accessorKey: "quantity",
       meta: {
-        bodyCellClassName: "text-start min-w-full max-w-full",
+        bodyCellClassName: "text-right min-w-full max-w-full",
       },
     },
     {
@@ -34,13 +47,9 @@ export const columns = () => {
       ),
       accessorKey: "totalAmount",
       meta: {
-        bodyCellClassName: "text-start min-w-full max-w-full",
+        bodyCellClassName: "text-right min-w-full max-w-full",
       },
-      //   cell: ({
-      //     row: {
-      //       original: { totalAmount },
-      //     },
-      //   }) => <FormattedNumber value={totalAmount.toFixed(2)} />,
+      cell: ({ row }) => <FormattedNumber value={row.original.totalAmount} />,
     },
   ];
 };

@@ -8,10 +8,10 @@
 
 .tab-nav {
   @apply font-bold flex items-center justify-center text-gray-600 dark:text-gray-100 transition duration-200 ease-in-out cursor-pointer;
-}
 
-.tab-nav.tab-nav-disabled {
-  @apply cursor-not-allowed;
+  &.tab-nav-disabled {
+    @apply opacity-60 cursor-not-allowed;
+  }
 }
 
 .tab-nav-underline {

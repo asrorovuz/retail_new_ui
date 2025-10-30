@@ -1,3 +1,4 @@
+import type { DraftSaleSchema } from "@/@types/sale";
 import { useDraftSaleStore } from "@/app/store/useSaleDraftStore";
 import { useAllProductApi } from "@/entities/products/repository";
 import Cashbox from "@/features/cashbox";
@@ -9,6 +10,7 @@ import SearchProductTable from "@/features/search-product-table";
 import { useDebounce } from "@/shared/lib/useDebounce";
 import Loading from "@/shared/ui/loading";
 import { useState } from "react";
+import PaymentSection from "@/features/payment-section/ui/PaymentSection";
 
 const SalePage = () => {
   const [search, setSearch] = useState("");
@@ -21,10 +23,10 @@ const SalePage = () => {
 
   const { data, isPending } = useAllProductApi(50, 1, debouncedSearch || "");
 
-  const resetActiveDraftSale = useDraftSaleStore(
-    (store) => store.resetActiveDraftSale
-  );
-  const deleteDraftSale = useDraftSaleStore((store) => store.deleteDraftSale);
+  // const resetActiveDraftSale = useDraftSaleStore(
+  //   (store) => store.resetActiveDraftSale
+  // );
+  // const deleteDraftSale = useDraftSaleStore((store) => store.deleteDraftSale);
   const deleteDraftSaleItem = useDraftSaleStore(
     (store) => store.deleteDraftSaleItem
   );
@@ -38,9 +40,12 @@ const SalePage = () => {
     (store) => store.updateDraftSaleItemTotalPrice
   );
 
+  const activeDraft: DraftSaleSchema =
+    draftSales?.find((s) => s.isActive) ?? draftSales[0];
+
   return (
-    <div className="flex justify-between gap-x-2">
-      <div className="bg-white p-4 rounded-2xl w-3/5 h-[calc(100vh-90px)] overflow-y-auto">
+    <div className="flex justify-between gap-x-2 h-[calc(100vh-100px)]">
+      <div className="bg-white p-4 rounded-2xl w-3/5">
         <Cashbox
           drafts={draftSales}
           addNewDraft={addDraftSale}
@@ -49,6 +54,7 @@ const SalePage = () => {
         <SaleAndRefunTable
           type="sale"
           draft={draftSales}
+          activeDraft={activeDraft}
           expandedRow={expandedRow}
           setExpandedRow={setExpandedRow}
           expendedId={expendedId}
@@ -65,7 +71,7 @@ const SalePage = () => {
         />
       </div>
 
-      <div className="bg-white p-4 rounded-2xl w-2/5 h-[calc(100vh-90px)] overflow-y-auto">
+      <div className="bg-white p-4 rounded-2xl w-2/5">
         <div className="bg-gray-50 p-2 rounded-2xl mb-3">
           <SearchProduct search={search} setSearch={setSearch} />
         </div>
@@ -78,7 +84,8 @@ const SalePage = () => {
 
         {!search && !isPending && (
           <>
-            <PaymeTypeCards />
+            <PaymeTypeCards type={"sale"} activeDraft={activeDraft} />
+            <PaymentSection type="sale" activeDraft={activeDraft}/>
           </>
         )}
 

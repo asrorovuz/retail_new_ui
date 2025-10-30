@@ -26,6 +26,7 @@ export const pathServices = {
     updateCategory: `/api/product/product-category/update/`,
     catalogSearch: "/api/product/catalog/search",
     getFavoritProduct: "/api/favorite-product/get/all",
+    findByBarcode: `/api/product/find-by-barcode/`,
 
     //UPDATE
     updateTableSettingsPath:

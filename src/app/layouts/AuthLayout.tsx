@@ -14,7 +14,7 @@ export const AuthLayout = () => {
   }, [data]);
 
   return (
-    <div className="flex flex-col min-h-screen items-center justify-center bg-gray-50">
+    <div className="flex flex-col h-screen items-center justify-center bg-gray-50">
       <div className="w-[255px] mx-auto mb-10">
         <img className="w-full object-cover" src={logoHippo} alt="Hippo" />
       </div>

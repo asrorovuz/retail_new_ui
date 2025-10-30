@@ -1,21 +1,21 @@
 .upload {
   @apply relative inline-block;
-}
 
-.upload.disabled {
-  @apply cursor-not-allowed;
-}
+  &.disabled {
+    @apply cursor-not-allowed opacity-60;
 
-.upload.disabled .upload-input {
-  @apply cursor-not-allowed;
+    .upload-input {
+      @apply cursor-not-allowed;
+    }
+  }
 }
 
 .upload-input {
   @apply absolute inset-0 hidden;
-}
 
-.upload-input.draggable {
-  @apply block w-full cursor-pointer;
+  &.draggable {
+    @apply block opacity-0 w-full cursor-pointer;
+  }
 }
 
 .upload-draggable {

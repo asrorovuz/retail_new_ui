@@ -28,7 +28,7 @@ const ProductsPage = () => {
   }, []);
 
   return (
-    <div className="bg-white rounded-3xl p-6 h-[calc(100vh_-_120px)]">
+    <div className="bg-white rounded-3xl p-6 h-[calc(100vh-100px)]">
       <div className="mb-3 flex items-center gap-x-4">
         <SearchProduct setSearch={setSearch} search={search} />
         <AddProductModal

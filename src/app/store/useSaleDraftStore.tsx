@@ -173,6 +173,13 @@ export const useDraftSaleStore = create<
           activeSale.items[draftSaleItemIndex].quantity = quantity;
         }
       }),
+    updateDraftSaleDiscount: (discountAmount: number) =>
+      set((state) => {
+        const activeSale = state.draftSales.find((s) => s.isActive);
+        if (activeSale) {
+          activeSale.discountAmount = discountAmount;
+        }
+      }),
     // completeActiveDraftSale: () => set((state) => {
     //     const activeSaleIndex = state.draftSales.findIndex(s => s.isActive)
 
@@ -207,12 +214,6 @@ export const useDraftSaleStore = create<
     //     }
     // }),
 
-    // updateDraftSaleDiscount: (discountAmount) => set((state) => {
-    //     const activeSale = state.draftSales.find(s => s.isActive)
-    //     if (activeSale) {
-    //         activeSale.discountAmount = discountAmount
-    //     }
-    // }),
     // addDraftSalePaymentAmount: (payload: DraftSalePaymentAmountSchema) => set((state) => {
 
     // }),

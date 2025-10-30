@@ -1,40 +1,48 @@
 .input {
-  @apply border border-gray-600
-    !bg-white
-    rounded-xl w-full py-2 px-3
-    focus:outline-none focus:ring-1 focus-within:ring-1
-    focus:bg-transparent focus:dark:bg-transparent
-    appearance-none transition duration-150
-    !text-gray-600
-    text-base
-    font-semibold ease-in-out
+  @apply border
+    border-gray-100 
+    dark:border-gray-700
+    bg-gray-100 
+    dark:bg-gray-700 
+    rounded-xl 
+    w-full 
+    py-2 px-3
+    focus:outline-none 
+    focus:ring-1 
+    focus-within:ring-1
+    focus:bg-transparent
+    focus:dark:bg-transparent
+    appearance-none 
+    transition 
+    duration-150 
+    text-gray-800
+    dark:text-gray-100
+    font-semibold
     read-only:focus:ring-0
     read-only:focus:border-transparent
     read-only:focus:bg-gray-100
-}
+    read-only:focus:dark:bg-gray-700
+    ease-in-out;
 
-.input::placeholder {
-  @apply text-gray-400;
-}
+  &::placeholder {
+    @apply text-gray-400;
+  }
 
-.input.input-invalid {
-  @apply border-error ring-1 ring-error bg-error-subtle;
-  @apply focus:ring-1 focus:ring-error focus:border-error
-    focus:bg-transparent bg-error-subtle
-    focus-within:ring-1 focus-within:ring-error
-    focus-within:border-error focus-within:bg-transparent;
-}
+  &.input-invalid {
+    @apply focus:ring-1 focus:ring-error focus:border-error focus:bg-transparent bg-error-subtle focus-within:ring-1 focus-within:ring-error focus-within:border-error focus-within:bg-transparent;
 
-.input.input-invalid::placeholder {
-  @apply text-error;
-}
+    &::placeholder {
+      @apply text-error;
+    }
+  }
 
-.input.input-lg {
-  @apply text-lg;
+  &.input-lg {
+    @apply text-lg;
+  }
 }
 
 .input-addon {
-  @apply flex items-center px-4 rounded-xl border border-gray-600 bg-transparent 
+  @apply flex items-center px-4 rounded-xl border border-gray-200 bg-gray-200 dark:border-gray-700 dark:bg-gray-600;
 }
 
 .input-textarea {
@@ -46,7 +54,7 @@
 }
 
 .input-disabled {
-  @apply cursor-not-allowed;
+  @apply opacity-50 !cursor-not-allowed;
 }
 
 .input-suffix-start {

@@ -4,10 +4,10 @@
 
 .notification-content {
   @apply py-5 px-6 flex;
-}
 
-.notification-content.no-child {
-  @apply items-center;
+  &.no-child {
+    @apply items-center;
+  }
 }
 
 .notification-title {

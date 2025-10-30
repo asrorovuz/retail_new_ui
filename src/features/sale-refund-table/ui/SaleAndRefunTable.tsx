@@ -23,6 +23,7 @@ import type { DraftRefundSchema } from "@/@types/refund";
 type PropsType = {
   type: "sale" | "refund";
   draft: DraftSaleSchema[] | DraftRefundSchema[];
+  activeDraft: DraftSaleSchema | DraftRefundSchema;
   expandedRow: string | null;
   expendedId: number | null;
   setExpandedRow: React.Dispatch<React.SetStateAction<string | null>>;
@@ -34,7 +35,7 @@ type PropsType = {
 };
 
 const SaleAndRefunTable = ({
-  draft,
+  activeDraft,
   expendedId,
   setExpandedId,
   setExpandedRow,
@@ -49,8 +50,7 @@ const SaleAndRefunTable = ({
     isOpen: false,
     type: "price",
   });
-  const activeDraft: DraftSaleSchema =
-    draft?.find((s) => s.isActive) ?? draft[0];
+
   const currentItem = activeDraft?.items?.[Number(expandedRow)] ?? null;
 
   const onDeleteDraftItem = () => {
@@ -93,7 +93,7 @@ const SaleAndRefunTable = ({
     if (expendedId) {
       let itemId = table
         .getRowModel()
-        .rows.find((item) => item.original?.productId === expendedId)?.id;
+        .rows.find((item) => item?.original?.productId === expendedId)?.id;
       setExpandedId(null);
       setExpandedRow(itemId!);
     }
@@ -111,7 +111,7 @@ const SaleAndRefunTable = ({
   });
 
   return (
-    <div className="bg-gray-50 rounded-2xl border overflow-auto border-gray-300 mb-3 h-[42vh]">
+    <div className="bg-gray-50 rounded-2xl border overflow-auto border-gray-300 mb-3 h-[366px]">
       <div className="flex flex-col justify-between h-full">
         <Table
           tabIndex={Number(expandedRow)}
@@ -240,14 +240,12 @@ const SaleAndRefunTable = ({
                 }}
               />
             ) : (
-              <div className="bg-white px-3 py-3 flex items-center justify-between gap-2 rounded-lg w-[200px]">
+              <div
+                onClick={() => setIsEditing({ isOpen: true, type: "price" })}
+                className="bg-white px-3 py-3 flex items-center justify-between gap-2 rounded-lg w-[200px]"
+              >
                 <span className="text-base font-normal">Цена:</span>
-                <div
-                  onDoubleClick={() =>
-                    setIsEditing({ isOpen: true, type: "price" })
-                  }
-                  className="text-base font-medium text-gray-800"
-                >
+                <div className="text-base font-medium text-gray-800">
                   <FormattedNumber value={currentItem?.priceAmount} />
                   <span className="ml-1">сум</span>
                 </div>
@@ -259,7 +257,7 @@ const SaleAndRefunTable = ({
                 <Button
                   variant="solid"
                   className={classNames(
-                    "w-12 h-12 p-3 flex items-center justify-center bg-white hover:bg-gray-50 rounded-lg active:bg-gray-400 text-gray-800"
+                    "w-12 h-12 p-3 flex items-center justify-center bg-white! hover:bg-gray-50 rounded-lg active:bg-gray-200! text-gray-800"
                   )}
                   onClick={decrease}
                 >
@@ -295,7 +293,7 @@ const SaleAndRefunTable = ({
                 />
               ) : (
                 <div
-                  onDoubleClick={() =>
+                  onClick={() =>
                     setIsEditing({ isOpen: true, type: "quantity" })
                   }
                   className="w-[100px] h-12 text-base font-medium text-gray-800 flex items-center justify-center bg-white rounded-lg"
@@ -308,7 +306,7 @@ const SaleAndRefunTable = ({
                 <Button
                   variant="solid"
                   className={classNames(
-                    "w-12 h-12 p-3 flex items-center justify-center bg-white hover:bg-gray-50 rounded-lg active:bg-gray-400 text-gray-800"
+                    "w-12 h-12 p-3 flex items-center justify-center bg-white! hover:bg-gray-50 rounded-lg active:bg-gray-200! text-gray-800"
                   )}
                   onClick={increase}
                 >
@@ -325,7 +323,8 @@ const SaleAndRefunTable = ({
                 className="w-[200px]!"
                 value={currentItem?.totalAmount}
                 onChange={(val) => {
-                  const recalculatedQuantity = Number(val?.target?.value) / currentItem?.priceAmount;
+                  const recalculatedQuantity =
+                    Number(val?.target?.value) / currentItem?.priceAmount;
                   updateDraftItemQuantity(
                     Number(expandedRow),
                     recalculatedQuantity
@@ -345,14 +344,14 @@ const SaleAndRefunTable = ({
                 }}
               />
             ) : (
-              <div className="bg-white px-3 py-3 flex items-center justify-between gap-2 rounded-lg w-[200px]">
+              <div
+                onClick={() =>
+                  setIsEditing({ isOpen: true, type: "totalPrice" })
+                }
+                className="bg-white px-3 py-3 flex items-center justify-between gap-2 rounded-lg w-[200px]"
+              >
                 <span className="text-base font-normal">Сумма:</span>
-                <div
-                  onDoubleClick={() =>
-                    setIsEditing({ isOpen: true, type: "totalPrice" })
-                  }
-                  className="text-base font-medium text-gray-800"
-                >
+                <div className="text-base font-medium text-gray-800">
                   <FormattedNumber value={currentItem?.totalAmount} />
                   <span className="ml-1">сум</span>
                 </div>

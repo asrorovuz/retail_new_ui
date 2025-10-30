@@ -1,21 +1,23 @@
 .progress {
   @apply inline-block;
-}
 
-.progress.circle {
-  @apply relative w-full;
-}
+  &.circle {
+    @apply relative w-full;
+  }
 
-.progress.line {
-  @apply relative w-full flex items-center;
+  &.line {
+    @apply relative w-full flex items-center;
+  }
 }
 
 .progress-bg {
   @apply rounded-full transition-all duration-200;
 }
 
-.progress-info.line {
-  @apply ltr:ml-2 rtl:mr-2;
+.progress-info {
+  &.line {
+    @apply ltr:ml-2 rtl:mr-2;
+  }
 }
 
 .progress-inner {
@@ -31,7 +33,7 @@
 }
 
 .progress-circle-info {
-  @apply absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2;
+  @apply absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2;
 }
 
 .progress-circle-trail {
