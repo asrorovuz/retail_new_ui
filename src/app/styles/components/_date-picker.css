@@ -9,7 +9,6 @@
 .date-picker-header-label {
   @apply cursor-pointer mx-0.5 select-none text-gray-900 dark:text-gray-100;
 }
-
 .date-picker-current-month {
   @apply text-gray-700 dark:text-gray-100;
 }
@@ -35,7 +34,7 @@
 }
 
 .date-picker-month-cell-disabled {
-  @apply bg-gray-300/30 cursor-not-allowed;
+  @apply opacity-30 bg-gray-300 cursor-not-allowed;
 }
 
 .date-picker-month-cell-inner {
@@ -51,7 +50,7 @@
 }
 
 .date-picker-year-cell-disabled {
-  @apply bg-gray-300/30 cursor-not-allowed;
+  @apply opacity-30 bg-gray-300 cursor-not-allowed;
 }
 
 .picker {
@@ -120,7 +119,7 @@
 }
 
 .date-picker-cell-disabled {
-  @apply bg-gray-300/30 cursor-not-allowed;
+  @apply opacity-30 bg-gray-300 cursor-not-allowed;
 }
 
 .date-picker-week-cell {
@@ -153,5 +152,6 @@
 
 .month-picker-cell-disabled,
 .year-picker-cell-disabled {
-  @apply bg-gray-300/30 cursor-not-allowed;
+  @apply opacity-30 bg-gray-300 cursor-not-allowed;
 }
+

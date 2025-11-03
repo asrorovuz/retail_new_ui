@@ -1,8 +1,7 @@
-/* 1️⃣ Font import */
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap");
-
 @import "./tailwind/tailwind.css";
 @import "./components/index.css";
+@import "./loading.css";
 
 .input-suffix-end {
   right: 0.625rem !important;
@@ -12,16 +11,39 @@
   right: 1.5rem !important;
 }
 
-.menu-horizontal{
-  @apply flex  items-center
+.menu-horizontal {
+  @apply flex  items-center;
 }
 
 /* scrollbar hide */
 .no-scrollbar::-webkit-scrollbar {
   height: 0; /* horizontal scrollbar uchun */
-  width: 0;  /* vertical scrollbar uchun */
+  width: 0; /* vertical scrollbar uchun */
 }
 .no-scrollbar {
   -ms-overflow-style: none; /* IE, Edge */
-  scrollbar-width: none;    /* Firefox */
+  scrollbar-width: none; /* Firefox */
+}
+
+/* Har bir scroll uchun */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+/* Scroll fon qismi */
+::-webkit-scrollbar-track {
+  background: #f0f0f0;
+  border-radius: 8px; /* bu joy yumaloqlik beradi */
+}
+
+/* Scroll harakatlanuvchi “thumb” qismi */
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 8px; /* bu joyda ham yumaloqlik */
+}
+
+/* Hover holatida thumb rangi o‘zgaradi */
+::-webkit-scrollbar-thumb:hover {
+  background: #a1a1a1;
 }

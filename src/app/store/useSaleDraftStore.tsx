@@ -2,6 +2,7 @@ import type {
   DraftSaleSchema,
   SaleStoreActions,
   SaleStoreInitialState,
+  DraftSaleItemSchema,
 } from "@/@types/sale";
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
@@ -76,66 +77,151 @@ export const useDraftSaleStore = create<
           state.draftSales = items;
         }
       }),
-    activateDraftSale: (draftSaleIndex: number) => set((state) => {
+    activateDraftSale: (draftSaleIndex: number) =>
+      set((state) => {
         if (state.draftSales.length > 0) {
-            const activeSale = state.draftSales.find(s => s.isActive)
-            if (activeSale) {
-                activeSale.isActive = false
-            }
+          const activeSale = state.draftSales.find((s) => s.isActive);
+          if (activeSale) {
+            activeSale.isActive = false;
+          }
         }
 
-        state.draftSales[draftSaleIndex].isActive = true
-    }),
-    // completeActiveDraftSale: () => set((state) => {
-    //     const activeSaleIndex = state.draftSales.findIndex(s => s.isActive)
+        state.draftSales[draftSaleIndex].isActive = true;
+      }),
+    updateDraftSaleItem: (draftItem: DraftSaleItemSchema) =>
+      set((state) => {
+        const activeSale = state.draftSales?.find((s) => s.isActive);
+        if (activeSale) {
+          const draftSaleItem = activeSale.items.find((i) => {
+            return (
+              i.productId === draftItem.productId &&
+              i.productPackageId === draftItem.productPackageId
+            );
+          });
 
-    //     if (state.draftSales.length > 1) {
-    //         state.draftSales.splice(activeSaleIndex, 1)
+          if (draftSaleItem) {
+            draftSaleItem.priceAmount = draftItem.priceAmount;
+            draftSaleItem.priceTypeId = draftItem.priceTypeId;
 
-    //         const previousSaleIndex = state.draftSales.length - 1
-    //         state.draftSales[previousSaleIndex].isActive = true
-    //     } else {
-    //         const activeSale = state.draftSales.find(s => s.isActive)
-    //         if (activeSale) {
-    //             if (activeSale.id) {
-    //                 const newDraftSale: DraftSaleSchema = {
-    //                     items: [],
-    //                     isActive: true,
-    //                     discountAmount: 0,
-    //                     payment: {
-    //                         amounts: PaymentTypes.map(paymentType => {
-    //                             return {amount: 0, paymentType: paymentType.type}
-    //                         })
-    //                     }
-    //                 }
-    //                 state.draftSales = [newDraftSale]
-    //             } else {
-    //                 activeSale.items = []
-    //                 activeSale.discountAmount = 0
-    //                 if (activeSale.payment) {
-    //                     activeSale.payment.amounts.forEach(a => a.amount = 0)
-    //                 }
-    //             }
-    //         }
-    //     }
-    // }),
-    // resetActiveDraftSale: () => set((state) => {
-    //     const activeSale = state.draftSales.find(s => s.isActive)
-    //     if (activeSale) {
-    //         activeSale.items = []
-    //         activeSale.discountAmount = 0
-    //         if (activeSale.payment) {
-    //             activeSale.payment.amounts.forEach(a => a.amount = 0)
-    //         }
-    //     }
-    // }),
+            if (draftItem.quantity <= 0) {
+              const draftSaleItemIndex = activeSale.items.findIndex((i) => {
+                return (
+                  i.productId === draftItem.productId &&
+                  i.productPackageId === draftItem.productPackageId
+                );
+              });
+              if (draftSaleItemIndex >= 0) {
+                activeSale.items.splice(draftSaleItemIndex, 1);
+              }
+            } else {
+              draftSaleItem.quantity = draftItem.quantity;
+              draftSaleItem.totalAmount = draftItem.totalAmount;
+            }
+          } else {
+            if (draftItem.quantity < 0) {
+              return;
+            }
+            activeSale.items.unshift(draftItem);
+          }
+        }
+      }),
+    resetActiveDraftSale: () =>
+      set((state) => {
+        const activeSale = state.draftSales.find((s) => s.isActive);
+        if (activeSale) {
+          activeSale.items = [];
+          activeSale.discountAmount = 0;
+          if (activeSale.payment) {
+            activeSale.payment.amounts.forEach((a) => (a.amount = 0));
+          }
+        }
+      }),
+    deleteDraftSaleItem: (draftSaleItemIndex: number) =>
+      set((state) => {
+        const activeSale = state.draftSales.find((s) => s.isActive);
+        if (activeSale) {
+          activeSale.items.splice(draftSaleItemIndex, 1);
+        }
+      }),
+    updateDraftSaleItemPrice: (
+      draftSaleItemIndex: number,
+      priceAmount: number
+    ) =>
+      set((state) => {
+        const activeSale = state.draftSales.find((s) => s.isActive);
+        if (activeSale) {
+          activeSale.items[draftSaleItemIndex].priceAmount = priceAmount;
+        }
+      }),
+    updateDraftSaleItemTotalPrice: (
+      draftSaleItemIndex: number,
+      totalPrice: number
+    ) =>
+      set((state) => {
+        const activeSale = state.draftSales.find((s) => s.isActive);
+        if (activeSale) {
+          activeSale.items[draftSaleItemIndex].totalAmount = totalPrice;
+        }
+      }),
+    updateDraftSaleItemQuantity: (
+      draftSaleItemIndex: number,
+      quantity: number
+    ) =>
+      set((state) => {
+        const activeSale = state.draftSales.find((s) => s.isActive);
+        if (activeSale) {
+          activeSale.items[draftSaleItemIndex].quantity = quantity;
+        }
+      }),
+    updateDraftSaleDiscount: (discountAmount: number) =>
+      set((state) => {
+        const activeSale = state.draftSales.find((s) => s.isActive);
+        if (activeSale) {
+          activeSale.discountAmount = discountAmount;
+        }
+      }),
+    updateDraftSalePayment: (payment) =>
+      set((state) => {
+        const activeSale = state.draftSales.find((s) => s.isActive);
+        if (activeSale) {
+          activeSale.payment = { amounts: payment };
+        }
+      }),
+    completeActiveDraftSale: () =>
+      set((state) => {
+        const activeSaleIndex = state.draftSales.findIndex((s) => s.isActive);
 
-    // updateDraftSaleDiscount: (discountAmount) => set((state) => {
-    //     const activeSale = state.draftSales.find(s => s.isActive)
-    //     if (activeSale) {
-    //         activeSale.discountAmount = discountAmount
-    //     }
-    // }),
+        if (state.draftSales.length > 1) {
+          state.draftSales.splice(activeSaleIndex, 1);
+
+          const previousSaleIndex = state.draftSales.length - 1;
+          state.draftSales[previousSaleIndex].isActive = true;
+        } else {
+          const activeSale = state.draftSales.find((s) => s.isActive);
+          if (activeSale) {
+            if (activeSale.id) {
+              const newDraftSale: DraftSaleSchema = {
+                items: [],
+                isActive: true,
+                discountAmount: 0,
+                payment: {
+                  amounts: PaymentTypes.map((paymentType) => {
+                    return { amount: 0, paymentType: paymentType.type };
+                  }),
+                },
+              };
+              state.draftSales = [newDraftSale];
+            } else {
+              activeSale.items = [];
+              activeSale.discountAmount = 0;
+              if (activeSale.payment) {
+                activeSale.payment.amounts.forEach((a) => (a.amount = 0));
+              }
+            }
+          }
+        }
+      }),
+
     // addDraftSalePaymentAmount: (payload: DraftSalePaymentAmountSchema) => set((state) => {
 
     // }),
@@ -194,42 +280,7 @@ export const useDraftSaleStore = create<
     //     }
 
     // }),
-    // updateDraftSaleItem:(draftItem) => set((state) => {
-    //     const activeSale = state.draftSales.find(s => s.isActive)
-    //     if (activeSale) {
-    //         const draftSaleItem = activeSale.items.find(i => {
-    //             return i.productId === draftItem.productId && i.productPackageId === draftItem.productPackageId
-    //         })
 
-    //         if (draftSaleItem) {
-    //             draftSaleItem.priceAmount = draftItem.priceAmount
-    //             draftSaleItem.priceTypeId = draftItem.priceTypeId
-
-    //             if (draftItem.quantity <= 0) {
-    //                 const draftSaleItemIndex = activeSale.items.findIndex(i => {
-    //                     return i.productId === draftItem.productId && i.productPackageId === draftItem.productPackageId
-    //                 })
-    //                 if (draftSaleItemIndex >= 0) {
-    //                     activeSale.items.splice(draftSaleItemIndex, 1);
-    //                 }
-    //             } else {
-    //                 draftSaleItem.quantity = draftItem.quantity
-    //                 draftSaleItem.totalAmount = draftItem.totalAmount
-    //             }
-    //         } else {
-    //             if (draftItem.quantity < 0) {
-    //                 return
-    //             }
-    //             activeSale.items.unshift(draftItem)
-    //         }
-    //     }
-    // }),
-    // deleteDraftSaleItem: (draftSaleItemIndex) => set((state) => {
-    //     const activeSale = state.draftSales.find(s => s.isActive)
-    //     if (activeSale) {
-    //         activeSale.items.splice(draftSaleItemIndex, 1)
-    //     }
-    // }),
     // incrementDraftSaleItemQuantity: (index) => set((state) => {
     //     const active = state.draftSales.find(s => s.isActive)
     //     if (!active) return
@@ -246,30 +297,7 @@ export const useDraftSaleStore = create<
     //         item.totalAmount = item.priceAmount * item.quantity
     //     }
     // }),
-    // updateDraftSaleItemQuantity: (draftSaleItemIndex, quantity) => set((state) => {
-    //     const activeSale = state.draftSales.find(s => s.isActive)
-    //     if (activeSale) {
-    //         activeSale.items[draftSaleItemIndex].quantity = quantity
-    //     }
-    // }),
-    // updateDraftSaleItemPrice: (draftSaleItemIndex, priceAmount) => set((state) => {
-    //     const activeSale = state.draftSales.find(s => s.isActive)
-    //     if (activeSale) {
-    //         activeSale.items[draftSaleItemIndex].priceAmount = priceAmount
-    //     }
-    // }),
-    // updateDraftSaleItemTotalPrice: (draftSaleItemIndex, totalPrice) => set((state) => {
-    //     const activeSale = state.draftSales.find(s => s.isActive)
-    //     if (activeSale) {
-    //         activeSale.items[draftSaleItemIndex].totalAmount = totalPrice
-    //     }
-    // }),
-    // updateDraftSalePayment: payment => set(state => {
-    //     const activeSale = state.draftSales.find(s => s.isActive)
-    //     if (activeSale) {
-    //         activeSale.payment = { amounts: payment }
-    //     }
-    // }),
+
     // deleteDraftSaleMark: (item) => set(state => {
     //     const activeSale = state.draftSales.find(s => s.isActive)
     //     if (activeSale) {

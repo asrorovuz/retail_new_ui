@@ -110,7 +110,7 @@ const Login = () => {
                         <FiEye size={20} />
                       )}
                       onClick={togglePasswordVisibility}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-gray-700"
+                      className="absolute right-0 top-1/2 -translate-y-1/2 bg-transparent cursor-pointer text-gray-700"
                     >
                     </Button>
                   </div>
@@ -134,8 +134,8 @@ const Login = () => {
         </FormProvider>
       </div>
       <div className="flex justify-between text-[16px] text-gray-700 font-normal">
-        <a href="">+998 71 200 63 63</a>
-        <a href="">Телеграм канал</a>
+        <a href="tel:+998712006363">+998 71 200 63 63</a>
+        <a target="_blank" href="https://t.me/HippoEDI">Телеграм канал</a>
       </div>
     </div>
   );

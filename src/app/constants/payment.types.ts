@@ -34,7 +34,7 @@ const GetPaymentImageSrc = (type: number) => {
         case PaymentTypeCash:
             return "img/payments/cash.png";
         case PaymentTypeUzCard:
-            return 'img/payments/uzcard.jpg';
+            return 'img/payments/uzcard.png';
         case PaymentTypeHumo:
             return 'img/payments/humo.png'
         // case PaymentTypeBankTransfer:

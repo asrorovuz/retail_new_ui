@@ -66,6 +66,7 @@ const Button = (props: ButtonProps) => {
         iconAlignment = 'start',
         ...rest
     } = props
+
     const { controlSize, ui } = useConfig()
     const formControlSize = useForm()?.size
     const inputGroupSize = useInputGroup()?.size
@@ -77,7 +78,7 @@ const Button = (props: ButtonProps) => {
     const unclickable = disabled || loading
 
     const getButtonSize = () => {
-        let sizeClass: string;
+        let sizeClass: string
         switch (buttonSize) {
             case SIZES.LG:
                 sizeClass = classNames(
@@ -133,10 +134,10 @@ const Button = (props: ButtonProps) => {
 
     const plainColor = () => {
         const btn = {
-            bgColor: active ? `` : `dark:primary-mild dark:bg-opacity-20`,
-            textColor: ``,
-            hoverColor: active ? '' : `hover:text-primary-mild`,
-            activeColor: `dark:active:primary-mild dark:active:bg-opacity-40`,
+            bgColor: active ? `` : `bg-gray-400`,
+            textColor: `text-gray-700`,
+            hoverColor: active ? '' : `hover:text-gray-300 hover:text-gray-600`,
+            activeColor: ``,
         }
         return getBtnColor(btn)
     }
@@ -144,12 +145,12 @@ const Button = (props: ButtonProps) => {
     const defaultColor = () => {
         const btn = {
             bgColor: active
-                ? `bg-gray-100 border border-gray-300 dark:bg-gray-600 dark:border-gray-600`
-                : `bg-white border border-gray-300 dark:bg-gray-700 dark:border-gray-700`,
-            textColor: `text-gray-600 dark:text-gray-100`,
+                ? `bg-gray-100 border border-gray-300`
+                : `bg-white border border-gray-300`,
+            textColor: `text-gray-600`,
             hoverColor: active
                 ? ''
-                : `ring-primary dark:ring-white hover:border-primary dark:hover:border-white hover:ring-1 hover:text-primary dark:hover:text-white dark:hover:bg-transparent`,
+                : `hover:border-primary hover:ring-1 hover:ring-primary hover:text-primary`,
             activeColor: ``,
         }
         return getBtnColor(btn)

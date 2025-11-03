@@ -71,7 +71,8 @@ export type SelectProps<
         size?: TypeAttributes.ControlSize
         field?: any
         componentAs?: ReactSelect | CreatableSelect | AsyncSelect
-    }
+        hideDropdownIndicator?: boolean
+    } 
 
 function Select<
     Option,
@@ -87,6 +88,7 @@ function Select<
         classNames,
         field,
         invalid,
+        hideDropdownIndicator,
         ...rest
     } = props
 
@@ -116,7 +118,7 @@ function Select<
                             state.isDisabled && 'opacity-50 cursor-not-allowed',
                             (() => {
                                 const classes: string[] = [
-                                    'bg-gray-100 dark:bg-gray-700',
+                                    'bg-gray-100',
                                 ]
 
                                 const { isFocused } = state
@@ -129,7 +131,7 @@ function Select<
 
                                 if (isSelectInvalid) {
                                     classes.push(
-                                        'select-control-invalid bg-error-subtle',
+                                        'select-control-invalid',
                                     )
                                 }
 
@@ -201,7 +203,7 @@ function Select<
                 IndicatorSeparator: () => null,
                 Option: DefaultOption,
                 LoadingIndicator: DefaultLoadingIndicator,
-                DropdownIndicator: DefaultDropdownIndicator,
+                DropdownIndicator: hideDropdownIndicator ? () => null : DefaultDropdownIndicator,
                 ClearIndicator: DefaultClearIndicator,
                 ...components,
             }}

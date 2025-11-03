@@ -1,3 +1,5 @@
+import "@tanstack/react-table";
+
 export {}
 
 declare global {
@@ -21,5 +23,13 @@ declare global {
     onMessage?: (
       callback: (message: { name: string; payload: any }) => void
     ) => void
+  }
+}
+
+declare module "@tanstack/react-table" {
+  interface ColumnMeta<TData extends RowData, TValue> {
+    color?: string;
+    bodyCellClassName?: string;
+    headerClassName?: string;
   }
 }

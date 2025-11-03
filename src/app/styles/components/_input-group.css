@@ -1,71 +1,75 @@
 .input-group {
   @apply flex items-center;
-}
 
-/* Fokus holatlari */
-.input-group .input:focus,
-.input-group .input:focus-within {
-  @apply z-10;
-}
+  .input {
+    &:focus,
+    &:focus-within {
+      @apply z-10;
+    }
+  }
 
-.input-group .date-picker {
-  z-index: 11;
-}
+  .date-picker {
+    z-index: 11;
+  }
 
-.input-group .select-control-focused,
-.input-group .date-picker.picker-expanded,
-.input-group .input-suffix-end,
-.input-group .input-suffix-start {
-  @apply z-20;
-}
+  .select-control-focused,
+  .date-picker.picker-expanded,
+  .input-suffix-end,
+  .input-suffix-start {
+    @apply z-20;
+  }
 
-/* Birinchi va oxirgi elementlar uchun radius va margin */
-.input-group > .input:first-child,
-.input-group > .input-addon:first-child,
-.input-group > .button:first-child {
-  @apply ltr:rounded-r-none rtl:rounded-l-none;
-}
+  > .input,
+  > .input-addon,
+  > .button {
+    &:first-child {
+      @apply ltr:rounded-r-none rtl:rounded-l-none;
+    }
 
-.input-group > .input:last-child:not(.picker),
-.input-group > .input-addon:last-child:not(.picker),
-.input-group > .button:last-child:not(.picker) {
-  @apply ltr:rounded-l-none rtl:rounded-r-none;
-}
+    &:last-child:not(.picker) {
+      @apply ltr:rounded-l-none rtl:rounded-r-none;
+    }
 
-.input-group > .input:not(:first-child),
-.input-group > .input-addon:not(:first-child),
-.input-group > .button:not(:first-child) {
-  @apply ltr:rounded-l-none ltr:-ml-px rtl:rounded-r-none rtl:-mr-px;
-}
+    &:not(:first-child) {
+      @apply ltr:rounded-l-none ltr:-ml-px rtl:rounded-r-none rtl:-mr-px;
+    }
 
-.input-group > .input:not(:last-child),
-.input-group > .input-addon:not(:last-child),
-.input-group > .button:not(:last-child) {
-  @apply ltr:rounded-r-none rtl:rounded-l-none;
-}
+    &:not(:last-child) {
+      @apply ltr:rounded-r-none rtl:rounded-l-none;
+    }
+  }
 
-/* Ichki select control lar uchun radius */
-.input-group > *:first-child .input,
-.input-group > *:first-child .select__control {
-  @apply ltr:rounded-r-none rtl:rounded-l-none;
-}
+  > * {
+    &:first-child {
+      .input,
+      .select__control {
+        @apply ltr:rounded-r-none rtl:rounded-l-none;
+      }
+    }
 
-.input-group > *:last-child .input,
-.input-group > *:last-child .select__control {
-  @apply ltr:rounded-l-none rtl:rounded-r-none;
-}
+    &:last-child {
+      .input,
+      .select__control {
+        @apply ltr:rounded-l-none rtl:rounded-r-none;
+      }
+    }
 
-.input-group > *:not(:first-child) .input,
-.input-group > *:not(:first-child) .select__control {
-  @apply ltr:rounded-l-none ltr:-ml-px rtl:rounded-r-none rtl:-mr-px;
-}
+    &:not(:first-child) {
+      .input,
+      .select__control {
+        @apply ltr:rounded-l-none ltr:-ml-px rtl:rounded-r-none rtl:-mr-px;
+      }
+    }
 
-.input-group > *:not(:last-child) .input,
-.input-group > *:not(:last-child) .select__control {
-  @apply ltr:rounded-r-none rtl:rounded-l-none;
-}
+    &:not(:last-child) {
+      .input,
+      .select__control {
+        @apply ltr:rounded-r-none rtl:rounded-l-none;
+      }
+    }
+  }
 
-/* Button hover z-index */
-.input-group > .button:hover {
-  @apply z-10;
+  >.button {
+    @apply hover:z-10;
+  }
 }

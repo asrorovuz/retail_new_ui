@@ -1,5 +1,13 @@
 .select-control {
-  @apply flex items-center justify-between bg-white border border-gray-100 dark:border-gray-700 rounded-xl transition duration-150;
+  @apply flex 
+    items-center 
+    justify-between 
+    border 
+    border-gray-100 
+    dark:border-gray-700
+    rounded-xl
+    transition 
+    duration-150;
 }
 
 .select-control-focused {
@@ -17,7 +25,7 @@
 
 .select-input-container {
   @apply inline-grid flex-auto text-gray-800 dark:text-gray-100 font-semibold;
-  grid-area: 1 / 1 / 2 / 3;
+  grid-area: 1/1/2/3;
   grid-template-columns: 0 min-content;
 }
 
@@ -26,7 +34,7 @@
 }
 
 .select-single-value {
-  grid-area: 1 / 1 / 2 / 3;
+  grid-area: 1/1/2/3;
   @apply max-w-full overflow-hidden text-ellipsis whitespace-nowrap text-gray-800 dark:text-gray-100 font-semibold;
 }
 
@@ -39,7 +47,7 @@
 }
 
 .select-multi-value-remove {
-  @apply flex items-center ltr:pr-1 rtl:pl-2 rtl:pr-1 ltr:pl-1;
+  @apply flex items-center ltr:pr-2 ltr:pl-1 rtl:pr-1 rtl:pl-2;
 }
 
 .select-menu {
@@ -54,6 +62,8 @@
   @apply text-lg px-2 cursor-pointer;
 }
 
-.select-sm .select-indicators-container {
-  @apply px-1;
+.select-sm {
+  .select-indicators-container {
+    @apply px-1;
+  }
 }

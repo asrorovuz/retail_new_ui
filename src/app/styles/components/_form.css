@@ -1,31 +1,33 @@
 .form-item {
   @apply mb-7 relative;
-}
 
-.form-item.horizontal {
-  @apply flex flex-auto;
-}
+  &.horizontal {
+    @apply flex flex-auto;
+  }
 
-.form-item.vertical {
-  @apply flex flex-col;
-}
+  &.vertical {
+    @apply flex flex-col;
+  }
 
-.form-item.inline {
-  @apply md:inline-flex mr-3 rtl:ml-3;
+  &.inline {
+    @apply md:inline-flex mr-3 rtl:ml-3;
+  }
 }
 
 .form-label {
   @apply flex items-center font-semibold;
-}
 
-.form-label.invalid {
-  @apply text-error;
+  &.invalid {
+    @apply text-error;
+  }
 }
 
 .form-explain {
   @apply text-error absolute font-semibold;
 }
 
-.form-container.inline {
-  @apply md:flex items-center;
+.form-container {
+  &.inline {
+    @apply md:flex items-center;
+  }
 }

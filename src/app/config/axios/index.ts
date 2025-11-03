@@ -1,6 +1,8 @@
 import { TOKEN } from "@/app/constants/app.constants";
 import axios from "axios";
 
+const isProduction = import.meta.env.VITE_NODE_ENV === "production";
+
 export const AxiosBase = axios.create({
   baseURL: import.meta.env.VITE_BASE_URL,
   withCredentials: true,
@@ -74,4 +76,27 @@ export const ipcFetch = async <T>(request: {
       }
     );
   });
+};
+
+// 🔹 Avtomatik API so‘rov funksiyasi
+export const apiRequest = async <T>(request: {
+  url: string;
+  method?: "GET" | "POST" | "PUT" | "DELETE";
+  params?: Record<string, any>;
+  data?: any;
+  responseType?: "json" | "blob" | "arraybuffer" | "document" | "text";
+}): Promise<T> => {
+  if (isProduction) {
+    return await ipcFetch<T>(request);
+  }
+
+  const response = await AxiosBase.request<T>({
+    url: request.url,
+    method: request.method || "GET",
+    params: request.params,
+    data: request.data,
+    responseType: request.responseType || "json",
+  });
+
+  return response.data;
 };

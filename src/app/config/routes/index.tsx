@@ -1,5 +1,5 @@
 import { createBrowserRouter, Navigate } from "react-router";
-import { HistoryCheckPage, ProductsPage, RefundPage, SalePage } from "./RoutePath";
+import { HistoryCheckPage, PavouriteProductPage, ProductsPage, RefundPage, SalePage } from "./RoutePath";
 import { PrivateRoute, PublicRoute } from "./PrivateRoute";
 import { AuthLayout } from "@/app/layouts/AuthLayout";
 import LoginPage from "@/pages/login/ui/LoginPage";
@@ -7,6 +7,7 @@ import { InitProvider } from "@/app/providers";
 import { AppLayout } from "@/app/layouts/MainLayout";
 import { Suspense } from "react";
 import Loading from "@/shared/ui/loading";
+import { Register } from "@/features/auth";
 
 export const router = createBrowserRouter([
   {
@@ -24,6 +25,14 @@ export const router = createBrowserRouter([
             element: (
               <Suspense fallback={<Loading />}>
                 <LoginPage />
+              </Suspense>
+            )
+          },
+          { 
+            path: "/register", 
+            element: (
+              <Suspense fallback={<Loading />}>
+                <Register />
               </Suspense>
             )
           },
@@ -67,14 +76,14 @@ export const router = createBrowserRouter([
               </Suspense>
             )
           },
-          // { 
-          //   path: "/settings", 
-          //   element: (
-          //     <Suspense fallback={<Loading />}>
-          //       <SettingsPage />
-          //     </Suspense>
-          //   )
-          // },
+          { 
+            path: "/favoutite-products", 
+            element: (
+              <Suspense fallback={<Loading />}>
+                <PavouriteProductPage />
+              </Suspense>
+            )
+          },
           { 
             path: "/history-check", 
             element: (
