@@ -5,6 +5,9 @@ export const pathServices = {
     globalLogin: "/public/auth/global-login",
     register: "/public/auth/register"
   },
+  init: {
+    printPath: "/api/print/"
+  },
   settings: {
     // GET
     getSettingsPath: `/api/settings/organization/get`,
@@ -12,6 +15,9 @@ export const pathServices = {
   },
   warhouse: {
     getList: "/api/warehouse/get",
+  },
+  cashbox: {
+    getAllCashbox: "/api/cash-box/get"
   },
   products: {
     // GET
@@ -43,4 +49,7 @@ export const pathServices = {
     deleteProductPath: `/api/product/delete`,
     deleteFavoritProductPath: "/api/favorite-product/delete"
   },
+  sale: {
+    register: '/api/sale/register',
+  }
 };

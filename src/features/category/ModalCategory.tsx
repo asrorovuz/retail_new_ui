@@ -29,7 +29,7 @@ interface ModalCategoryProps {
     editId?: number | null;
   }) => void;
   setEndSelectCategory?: (value: { id: number; name: string }) => void;
-  allCategory: CategoryResponse[];
+  allCategory: CategoryResponse[] | [];
 }
 
 const ModalCategory = ({

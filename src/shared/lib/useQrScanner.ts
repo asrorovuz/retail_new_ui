@@ -16,7 +16,6 @@ export const useQrScanner = ({ elementId, fps = 10, qrbox = 200 }: UseQrScannerO
       { facingMode: "environment" },
       { fps, qrbox },
       (decodedText) => {
-        console.log("✅ QR scanned:", decodedText);
         eventBus.dispatch("QR_SCANNED", decodedText);
       },
       (errorMessage) => {

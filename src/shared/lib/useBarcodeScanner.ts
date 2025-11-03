@@ -22,7 +22,6 @@ export const useBarcodeScanner = () => {
       timeout.current = setTimeout(() => {
         const scanned = buffer.current.trim();
         if (scanned.length > 3) {
-          console.log("✅ Barcode scanned:", scanned);
           eventBus.dispatch("BARCODE_SCANNED", scanned);
         }
         buffer.current = "";

@@ -3,14 +3,20 @@ import { useSettingsStore } from "../store/useSettingsStore";
 import { useSettingsApi, useWarehouseApi } from "@/entities/init/repository";
 import { transformProductColumns } from "@/shared/lib/transformation-table";
 import i18n from "../config/i18n";
-import { useProductTableSettingsApi } from "@/entities/products/repository";
+import {
+  useCurrancyApi,
+  useProductTableSettingsApi,
+} from "@/entities/products/repository";
+import { useCurrencyStore } from "../store/useCurrencyStore";
 
 export const InitProvider = ({ children }: { children: ReactNode }) => {
   const { setSettings, setTableSettings, setWareHouseId } = useSettingsStore();
+  const { setNationalCurrency, setCurrencies } = useCurrencyStore();
 
   const { data: settings } = useSettingsApi();
   const { data: settingsTable } = useProductTableSettingsApi();
   const { data: wareHouseData } = useWarehouseApi();
+  const { data: currency } = useCurrancyApi();
 
   // 🏬 Warehouse ID ni o‘rnatish
   useEffect(() => {
@@ -37,6 +43,18 @@ export const InitProvider = ({ children }: { children: ReactNode }) => {
       setTableSettings(result);
     }
   }, [settingsTable, setTableSettings]);
+
+  // Valyuta va milliy valyutani saqlash
+  useEffect(() => {
+    if (currency && currency.length > 0) {
+      const nationalCurrency = currency.find((item) => item.is_national);
+      setCurrencies(currency);
+
+      if (nationalCurrency) {
+        setNationalCurrency(nationalCurrency);
+      }
+    }
+  }, [currency, setCurrencies, setNationalCurrency]);
 
   return <>{children}</>;
 };

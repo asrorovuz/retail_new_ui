@@ -74,10 +74,8 @@ export const convertImageObjectsToBase64 = async (images: ImageObj[], imgUrl: st
             // Yangi rasm yuklangan bo‘lsa (File bor) → Case 1 yoki Case 3
             if (img.file instanceof File) {
                 const base64 = await readFileAsBase64(img.file)
-                console.log("img", img);
                 // Agar img.id mavjud bo‘lsa → Case 1 (eski rasmni update qilamiz)
                 if (img?.id) {
-                    console.log("tessssssss");
                     
                     return {
                         // id: img.img ? null : img.id,

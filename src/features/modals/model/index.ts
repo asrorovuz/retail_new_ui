@@ -94,7 +94,7 @@ interface PackageType {
 // 🏷️ Asosiy mahsulot tipi
 export interface ProductDefaultValues {
   id?: number | null;
-  name: string;
+  name?: string;
   state?: number;
   purchase_price: {
     amount: number | null;

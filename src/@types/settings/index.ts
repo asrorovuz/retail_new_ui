@@ -1,3 +1,5 @@
+import type { Shift } from "../shift/schema";
+
 export type SettingsType = {
   date_format: string;
   lang: string;
@@ -24,12 +26,14 @@ export type SettingsStoreInitialState = {
   settings: SettingsType | null;
   tableSettings: TableColumnSetting[];
   wareHouseId: null | number;
+  activeShift: Shift | null;
 };
 
 export type SettingsStoreActions = {
   setSettings: (payload: SettingsType | null) => void;
   setTableSettings: (payload: TableColumnSetting[]) => void;
   setWareHouseId: (payload: number) => void;
+  setActiveShift: (payload: Shift | null) => void;
 };
 
 export type WareHouseDataType = {

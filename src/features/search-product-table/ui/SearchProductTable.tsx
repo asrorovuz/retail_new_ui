@@ -4,7 +4,7 @@ import { useDraftSaleStore } from "@/app/store/useSaleDraftStore";
 import classNames from "@/shared/lib/classNames";
 import { highlightText } from "@/shared/lib/hightLightText";
 import FormattedNumber from "@/shared/ui/kit-pro/numeric-format/NumericFormat";
-import type { PriceType } from "@/widgets/header/ui/favourite-card/FavouriteCard";
+import type { PriceType } from "@/widgets/ui/favourite-card/FavouriteCard";
 
 type PropsType = {
   data: Product[] | [];

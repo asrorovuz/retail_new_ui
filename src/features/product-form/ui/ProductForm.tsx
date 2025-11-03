@@ -112,11 +112,11 @@ const ProductForm: FC<ProductFormType> = ({
         ],
       };
 
-      try {
-        createRegister(reminderData);
-      } catch (error) {
-        console.log(error, "error remender");
-      }
+      createRegister(reminderData, {
+        onError(error){
+          console.log(error);
+        }
+      });
     }
   };
 

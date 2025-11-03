@@ -15,10 +15,12 @@ const Cashbox: FC<CashboxPropsType> = ({
     <div className="p-2 bg-gray-50 rounded-2xl flex items-center justify-between gap-x-2 mb-3">
       <Button
         disabled={!activeIndex}
+        className="bg-white disabled:bg-white"
+        variant="plain"
+        icon={<BsChevronLeft />}
+        size="sm"
         onClick={() => activateDraft(activeIndex - 1)}
-      >
-        <BsChevronLeft />
-      </Button>
+      />
 
       <Tabs
         drafts={drafts}
@@ -27,6 +29,7 @@ const Cashbox: FC<CashboxPropsType> = ({
       />
 
       <Button
+        size="sm"
         disabled={drafts.length === activeIndex + 1}
         onClick={() => activateDraft(activeIndex + 1)}
       >

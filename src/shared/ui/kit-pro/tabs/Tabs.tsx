@@ -80,12 +80,13 @@ export default function Tabs({ drafts, activateDraft, addNewDraft }: TabsType) {
         {drafts?.map((draft, index) => (
           <Button
             key={index}
+            size="sm"
             ref={(el) => {
               btnRefs.current[index] = el;
             }}
             variant="plain"
             onClick={() => activateDraft(index)}
-            className={`p-2 px-5 text-sm font-medium rounded-lg transition-colors ${
+            className={`px-5 text-sm font-medium rounded-lg transition-colors ${
               draft?.isActive
                 ? "bg-white text-primary"
                 : "text-gray-500 bg-transparent"
@@ -99,6 +100,7 @@ export default function Tabs({ drafts, activateDraft, addNewDraft }: TabsType) {
       {/* Add button */}
       <Button
         onClick={addDrafts}
+        size="sm"
         iconAlignment="end"
         icon={<FaPlus className="text-sm" />}
         className="bg-white text-sm font-medium rounded-lg"

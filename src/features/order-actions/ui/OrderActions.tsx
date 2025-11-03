@@ -1,0 +1,291 @@
+import { Button } from "@/shared/ui/kit";
+import { MdOutlineDiscount } from "react-icons/md";
+import { CiSquareMinus } from "react-icons/ci";
+import type {
+  DraftSalePaymentAmountSchema,
+  DraftSaleSchema,
+  RegisterSaleModel,
+  SaleItemModel,
+} from "@/@types/sale";
+import type { DraftRefundSchema } from "@/@types/refund";
+import classNames from "@/shared/lib/classNames";
+import { useMemo, useState } from "react";
+import { toast } from "react-toastify";
+import { useSettingsStore } from "@/app/store/useSettingsStore";
+import { CommonDeleteDialog, PaymentModal, PrinterModal } from "@/widgets";
+import { useCurrencyStore } from "@/app/store/useCurrencyStore";
+import type { PaymentAmount } from "@/@types/common";
+import { useCashboxApi } from "@/entities/init/repository";
+import { useRegisterSellApi } from "@/entities/sale/repository";
+import { showErrorMessage, showSuccessMessage } from "@/shared/lib/showMessage";
+import { messages } from "@/app/constants/message.request";
+
+type OrderActionType = {
+  type: "sale" | "refund";
+  draft: DraftSaleSchema[] & DraftRefundSchema[];
+  activeDraft: DraftSaleSchema & DraftRefundSchema;
+  activeSelectPaymetype: number;
+  deleteDraft: (ind: number) => void;
+  setActivePaymentSelectType: (val: number) => void;
+  complateActiveDraft: () => void;
+};
+
+const OrderActions = ({
+  type,
+  draft,
+  activeDraft,
+  activeSelectPaymetype,
+  deleteDraft,
+  setActivePaymentSelectType,
+  complateActiveDraft,
+}: OrderActionType) => {
+  const [ipOpenPayment, setIsOpenPayment] = useState(false);
+  const [saleId, setSaleId] = useState<number | null>(null);
+  const [fiscalizedModal, setFiscalizedModal] = useState(false);
+  const [printSelect, setPrintSelect] = useState<boolean>(false);
+  const { settings, activeShift } = useSettingsStore();
+
+  const nationalCurrency = useCurrencyStore((store) => store.nationalCurrency);
+  const warehouseId = useSettingsStore((s) => s.wareHouseId);
+
+  const { data: cashboxData } = useCashboxApi();
+  const { mutate: registerSaleMutate } = useRegisterSellApi();
+
+  const onDeleteActivedraft = () => {
+    const findIndex = draft?.findIndex((item) => item?.isActive);
+    deleteDraft(findIndex);
+  };
+
+  const netPrice = useMemo<number>(() => {
+    let totalAmount = activeDraft!.items.reduce(
+      (acc, item) => acc + item.totalAmount,
+      0
+    );
+    if (activeDraft!.discountAmount) {
+      totalAmount -= activeDraft!.discountAmount;
+    }
+    return totalAmount;
+  }, [activeDraft]);
+
+  const totalPaymentAmount = useMemo<number>(() => {
+    return (
+      (type === "sale"
+        ? activeDraft?.payment
+        : activeDraft?.payout
+      )?.amounts.reduce(
+        (acc: number, payment: DraftSalePaymentAmountSchema) =>
+          acc + payment?.amount,
+        0
+      ) ?? 0
+    );
+  }, [(type === "sale" ? activeDraft?.payment : activeDraft?.payout)?.amounts]);
+
+  const toDebtAmount = useMemo<number>(() => {
+    const debtAmount = netPrice - totalPaymentAmount;
+    return debtAmount > 0 ? debtAmount : 0;
+  }, [netPrice, totalPaymentAmount]);
+
+  const totalMoumentPrice = useMemo(() => {
+    const sum =
+      activeDraft?.items?.reduce(
+        (sum, current) =>
+          sum + Number(current?.priceAmount * current?.quantity || 0),
+        0
+      ) || 0;
+
+    return sum - (activeDraft?.discountAmount || 0);
+  }, [activeDraft, toDebtAmount]);
+
+  const handleCancelPrint = () => {
+    setPrintSelect(false);
+    if (settings?.fiscalization_enabled) setFiscalizedModal(true);
+    else setSaleId(null);
+  };
+
+  const cashBackAmount = useMemo<number>(() => {
+    const backAmount = totalPaymentAmount - netPrice;
+    return backAmount > 0 ? backAmount : 0;
+  }, [netPrice, totalPaymentAmount]);
+
+  function onSubmitPaymentHandler(
+    paymentAmounts: PaymentAmount[],
+    callback: (success: boolean) => void
+  ) {
+    // init payload
+    const payload: RegisterSaleModel = {
+      is_approved: true,
+      exact_discount: [],
+      items: [],
+      cash_box_id: cashboxData?.length ? cashboxData[0].id : null,
+    };
+
+    // prepare payload
+    {
+      // set exact discount
+
+      if (activeDraft?.discountAmount) {
+        payload.exact_discount.push({
+          amount: activeDraft.discountAmount,
+          currency_code: nationalCurrency?.code, // todo set national currency id
+        });
+      }
+
+      // append sale item
+      const draftSaleItems = activeDraft?.items ?? [];
+      for (let i = 0; i < draftSaleItems.length; i++) {
+        const draftSaleItem = draftSaleItems[i];
+
+        const saleItem: SaleItemModel = {
+          product_package_id: draftSaleItem.productPackageId,
+          warehouse_id: warehouseId ?? null, // todo set default warehouse id
+          quantity: draftSaleItem.quantity,
+          price: {
+            amount: draftSaleItem.priceAmount,
+            currency_code: nationalCurrency?.code, // todo set national currency id
+          },
+          price_type_id: draftSaleItem.priceTypeId, // todo save price type id in store and set
+          marks: draftSaleItem.marks,
+        };
+
+        payload.items.push(saleItem);
+      }
+      // set payment
+      if (paymentAmounts) {
+        payload.payment = {
+          debt_states: [],
+          cash_box_states: [],
+        };
+
+        for (let i = 0; i < paymentAmounts.length; i++) {
+          const salePayment = paymentAmounts[i];
+          if (salePayment.amount > 0) {
+            // append debt state
+            payload.payment.debt_states.push({
+              amount: salePayment.amount,
+              currency_code: nationalCurrency?.code,
+            });
+
+            // append cash-box state
+            payload.payment.cash_box_states.push({
+              amount: salePayment.amount,
+              currency_code: nationalCurrency?.code,
+              type: salePayment.paymentType,
+            });
+          }
+        }
+      }
+    }
+
+    // register sale
+    registerSaleMutate(payload, {
+      onSuccess: (data: any) => {
+        if (data?.sale?.id) {
+          setSaleId(data?.sale?.id);
+          if (activeDraft?.id && !activeDraft.is_fiscalized)
+            setFiscalizedModal(true);
+          else if (!settings?.auto_print_receipt && settings?.printer_name)
+            setPrintSelect(true);
+          else handleCancelPrint();
+          // setPrintSelect(true);
+        }
+
+        callback(true);
+        complateActiveDraft();
+        showSuccessMessage(
+          messages.uz.SUCCESS_MESSAGE,
+          messages.ru.SUCCESS_MESSAGE
+        );
+      },
+      onError: (error) => {
+        showErrorMessage(error);
+        callback(true);
+      },
+    });
+  }
+
+  const calcPricePayment = () => {
+    const amounts =
+      (type === "sale" ? activeDraft?.payment : activeDraft?.payout)?.amounts ||
+      [];
+
+    const total = amounts.reduce(
+      (sum, current) => sum + Number(current?.amount || 0),
+      0
+    );
+
+    const debt = netPrice - total;
+
+    if (activeShift) {
+      toast.error("Смена не открыта.");
+      return;
+    }
+    if ((debt >= 1 && totalMoumentPrice) || settings?.shift?.shift_enabled) {
+      
+      toast.error("Продажа в долг невозможна.");
+
+      return;
+    }
+
+    if (activeDraft?.items?.length) {
+      setIsOpenPayment(true);
+    }
+  };
+
+  const onSubmit = () => {
+    calcPricePayment();
+  };
+
+  return (
+    <div className="p-1 bg-gray-50 rounded-2xl flex gap-x-2">
+      <CommonDeleteDialog
+        description="Удалить корзину? Действие нельзя будет отменить"
+        onDelete={onDeleteActivedraft}
+      >
+        <Button
+          variant="plain"
+          size="sm"
+          icon={<CiSquareMinus />}
+          className="!text-red-400 bg-white w-full"
+        >
+          Oчистка
+        </Button>
+      </CommonDeleteDialog>
+      <Button
+        variant="plain"
+        size="sm"
+        onClick={() => setActivePaymentSelectType(0)}
+        icon={<MdOutlineDiscount />}
+        className={classNames(
+          "bg-white w-full",
+          activeSelectPaymetype === 0 && "text-primary"
+        )}
+      >
+        Скидка
+      </Button>
+      <Button size="sm" onClick={onSubmit} variant="solid" className="w-full">
+        Оформить
+      </Button>
+
+      <PaymentModal
+        type={type}
+        cashBackAmount={cashBackAmount}
+        totalPaymentAmount={totalPaymentAmount}
+        onSubmitPaymentHandler={onSubmitPaymentHandler}
+        activeDraft={activeDraft}
+        isOpen={ipOpenPayment}
+        setIsOpenPayment={setIsOpenPayment}
+      />
+
+      <PrinterModal
+        type={type}
+        isOpen={!!saleId && printSelect}
+        size={settings?.receipt_size ?? "80"}
+        saleId={saleId}
+        defaultName={settings?.printer_name ?? null}
+        handleCancelPrint={handleCancelPrint}
+      />
+    </div>
+  );
+};
+
+export default OrderActions;

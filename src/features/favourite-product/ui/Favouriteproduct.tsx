@@ -3,8 +3,8 @@ import { useDraftSaleStore } from "@/app/store/useSaleDraftStore";
 import { useAllFavoritProductApi } from "@/entities/products/repository";
 import Empty from "@/shared/ui/kit-pro/empty/Empty";
 import Loading from "@/shared/ui/loading";
-import { FavouriteCard } from "@/widgets/header";
-import type { PriceType } from "@/widgets/header/ui/favourite-card/FavouriteCard";
+import { FavouriteCard } from "@/widgets";
+import type { PriceType } from "@/widgets/ui/favourite-card/FavouriteCard";
 
 type LikedType = {
   type?: "sale" | "refund";
@@ -35,8 +35,7 @@ const FavouriteProduct = ({
   const { active, update } = getActiveDraft();
 
   const onChange = (item: any) => {
-    console.log(item, "item");
-    
+
     const operationItem = active?.items?.find(
       (p) =>
         p.productId === item.product.id &&
@@ -67,24 +66,28 @@ const FavouriteProduct = ({
   };
 
   return (
-    <div className="h-[180px] overflow-y-auto rounded-2xl">
-      <div className=" bg-gray-50 p-2 grid grid-cols-4 gap-2">
-        {isPending && <Loading />}
+    <div className="h-[27vh] rounded-2xl overflow-hidden">
+      <div className="h-[27vh] overflow-y-auto">
+        <div className="bg-gray-50 p-2 grid grid-cols-4 gap-2">
+          {isPending && <Loading />}
 
-        {!isPending && favoriteProducts?.length ? (
-          favoriteProducts?.map((item) => {
-            return (
-              <FavouriteCard
-                name={item?.product?.name}
-                onItemChange={() => onChange(item)}
-                img={item?.product_package?.images ?? []}
-                prices={item?.product_package?.prices}
-              />
-            );
-          })
-        ) : (
-          <Empty />
-        )}
+          {!isPending && favoriteProducts?.length ? (
+            favoriteProducts?.map((item) => {
+              return (
+                <FavouriteCard
+                  name={item?.product?.name}
+                  onItemChange={() => onChange(item)}
+                  img={item?.product_package?.images ?? []}
+                  prices={item?.product_package?.prices}
+                />
+              );
+            })
+          ) : (
+            <div className="h-[22vh] w-full flex items-center justify-center col-span-4">
+              <Empty textSize="text-lg" size={60}/>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

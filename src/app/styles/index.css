@@ -24,3 +24,26 @@
   -ms-overflow-style: none; /* IE, Edge */
   scrollbar-width: none; /* Firefox */
 }
+
+/* Har bir scroll uchun */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+/* Scroll fon qismi */
+::-webkit-scrollbar-track {
+  background: #f0f0f0;
+  border-radius: 8px; /* bu joy yumaloqlik beradi */
+}
+
+/* Scroll harakatlanuvchi “thumb” qismi */
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 8px; /* bu joyda ham yumaloqlik */
+}
+
+/* Hover holatida thumb rangi o‘zgaradi */
+::-webkit-scrollbar-thumb:hover {
+  background: #a1a1a1;
+}

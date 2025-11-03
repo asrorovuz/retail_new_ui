@@ -10,198 +10,195 @@ import type {
   ProductResponse,
   RegisterType,
 } from "@/@types/products";
-import type { TableColumnSetting } from "@/@types/settings";
-import { AxiosBase } from "@/app/config/axios";
-import { pathServices } from "@/entities/path";
 import type { FavouriteProduct } from "@/features/modals/model";
 import type { ProductFormType } from "@/features/product-form/model";
-import type { AxiosResponse } from "axios";
+import { apiRequest } from "@/app/config/axios";
+import { pathServices } from "@/entities/path";
+import type { TableColumnSetting } from "@/@types/settings";
+
+/* ------------------------------ GET APIs ------------------------------ */
 
 export const getAllProductApi = async (
   size?: number,
   index?: number,
   search?: string
-): Promise<Product[] | []> => {
-  const skip = index && size ? (index - 1) * size : "";
+): Promise<Product[]> => {
+  const skip = index && size ? (index - 1) * size : undefined;
 
-  const { data } = await AxiosBase.get(
-    pathServices.products.getAllProductsPath,
-    {
-      params: {
-        limit: size,
-        skip: skip,
-        query: search,
-      },
-    }
-  );
-
-  return data;
+  return await apiRequest<Product[]>({
+    url: pathServices.products.getAllProductsPath,
+    method: "GET",
+    params: {
+      limit: size,
+      skip,
+      query: search,
+    },
+  });
 };
 
-export const getAllFavoritProductApi = async (): Promise<FavouriteProductType[] | []> => {
-  const { data } = await AxiosBase.get(pathServices.products.getFavoritProduct);
-
-  return data;
+export const getAllFavoritProductApi = async (): Promise<FavouriteProductType[]> => {
+  return await apiRequest<FavouriteProductType[]>({
+    url: pathServices.products.getFavoritProduct,
+    method: "GET",
+  });
 };
 
-export const getAllProductCountApi = async (
-  search?: string
-): Promise<number> => {
-  const { data } = await AxiosBase.get(
-    pathServices.products.getAllProductsCountPath,
-    {
-      params: {
-        query: search,
-      },
-    }
-  );
-  return data;
+export const getAllProductCountApi = async (search?: string): Promise<number> => {
+  return await apiRequest<number>({
+    url: pathServices.products.getAllProductsCountPath,
+    method: "GET",
+    params: { query: search },
+  });
 };
 
 export const getCurrencyApi = async (): Promise<Currency[]> => {
-  const { data } = await AxiosBase.get(pathServices.products.getCurrencyPath);
-  return data;
+  return await apiRequest<Currency[]>({
+    url: pathServices.products.getCurrencyPath,
+    method: "GET",
+  });
 };
 
 export const getTableSettingsApi = async (): Promise<any> => {
-  const { data } = await AxiosBase.get(
-    pathServices.products.getTableSettingsPath
-  );
-  return data;
+  return await apiRequest<any>({
+    url: pathServices.products.getTableSettingsPath,
+    method: "GET",
+  });
 };
 
 export const getPriceTypeApi = async (): Promise<any> => {
-  const { data } = await AxiosBase.get(pathServices.products.getPriceTypesList);
-  return data;
+  return await apiRequest<any>({
+    url: pathServices.products.getPriceTypesList,
+    method: "GET",
+  });
 };
 
-export const getCategoryApi = async (): Promise<any> => {
-  const { data } = await AxiosBase.get(pathServices.products.getCategory);
-  return data;
+export const getCategoryApi = async (): Promise<CategoryResponse[]> => {
+  return await apiRequest<CategoryResponse[]>({
+    url: pathServices.products.getCategory,
+    method: "GET",
+  });
 };
 
 export const getCatalogSearchApi = async (query: string): Promise<any> => {
-  const { data } = await AxiosBase.get(pathServices.products.catalogSearch, {
-    params: {
-      query: query,
-    },
+  return await apiRequest<any>({
+    url: pathServices.products.catalogSearch,
+    method: "GET",
+    params: { query },
   });
-  return data;
 };
 
-export const getProductByIdApi = async (
-  productId: number | null
-): Promise<any> => {
-  const { data } = await AxiosBase.get(
-    `${pathServices.products.getByIdPath}${productId}`
-  );
-  return data;
+export const getProductByIdApi = async (productId: number | null): Promise<any> => {
+  return await apiRequest<ProductResponse>({
+    url: `${pathServices.products.getByIdPath}${productId}`,
+    method: "GET",
+  });
 };
 
-export const getProductBarcodeApi = async (
-  barcode: string | null
-): Promise<any> => {
-  const { data } = await AxiosBase.get(
-    `${pathServices.products.findByBarcode}${barcode}`
-  );
-  return data;
+export const getProductBarcodeApi = async (barcode: string | null): Promise<any> => {
+  return await apiRequest<ProductResponse>({
+    url: `${pathServices.products.findByBarcode}${barcode}`,
+    method: "GET",
+  });
 };
 
-//UPDATE
+/* ------------------------------ UPDATE APIs ------------------------------ */
+
 export const updateTableSettingsApi = async (
   payload: ProductColumnVisibility
 ): Promise<TableColumnSetting> => {
-  const { data }: AxiosResponse<TableColumnSetting> = await AxiosBase.post(
-    pathServices.products.updateTableSettingsPath,
-    payload
-  );
-  return data;
+  return await apiRequest<TableColumnSetting>({
+    url: pathServices.products.updateTableSettingsPath,
+    method: "POST",
+    data: payload,
+  });
 };
 
 export const updateAlertOnApi = async (
   payload: AlertOntype
 ): Promise<AlertOntypeResponse> => {
-  const { data }: AxiosResponse<AlertOntypeResponse> = await AxiosBase.post(
-    pathServices.products.updateAlertOn,
-    payload
-  );
-  return data;
+  return await apiRequest<AlertOntypeResponse>({
+    url: pathServices.products.updateAlertOn,
+    method: "POST",
+    data: payload,
+  });
 };
 
 export const updateProductApi = async (
-  productId: number | null,
+  productId: number,
   payload: ProductFormType
 ): Promise<ProductResponse> => {
-  const { data }: AxiosResponse<ProductResponse> = await AxiosBase.post(
-    `${pathServices.products.updateProduct}${productId}`,
-    payload
-  );
-  return data;
+  return await apiRequest<ProductResponse>({
+    url: `${pathServices.products.updateProduct}${productId}`,
+    method: "POST",
+    data: payload,
+  });
 };
 
 export const updateCategoryApi = async (
   id: number,
   payload: CategoryTypeModal
 ): Promise<CategoryResponse> => {
-  const { data }: AxiosResponse<CategoryResponse> = await AxiosBase.post(
-    `${pathServices.products.updateCategory}${id}`,
-    payload
-  );
-  return data;
+  return await apiRequest<CategoryResponse>({
+    url: `${pathServices.products.updateCategory}${id}`,
+    method: "POST",
+    data: payload,
+  });
 };
 
-// POST
+/* ------------------------------ CREATE APIs ------------------------------ */
+
 export const createFavouriteProductApi = async (
   payload: FavouriteProduct
 ): Promise<FavouriteProduct> => {
-  const { data }: AxiosResponse<FavouriteProduct> = await AxiosBase.post(
-    pathServices.products.createFavouriteProductPath,
-    payload
-  );
-  return data;
+  return await apiRequest<FavouriteProduct>({
+    url: pathServices.products.createFavouriteProductPath,
+    method: "POST",
+    data: payload,
+  });
 };
 
 export const createRegisterApi = async (
   payload: RegisterType
 ): Promise<any> => {
-  const { data }: AxiosResponse<any> = await AxiosBase.post(
-    pathServices.products.createRegister,
-    payload
-  );
-  return data;
+  return await apiRequest<any>({
+    url: pathServices.products.createRegister,
+    method: "POST",
+    data: payload,
+  });
 };
 
 export const createCategoryApi = async (
   payload: CategoryTypeModal
 ): Promise<CategoryResponse> => {
-  const { data }: AxiosResponse<CategoryResponse> = await AxiosBase.post(
-    pathServices.products.addCategory,
-    payload
-  );
-  return data;
+  return await apiRequest<CategoryResponse>({
+    url: pathServices.products.addCategory,
+    method: "POST",
+    data: payload,
+  });
 };
 
 export const createProductApi = async (
   payload: ProductFormType
 ): Promise<ProductResponse> => {
-  const { data }: AxiosResponse<ProductResponse> = await AxiosBase.post(
-    pathServices.products.createProductPath,
-    payload
-  );
-  return data;
+  return await apiRequest<ProductResponse>({
+    url: pathServices.products.createProductPath,
+    method: "POST",
+    data: payload,
+  });
 };
 
-// DELETE
-export const deleteProductApi = async (id: number) => {
-  const response = await AxiosBase.post(
-    `${pathServices.products.deleteProductPath}/${id}`
-  );
-  return response;
+/* ------------------------------ DELETE APIs ------------------------------ */
+
+export const deleteProductApi = async (id: number): Promise<any> => {
+  return await apiRequest<any>({
+    url: `${pathServices.products.deleteProductPath}/${id}`,
+    method: "POST",
+  });
 };
 
-export const deleteFavoritProductApi = async (id: number) => {
-  const response = await AxiosBase.post(
-    `${pathServices.products.deleteFavoritProductPath}/${id}`
-  );
-  return response;
+export const deleteFavoritProductApi = async (id: number): Promise<any> => {
+  return await apiRequest<any>({
+    url: `${pathServices.products.deleteFavoritProductPath}/${id}`,
+    method: "POST",
+  });
 };

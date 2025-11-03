@@ -67,7 +67,8 @@ export const useFindBarcode = (barcode: string | null) => {
   return useQuery({
     queryKey: ["find-barcode", barcode],
     queryFn: () => getProductBarcodeApi(barcode),
-    // enabled: !!barcode,
+    enabled: !!barcode,
+    retry: false,
   });
 };
 

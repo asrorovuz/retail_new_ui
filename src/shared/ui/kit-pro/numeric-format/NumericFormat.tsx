@@ -2,7 +2,7 @@ import React from "react";
 
 interface FormattedNumberProps {
   value: number | string;
-  scale?: number; // kasr aniqligi (default: 2)
+  scale?: number; // verguldan keyingi raqamlar soni (masalan, 2 => .12)
   showGrouping?: boolean; // 1 000 vs 1000
 }
 
@@ -13,19 +13,28 @@ const FormattedNumber: React.FC<FormattedNumberProps> = ({
 }) => {
   const num = Number(value);
 
-  // Agar son emas bo‘lsa, bo‘sh chiqadi
+  // NaN bo‘lsa, hech narsa chiqmasin
   if (isNaN(num)) return <span>-</span>;
 
-  // Butun va kasr qismini ajratamiz
-  const [integerPart, decimalPart = ""] = num.toFixed(scale).split(".");
+  // Sonni stringga aylantiramiz
+  const strValue = String(value);
+  const [integerPart, decimalPart] = strValue.split(/[.,]/); // . yoki , bo‘lishi mumkin
 
   // Guruhlash (masalan, 10000 -> 10 000)
   const grouped = showGrouping
     ? integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, " ")
     : integerPart;
 
-  // Yakuniy formatlangan qiymat
-  const formatted = scale > 0 ? `${grouped}.${decimalPart}` : grouped;
+  // Agar kasr bo‘lsa, scale bo‘yicha kesib tashlaymiz
+  const formattedDecimal =
+    decimalPart && scale > 0
+      ? decimalPart.slice(0, scale).replace(/0+$/, "") // oxirgi nolni olib tashlash
+      : "";
+
+  // Yakuniy format
+  const formatted = formattedDecimal
+    ? `${grouped}.${formattedDecimal}`
+    : grouped;
 
   return <span>{formatted}</span>;
 };

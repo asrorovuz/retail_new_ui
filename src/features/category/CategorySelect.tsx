@@ -158,7 +158,7 @@ const CategorySelect = ({
                   handleShowAdd({ ...args, type: "edit" })
                 }
                 setEndSelectCategory={(val) => field.onChange(val)}
-                allCategory={allCategory}
+                allCategory={allCategory ?? []}
               />
             ))}
           </FormItem>

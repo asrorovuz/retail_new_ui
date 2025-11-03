@@ -27,7 +27,7 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
   const error: ErrorResponse = err?.response?.data ||
     err?.data ||
     err || { message: "Unknown error" };
-  console.log(error, "errrrrr55");
+  const statusCode = err?.code || err?.status_code;
 
   // 🔹 err.data yoki err.data.message bo‘lishi mumkin
   // if (typeof err === "object" && err !== null) {
@@ -47,10 +47,19 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
   // }
 
   // if(status_code >= 500){
-  //   console.log(status_code);
 
   //   return
   // }
+
+  if (typeof error === "string" && statusCode === 404) {
+    return toast.error(
+      lang === "ru" ? "Такая страница не найдена" : "Bunday sahifa mavjud emas",
+      {
+        position: "bottom-left",
+        autoClose: 3000,
+      }
+    );
+  }
 
   // 2️⃣ - API dan kelgan javob
   if (typeof error === "object" && error !== null) {
@@ -59,6 +68,16 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
         lang === "ru"
           ? "Неверный логин или пароль"
           : "Login yoki parol noto‘g‘ri",
+        {
+          position: "bottom-left",
+          autoClose: 3000,
+        }
+      );
+    }
+
+    if (error.currency_not_found) {
+      return toast.error(
+        lang === "ru" ? "Валюта не найдена" : "Valyuta topilmadi",
         {
           position: "bottom-left",
           autoClose: 3000,

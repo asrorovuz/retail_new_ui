@@ -180,39 +180,47 @@ export const useDraftSaleStore = create<
           activeSale.discountAmount = discountAmount;
         }
       }),
-    // completeActiveDraftSale: () => set((state) => {
-    //     const activeSaleIndex = state.draftSales.findIndex(s => s.isActive)
+    updateDraftSalePayment: (payment) =>
+      set((state) => {
+        const activeSale = state.draftSales.find((s) => s.isActive);
+        if (activeSale) {
+          activeSale.payment = { amounts: payment };
+        }
+      }),
+    completeActiveDraftSale: () =>
+      set((state) => {
+        const activeSaleIndex = state.draftSales.findIndex((s) => s.isActive);
 
-    //     if (state.draftSales.length > 1) {
-    //         state.draftSales.splice(activeSaleIndex, 1)
+        if (state.draftSales.length > 1) {
+          state.draftSales.splice(activeSaleIndex, 1);
 
-    //         const previousSaleIndex = state.draftSales.length - 1
-    //         state.draftSales[previousSaleIndex].isActive = true
-    //     } else {
-    //         const activeSale = state.draftSales.find(s => s.isActive)
-    //         if (activeSale) {
-    //             if (activeSale.id) {
-    //                 const newDraftSale: DraftSaleSchema = {
-    //                     items: [],
-    //                     isActive: true,
-    //                     discountAmount: 0,
-    //                     payment: {
-    //                         amounts: PaymentTypes.map(paymentType => {
-    //                             return {amount: 0, paymentType: paymentType.type}
-    //                         })
-    //                     }
-    //                 }
-    //                 state.draftSales = [newDraftSale]
-    //             } else {
-    //                 activeSale.items = []
-    //                 activeSale.discountAmount = 0
-    //                 if (activeSale.payment) {
-    //                     activeSale.payment.amounts.forEach(a => a.amount = 0)
-    //                 }
-    //             }
-    //         }
-    //     }
-    // }),
+          const previousSaleIndex = state.draftSales.length - 1;
+          state.draftSales[previousSaleIndex].isActive = true;
+        } else {
+          const activeSale = state.draftSales.find((s) => s.isActive);
+          if (activeSale) {
+            if (activeSale.id) {
+              const newDraftSale: DraftSaleSchema = {
+                items: [],
+                isActive: true,
+                discountAmount: 0,
+                payment: {
+                  amounts: PaymentTypes.map((paymentType) => {
+                    return { amount: 0, paymentType: paymentType.type };
+                  }),
+                },
+              };
+              state.draftSales = [newDraftSale];
+            } else {
+              activeSale.items = [];
+              activeSale.discountAmount = 0;
+              if (activeSale.payment) {
+                activeSale.payment.amounts.forEach((a) => (a.amount = 0));
+              }
+            }
+          }
+        }
+      }),
 
     // addDraftSalePaymentAmount: (payload: DraftSalePaymentAmountSchema) => set((state) => {
 
@@ -290,12 +298,6 @@ export const useDraftSaleStore = create<
     //     }
     // }),
 
-    // updateDraftSalePayment: payment => set(state => {
-    //     const activeSale = state.draftSales.find(s => s.isActive)
-    //     if (activeSale) {
-    //         activeSale.payment = { amounts: payment }
-    //     }
-    // }),
     // deleteDraftSaleMark: (item) => set(state => {
     //     const activeSale = state.draftSales.find(s => s.isActive)
     //     if (activeSale) {

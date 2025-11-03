@@ -85,7 +85,7 @@ const Header = () => {
 
       <Button
         onClick={() => setShowAlert(true)}
-        className="bg-red-100 text-red-500 text-base font-semibold active:bg-red-200 transition duration-300"
+        className="bg-red-100 text-red-500 text-base font-semibold active:bg-red-200 active:text-red-500 hover:text-red-500 transition duration-300"
         variant="plain"
         icon={<LogoutSvg height={20} width={20} />}
       >

@@ -63,7 +63,6 @@ const PrintCheckProduct = ({ item, type, onClosePrintModal }: PropsType) => {
   const [itemNameFontSize, setItemNameFontSize] = useState(22);
   const [itemNameAndPriceWidth, setItemNameAndPriceWidth] = useState(180);
   const [itemSkuFontSize, setItemSkuFontSize] = useState(25);
-  console.log(item);
 
   const onClose = () => {
     setBarcode("12345670");
@@ -235,8 +234,6 @@ const PrintCheckProduct = ({ item, type, onClosePrintModal }: PropsType) => {
         setSelectedViewType(barcodeSettings.selectedViewType);
     }
   }, []);
-  console.log(itemNameAndPriceWidth);
-  
 
   return (
     <Dialog
