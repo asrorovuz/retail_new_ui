@@ -237,3 +237,18 @@ export interface SaleStoreActions {
 export interface SaleStoreInitialState {
   draftSales: DraftSaleSchema[];
 }
+
+export type PaymeProviderType = {
+  id: number;
+  type: number;
+  is_enabled: boolean;
+  info: {
+    service_id: number;
+    merchant_id: number;
+    merchant_user_id: number;
+    secret_key: string;
+  } | {
+    cash_box_id: string;
+    cash_box_name: string;
+  }
+}

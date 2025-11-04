@@ -16,15 +16,27 @@ import { CommonDeleteDialog, PaymentModal, PrinterModal } from "@/widgets";
 import { useCurrencyStore } from "@/app/store/useCurrencyStore";
 import type { PaymentAmount } from "@/@types/common";
 import { useCashboxApi } from "@/entities/init/repository";
-import { useRegisterSellApi } from "@/entities/sale/repository";
+import {
+  useCreateFiscalizedApi,
+  useRegisterSellApi,
+} from "@/entities/sale/repository";
 import { showErrorMessage, showSuccessMessage } from "@/shared/lib/showMessage";
 import { messages } from "@/app/constants/message.request";
+import { FiscalizedModal } from "@/features/modals";
+import type { FizcalResponsetype } from "@/entities/sale/model";
+import {
+  FiscalizedProviderTypeEPos,
+  FiscalizedProviderTypeHippoPos,
+} from "@/app/constants/fiscalized.constants";
+import PaymeWhithQR from "@/features/modals/ui/PaymeWhithQR";
 
 type OrderActionType = {
   type: "sale" | "refund";
   draft: DraftSaleSchema[] & DraftRefundSchema[];
   activeDraft: DraftSaleSchema & DraftRefundSchema;
   activeSelectPaymetype: number;
+  payModal: boolean;
+  setPayModal: (open: boolean) => void;
   deleteDraft: (ind: number) => void;
   setActivePaymentSelectType: (val: number) => void;
   complateActiveDraft: () => void;
@@ -35,6 +47,8 @@ const OrderActions = ({
   draft,
   activeDraft,
   activeSelectPaymetype,
+  payModal,
+  setPayModal,
   deleteDraft,
   setActivePaymentSelectType,
   complateActiveDraft,
@@ -44,12 +58,16 @@ const OrderActions = ({
   const [fiscalizedModal, setFiscalizedModal] = useState(false);
   const [printSelect, setPrintSelect] = useState<boolean>(false);
   const { settings, activeShift } = useSettingsStore();
+  const [selectFiscalized, setSelectFiscalized] =
+    useState<FizcalResponsetype | null>(null);
 
   const nationalCurrency = useCurrencyStore((store) => store.nationalCurrency);
   const warehouseId = useSettingsStore((s) => s.wareHouseId);
 
   const { data: cashboxData } = useCashboxApi();
   const { mutate: registerSaleMutate } = useRegisterSellApi();
+  const { mutate: createFiscalized, isPending: fiscalPending } =
+    useCreateFiscalizedApi();
 
   const onDeleteActivedraft = () => {
     const findIndex = draft?.findIndex((item) => item?.isActive);
@@ -100,6 +118,52 @@ const OrderActions = ({
     setPrintSelect(false);
     if (settings?.fiscalization_enabled) setFiscalizedModal(true);
     else setSaleId(null);
+  };
+
+  const handleCancelFiscalization = () => {
+    setSaleId(null);
+    setFiscalizedModal(false);
+    setSelectFiscalized(null);
+  };
+
+  const handleCancelPayment = () => {
+    setSelectFiscalized(null);
+    setPayModal(false)
+    setActivePaymentSelectType(1);
+  };
+
+  const handleApproveFiscalization = () => {
+    if (selectFiscalized) {
+      let payload = {
+        sale_id: saleId,
+        fiscal_device_id: selectFiscalized?.id,
+        payment_card_type: selectFiscalized.type,
+      };
+      if (
+        [FiscalizedProviderTypeEPos, FiscalizedProviderTypeHippoPos].includes(
+          selectFiscalized?.type
+        ) &&
+        activeSelectPaymetype
+      ) {
+        setPayModal(true);
+        setFiscalizedModal(false);
+      } else {
+        createFiscalized(payload, {
+          onSuccess() {
+            showSuccessMessage(
+              messages.uz.SUCCESS_MESSAGE,
+              messages.ru.SUCCESS_MESSAGE
+            );
+            handleCancelFiscalization();
+          },
+          onError(error) {
+            showErrorMessage(error);
+          },
+        });
+      }
+    } else {
+      handleCancelFiscalization();
+    }
   };
 
   const cashBackAmount = useMemo<number>(() => {
@@ -220,7 +284,6 @@ const OrderActions = ({
       return;
     }
     if ((debt >= 1 && totalMoumentPrice) || settings?.shift?.shift_enabled) {
-      
       toast.error("Продажа в долг невозможна.");
 
       return;
@@ -283,6 +346,26 @@ const OrderActions = ({
         saleId={saleId}
         defaultName={settings?.printer_name ?? null}
         handleCancelPrint={handleCancelPrint}
+      />
+
+      <FiscalizedModal
+        isOpen={type === "sale" && !!saleId && fiscalizedModal}
+        saleId={saleId}
+        selectFiscalized={selectFiscalized}
+        handleCancel={handleCancelFiscalization}
+        setSelectFiscalized={setSelectFiscalized}
+        setIsOpen={setFiscalizedModal}
+        fiscalPending={fiscalPending}
+        handleApproveFiscalization={handleApproveFiscalization}
+      />
+
+      <PaymeWhithQR
+        isOpen={payModal}
+        saleId={saleId}
+        selectFiscalized={selectFiscalized}
+        selectedPaymentType={activeSelectPaymetype}
+        handleCancelFiscalization={handleCancelFiscalization}
+        handleCancelPayment={handleCancelPayment}
       />
     </div>
   );

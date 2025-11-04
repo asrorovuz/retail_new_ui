@@ -33,6 +33,7 @@ const ProductsPage = () => {
         <SearchProduct setSearch={setSearch} search={search} />
         <AddProductModal
           type={modalType}
+          pageType={"products"}
           setType={setModalType}
           setBarcode={setBarcode}
           barcode={barcode}

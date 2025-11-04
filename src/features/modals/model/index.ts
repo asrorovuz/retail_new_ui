@@ -14,6 +14,7 @@ export type ProductPriceType = {
 
 export type ProductModalProps = {
   type: "add" | "edit" | "print";
+  pageType?: string;
   setType: (value: "add" | "edit" | "print") => void;
   barcode: string | null;
   setBarcode: (val: string | null) => void;

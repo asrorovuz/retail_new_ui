@@ -31,6 +31,7 @@ const SalePage = () => {
   const [expandedRow, setExpandedRow] = useState<string | null>(null);
   const [expendedId, setExpandedId] = useState<number | null>(null);
   const [value, setValue] = useState<string>("0");
+  const [payModal, setPayModal] = useState(true);
   const [activeOnlyType, setActiveOnlyType] = useState({
     isOpen: false,
     ind: -1,
@@ -48,7 +49,6 @@ const SalePage = () => {
     data: findBarcodeData,
     isSuccess,
     isError,
-    error,
     isFetching,
   } = useFindBarcode(barcode);
   const { data: productPriceType } = usePriceTypeApi();
@@ -84,15 +84,17 @@ const SalePage = () => {
     draftSales?.find((s) => s.isActive) ?? draftSales[0];
 
   useEffect(() => {
-    const onScan = eventBus.on("BARCODE_SCANNED", (code) => {
-      const val: string = handleBarcodeScanned(code);
-      if (val) {
-        setBarcode(val);
-      }
-      setSearch(val);
-    });
+    if (!payModal) {
+      const onScan = eventBus.on("BARCODE_SCANNED", (code) => {
+        const val: string = handleBarcodeScanned(code);
+        if (val) {
+          setBarcode(val);
+        }
+        setSearch(val);
+      });
 
-    return () => eventBus.remove("BARCODE_SCANNED", onScan);
+      return () => eventBus.remove("BARCODE_SCANNED", onScan);
+    }
   }, []);
 
   useEffect(() => {
@@ -185,6 +187,8 @@ const SalePage = () => {
               type={"sale"}
               draft={draftSales}
               activeDraft={activeDraft}
+              payModal={payModal}
+              setPayModal={setPayModal}
               deleteDraft={deleteDraftSale}
               activeSelectPaymetype={activeSelectPaymetype}
               setActivePaymentSelectType={setActivePaymentSelectType}

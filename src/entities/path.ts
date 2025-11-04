@@ -3,10 +3,10 @@ export const pathServices = {
     auth: "/public/auth/status",
     login: "/public/auth/login",
     globalLogin: "/public/auth/global-login",
-    register: "/public/auth/register"
+    register: "/public/auth/register",
   },
   init: {
-    printPath: "/api/print/"
+    printPath: "/api/print/",
   },
   settings: {
     // GET
@@ -17,7 +17,7 @@ export const pathServices = {
     getList: "/api/warehouse/get",
   },
   cashbox: {
-    getAllCashbox: "/api/cash-box/get"
+    getAllCashbox: "/api/cash-box/get",
   },
   products: {
     // GET
@@ -47,9 +47,15 @@ export const pathServices = {
 
     // DELETE
     deleteProductPath: `/api/product/delete`,
-    deleteFavoritProductPath: "/api/favorite-product/delete"
+    deleteFavoritProductPath: "/api/favorite-product/delete",
   },
   sale: {
-    register: '/api/sale/register',
-  }
+    // GET 
+    register: "/api/sale/register",
+    getFiscaldevice: "/api/fiscal-device/get",
+    getPaymentPath: "/api/payment-provider/get",
+
+    // CREATE 
+    createFiscalized: "/api/fiscalization/sale/register",
+  },
 };
