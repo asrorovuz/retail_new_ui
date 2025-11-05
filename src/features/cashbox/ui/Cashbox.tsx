@@ -5,6 +5,7 @@ import { BsChevronLeft, BsChevronRight } from "react-icons/bs";
 import Tabs from "@/shared/ui/kit-pro/tabs/Tabs";
 
 const Cashbox: FC<CashboxPropsType> = ({
+  type,
   drafts,
   addNewDraft,
   activateDraft,
@@ -23,6 +24,7 @@ const Cashbox: FC<CashboxPropsType> = ({
       />
 
       <Tabs
+        type={type}
         drafts={drafts}
         addNewDraft={addNewDraft}
         activateDraft={activateDraft}
@@ -30,7 +32,7 @@ const Cashbox: FC<CashboxPropsType> = ({
 
       <Button
         size="sm"
-        disabled={drafts.length === activeIndex + 1}
+        disabled={drafts?.length === activeIndex + 1}
         onClick={() => activateDraft(activeIndex + 1)}
       >
         <BsChevronRight />

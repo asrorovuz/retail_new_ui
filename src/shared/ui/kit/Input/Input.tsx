@@ -60,6 +60,7 @@ const Input = (props: InputProps) => {
     unstyle = false,
     value,
     onChange,
+    onFocus,
     replaceLeadingZero = false,
     space = true,
     ...rest
@@ -196,6 +197,7 @@ const Input = (props: InputProps) => {
     ref,
     value: displayValue,
     onChange: handleChange,
+    onFocus: onFocus,
     inputMode: type === "number" ? "numeric" : undefined,
     ...rest,
   };

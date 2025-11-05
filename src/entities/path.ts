@@ -58,4 +58,9 @@ export const pathServices = {
     // CREATE 
     createFiscalized: "/api/fiscalization/sale/register",
   },
+
+  refund: {
+    getCheck: "api/sale/get-by-receipt",
+    register: "/api/refund/register"
+  }
 };

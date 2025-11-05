@@ -6,6 +6,7 @@ import type {
 } from "@/@types/sale";
 import { useSettingsStore } from "@/app/store/useSettingsStore";
 import { Button, Dialog } from "@/shared/ui/kit";
+import FormattedNumber from "@/shared/ui/kit-pro/numeric-format/NumericFormat";
 import SuccessSvg from "@/shared/ui/svg/SuccessSvg";
 import { useState } from "react";
 
@@ -83,10 +84,11 @@ const PaymentModal = ({
       <div className="bg-gray-50 rounded-2xl p-4 text-gray-900 mb-4">
         <div className="flex justify-between pb-4 border-b border-dashed">
           <span className="text-gray-600">Оплачено сумма:</span>{" "}
-          {totalPaymentAmount ?? 0}
+          <FormattedNumber value={totalPaymentAmount ?? 0} />
         </div>
         <div className="flex justify-between pt-4">
-          <span>Сдачи:</span> {cashBackAmount ?? 0}
+          <span>Сдачи:</span>
+          <FormattedNumber value={cashBackAmount ?? 0} />
         </div>
       </div>
       <Button

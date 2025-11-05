@@ -119,7 +119,7 @@ const PaymeWhithQR = ({
   }, [isOpen]);
 
   return (
-    <Dialog width={490} title={"Хотите совершить QR-платеж "} isOpen={isOpen}>
+    <Dialog onClose={onCancel} width={490} title={"Хотите совершить QR-платеж "} isOpen={isOpen}>
       <div className="bg-gray-50 rounded-2xl p-3 flex flex-col gap-y-3 mb-6">
         <div className="h-[222px] w-[222px] flex items-center justify-center mx-auto">
           {qrCode ? (

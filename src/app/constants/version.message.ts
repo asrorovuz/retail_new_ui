@@ -1,0 +1,1 @@
+export const NOTIFY_NEW_VERSION = "NOTIFY_NEW_VERSION";

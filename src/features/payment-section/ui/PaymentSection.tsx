@@ -26,15 +26,14 @@ const PaymentSection = ({
   setValue,
 }: PaymentSectionPropsType) => {
   const netPrice = useMemo<number>(() => {
-    let totalAmount = activeDraft!.items.reduce(
+    let totalAmount = activeDraft?.items?.length && activeDraft?.items?.reduce(
       (acc, item) => acc + item?.totalAmount,
       0
-    );
+    ) || 0;
     return totalAmount;
   }, [activeDraft]);
 
   const toPayAmount = useMemo<number>(() => {
-    
     const list =
       type === "sale"
         ? activeDraft?.payment?.amounts
@@ -56,7 +55,7 @@ const PaymentSection = ({
 
     const existing = (
       type === "sale" ? activeDraft?.payment : activeDraft?.payout
-    )?.amounts.find((p) => p.paymentType === paymentType);
+    )?.amounts.find((p) => p?.paymentType === paymentType);
 
     let updatedAmounts;
 
@@ -85,7 +84,7 @@ const PaymentSection = ({
     } else {
       const current = (
         type === "sale" ? activeDraft?.payment : activeDraft?.payout
-      )?.amounts.find((p) => p.paymentType === activeSelectPaymetype);
+      )?.amounts.find((p) => p?.paymentType === activeSelectPaymetype);
       setValue(current ? current?.amount?.toString() : "0");
     }
   }, [
@@ -95,18 +94,21 @@ const PaymentSection = ({
 
   return (
     <div className="rounded-2xl bg-gray-50 p-1 flex flex-col gap-y-1 mb-2">
-      <Discount
-        toDebtAmount={toDebtAmount}
-        updateDraftDiscount={updateDraftDiscount}
-        active={activeDraft?.discountAmount ?? 0}
-      />
       <PriceForm
+        type={type}
         value={value}
         setValue={setValue}
         toPayAmount={toPayAmount}
         activeSelectPaymetype={activeSelectPaymetype}
         onPaymentChanged={onPaymentChanged}
-      />
+        />
+        {type === "sale" ? (
+          <Discount
+            toDebtAmount={toDebtAmount}
+            updateDraftDiscount={updateDraftDiscount}
+            active={activeDraft?.discountAmount ?? 0}
+          />
+        ) : <div className="h-10"></div>}
       <Calculator
         value={value}
         setValue={setValue}

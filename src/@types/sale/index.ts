@@ -19,22 +19,22 @@ export type SaleItemModel = {
   marks?: string[];
 };
 
-type SaleItemDiscount = {
+export type SaleItemDiscount = {
   value: number;
   type: number;
 };
-type SalePaymentModel = {
+export type SalePaymentModel = {
   notes?: number;
   debt_states: Money[];
   cash_box_states: MoneyMovement[];
 };
 
-type Money = {
+export type Money = {
   amount: number;
   currency_code: number;
 };
 
-type MoneyMovement = Money & {
+export type MoneyMovement = Money & {
   type?: number;
 };
 

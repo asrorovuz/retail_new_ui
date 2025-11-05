@@ -12,16 +12,15 @@ import SaleAndRefunTable from "@/features/sale-refund-table";
 import SearchProduct from "@/features/search-product";
 import SearchProductTable from "@/features/search-product-table";
 import { useDebounce } from "@/shared/lib/useDebounce";
-// import Loading from "@/shared/ui/loading";
 import { useEffect, useState } from "react";
 import PaymentSection from "@/features/payment-section/ui/PaymentSection";
-import OrderActions from "@/features/order-actions";
 import eventBus from "@/shared/lib/eventBus";
 import { handleBarcodeScanned } from "@/shared/lib/handleScannedBarcode";
 import { handleScannedProduct } from "@/shared/lib/handleScannedProduct";
 import { AddProductModal } from "@/features/modals";
 import { showErrorMessage } from "@/shared/lib/showMessage";
 import { useSettingsStore } from "@/app/store/useSettingsStore";
+import OrderActions from "@/features/order-actions";
 
 const SalePage = () => {
   const [search, setSearch] = useState("");
@@ -31,12 +30,11 @@ const SalePage = () => {
   const [expandedRow, setExpandedRow] = useState<string | null>(null);
   const [expendedId, setExpandedId] = useState<number | null>(null);
   const [value, setValue] = useState<string>("0");
-  const [payModal, setPayModal] = useState(true);
+  const [payModal, setPayModal] = useState(false);
   const [activeOnlyType, setActiveOnlyType] = useState({
     isOpen: false,
     ind: -1,
   });
-
   const [activeSelectPaymetype, setActivePaymentSelectType] =
     useState<number>(1);
 
@@ -53,9 +51,6 @@ const SalePage = () => {
   } = useFindBarcode(barcode);
   const { data: productPriceType } = usePriceTypeApi();
 
-  // const resetActiveDraftSale = useDraftSaleStore(
-  //   (store) => store.resetActiveDraftSale
-  // );
   const { settings } = useSettingsStore((s) => s);
   const deleteDraftSale = useDraftSaleStore((store) => store.deleteDraftSale);
   const deleteDraftSaleItem = useDraftSaleStore(
@@ -128,6 +123,7 @@ const SalePage = () => {
     <div className="flex justify-between gap-x-2 h-[calc(100vh-90px)]">
       <div className="bg-white p-3 rounded-2xl w-3/5">
         <Cashbox
+          type={"sale"}
           drafts={draftSales}
           addNewDraft={addDraftSale}
           activateDraft={activateDraftSale}
@@ -156,12 +152,6 @@ const SalePage = () => {
         <div className="rounded-2xl mb-2">
           <SearchProduct search={search} setSearch={setSearch} />
         </div>
-
-        {/* {isPending && (
-          <div className="h-[200px]">
-            <Loading />
-          </div>
-        )} */}
 
         {!search && !isPending && (
           <>

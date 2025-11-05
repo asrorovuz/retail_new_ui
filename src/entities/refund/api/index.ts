@@ -1,0 +1,21 @@
+import type { RegisterRefundModel } from "@/@types/refund";
+import { apiRequest } from "@/app/config/axios";
+import { pathServices } from "@/entities/path";
+
+export const registerRefundApi = async (payload: RegisterRefundModel) => {
+  return await apiRequest({
+    url: pathServices.refund.register,
+    method: "POST",
+    data: payload,
+  });
+};
+
+export const getCheckRefundApi = async (payload: string) => {
+  return await apiRequest({
+    url: pathServices.refund.getCheck,
+    method: "GET",
+    params: {
+      data: payload
+    }
+  });
+};
