@@ -1,6 +1,7 @@
 export const messages = {
   uz: {
     SUCCESS_MESSAGE: 'Muvaffaqiyatli!',
+    SUCCESS_CREATE_SHIFT: "Smena muvaffaqiyatli yaratildi!",
     ERROR_MESSAGE: 'Xatolik yuz berdi!',
     UNKNOWN_ERROR: 'Nomaʼlum xatolik',
     NAME_EXISTS: 'Bunday nom allaqachon mavjud',
@@ -9,6 +10,7 @@ export const messages = {
   },
   ru: {
     SUCCESS_MESSAGE: 'Успешно!',
+    SUCCESS_CREATE_SHIFT: "Смена успешно создана!",
     ERROR_MESSAGE: 'Произошла ошибка!',
     UNKNOWN_ERROR: 'Неизвестная ошибка',
     NAME_EXISTS: 'Имя уже существует',

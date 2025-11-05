@@ -1,7 +1,9 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   createPrintApi,
+  createShiftApi,
   getCashboxApi,
+  getLastShiftApi,
   getPrinterApi,
   getSettingsApi,
   getWarhouseApi,
@@ -36,6 +38,14 @@ export const useCashboxApi = () => {
   });
 };
 
+export const useLastShiftApi = (id: number | null) => {
+  return useQuery({
+    queryKey: ["last-shift"],
+    queryFn: () => getLastShiftApi(id),
+    enabled: !!id,
+  });
+};
+
 export const useCreatePrintApi = () => {
   return useMutation({
     mutationFn: ({
@@ -45,5 +55,11 @@ export const useCreatePrintApi = () => {
       path: string;
       payload: PrinterPostType;
     }) => createPrintApi(path, payload),
+  });
+};
+
+export const useCreateShiftApi = () => {
+  return useMutation({
+    mutationFn: (id: number | null) => createShiftApi(id),
   });
 };

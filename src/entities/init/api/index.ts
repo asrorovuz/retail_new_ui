@@ -5,6 +5,7 @@ import { pathServices } from "../../path";
 import type { SettingsType, WareHouseDataType } from "@/@types/settings";
 import type { CashboxType } from "@/@types/cashbox";
 import type { PrinterPostType } from "@/@types/common";
+import type { Shift } from "@/@types/shift/schema";
 
 // 🔹 Sozlamalarni olish
 export const getSettingsApi = async (): Promise<SettingsType> => {
@@ -30,6 +31,13 @@ export const getWarhouseApi = async (): Promise<WareHouseDataType[]> => {
   });
 };
 
+export const getLastShiftApi = async (id: number | null): Promise<Shift> => {
+  return await apiRequest<Shift>({
+    url: pathServices.init.lastShiftPath + id,
+    method: "GET",
+  });
+};
+
 export const getCashboxApi = async (): Promise<CashboxType[]> => {
   return await apiRequest<CashboxType[]>({
     url: pathServices.cashbox.getAllCashbox,
@@ -37,10 +45,23 @@ export const getCashboxApi = async (): Promise<CashboxType[]> => {
   });
 };
 
-export const createPrintApi = async (path: string, payload: PrinterPostType): Promise<any> => {
+export const createPrintApi = async (
+  path: string,
+  payload: PrinterPostType
+): Promise<any> => {
   return await apiRequest<PrinterPostType>({
     url: pathServices.init.printPath + path,
     method: "POST",
-    data: payload
+    data: payload,
+  });
+};
+
+export const createShiftApi = async (id: number | null): Promise<Shift> => {
+  return await apiRequest<Shift>({
+    url: pathServices.init.shiftOpenApi,
+    method: "POST",
+    data: {
+      cash_box_id: id,
+    },
   });
 };

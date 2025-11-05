@@ -17,7 +17,7 @@ const Header = () => {
   const [shiftUpdateModal, setShiftUpdateModal] = useState(false);
   const navigate = useNavigate();
 
-  const { activeShift, setActiveShift } = useSettingsStore()
+  const { activeShift, setActiveShift } = useSettingsStore();
 
   const activeKey = location.pathname.replace("/", "") || "sales";
   const { logout } = useAuthContext();
@@ -132,7 +132,10 @@ const Header = () => {
         />
       )}
 
-      <CreateShiftDialog isOpen={shiftAddModal}/>
+      <CreateShiftDialog
+        isOpen={shiftAddModal}
+        onClose={() => setShiftAddModal(false)}
+      />
     </header>
   );
 };
