@@ -3,10 +3,15 @@ export const pathServices = {
     auth: "/public/auth/status",
     login: "/public/auth/login",
     globalLogin: "/public/auth/global-login",
-    register: "/public/auth/register"
+    register: "/public/auth/register",
   },
   init: {
-    printPath: "/api/print/"
+    printPath: "/api/print/",
+    lastShiftPath: "/api/shift/last-active/get?cash_box_id=",
+    shiftOpenApi: "/api/shift/open",
+    getShiftPath: "/api/shift/active/get",
+    getShiftoperation: "/api/shift/operation/get/",
+    closeShiftPath: "/api/shift/close",
   },
   settings: {
     // GET
@@ -17,7 +22,7 @@ export const pathServices = {
     getList: "/api/warehouse/get",
   },
   cashbox: {
-    getAllCashbox: "/api/cash-box/get"
+    getAllCashbox: "/api/cash-box/get",
   },
   products: {
     // GET
@@ -47,9 +52,23 @@ export const pathServices = {
 
     // DELETE
     deleteProductPath: `/api/product/delete`,
-    deleteFavoritProductPath: "/api/favorite-product/delete"
+    deleteFavoritProductPath: "/api/favorite-product/delete",
   },
   sale: {
-    register: '/api/sale/register',
-  }
+    // GET
+    register: "/api/sale/register",
+    getFiscaldevice: "/api/fiscal-device/get",
+    getPaymentPath: "/api/payment-provider/get",
+
+    // CREATE
+    createFiscalized: "/api/fiscalization/sale/register",
+  },
+
+  refund: {
+    getCheck: "api/sale/get-by-receipt",
+    register: "/api/refund/register",
+  },
+  versions: {
+    getVersions: "/api/auto-updater/current-version/get",
+  },
 };

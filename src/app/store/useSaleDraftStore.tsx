@@ -54,6 +54,17 @@ export const useDraftSaleStore = create<
 
         state.draftSales.push(draftSale);
       }),
+    activateDraftSale: (draftSaleIndex: number) =>
+      set((state) => {
+        if (state.draftSales.length > 0) {
+          const activeSale = state.draftSales.find((s) => s.isActive);
+          if (activeSale) {
+            activeSale.isActive = false;
+          }
+        }
+
+        state.draftSales[draftSaleIndex].isActive = true;
+      }),
     deleteDraftSale: (draftSaleIndex: number) =>
       set((state) => {
         if (state.draftSales.length === 1 && draftSaleIndex === 0) {
@@ -77,17 +88,7 @@ export const useDraftSaleStore = create<
           state.draftSales = items;
         }
       }),
-    activateDraftSale: (draftSaleIndex: number) =>
-      set((state) => {
-        if (state.draftSales.length > 0) {
-          const activeSale = state.draftSales.find((s) => s.isActive);
-          if (activeSale) {
-            activeSale.isActive = false;
-          }
-        }
 
-        state.draftSales[draftSaleIndex].isActive = true;
-      }),
     updateDraftSaleItem: (draftItem: DraftSaleItemSchema) =>
       set((state) => {
         const activeSale = state.draftSales?.find((s) => s.isActive);

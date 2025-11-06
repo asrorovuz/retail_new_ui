@@ -56,10 +56,6 @@ export const CommonDeleteDialog = (props: CommonDeleteDialogType) => {
 
           <div className={"flex justify-end items-center gap-2"}>
             <Button
-              variant={"solid"}
-              className={
-                "bg-gray-500 text-white hover:bg-gray-500 hover:opacity-90"
-              }
               onClick={handleClose}
             >
               {cancelButtonTitle ? cancelButtonTitle : "Назад"}

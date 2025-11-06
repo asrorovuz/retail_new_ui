@@ -1,14 +1,29 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { registerSaleApi } from "../api";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { createFiscalizedApi, fiscalDeviceApi, paymentProviderApi, registerSaleApi } from "../api";
 import type { RegisterSaleModel } from "@/@types/sale";
 
 export const useRegisterSellApi = () => {
-  const queryClient = useQueryClient();
-
   return useMutation({
     mutationFn: (data: RegisterSaleModel) => registerSaleApi(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [""] });
-    },
+  });
+};
+
+export const useFescalDeviceApi = () => {
+  return useQuery({
+    queryKey: ["fiscalized"],
+    queryFn: fiscalDeviceApi,
+  });
+};
+
+export const usePaymentProviderApi = () => {
+  return useQuery({
+    queryKey: ["payment-provider"],
+    queryFn: paymentProviderApi,
+  });
+};
+
+export const useCreateFiscalizedApi = () => {
+  return useMutation({
+    mutationFn: (data: any) => createFiscalizedApi(data),
   });
 };

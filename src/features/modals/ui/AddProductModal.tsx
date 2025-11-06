@@ -9,8 +9,16 @@ import {
 } from "@/app/constants/paymentType";
 import type { ProductPriceType } from "@/@types/products";
 
-const AddProductModal: FC<ProductModalProps> = ({ type, setType, setBarcode, barcode, productPriceType, setIsOpen, isOpen }) => {
-
+const AddProductModal: FC<ProductModalProps> = ({
+  type,
+  pageType,
+  setType,
+  setBarcode,
+  barcode,
+  productPriceType,
+  setIsOpen,
+  isOpen,
+}) => {
   const openModal = () => {
     setType("add");
     setIsOpen(true);
@@ -62,12 +70,14 @@ const AddProductModal: FC<ProductModalProps> = ({ type, setType, setBarcode, bar
       ],
     };
   }, [productPriceType, isOpen, Date.now()]);
-  
+
   return (
     <div>
-      <Button onClick={openModal} variant="solid">
-        Добавить
-      </Button>
+      {pageType === "products" && (
+        <Button onClick={openModal} variant="solid">
+          Добавить
+        </Button>
+      )}
 
       <ProductForm
         type={type}

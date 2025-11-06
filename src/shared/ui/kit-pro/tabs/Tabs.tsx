@@ -2,15 +2,23 @@ import { useRef, useEffect } from "react";
 import { FaPlus } from "react-icons/fa";
 import Button from "../../kit/Button";
 import type { DraftSaleSchema } from "@/@types/sale";
+import type { DraftRefundSchema } from "@/@types/refund";
 import { PaymentTypes } from "@/app/constants/payment.types";
+import classNames from "@/shared/lib/classNames";
 
 type TabsType = {
-  drafts: DraftSaleSchema[];
+  type: "sale" | "refund";
+  drafts: DraftSaleSchema[] | DraftRefundSchema[];
   addNewDraft: (payload: DraftSaleSchema) => void;
   activateDraft: (index: number) => void;
 };
 
-export default function Tabs({ drafts, activateDraft, addNewDraft }: TabsType) {
+export default function Tabs({
+  type,
+  drafts,
+  activateDraft,
+  addNewDraft,
+}: TabsType) {
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const btnRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
@@ -19,16 +27,18 @@ export default function Tabs({ drafts, activateDraft, addNewDraft }: TabsType) {
   let scrollLeft = 0;
 
   const addDrafts = () => {
-    const newDraftSale: DraftSaleSchema = {
+    const newDraftSale: DraftSaleSchema | DraftRefundSchema = {
       items: [],
       isActive: true,
       discountAmount: 0,
-      payment: {
-        amounts: PaymentTypes.map((paymentType) => {
-          return { amount: 0, paymentType: paymentType.type };
-        }),
+      [type === "sale" ? "payment" : "payout"]: {
+        amounts: PaymentTypes.map((paymentType) => ({
+          amount: 0,
+          paymentType: paymentType?.type,
+        })),
       },
     };
+
     addNewDraft(newDraftSale);
   };
 
@@ -86,11 +96,13 @@ export default function Tabs({ drafts, activateDraft, addNewDraft }: TabsType) {
             }}
             variant="plain"
             onClick={() => activateDraft(index)}
-            className={`px-5 text-sm font-medium rounded-lg transition-colors ${
-              draft?.isActive
-                ? "bg-white text-primary"
-                : "text-gray-500 bg-transparent"
-            }`}
+            className={
+              classNames(
+                "px-5 text-sm font-medium rounded-lg transition-colors bg-transparent",
+                draft?.isActive && type === "sale" && "text-primary bg-white",
+                draft?.isActive && type === "refund" && "text-red-500 bg-white"
+              )
+            }
           >
             Касса {index > 9 ? index + 1 : "0" + (index + 1)}
           </Button>

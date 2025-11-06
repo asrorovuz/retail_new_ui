@@ -19,22 +19,22 @@ export type SaleItemModel = {
   marks?: string[];
 };
 
-type SaleItemDiscount = {
+export type SaleItemDiscount = {
   value: number;
   type: number;
 };
-type SalePaymentModel = {
+export type SalePaymentModel = {
   notes?: number;
   debt_states: Money[];
   cash_box_states: MoneyMovement[];
 };
 
-type Money = {
+export type Money = {
   amount: number;
   currency_code: number;
 };
 
-type MoneyMovement = Money & {
+export type MoneyMovement = Money & {
   type?: number;
 };
 
@@ -236,4 +236,19 @@ export interface SaleStoreActions {
 
 export interface SaleStoreInitialState {
   draftSales: DraftSaleSchema[];
+}
+
+export type PaymeProviderType = {
+  id: number;
+  type: number;
+  is_enabled: boolean;
+  info: {
+    service_id: number;
+    merchant_id: number;
+    merchant_user_id: number;
+    secret_key: string;
+  } | {
+    cash_box_id: string;
+    cash_box_name: string;
+  }
 }

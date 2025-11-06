@@ -16,15 +16,28 @@ import { CommonDeleteDialog, PaymentModal, PrinterModal } from "@/widgets";
 import { useCurrencyStore } from "@/app/store/useCurrencyStore";
 import type { PaymentAmount } from "@/@types/common";
 import { useCashboxApi } from "@/entities/init/repository";
-import { useRegisterSellApi } from "@/entities/sale/repository";
+import {
+  useCreateFiscalizedApi,
+  useRegisterSellApi,
+} from "@/entities/sale/repository";
 import { showErrorMessage, showSuccessMessage } from "@/shared/lib/showMessage";
 import { messages } from "@/app/constants/message.request";
+import { FiscalizedModal } from "@/features/modals";
+import type { FizcalResponsetype } from "@/entities/sale/model";
+import {
+  FiscalizedProviderTypeEPos,
+  FiscalizedProviderTypeHippoPos,
+} from "@/app/constants/fiscalized.constants";
+import PaymeWhithQR from "@/features/modals/ui/PaymeWhithQR";
+import { useRegisterRefundApi } from "@/entities/refund/repository";
 
 type OrderActionType = {
   type: "sale" | "refund";
   draft: DraftSaleSchema[] & DraftRefundSchema[];
   activeDraft: DraftSaleSchema & DraftRefundSchema;
   activeSelectPaymetype: number;
+  payModal: boolean;
+  setPayModal: (open: boolean) => void;
   deleteDraft: (ind: number) => void;
   setActivePaymentSelectType: (val: number) => void;
   complateActiveDraft: () => void;
@@ -35,6 +48,8 @@ const OrderActions = ({
   draft,
   activeDraft,
   activeSelectPaymetype,
+  payModal,
+  setPayModal,
   deleteDraft,
   setActivePaymentSelectType,
   complateActiveDraft,
@@ -44,12 +59,17 @@ const OrderActions = ({
   const [fiscalizedModal, setFiscalizedModal] = useState(false);
   const [printSelect, setPrintSelect] = useState<boolean>(false);
   const { settings, activeShift } = useSettingsStore();
+  const [selectFiscalized, setSelectFiscalized] =
+    useState<FizcalResponsetype | null>(null);
 
   const nationalCurrency = useCurrencyStore((store) => store.nationalCurrency);
   const warehouseId = useSettingsStore((s) => s.wareHouseId);
 
   const { data: cashboxData } = useCashboxApi();
   const { mutate: registerSaleMutate } = useRegisterSellApi();
+  const { mutate: registerRefundMutate } = useRegisterRefundApi();
+  const { mutate: createFiscalized, isPending: fiscalPending } =
+    useCreateFiscalizedApi();
 
   const onDeleteActivedraft = () => {
     const findIndex = draft?.findIndex((item) => item?.isActive);
@@ -57,14 +77,14 @@ const OrderActions = ({
   };
 
   const netPrice = useMemo<number>(() => {
-    let totalAmount = activeDraft!.items.reduce(
-      (acc, item) => acc + item.totalAmount,
-      0
-    );
-    if (activeDraft!.discountAmount) {
-      totalAmount -= activeDraft!.discountAmount;
-    }
-    return totalAmount;
+    if (!activeDraft) return 0; // <— himoya
+
+    const totalAmount =
+      activeDraft.items?.reduce((acc, item) => acc + item.totalAmount, 0) || 0;
+
+    const discount = activeDraft.discountAmount || 0;
+
+    return totalAmount - discount;
   }, [activeDraft]);
 
   const totalPaymentAmount = useMemo<number>(() => {
@@ -102,6 +122,52 @@ const OrderActions = ({
     else setSaleId(null);
   };
 
+  const handleCancelFiscalization = () => {
+    setSaleId(null);
+    setFiscalizedModal(false);
+    setSelectFiscalized(null);
+  };
+
+  const handleCancelPayment = () => {
+    setSelectFiscalized(null);
+    setPayModal(false);
+    setActivePaymentSelectType(1);
+  };
+
+  const handleApproveFiscalization = () => {
+    if (selectFiscalized) {
+      let payload = {
+        sale_id: saleId,
+        fiscal_device_id: selectFiscalized?.id,
+        payment_card_type: selectFiscalized.type,
+      };
+      if (
+        [FiscalizedProviderTypeEPos, FiscalizedProviderTypeHippoPos].includes(
+          selectFiscalized?.type
+        ) &&
+        activeSelectPaymetype
+      ) {
+        setPayModal(true);
+        setFiscalizedModal(false);
+      } else {
+        createFiscalized(payload, {
+          onSuccess() {
+            showSuccessMessage(
+              messages.uz.SUCCESS_MESSAGE,
+              messages.ru.SUCCESS_MESSAGE
+            );
+            handleCancelFiscalization();
+          },
+          onError(error) {
+            showErrorMessage(error);
+          },
+        });
+      }
+    } else {
+      handleCancelFiscalization();
+    }
+  };
+
   const cashBackAmount = useMemo<number>(() => {
     const backAmount = totalPaymentAmount - netPrice;
     return backAmount > 0 ? backAmount : 0;
@@ -116,7 +182,7 @@ const OrderActions = ({
       is_approved: true,
       exact_discount: [],
       items: [],
-      cash_box_id: cashboxData?.length ? cashboxData[0].id : null,
+      cash_box_id: cashboxData?.length ? cashboxData[0]?.id : null,
     };
 
     // prepare payload
@@ -124,30 +190,30 @@ const OrderActions = ({
       // set exact discount
 
       if (activeDraft?.discountAmount) {
-        payload.exact_discount.push({
-          amount: activeDraft.discountAmount,
+        payload?.exact_discount.push({
+          amount: activeDraft?.discountAmount,
           currency_code: nationalCurrency?.code, // todo set national currency id
         });
       }
 
-      // append sale item
-      const draftSaleItems = activeDraft?.items ?? [];
-      for (let i = 0; i < draftSaleItems.length; i++) {
-        const draftSaleItem = draftSaleItems[i];
+      // append sale and refund item
+      const draftItems = activeDraft?.items ?? [];
+      for (let i = 0; i < draftItems.length; i++) {
+        const draftItem = draftItems[i];
 
-        const saleItem: SaleItemModel = {
-          product_package_id: draftSaleItem.productPackageId,
+        const saleAndRefunItem: SaleItemModel = {
+          product_package_id: draftItem.productPackageId,
           warehouse_id: warehouseId ?? null, // todo set default warehouse id
-          quantity: draftSaleItem.quantity,
+          quantity: draftItem.quantity,
           price: {
-            amount: draftSaleItem.priceAmount,
+            amount: draftItem.priceAmount,
             currency_code: nationalCurrency?.code, // todo set national currency id
           },
-          price_type_id: draftSaleItem.priceTypeId, // todo save price type id in store and set
-          marks: draftSaleItem.marks,
+          price_type_id: draftItem.priceTypeId, // todo save price type id in store and set
+          marks: draftItem.marks,
         };
 
-        payload.items.push(saleItem);
+        payload.items.push(saleAndRefunItem);
       }
       // set payment
       if (paymentAmounts) {
@@ -157,27 +223,30 @@ const OrderActions = ({
         };
 
         for (let i = 0; i < paymentAmounts.length; i++) {
-          const salePayment = paymentAmounts[i];
-          if (salePayment.amount > 0) {
+          const saleAndRefundPayment = paymentAmounts[i];
+          if (saleAndRefundPayment?.amount > 0) {
             // append debt state
-            payload.payment.debt_states.push({
-              amount: salePayment.amount,
+            payload?.payment?.debt_states.push({
+              amount: saleAndRefundPayment?.amount,
               currency_code: nationalCurrency?.code,
             });
 
             // append cash-box state
-            payload.payment.cash_box_states.push({
-              amount: salePayment.amount,
+            payload?.payment?.cash_box_states.push({
+              amount: saleAndRefundPayment?.amount,
               currency_code: nationalCurrency?.code,
-              type: salePayment.paymentType,
+              type: saleAndRefundPayment?.paymentType,
             });
           }
         }
       }
     }
 
+    const registerMutate =
+      type === "sale" ? registerSaleMutate : registerRefundMutate;
+
     // register sale
-    registerSaleMutate(payload, {
+    registerMutate(payload, {
       onSuccess: (data: any) => {
         if (data?.sale?.id) {
           setSaleId(data?.sale?.id);
@@ -215,14 +284,13 @@ const OrderActions = ({
 
     const debt = netPrice - total;
 
-    if (activeShift) {
+    if (!activeShift && settings?.shift?.shift_enabled) {
       toast.error("Смена не открыта.");
       return;
     }
-    if ((debt >= 1 && totalMoumentPrice) || settings?.shift?.shift_enabled) {
-      
-      toast.error("Продажа в долг невозможна.");
 
+    if (debt >= 1 && totalMoumentPrice) {
+      toast.error("Продажа в долг невозможна.");
       return;
     }
 
@@ -232,6 +300,7 @@ const OrderActions = ({
   };
 
   const onSubmit = () => {
+    console.log(settings?.enable_create_unknown_product, activeShift);
     calcPricePayment();
   };
 
@@ -252,6 +321,7 @@ const OrderActions = ({
       </CommonDeleteDialog>
       <Button
         variant="plain"
+        disabled={type === "refund"}
         size="sm"
         onClick={() => setActivePaymentSelectType(0)}
         icon={<MdOutlineDiscount />}
@@ -283,6 +353,26 @@ const OrderActions = ({
         saleId={saleId}
         defaultName={settings?.printer_name ?? null}
         handleCancelPrint={handleCancelPrint}
+      />
+
+      <FiscalizedModal
+        isOpen={type === "sale" && !!saleId && fiscalizedModal}
+        saleId={saleId}
+        selectFiscalized={selectFiscalized}
+        handleCancel={handleCancelFiscalization}
+        setSelectFiscalized={setSelectFiscalized}
+        setIsOpen={setFiscalizedModal}
+        fiscalPending={fiscalPending}
+        handleApproveFiscalization={handleApproveFiscalization}
+      />
+
+      <PaymeWhithQR
+        isOpen={payModal}
+        saleId={saleId}
+        selectFiscalized={selectFiscalized}
+        selectedPaymentType={activeSelectPaymetype}
+        handleCancelFiscalization={handleCancelFiscalization}
+        handleCancelPayment={handleCancelPayment}
       />
     </div>
   );

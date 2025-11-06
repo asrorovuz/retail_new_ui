@@ -35,6 +35,7 @@ type PropsType = {
 };
 
 const SaleAndRefunTable = ({
+  type,
   activeDraft,
   expendedId,
   setExpandedId,
@@ -157,7 +158,7 @@ const SaleAndRefunTable = ({
                       }}
                       className={classNames(
                         oddEven ? "bg-gray-50" : "bg-white",
-                        expandedRow?.toString() === row.id && "text-primary"
+                        expandedRow?.toString() === row.id && (type === "sale" ? "text-primary" : "text-red-500")
                       )}
                     >
                       {row.getVisibleCells().map((cell) => (
@@ -195,7 +196,7 @@ const SaleAndRefunTable = ({
               <div className="text-sm font-medium text-gray-500">
                 Итого к Оплату{" "}
               </div>{" "}
-              <div className="text-primary text-base font-semibold">
+              <div className={classNames("text-base font-semibold", type === "sale" ? "text-primary" : "text-red-500")}>
                 <FormattedNumber value={totalPrice} scale={2} /> сум{" "}
               </div>
             </div>
@@ -221,7 +222,8 @@ const SaleAndRefunTable = ({
                 <Input
                   size="sm"
                   type="number"
-                  autoFocus
+                  autoFocus={isEditing?.type === "price"}
+                  onFocus={(e) => e.target.focus()}
                   className="!w-[220px]"
                   value={currentItem?.priceAmount}
                   onChange={(val) => {

@@ -1,16 +1,42 @@
+import type { Shift } from "@/@types/shift/schema";
 import { useAuthContext } from "@/app/providers/AuthProvider";
+import { useSettingsStore } from "@/app/store/useSettingsStore";
+import { useVersionStore } from "@/app/store/useVersionStore";
+import { useShiftApi } from "@/entities/init/repository";
+import { CreateShiftDialog, UpdateShiftDialog } from "@/features/shift";
+import UpdateVersion from "@/features/update";
 import { Button } from "@/shared/ui/kit";
 import Alert from "@/shared/ui/kit-pro/alert/Alert";
 import Menu from "@/shared/ui/kit/Menu/Menu";
 import MenuItem from "@/shared/ui/kit/Menu/MenuItem";
 import { LogoutSvg } from "@/shared/ui/svg/LogoutSvg";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { FiRefreshCcw } from "react-icons/fi";
 import { useLocation, useNavigate } from "react-router-dom";
+
+interface ShiftError extends Error {
+  active_shift_not_found?: boolean;
+  response?: {
+    data?: {
+      active_shift_not_found?: boolean;
+    };
+  };
+}
 
 const Header = () => {
   const location = useLocation();
   const [showAlert, setShowAlert] = useState(false);
+  const [shiftAddModal, setShiftAddModal] = useState(false);
+  const [shiftUpdateModal, setShiftUpdateModal] = useState(false);
   const navigate = useNavigate();
+
+  const { activeShift, setActiveShift } = useSettingsStore();
+  const version = useVersionStore((store) => store.versions)
+
+  const { data: shift, error } = useShiftApi(activeShift?.id ?? null) as {
+    data: Shift | null;
+    error: ShiftError | null;
+  };
 
   const activeKey = location.pathname.replace("/", "") || "sales";
   const { logout } = useAuthContext();
@@ -18,6 +44,17 @@ const Header = () => {
   const handleSelect = (eventKey: string) => {
     navigate(eventKey);
   };
+
+  useEffect(() => {
+    if (shift) {
+      setActiveShift(shift);
+    } else if (
+      error?.active_shift_not_found ||
+      error?.response?.data?.active_shift_not_found
+    ) {
+      setActiveShift(null);
+    }
+  }, [shift, shiftAddModal, shiftUpdateModal]);
 
   return (
     <header className="bg-white rounded-3xl p-2 flex justify-between items-center">
@@ -41,7 +78,7 @@ const Header = () => {
           <div
             className={`px-4 py-2 rounded-md cursor-pointer text-[16px] transition-colors duration-200 ${
               activeKey === "refund"
-                ? "text-blue-500"
+                ? "text-red-500"
                 : "hover:bg-gray-100 text-gray-700"
             }`}
           >
@@ -59,7 +96,7 @@ const Header = () => {
             <span>Товары</span>
           </div>
         </MenuItem>
-         <MenuItem eventKey="favoutite-products">
+        <MenuItem eventKey="favoutite-products">
           <div
             className={`px-4 py-2 rounded-md cursor-pointer text-[16px] transition-colors duration-200 ${
               activeKey === "favoutite-products"
@@ -83,14 +120,36 @@ const Header = () => {
         </MenuItem>
       </Menu>
 
-      <Button
-        onClick={() => setShowAlert(true)}
-        className="bg-red-100 text-red-500 text-base font-semibold active:bg-red-200 active:text-red-500 hover:text-red-500 transition duration-300"
-        variant="plain"
-        icon={<LogoutSvg height={20} width={20} />}
-      >
-        Выход
-      </Button>
+      <div className="flex items-center gap-x-2">
+        {version && <div>В: {version || ""}</div>}
+        <UpdateVersion />
+        <div className="relative">
+          <Button
+            onClick={() => {
+              if (activeShift) {
+                setShiftUpdateModal(true);
+              } else {
+                setShiftAddModal(true);
+              }
+            }}
+            variant="solid"
+            icon={<FiRefreshCcw />}
+          >
+            Смена
+          </Button>
+          {activeShift && (
+            <span className="absolute -top-1 -right-1 block size-3 rounded-full bg-green-500 border border-white" />
+          )}
+        </div>
+        <Button
+          onClick={() => setShowAlert(true)}
+          className="bg-red-100 text-red-500 text-base font-semibold active:bg-red-200 active:text-red-500 hover:text-red-500 transition duration-300"
+          variant="plain"
+          icon={<LogoutSvg height={20} width={20} />}
+        >
+          Выход
+        </Button>
+      </div>
 
       {showAlert && (
         <Alert
@@ -104,6 +163,16 @@ const Header = () => {
           }}
         />
       )}
+
+      <CreateShiftDialog
+        isOpen={shiftAddModal}
+        onClose={() => setShiftAddModal(false)}
+      />
+
+      <UpdateShiftDialog
+        isOpen={shiftUpdateModal}
+        onClose={() => setShiftUpdateModal(false)}
+      />
     </header>
   );
 };

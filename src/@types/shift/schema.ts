@@ -1,4 +1,4 @@
-type Balance = {
+export type Balance = {
     amount: number
     currencyCode: number
     type: number

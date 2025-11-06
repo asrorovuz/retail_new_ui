@@ -47,6 +47,7 @@ export const ipcFetch = async <T>(request: {
           data: request.data || null,
           headers: {
             Authorization: `Basic ${token}`,
+            "X-ACCESS-KEY": "LocalPosRetail"
           },
         },
       },

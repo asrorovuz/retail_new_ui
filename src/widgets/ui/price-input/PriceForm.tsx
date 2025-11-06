@@ -4,6 +4,7 @@ import MagnetSvg from "@/shared/ui/svg/MagnetSvg";
 import { MdClose } from "react-icons/md";
 
 type Props = {
+  type: "sale" | "refund";
   value: string;
   toPayAmount: number;
   setValue: (val: string) => void;
@@ -12,6 +13,7 @@ type Props = {
 };
 
 const PriceForm = ({
+  type,
   value,
   toPayAmount,
   setValue,
@@ -34,7 +36,15 @@ const PriceForm = ({
       <div className="w-full text-right font-normal text-2xl">
         <FormattedNumber value={value ?? "0"} />
       </div>
-      <Button onClick={onMagent} className="border-none" icon={<MagnetSvg />} />
+      <Button
+        onClick={onMagent}
+        className={"border-none"}
+        icon={
+          <span className={type === "refund" ? "!text-red-500" : "text-[#2B7FFF]"}>
+            <MagnetSvg />
+          </span>
+        }
+      />
     </div>
   );
 };
