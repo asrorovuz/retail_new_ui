@@ -97,6 +97,16 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
       );
     }
 
+    if (error.active_shift_not_found) {
+      return toast.error(
+        lang === "ru" ? "Активная смена не найдена" : "Faol smena topilmadi",
+        {
+          position: "bottom-left",
+          autoClose: 3000,
+        }
+      );
+    }
+
     if (error.already_exist) {
       return toast.error(
         lang === "ru"

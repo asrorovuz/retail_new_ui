@@ -1,14 +1,25 @@
+import type { Shift } from "@/@types/shift/schema";
 import { useAuthContext } from "@/app/providers/AuthProvider";
 import { useSettingsStore } from "@/app/store/useSettingsStore";
-import { CreateShiftDialog } from "@/features/shift";
+import { useShiftApi } from "@/entities/init/repository";
+import { CreateShiftDialog, UpdateShiftDialog } from "@/features/shift";
 import { Button } from "@/shared/ui/kit";
 import Alert from "@/shared/ui/kit-pro/alert/Alert";
 import Menu from "@/shared/ui/kit/Menu/Menu";
 import MenuItem from "@/shared/ui/kit/Menu/MenuItem";
 import { LogoutSvg } from "@/shared/ui/svg/LogoutSvg";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FiRefreshCcw } from "react-icons/fi";
 import { useLocation, useNavigate } from "react-router-dom";
+
+interface ShiftError extends Error {
+  active_shift_not_found?: boolean;
+  response?: {
+    data?: {
+      active_shift_not_found?: boolean;
+    };
+  };
+}
 
 const Header = () => {
   const location = useLocation();
@@ -19,12 +30,30 @@ const Header = () => {
 
   const { activeShift, setActiveShift } = useSettingsStore();
 
+  const { data: shift, error } = useShiftApi(activeShift?.id ?? null) as {
+    data: Shift | null;
+    error: ShiftError | null;
+  };
+
   const activeKey = location.pathname.replace("/", "") || "sales";
   const { logout } = useAuthContext();
 
   const handleSelect = (eventKey: string) => {
     navigate(eventKey);
   };
+
+  useEffect(() => {
+    if (shift) {
+      setActiveShift(shift);
+    } else if (
+      error?.active_shift_not_found ||
+      error?.response?.data?.active_shift_not_found
+    ) {
+      setActiveShift(null);
+    }
+  }, [shift, shiftAddModal, shiftUpdateModal]);
+
+  console.log(activeShift, shift, error);
 
   return (
     <header className="bg-white rounded-3xl p-2 flex justify-between items-center">
@@ -135,6 +164,11 @@ const Header = () => {
       <CreateShiftDialog
         isOpen={shiftAddModal}
         onClose={() => setShiftAddModal(false)}
+      />
+
+      <UpdateShiftDialog
+        isOpen={shiftUpdateModal}
+        onClose={() => setShiftUpdateModal(false)}
       />
     </header>
   );

@@ -284,7 +284,7 @@ const OrderActions = ({
 
     const debt = netPrice - total;
 
-    if (activeShift || settings?.shift?.shift_enabled) {
+    if (!activeShift && settings?.shift?.shift_enabled) {
       toast.error("Смена не открыта.");
       return;
     }
@@ -300,6 +300,7 @@ const OrderActions = ({
   };
 
   const onSubmit = () => {
+    console.log(settings?.enable_create_unknown_product, activeShift);
     calcPricePayment();
   };
 

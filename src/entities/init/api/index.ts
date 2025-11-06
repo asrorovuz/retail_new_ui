@@ -5,7 +5,7 @@ import { pathServices } from "../../path";
 import type { SettingsType, WareHouseDataType } from "@/@types/settings";
 import type { CashboxType } from "@/@types/cashbox";
 import type { PrinterPostType } from "@/@types/common";
-import type { Shift } from "@/@types/shift/schema";
+import type { Shift, ShiftOperation } from "@/@types/shift/schema";
 
 // 🔹 Sozlamalarni olish
 export const getSettingsApi = async (): Promise<SettingsType> => {
@@ -34,6 +34,28 @@ export const getWarhouseApi = async (): Promise<WareHouseDataType[]> => {
 export const getLastShiftApi = async (id: number | null): Promise<Shift> => {
   return await apiRequest<Shift>({
     url: pathServices.init.lastShiftPath + id,
+    method: "GET",
+  });
+};
+
+export const closeShiftApi = async (payload: any): Promise<Shift> => {
+  return await apiRequest<Shift>({
+    url: pathServices.init.closeShiftPath,
+    method: "POST",
+    data: payload,
+  });
+};
+
+export const getShiftOperationApi = async (id: number | null): Promise<ShiftOperation> => {
+  return await apiRequest<ShiftOperation>({
+    url: pathServices.init.getShiftoperation + id,
+    method: "GET",
+  });
+};
+
+export const getShiftApi = async (): Promise<Shift> => {
+  return await apiRequest<Shift>({
+    url: pathServices.init.getShiftPath,
     method: "GET",
   });
 };

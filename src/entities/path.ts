@@ -8,7 +8,10 @@ export const pathServices = {
   init: {
     printPath: "/api/print/",
     lastShiftPath: "/api/shift/last-active/get?cash_box_id=",
-    shiftOpenApi: "/api/shift/open"
+    shiftOpenApi: "/api/shift/open",
+    getShiftPath: "/api/shift/active/get",
+    getShiftoperation: "/api/shift/operation/get/",
+    closeShiftPath: "/api/shift/close",
   },
   settings: {
     // GET

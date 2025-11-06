@@ -56,15 +56,6 @@ const CreateShiftDialog = ({ isOpen, onClose }: PropsType) => {
       toast.warning(
         "Упс, что-то пошло не так. Обратитесь к администратору, чтобы решить эту проблему."
       );
-      // notify({
-      //     placement: 'bottom-end',
-      //     type: 'danger',
-      //     closable: true,
-      //     title: 'Cashbox not found!',
-      //     message:
-      //         ,
-      //     duration: 5000,
-      // })
 
       return;
     }

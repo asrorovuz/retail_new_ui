@@ -1,11 +1,14 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
+  closeShiftApi,
   createPrintApi,
   createShiftApi,
   getCashboxApi,
   getLastShiftApi,
   getPrinterApi,
   getSettingsApi,
+  getShiftApi,
+  getShiftOperationApi,
   getWarhouseApi,
 } from "../api";
 import type { PrinterPostType } from "@/@types/common";
@@ -45,6 +48,33 @@ export const useLastShiftApi = (id: number | null) => {
     enabled: !!id,
   });
 };
+
+export const useShiftOperationApi = (id: number | null) => {
+  return useQuery({
+    queryKey: ["last-shift-operation"],
+    queryFn: () => getShiftOperationApi(id),
+    enabled: !!id,
+  });
+};
+
+export const useShiftApi = (id: number | null) => {
+  return useQuery({
+    queryKey: ["shift", id],
+    queryFn: getShiftApi
+  });
+};
+
+export const useCloseShiftApi = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: any) => closeShiftApi(payload),
+    onSuccess() {
+      queryClient.invalidateQueries({ queryKey: ["shift"] });
+      queryClient.invalidateQueries({ queryKey: ["last-shift"] });
+    },
+  });
+}
 
 export const useCreatePrintApi = () => {
   return useMutation({
