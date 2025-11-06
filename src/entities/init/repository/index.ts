@@ -9,6 +9,7 @@ import {
   getSettingsApi,
   getShiftApi,
   getShiftOperationApi,
+  getVersionApi,
   getWarhouseApi,
 } from "../api";
 import type { PrinterPostType } from "@/@types/common";
@@ -34,6 +35,13 @@ export const usePrinterApi = () => {
   });
 };
 
+export const useVersionApi = () => {
+  return useQuery({
+    queryKey: ["version"],
+    queryFn: getVersionApi,
+  });
+};
+
 export const useCashboxApi = () => {
   return useQuery({
     queryKey: ["cashbox"],
@@ -49,11 +57,11 @@ export const useLastShiftApi = (id: number | null) => {
   });
 };
 
-export const useShiftOperationApi = (id: number | null) => {
+export const useShiftOperationApi = (id: number | null, isOpen: boolean) => {
   return useQuery({
-    queryKey: ["last-shift-operation"],
+    queryKey: ["last-shift-operation", id, isOpen],
     queryFn: () => getShiftOperationApi(id),
-    enabled: !!id,
+    enabled: !!id && isOpen,
   });
 };
 

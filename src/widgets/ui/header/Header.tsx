@@ -1,8 +1,10 @@
 import type { Shift } from "@/@types/shift/schema";
 import { useAuthContext } from "@/app/providers/AuthProvider";
 import { useSettingsStore } from "@/app/store/useSettingsStore";
+import { useVersionStore } from "@/app/store/useVersionStore";
 import { useShiftApi } from "@/entities/init/repository";
 import { CreateShiftDialog, UpdateShiftDialog } from "@/features/shift";
+import UpdateVersion from "@/features/update";
 import { Button } from "@/shared/ui/kit";
 import Alert from "@/shared/ui/kit-pro/alert/Alert";
 import Menu from "@/shared/ui/kit/Menu/Menu";
@@ -29,6 +31,7 @@ const Header = () => {
   const navigate = useNavigate();
 
   const { activeShift, setActiveShift } = useSettingsStore();
+  const version = useVersionStore((store) => store.versions)
 
   const { data: shift, error } = useShiftApi(activeShift?.id ?? null) as {
     data: Shift | null;
@@ -52,8 +55,6 @@ const Header = () => {
       setActiveShift(null);
     }
   }, [shift, shiftAddModal, shiftUpdateModal]);
-
-  console.log(activeShift, shift, error);
 
   return (
     <header className="bg-white rounded-3xl p-2 flex justify-between items-center">
@@ -119,7 +120,9 @@ const Header = () => {
         </MenuItem>
       </Menu>
 
-      <div className="flex gap-x-2">
+      <div className="flex items-center gap-x-2">
+        {version && <div>В: {version || ""}</div>}
+        <UpdateVersion />
         <div className="relative">
           <Button
             onClick={() => {

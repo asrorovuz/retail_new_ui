@@ -1,5 +1,6 @@
 import { useUpdateProject } from "@/shared/lib/useUpdateProject";
 import { Button, Dialog } from "@/shared/ui/kit";
+import { VscDebugRestartFrame } from "react-icons/vsc";
 
 const UpdateVersion = () => {
   const {
@@ -17,10 +18,10 @@ const UpdateVersion = () => {
       {hasUpdates && (
         <Button
           variant="plain"
-          className="text-red-500 border-2 border-red-500 hover:text-red-500 relative px-3"
+          className="text-red-500 border-2 bg-transparent border-red-500 hover:text-red-500 relative px-3"
           onClick={() => setUpdateDialogOpen(true)}
         >
-          <span className="text-xl">{/* <LuListRestart /> */}</span>
+          <span className="text-xl"><VscDebugRestartFrame /></span>
           {/* Badge */}
           <span className="absolute -top-2 -right-2 flex h-5 w-5">
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75"></span>

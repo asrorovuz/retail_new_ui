@@ -28,13 +28,6 @@ import TFoot from "@/shared/ui/kit/Table/TFoot";
 import { showErrorMessage, showSuccessMessage } from "@/shared/lib/showMessage";
 import { messages } from "@/app/constants/message.request";
 
-//     useEffect(() => {
-//         if (isOpen) {
-//             mutate()
-//             activeShiftMutate()
-//         }
-//     }, [isOpen])
-
 type PropsType = {
   isOpen: boolean;
   onClose: () => void;
@@ -54,7 +47,7 @@ export type ShiftUpdateFormData = {
 const UpdateShiftDialog = ({ isOpen, onClose }: PropsType) => {
   const { activeShift, setActiveShift } = useSettingsStore();
   const { data: shiftOperations, isPending } = useShiftOperationApi(
-    activeShift?.id ?? null
+    activeShift?.id ?? null, isOpen
   );
   const { mutate: closeShiftMutate, isPending: isClosing } = useCloseShiftApi();
 
@@ -567,7 +560,7 @@ const UpdateShiftDialog = ({ isOpen, onClose }: PropsType) => {
               </Table>
             </div>
 
-            <div className="flex justify-end gap-2">
+            <div className="flex justify-end gap-2 mt-6">
               <Button type="button" onClick={onClose}>
                 Отменить
               </Button>

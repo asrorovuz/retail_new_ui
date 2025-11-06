@@ -55,17 +55,20 @@ export const pathServices = {
     deleteFavoritProductPath: "/api/favorite-product/delete",
   },
   sale: {
-    // GET 
+    // GET
     register: "/api/sale/register",
     getFiscaldevice: "/api/fiscal-device/get",
     getPaymentPath: "/api/payment-provider/get",
 
-    // CREATE 
+    // CREATE
     createFiscalized: "/api/fiscalization/sale/register",
   },
 
   refund: {
     getCheck: "api/sale/get-by-receipt",
-    register: "/api/refund/register"
-  }
+    register: "/api/refund/register",
+  },
+  versions: {
+    getVersions: "/api/auto-updater/current-version/get",
+  },
 };

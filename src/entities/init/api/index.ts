@@ -23,6 +23,13 @@ export const getPrinterApi = async (): Promise<string[]> => {
   });
 };
 
+export const getVersionApi = async (): Promise<{current_version: string}> => {
+  return await apiRequest<{current_version: string}>({
+    url: pathServices.versions.getVersions,
+    method: "GET",
+  });
+};
+
 // 🔹 Omborlar ro‘yxatini olish
 export const getWarhouseApi = async (): Promise<WareHouseDataType[]> => {
   return await apiRequest<WareHouseDataType[]>({
