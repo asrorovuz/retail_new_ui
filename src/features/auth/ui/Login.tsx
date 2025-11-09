@@ -103,7 +103,6 @@ const Login = () => {
                     />
                     <Button
                       type="button"
-                      variant="plain"
                       icon={showPassword ? (
                         <FiEyeOff size={20} />
                       ) : (

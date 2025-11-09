@@ -34,13 +34,15 @@ const PriceForm = ({
     <div className="rounded-lg bg-white p-1 flex items-center gap-x-6">
       <Button onClick={clearvalue} className="border-none" icon={<MdClose />} />
       <div className="w-full text-right font-normal text-2xl">
-        <FormattedNumber value={value ?? "0"} />
+        <FormattedNumber value={value} />
       </div>
       <Button
         onClick={onMagent}
         className={"border-none"}
         icon={
-          <span className={type === "refund" ? "!text-red-500" : "text-[#2B7FFF]"}>
+          <span
+            className={type === "refund" ? "!text-red-500" : "text-[#2B7FFF]"}
+          >
             <MagnetSvg />
           </span>
         }

@@ -159,11 +159,11 @@ const RefundPage = () => {
             setRefundCheckData(checkData);
           }
         } else {
+          
           const val: string = handleBarcodeScanned(code);
           if (val) {
             setBarcode(val);
           }
-          setSearch(val);
         }
       });
 
@@ -174,7 +174,7 @@ const RefundPage = () => {
   useEffect(() => {
     if (isSuccess && !isFetching) {
       if (findBarcodeData) {
-        handleScannedProduct(findBarcodeData, "sale");
+        handleScannedProduct(findBarcodeData, "refund");
         setBarcode(null); // qayta so‘rov yubormaslik uchun tozalaymiz
       }
     }
@@ -186,6 +186,8 @@ const RefundPage = () => {
         setBarcode(barcode);
         setIsOpenAddProduct(true);
       } else {
+        console.log("log salom");
+        
         showErrorMessage("Товар не найден");
         setBarcode(null);
       }
@@ -252,6 +254,7 @@ const RefundPage = () => {
               payModal={payModal}
               setPayModal={setPayModal}
               deleteDraft={deleteDraftRefund}
+              updateDraftDiscount={updateDraftRefundDiscount}
               activeSelectPaymetype={activeSelectPaymetype}
               setActivePaymentSelectType={setActivePaymentSelectType}
               complateActiveDraft={completeActiveDraftRefund}
@@ -264,6 +267,7 @@ const RefundPage = () => {
             <SearchProductTable
               type="refund"
               debouncedSearch={debouncedSearch}
+              setSearchValue={setSearch}
               data={data ?? []}
               setExpandedRow={setExpandedRow}
               setExpandedId={setExpandedId}

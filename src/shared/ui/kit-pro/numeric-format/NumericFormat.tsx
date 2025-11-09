@@ -8,28 +8,33 @@ interface FormattedNumberProps {
 
 const FormattedNumber: React.FC<FormattedNumberProps> = ({
   value,
-  scale = 2,
+  scale,
   showGrouping = true,
 }) => {
-  const num = Number(value);
+  const strValue = String(value ?? "");
 
-  // NaN bo‘lsa, hech narsa chiqmasin
-  if (isNaN(num)) return <span>-</span>;
+  // Bo'sh yoki "NaN" holat
+  if (!strValue || strValue === "NaN") return <span>-</span>;
 
-  // Sonni stringga aylantiramiz
-  const strValue = String(value);
+  // Butun va kasr qismlarini ajratamiz
   const [integerPart, decimalPart] = strValue.split(/[.,]/); // . yoki , bo‘lishi mumkin
 
-  // Guruhlash (masalan, 10000 -> 10 000)
+  // Butun qismni minglik bo‘yicha ajratamiz
   const grouped = showGrouping
     ? integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, " ")
     : integerPart;
 
-  // Agar kasr bo‘lsa, scale bo‘yicha kesib tashlaymiz
-  const formattedDecimal =
-    decimalPart && scale > 0
-      ? decimalPart.slice(0, scale).replace(/0+$/, "") // oxirgi nolni olib tashlash
-      : "";
+  // Agar foydalanuvchi hali "." ni yozgan bo‘lsa (masalan: "123.")
+  if (strValue.endsWith(".")) {
+    return <span>{grouped}.</span>;
+  }
+
+  // Agar scale berilgan bo‘lsa → verguldan keyingi raqamlarni kesib tashlaymiz
+  let formattedDecimal = decimalPart ?? "";
+
+  if (scale !== undefined && scale >= 0 && decimalPart) {
+    formattedDecimal = decimalPart.slice(0, scale);
+  }
 
   // Yakuniy format
   const formatted = formattedDecimal

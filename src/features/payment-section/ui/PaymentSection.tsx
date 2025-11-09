@@ -26,26 +26,40 @@ const PaymentSection = ({
   setValue,
 }: PaymentSectionPropsType) => {
   const netPrice = useMemo<number>(() => {
-    let totalAmount = activeDraft?.items?.length && activeDraft?.items?.reduce(
-      (acc, item) => acc + item?.totalAmount,
-      0
-    ) || 0;
+    let totalAmount =
+      (activeDraft?.items?.length &&
+        activeDraft?.items?.reduce(
+          (acc, item) => acc + item?.totalAmount,
+          0
+        )) ||
+      0;
     return totalAmount;
   }, [activeDraft]);
 
-  const toPayAmount = useMemo<number>(() => {
-    const list =
-      type === "sale"
-        ? activeDraft?.payment?.amounts
-        : activeDraft?.payout?.amounts;
+  // const toPayAmount = useMemo<number>(() => {
+  //   const list =
+  //     type === "sale"
+  //       ? activeDraft?.payment?.amounts
+  //       : activeDraft?.payout?.amounts;
 
-    const totalAmount =
-      list?.reduce((acc, item) => acc + (item?.amount || 0), 0) || 0;
+  //   const totalAmount =
+  //     list?.reduce((acc, item) => acc + (item?.amount || 0), 0) || 0;
 
-    return netPrice - totalAmount;
-  }, [activeDraft, type]);
+  //   return (netPrice - totalAmount);
+  // }, [activeDraft, type]);
 
   const toDebtAmount = netPrice;
+
+  const totalMoumentPrice = useMemo(() => {
+    const sum =
+      activeDraft?.items?.reduce(
+        (sum, current) =>
+          sum + Number(current?.priceAmount * current?.quantity || 0),
+        0
+      ) || 0;
+
+    return sum - (activeDraft?.discountAmount || 0);
+  }, [activeDraft, toDebtAmount]);
 
   const onPaymentChanged = (paymentType: number, amount: number) => {
     if (paymentType === 0) {
@@ -98,17 +112,19 @@ const PaymentSection = ({
         type={type}
         value={value}
         setValue={setValue}
-        toPayAmount={toPayAmount}
+        toPayAmount={totalMoumentPrice}
         activeSelectPaymetype={activeSelectPaymetype}
         onPaymentChanged={onPaymentChanged}
+      />
+      {type === "sale" ? (
+        <Discount
+          toDebtAmount={toDebtAmount}
+          updateDraftDiscount={updateDraftDiscount}
+          active={activeDraft?.discountAmount ?? 0}
         />
-        {type === "sale" ? (
-          <Discount
-            toDebtAmount={toDebtAmount}
-            updateDraftDiscount={updateDraftDiscount}
-            active={activeDraft?.discountAmount ?? 0}
-          />
-        ) : <div className="h-10"></div>}
+      ) : (
+        <div className="h-10"></div>
+      )}
       <Calculator
         value={value}
         setValue={setValue}

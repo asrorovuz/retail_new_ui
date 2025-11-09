@@ -97,6 +97,7 @@ const Register = () => {
 
       <Steps
         current={step}
+        className="mb-4"
         status={
           globalLoginPending ? "pending" : isError ? "error" : "in-progress"
         }
@@ -127,7 +128,6 @@ const Register = () => {
           <div className="flex justify-between mt-6">
             <Button
               type="button"
-              variant="plain"
               className="text-gray-700 font-medium rounded-xl"
               onClick={prevStep}
             >

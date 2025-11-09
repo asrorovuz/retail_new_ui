@@ -12,7 +12,12 @@ import classNames from "@/shared/lib/classNames";
 import { useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import { useSettingsStore } from "@/app/store/useSettingsStore";
-import { CommonDeleteDialog, PaymentModal, PrinterModal } from "@/widgets";
+import {
+  CommonDeleteDialog,
+  DiscountModal,
+  PaymentModal,
+  PrinterModal,
+} from "@/widgets";
 import { useCurrencyStore } from "@/app/store/useCurrencyStore";
 import type { PaymentAmount } from "@/@types/common";
 import { useCashboxApi } from "@/entities/init/repository";
@@ -39,6 +44,7 @@ type OrderActionType = {
   payModal: boolean;
   setPayModal: (open: boolean) => void;
   deleteDraft: (ind: number) => void;
+  updateDraftDiscount: (val: number) => void;
   setActivePaymentSelectType: (val: number) => void;
   complateActiveDraft: () => void;
 };
@@ -51,6 +57,7 @@ const OrderActions = ({
   payModal,
   setPayModal,
   deleteDraft,
+  updateDraftDiscount,
   setActivePaymentSelectType,
   complateActiveDraft,
 }: OrderActionType) => {
@@ -61,6 +68,7 @@ const OrderActions = ({
   const { settings, activeShift } = useSettingsStore();
   const [selectFiscalized, setSelectFiscalized] =
     useState<FizcalResponsetype | null>(null);
+  const [discountModal, setDiscountModal] = useState<boolean>(false);
 
   const nationalCurrency = useCurrencyStore((store) => store.nationalCurrency);
   const warehouseId = useSettingsStore((s) => s.wareHouseId);
@@ -300,7 +308,6 @@ const OrderActions = ({
   };
 
   const onSubmit = () => {
-    console.log(settings?.enable_create_unknown_product, activeShift);
     calcPricePayment();
   };
 
@@ -323,7 +330,7 @@ const OrderActions = ({
         variant="plain"
         disabled={type === "refund"}
         size="sm"
-        onClick={() => setActivePaymentSelectType(0)}
+        onClick={() => setDiscountModal(true)}
         icon={<MdOutlineDiscount />}
         className={classNames(
           "bg-white w-full",
@@ -356,7 +363,7 @@ const OrderActions = ({
       />
 
       <FiscalizedModal
-        isOpen={type === "sale" && !!saleId && fiscalizedModal}
+        isOpen={!!saleId && fiscalizedModal}
         saleId={saleId}
         selectFiscalized={selectFiscalized}
         handleCancel={handleCancelFiscalization}
@@ -364,6 +371,13 @@ const OrderActions = ({
         setIsOpen={setFiscalizedModal}
         fiscalPending={fiscalPending}
         handleApproveFiscalization={handleApproveFiscalization}
+      />
+
+      <DiscountModal
+        isOpen={discountModal}
+        setDiscountModal={setDiscountModal}
+        updateDraftDiscount={updateDraftDiscount}
+        discount={activeDraft?.discountAmount ?? 0}
       />
 
       <PaymeWhithQR

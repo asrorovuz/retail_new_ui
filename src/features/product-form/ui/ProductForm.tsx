@@ -553,10 +553,12 @@ const ProductForm: FC<ProductFormType> = ({
             <></>
           )}
 
-          <ImageForm fieldName={`packages.0.images`} control={control} />
+          <div className="col-span-2">
+            <ImageForm fieldName={`packages.0.images`} control={control} />
+          </div>
         </div>
         <div className="mt-5 flex justify-end gap-x-3">
-          <Button type="button" variant="plain" onClick={onClose}>
+          <Button type="button" onClick={onClose}>
             Отменить
           </Button>
           <Button

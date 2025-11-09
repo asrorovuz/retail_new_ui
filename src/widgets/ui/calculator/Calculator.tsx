@@ -15,9 +15,7 @@ const Calculator = ({
   activeSelectPaymetype,
 }: CalculatorpropsType) => {
   const onClickNumber = (newValue: string) => {
-    // Agar hozirgi qiymat "0" bo‘lsa, uni olib tashlaymiz (boshida nol qolmasin)
-    const updatedValue = value === "0" ? newValue : (value || "") + newValue;
-
+    const updatedValue = value + newValue;
     setValue(updatedValue);
     onPaymentChanged(activeSelectPaymetype, +updatedValue);
   };
@@ -26,7 +24,7 @@ const Calculator = ({
     if (!value.includes(".")) {
       const newStr = value + ".";
       setValue(newStr);
-      onPaymentChanged(activeSelectPaymetype, +newStr);
+      // onPaymentChanged(activeSelectPaymetype, +newStr);
     }
   };
 

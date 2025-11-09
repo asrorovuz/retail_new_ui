@@ -222,8 +222,7 @@ const SaleAndRefunTable = ({
                 <Input
                   size="sm"
                   type="number"
-                  autoFocus={isEditing?.type === "price"}
-                  onFocus={(e) => e.target.focus()}
+                  autoFocus={true}
                   className="!w-[220px]"
                   value={currentItem?.priceAmount}
                   onChange={(val) => {
@@ -276,7 +275,7 @@ const SaleAndRefunTable = ({
                     size="md"
                     type="number"
                     className="!w-[100px]"
-                    autoFocus
+                    autoFocus={true}
                     value={currentItem?.quantity}
                     onChange={(val) => {
                       updateDraftItemQuantity(

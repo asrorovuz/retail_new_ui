@@ -85,7 +85,6 @@ const SalePage = () => {
         if (val) {
           setBarcode(val);
         }
-        setSearch(val);
       });
 
       return () => eventBus.remove("BARCODE_SCANNED", onScan);
@@ -180,6 +179,7 @@ const SalePage = () => {
               payModal={payModal}
               setPayModal={setPayModal}
               deleteDraft={deleteDraftSale}
+              updateDraftDiscount={updateDraftSaleDiscount}
               activeSelectPaymetype={activeSelectPaymetype}
               setActivePaymentSelectType={setActivePaymentSelectType}
               complateActiveDraft={completeActiveDraftSale}
@@ -192,6 +192,7 @@ const SalePage = () => {
             <SearchProductTable
               type="sale"
               debouncedSearch={debouncedSearch}
+              setSearchValue={setSearch}
               data={data ?? []}
               setExpandedRow={setExpandedRow}
               setExpandedId={setExpandedId}

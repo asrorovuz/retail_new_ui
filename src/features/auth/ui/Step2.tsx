@@ -96,7 +96,6 @@ const Step2 = ({ item }: {item: any[]}) => {
               />
               <Button
                 type="button"
-                variant="plain"
                 icon={
                   showPassword ? <FiEyeOff size={20} /> : <FiEye size={20} />
                 }
