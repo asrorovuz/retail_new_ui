@@ -347,6 +347,7 @@ const OrderActions = ({
         type={type}
         cashBackAmount={cashBackAmount}
         totalPaymentAmount={totalPaymentAmount}
+        setActivePaymentSelectType={setActivePaymentSelectType}
         onSubmitPaymentHandler={onSubmitPaymentHandler}
         activeDraft={activeDraft}
         isOpen={ipOpenPayment}

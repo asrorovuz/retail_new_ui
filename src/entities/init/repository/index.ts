@@ -65,9 +65,9 @@ export const useShiftOperationApi = (id: number | null, isOpen: boolean) => {
   });
 };
 
-export const useShiftApi = (id: number | null) => {
+export const useShiftApi = (isOpen?: boolean) => {
   return useQuery({
-    queryKey: ["shift", id],
+    queryKey: ["shift", isOpen],
     queryFn: getShiftApi
   });
 };

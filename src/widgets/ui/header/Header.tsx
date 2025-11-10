@@ -33,7 +33,7 @@ const Header = () => {
   const { activeShift, setActiveShift } = useSettingsStore();
   const version = useVersionStore((store) => store.versions)
 
-  const { data: shift, error } = useShiftApi(activeShift?.id ?? null) as {
+  const { data: shift, error } = useShiftApi() as {
     data: Shift | null;
     error: ShiftError | null;
   };

@@ -20,6 +20,7 @@ type PaymentModalType = {
     callback: (success: boolean) => void
   ) => void;
   activeDraft: DraftSaleSchema & DraftRefundSchema;
+  setActivePaymentSelectType: (val: number) => void;
   setIsOpenPayment: (open: boolean) => void;
 };
 
@@ -27,6 +28,7 @@ const PaymentModal = ({
   type,
   cashBackAmount,
   totalPaymentAmount,
+  setActivePaymentSelectType,
   isOpen,
   activeDraft,
   onSubmitPaymentHandler,
@@ -34,8 +36,6 @@ const PaymentModal = ({
 }: PaymentModalType) => {
   const [loading, setIsLoading] = useState(false);
   const { settings } = useSettingsStore((s) => s);
-
-  console.log(activeDraft?.items);
 
   const totalAmount =
     activeDraft?.items?.reduce((acc, item) => acc + item?.totalAmount, 0) ?? 0;
@@ -56,6 +56,7 @@ const PaymentModal = ({
       })!,
       (success) => {
         setIsLoading(false);
+        setActivePaymentSelectType(1);
         if (success) {
           if (type === "sale") {
             setIsOpenPayment(false);
@@ -63,7 +64,6 @@ const PaymentModal = ({
               setIsOpenPayment(false);
             }
           } else if (type === "refund") {
-            setIsOpenPayment(false);
             setIsOpenPayment(false);
           } else {
             return;

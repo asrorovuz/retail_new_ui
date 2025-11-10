@@ -1,6 +1,7 @@
 import { useSettingsStore } from "@/app/store/useSettingsStore";
 import {
   useCloseShiftApi,
+  useShiftApi,
   useShiftOperationApi,
 } from "@/entities/init/repository";
 import { Button, Dialog, Input, Table } from "@/shared/ui/kit";
@@ -45,12 +46,6 @@ export type ShiftUpdateFormData = {
 };
 
 const UpdateShiftDialog = ({ isOpen, onClose }: PropsType) => {
-  const { activeShift, setActiveShift } = useSettingsStore();
-  const { data: shiftOperations, isPending } = useShiftOperationApi(
-    activeShift?.id ?? null, isOpen
-  );
-  const { mutate: closeShiftMutate, isPending: isClosing } = useCloseShiftApi();
-
   const {
     control,
     handleSubmit,
@@ -65,12 +60,18 @@ const UpdateShiftDialog = ({ isOpen, onClose }: PropsType) => {
     },
   });
 
-  const watchedBalances = watch("balances");
-
   const { fields } = useFieldArray({
     control,
     name: "balances",
   });
+
+  const watchedBalances = watch("balances");
+
+  const { activeShift: shift, setActiveShift } = useSettingsStore();
+  const { data: shiftOperations, isPending: isShiftOperationsPending } =
+    useShiftOperationApi(shift?.id ?? null, isOpen);
+  const { data: activeShift, isPending } = useShiftApi(isOpen);
+  const { mutate: closeShiftMutate, isPending: isClosing } = useCloseShiftApi();
 
   const columns: ColumnDef<(typeof fields)[0]>[] = useMemo(
     () => [
@@ -365,12 +366,6 @@ const UpdateShiftDialog = ({ isOpen, onClose }: PropsType) => {
     }
   }, [watchedBalances, setValue]);
 
-  useEffect(() => {
-    if (!activeShift) {
-      setActiveShift(activeShift);
-    }
-  }, [activeShift]);
-
   return (
     <Dialog
       width={1114}
@@ -378,9 +373,9 @@ const UpdateShiftDialog = ({ isOpen, onClose }: PropsType) => {
       onClose={onClose} //handleClose
       title={"Закрыть смену"}
     >
-      <div className="flex flex-col h-full max-h-[70vh]">
-        <div className="flex-1 overflow-hidden">
-          {isPending && (
+      <div className="h-[75vh]">
+        <div className="overflow-hidden">
+          {isPending && isShiftOperationsPending && (
             <div className="flex items-center justify-center py-16">
               <Loading />
             </div>
@@ -391,67 +386,96 @@ const UpdateShiftDialog = ({ isOpen, onClose }: PropsType) => {
             </div>
           )}
 
-          <div className="border border-gray-200 rounded-2xl py-10 flex justify-center gap-x-10 mb-4">
-            <div className="flex gap-x-4">
-              <div className="h-14 w-14 rounded-full bg-primary flex items-center justify-center text-white">
-                <MdDiscount size={22} />
+          <div className="flex gap-4 mb-4">
+            <div className="w-3/5 border border-gray-200 rounded-2xl p-4 grid grid-cols-2 gap-6">
+              <div className="flex gap-x-4">
+                <div className="h-14 w-14 rounded-full bg-primary flex items-center justify-center text-white">
+                  <MdDiscount size={22} />
+                </div>
+                <div className="flex flex-col gap-y-1">
+                  <p>Чеки</p>
+                  <p className="font-medium text-xl text-gray-800">
+                    {shiftOperations?.sale_count ?? 0}
+                  </p>
+                </div>
               </div>
-              <div className="flex flex-col gap-y-1">
-                <p>Чеки</p>
-                <p className="font-medium text-xl text-gray-800">
-                  {shiftOperations?.sale_count ?? 0}
-                </p>
+
+              <div className="flex gap-x-4">
+                <div className="h-14 w-14 rounded-full bg-primary flex items-center justify-center text-white">
+                  <span className="bg-white text-primary rounded-full">
+                    <CgMathPercent size={22} />
+                  </span>
+                </div>
+                <div className="flex flex-col gap-y-1">
+                  <p>Продажа</p>
+                  <p className="font-medium text-xl text-gray-800">
+                    <FormattedNumber
+                      value={
+                        shiftOperations?.sale_price?.[0]?.amount.toFixed(2) ?? 0
+                      }
+                    />
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-x-4">
+                <div className="h-14 w-14 rounded-full bg-primary flex items-center justify-center text-white">
+                  <span className="bg-white text-primary rounded-full">
+                    <CgMathPercent size={22} />
+                  </span>
+                </div>
+                <div className="flex flex-col gap-y-1">
+                  <p>В долг</p>
+                  <p className="font-medium text-xl text-gray-800">
+                    <FormattedNumber
+                      value={
+                        shiftOperations?.sale_debts?.[0]?.amount.toFixed(2) ?? 0
+                      }
+                    />
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-x-4">
+                <div className="h-14 w-14 rounded-full bg-primary flex items-center justify-center text-white">
+                  <span className="bg-white text-primary rounded-full">
+                    <CgMathPercent size={22} />
+                  </span>
+                </div>
+                <div className="flex flex-col gap-y-1">
+                  <p>Средний чек</p>
+                  <p className="font-medium text-xl text-gray-800">
+                    <FormattedNumber
+                      value={
+                        shiftOperations?.average_check?.amount?.toFixed(2) ?? 0
+                      }
+                    />
+                  </p>
+                </div>
               </div>
             </div>
 
-            <div className="flex gap-x-4">
-              <div className="h-14 w-14 rounded-full bg-primary flex items-center justify-center text-white">
-                <span className="bg-white text-primary rounded-full">
-                  <CgMathPercent size={22} />
-                </span>
-              </div>
-              <div className="flex flex-col gap-y-1">
-                <p>Продажа</p>
+            <div className="w-2/5 flex justify-between flex-col gap-y-4">
+              <div className="w-full flex flex-col items-center justify-center py-4 bg-blue-50 rounded-2xl">
+                <p>Приход</p>
                 <p className="font-medium text-xl text-gray-800">
                   <FormattedNumber
                     value={
-                      shiftOperations?.sale_price?.[0]?.amount.toFixed(2) ?? 0
+                      shiftOperations?.shift_contract.cashboxes_in_balance.total?.[0]?.amount.toFixed(
+                        2
+                      ) ?? 0
                     }
                   />
                 </p>
               </div>
-            </div>
-
-            <div className="flex gap-x-4">
-              <div className="h-14 w-14 rounded-full bg-primary flex items-center justify-center text-white">
-                <span className="bg-white text-primary rounded-full">
-                  <CgMathPercent size={22} />
-                </span>
-              </div>
-              <div className="flex flex-col gap-y-1">
-                <p>В долг</p>
-                <p className="font-medium text-xl text-gray-800">
+              <div className="w-full flex flex-col items-center justify-center py-4 bg-blue-50 rounded-2xl">
+                <p>Расход</p>
+                <p className="font-medium text-xl text-gray-800 mt-1">
                   <FormattedNumber
                     value={
-                      shiftOperations?.sale_debts?.[0]?.amount.toFixed(2) ?? 0
-                    }
-                  />
-                </p>
-              </div>
-            </div>
-
-            <div className="flex gap-x-4">
-              <div className="h-14 w-14 rounded-full bg-primary flex items-center justify-center text-white">
-                <span className="bg-white text-primary rounded-full">
-                  <CgMathPercent size={22} />
-                </span>
-              </div>
-              <div className="flex flex-col gap-y-1">
-                <p>Средний чек</p>
-                <p className="font-medium text-xl text-gray-800">
-                  <FormattedNumber
-                    value={
-                      shiftOperations?.average_check?.amount?.toFixed(2) ?? 0
+                      shiftOperations?.shift_contract?.cashboxes_out_balance?.total?.[0]?.amount.toFixed(
+                        2
+                      ) ?? 0
                     }
                   />
                 </p>
@@ -459,35 +483,8 @@ const UpdateShiftDialog = ({ isOpen, onClose }: PropsType) => {
             </div>
           </div>
 
-          <div className="flex justify-between gap-x-4 mb-4">
-            <div className="flex flex-col items-center justify-center py-6 bg-blue-50 rounded-2xl w-1/2">
-              <p>Приход</p>
-              <p className="font-medium text-xl text-gray-800">
-                <FormattedNumber
-                  value={
-                    shiftOperations?.shift_contract.cashboxes_in_balance.total?.[0]?.amount.toFixed(
-                      2
-                    ) ?? 0
-                  }
-                />
-              </p>
-            </div>
-            <div className="flex flex-col items-center justify-center py-6 bg-blue-50 rounded-2xl w-1/2">
-              <p>Расход</p>
-              <p className="font-medium text-xl text-gray-800 mt-1">
-                <FormattedNumber
-                  value={
-                    shiftOperations?.shift_contract?.cashboxes_out_balance?.total?.[0]?.amount.toFixed(
-                      2
-                    ) ?? 0
-                  }
-                />
-              </p>
-            </div>
-          </div>
-
-          <form className="mb-6" onSubmit={handleSubmit(onSubmit)}>
-            <div className="flex-1 h-[20vh] overflow-auto border border-gray-200 rounded-2xl">
+          <form className="mb-4" onSubmit={handleSubmit(onSubmit)}>
+            <div className="flex-1 h-[40vh] overflow-auto border border-gray-200 rounded-2xl">
               <Table overflow={false} compact={true}>
                 <THead className="sticky top-0">
                   {table.getHeaderGroups().map((headerGroup) => (
@@ -560,7 +557,7 @@ const UpdateShiftDialog = ({ isOpen, onClose }: PropsType) => {
               </Table>
             </div>
 
-            <div className="flex justify-end gap-2 mt-6">
+            <div className="flex justify-end gap-2 mt-4">
               <Button type="button" onClick={onClose}>
                 Отменить
               </Button>
