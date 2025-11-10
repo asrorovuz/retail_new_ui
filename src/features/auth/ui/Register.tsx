@@ -4,18 +4,13 @@ import Step1Phone from "./Step1";
 import Step2Info from "./Step2";
 import Step3Confirm from "./Step3";
 import { Button, Form, Spinner, Steps } from "@/shared/ui/kit";
-import { useNavigate, useOutletContext } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useGlobalLogin, useRegister } from "@/entities/auth/repository";
 import { showErrorMessage } from "@/shared/lib/showMessage";
 import type { Organizationtype } from "@/@types/auth/login";
 
-type OutletContextType = {
-  register_status: boolean;
-};
-
 const Register = () => {
   const navigate = useNavigate();
-  const { register_status } = useOutletContext<OutletContextType>();
   const [isError, setIsError] = useState<boolean>(false);
   const { mutate: globalLogin, isPending: globalLoginPending } =
     useGlobalLogin();
@@ -40,10 +35,6 @@ const Register = () => {
 
   const nextStep = () => setStep((s) => s + 1);
   const prevStep = () => {
-    if (step === 1 && register_status) {
-      navigate("/login");
-    }
-
     if (step === 2) {
       setStep((s) => s - 1);
     }
@@ -55,7 +46,6 @@ const Register = () => {
 
   const onSubmit = (values: any) => {
     if (step === 1) {
-      
       globalLogin(
         { username: values?.login, password: values?.pass },
         {
@@ -84,8 +74,8 @@ const Register = () => {
       );
     }
 
-    if(step === 3) {
-      navigate("/login")
+    if (step === 3) {
+      navigate("/login");
     }
   };
 
@@ -122,7 +112,9 @@ const Register = () => {
       <FormProvider {...form}>
         <Form layout="vertical" onSubmit={form.handleSubmit(onSubmit)}>
           {step === 1 && <Step1Phone />}
-          {step === 2 && <Step2Info item={response ? response?.organizations : []} />}
+          {step === 2 && (
+            <Step2Info item={response ? response?.organizations : []} />
+          )}
           {step === 3 && <Step3Confirm />}
 
           <div className="flex justify-between mt-6">
@@ -132,6 +124,15 @@ const Register = () => {
               onClick={prevStep}
             >
               Назад
+            </Button>
+
+            <Button
+              onClick={() => navigate("/login")}
+              type="button"
+              variant="solid"
+              className="bg-transparent text-gray-700 font-medium rounded-xl"
+            >
+              Выйти
             </Button>
 
             {step < 3 ? (

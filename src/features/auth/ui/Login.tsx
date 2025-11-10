@@ -1,16 +1,21 @@
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import { useAuthContext } from "@/app/providers/AuthProvider";
-import { useNavigate } from "react-router";
+import { useNavigate, useOutletContext } from "react-router";
 import { Button, Form, FormItem, Input } from "@/shared/ui/kit";
 import type { LoginPayload } from "@/@types/auth/login";
 import { useState, useEffect, useRef } from "react";
 import { showErrorMessage, showSuccessMessage } from "@/shared/lib/showMessage";
 import { messages } from "@/app/constants/message.request";
 
+type OutletContextType = {
+  register_status: boolean;
+};
+
 const Login = () => {
   const { login, loading } = useAuthContext();
   const navigate = useNavigate();
+  const { register_status } = useOutletContext<OutletContextType>();
   const [showPassword, setShowPassword] = useState(false);
   const timeoutRef = useRef<number | null>(null);
 
@@ -50,6 +55,12 @@ const Login = () => {
       }
     };
   }, []);
+
+  useEffect(() => {
+    if (!register_status) {
+      navigate("/register");
+    }
+  }, [register_status]);
 
   return (
     <div className="w-full max-w-[512px]">

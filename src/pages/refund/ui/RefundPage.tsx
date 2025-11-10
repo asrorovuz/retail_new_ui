@@ -186,8 +186,6 @@ const RefundPage = () => {
         setBarcode(barcode);
         setIsOpenAddProduct(true);
       } else {
-        console.log("log salom");
-        
         showErrorMessage("Товар не найден");
         setBarcode(null);
       }

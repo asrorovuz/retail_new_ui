@@ -51,7 +51,6 @@ const CreateShiftDialog = ({ isOpen, onClose }: PropsType) => {
   const { setActiveShift } = useSettingsStore();
 
   const handleShiftCreate = async () => {
-    console.log(cashboxs);
     if (cashboxs?.length === 0) {
       toast.warning(
         "Упс, что-то пошло не так. Обратитесь к администратору, чтобы решить эту проблему."
