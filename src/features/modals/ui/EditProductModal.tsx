@@ -130,15 +130,6 @@ const EditProductModal: FC<ProductTableProps & EXtraPropsType> = ({
     }
   }, [productId, isOpen]);
 
-  // useEffect(() => {
-  //   const onScan = EventBus.on("BARCODE_SCANNED", (code) => {
-  //     // shu yerda modal ochish, yoki tovarni topish
-  //     // openModal(code)
-  //   });
-
-  //   return () => EventBus.remove("BARCODE_SCANNED", onScan);
-  // }, []);
-
   return (
     <div>
       <ProductForm

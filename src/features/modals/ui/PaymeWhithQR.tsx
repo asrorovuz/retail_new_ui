@@ -4,10 +4,12 @@ import {
   PaymentProviderTypeClick,
   PaymentProviderTypePayme,
 } from "@/app/constants/payme-providers";
-import { useCreateFiscalizedApi, usePaymentProviderApi } from "@/entities/sale/repository";
+import {
+  useCreateFiscalizedApi,
+  usePaymentProviderApi,
+} from "@/entities/sale/repository";
 import classNames from "@/shared/lib/classNames";
 import eventBus from "@/shared/lib/eventBus";
-import { handleBarcodeScanned } from "@/shared/lib/handleScannedBarcode";
 import { Button, Dialog } from "@/shared/ui/kit";
 import { useEffect, useState } from "react";
 import qrImg from "@/app/assets/qrcode-checked.png";
@@ -31,7 +33,7 @@ const PaymeWhithQR = ({
   saleId,
   selectFiscalized,
   handleCancelFiscalization,
-  handleCancelPayment
+  handleCancelPayment,
 }: PropsPaymeQrType) => {
   const [qrCode, setQrCode] = useState<string>("");
   const [selectedPayment, setSelectedPayment] =
@@ -39,7 +41,7 @@ const PaymeWhithQR = ({
 
   const { data: paymentData = [] } = usePaymentProviderApi();
   const { mutate: createFiscalized, isPending: fiscalPending } =
-      useCreateFiscalizedApi();
+    useCreateFiscalizedApi();
 
   const payment = (paymentData ?? []).filter(
     (elem: any) =>
@@ -49,10 +51,10 @@ const PaymeWhithQR = ({
   );
 
   const onCancel = () => {
-    handleCancelPayment()
-    setQrCode("")
-    setSelectedPayment(null)
-  }
+    handleCancelPayment();
+    setQrCode("");
+    setSelectedPayment(null);
+  };
 
   const handleApprovePayment = () => {
     const payment: any = (paymentData ?? []).find(
@@ -79,6 +81,8 @@ const PaymeWhithQR = ({
           messages.ru.SUCCESS_MESSAGE
         );
         handleCancelFiscalization();
+        setQrCode("");
+        setSelectedPayment(null);
       },
       onError(error) {
         showErrorMessage(error);
@@ -110,16 +114,21 @@ const PaymeWhithQR = ({
   }, [selectedPaymentType]);
 
   useEffect(() => {
-    const onScan = eventBus.on("BARCODE_SCANNED", (code) => {
-      const val: string = handleBarcodeScanned(code);
-      setQrCode(val);
-    });
+    const listener = (code: string) => {
+      setQrCode(code);
+    };
+    eventBus.on("BARCODE_SCANNED", listener);
 
-    return () => eventBus.remove("BARCODE_SCANNED", onScan);
-  }, [isOpen]);
+    return () => eventBus.remove("BARCODE_SCANNED", listener);
+  }, []);
 
   return (
-    <Dialog onClose={onCancel} width={490} title={"Хотите совершить QR-платеж "} isOpen={isOpen}>
+    <Dialog
+      onClose={onCancel}
+      width={490}
+      title={"Хотите совершить QR-платеж "}
+      isOpen={isOpen}
+    >
       <div className="bg-gray-50 rounded-2xl p-3 flex flex-col gap-y-3 mb-6">
         <div className="h-[222px] w-[222px] flex items-center justify-center mx-auto">
           {qrCode ? (

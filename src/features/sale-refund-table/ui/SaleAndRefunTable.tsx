@@ -62,6 +62,13 @@ const SaleAndRefunTable = ({
 
   const decrease = () => {
     const newVal = (currentItem?.quantity || 0) - 1;
+
+    if (currentItem?.quantity === 1) {
+      deleteDraftItem(Number(expandedRow));
+      setExpandedRow(null);
+      return;
+    }
+
     if (newVal > 0) {
       updateDraftItemQuantity(Number(expandedRow), newVal);
       updateDraftItemTotalPrice(
@@ -88,6 +95,7 @@ const SaleAndRefunTable = ({
       ) ?? 0
     );
   }, [activeDraft]);
+  
 
   useEffect(() => {
     if (expendedId) {
@@ -158,7 +166,8 @@ const SaleAndRefunTable = ({
                       }}
                       className={classNames(
                         oddEven ? "bg-gray-50" : "bg-white",
-                        expandedRow?.toString() === row.id && (type === "sale" ? "text-primary" : "text-red-500")
+                        expandedRow?.toString() === row.id &&
+                          (type === "sale" ? "text-primary" : "text-red-500")
                       )}
                     >
                       {row.getVisibleCells().map((cell) => (
@@ -196,14 +205,21 @@ const SaleAndRefunTable = ({
               <div className="text-sm font-medium text-gray-500">
                 Итого к Оплату{" "}
               </div>{" "}
-              <div className={classNames("text-base font-semibold", type === "sale" ? "text-primary" : "text-red-500")}>
+              <div
+                className={classNames(
+                  "text-base font-semibold",
+                  type === "sale" ? "text-primary" : "text-red-500"
+                )}
+              >
                 <FormattedNumber value={totalPrice} scale={2} /> сум{" "}
               </div>
             </div>
 
             <div
               className={classNames(
-                expandedRow && activeDraft?.items?.length ? "flex items-center justify-between" : "hidden",
+                expandedRow && activeDraft?.items?.length
+                  ? "flex items-center justify-between"
+                  : "hidden",
                 `px-2 py-2.5 bg-gray-50 border-t border-gray-200`
               )}
             >
@@ -258,7 +274,7 @@ const SaleAndRefunTable = ({
               )}
 
               <div className="flex items-center gap-x-2">
-                {isEditing?.type !== "quantity" && (
+                {isEditing?.type !== "quantity" && currentItem?.quantity > 1 ? (
                   <Button
                     variant="solid"
                     className={classNames(
@@ -268,6 +284,21 @@ const SaleAndRefunTable = ({
                   >
                     -
                   </Button>
+                ) : (
+                  <CommonDeleteDialog
+                    description={`Удалить товар "${currentItem?.productName}"? Действие нельзя будет отменить.`}
+                    onDelete={onDeleteDraftItem}
+                  >
+                    <Button
+                      variant="solid"
+                      className={classNames(
+                        "w-12 h-12 p-3 flex items-center justify-center !bg-white hover:bg-gray-50 rounded-lg active:!bg-gray-200 text-gray-800"
+                      )}
+                      onClick={decrease}
+                    >
+                      -
+                    </Button>
+                  </CommonDeleteDialog>
                 )}
 
                 {isEditing?.isOpen && isEditing?.type === "quantity" ? (

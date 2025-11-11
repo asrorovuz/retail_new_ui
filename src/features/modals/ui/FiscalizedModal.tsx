@@ -1,12 +1,12 @@
 import { GetFiscalizedProviderLogo } from "@/app/constants/fiscalized.constants";
 import type { FizcalResponsetype } from "@/entities/sale/model";
-import { useFescalDeviceApi } from "@/entities/sale/repository";
 import { Button, Checkbox, Dialog } from "@/shared/ui/kit";
 type ModalProps = {
   isOpen: boolean;
   saleId: number | null;
   selectFiscalized: FizcalResponsetype | null;
   fiscalPending: boolean;
+  filterData: FizcalResponsetype[] | null;
   handleCancel: () => void;
   setSelectFiscalized: (val: FizcalResponsetype | null) => void;
   setIsOpen: (open: boolean) => void;
@@ -17,12 +17,12 @@ const FiscalizedModal = ({
   isOpen,
   selectFiscalized,
   fiscalPending,
+  filterData,
   setSelectFiscalized,
   handleCancel,
   handleApproveFiscalization,
 }: ModalProps) => {
-  const { data: fiscalData = [] } = useFescalDeviceApi();
-  const filterData = fiscalData?.filter((elem: any) => elem?.is_enabled);
+
 
   return (
     <Dialog onClose={handleCancel} onRequestClose={handleCancel} width={490} isOpen={isOpen} title={"Фискализация"}>

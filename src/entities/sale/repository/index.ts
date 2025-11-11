@@ -8,10 +8,11 @@ export const useRegisterSellApi = () => {
   });
 };
 
-export const useFescalDeviceApi = () => {
+export const useFescalDeviceApi = (fiscalizedModal: boolean) => {
   return useQuery({
     queryKey: ["fiscalized"],
     queryFn: fiscalDeviceApi,
+    enabled: fiscalizedModal,
   });
 };
 

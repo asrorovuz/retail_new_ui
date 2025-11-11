@@ -37,7 +37,7 @@ const Calculator = ({
   };
 
   return (
-    <div className="w-full min-h-[30vh] h-full">
+    <div className="w-full min-h-[30vh] max-h-[40vh]">
       <div className="grid grid-cols-3 grid-rows-4 gap-1.5">
         {["7", "8", "9", "4", "5", "6", "1", "2", "3", "0"].map((num) => (
           <Button

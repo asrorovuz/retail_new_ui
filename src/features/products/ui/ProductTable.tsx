@@ -45,7 +45,7 @@ const ProductTable = ({
   const debouncedSearch = useDebounce(search, 500);
   const [confirmProductId, setConfirmProductId] = useState<number | null>(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [item, setItem] = useState<Product | null>(null)
+  const [item, setItem] = useState<Product | null>(null);
   const { tableSettings } = useSettingsStore((s) => s);
 
   const [pagination, setPagination] = useState({
@@ -118,7 +118,7 @@ const ProductTable = ({
         header: "ОБЩАЯ ОСТАТОК",
         cell: (info) => {
           const total = info.row.original.warehouse_items?.[0]?.state;
-          return total !== undefined ? total?.toFixed(2) : "0.00";
+          return total !== undefined ? total.toLocaleString() : "0";
         },
         size: 100,
         meta: {
@@ -200,7 +200,7 @@ const ProductTable = ({
               <DropdownItem className="h-auto!">
                 <div
                   onClick={() => {
-                    setItem(info?.row?.original)
+                    setItem(info?.row?.original);
                     setConfirmProductId(productId);
                     setType("print");
                   }}
@@ -351,7 +351,11 @@ const ProductTable = ({
         productPriceType={productPriceType}
       />
 
-      <PrintCheckProduct item={item} type={type} onClosePrintModal={onClosePrintModal}/>
+      <PrintCheckProduct
+        item={item}
+        type={type}
+        onClosePrintModal={onClosePrintModal}
+      />
     </div>
   );
 };

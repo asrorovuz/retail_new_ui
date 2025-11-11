@@ -1,19 +1,12 @@
 import { Button, FormItem, Select } from "@/shared/ui/kit";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Controller } from "react-hook-form";
 import ModalCategory from "./ModalCategory";
-import { showErrorMessage } from "@/shared/lib/showMessage";
+import { showErrorLocalMessage } from "@/shared/lib/showMessage";
 import { useCategoryApi } from "@/entities/products/repository";
 import { FiPlusCircle } from "react-icons/fi";
 
-type Category = {
-  id: number;
-  name: string;
-  children?: Category[];
-};
-
 type CategorySelectProps = {
-  defaultCategory?: Category[];
   name: string;
   label: string;
   control: any;
@@ -22,39 +15,22 @@ type CategorySelectProps = {
 };
 
 const CategorySelect = ({
-  defaultCategory = [],
   name,
   label,
   control,
   placeholder,
   onChange = () => {},
 }: CategorySelectProps) => {
-  const [categoryData, setCategoryData] = useState<Category[]>([]);
   const [modals, setModals] = useState<any[]>([]);
-  const { data: allCategory } = useCategoryApi();
-
-  const flattenCategories = (data: Category[]): Category[] => {
-    let result: Category[] = [];
-    data.forEach((item) => {
-      result.push({ id: item.id, name: item.name });
-      if (item.children?.length)
-        result = result.concat(flattenCategories(item.children));
-    });
-    return result;
-  };
-
-  const fetchCategory = async () => {
-    const flat = flattenCategories(allCategory || []);
-    setCategoryData(flat);
-  };
-
+  const { data: allCategory, refetch } = useCategoryApi();
+  
   const categoryOptions = useMemo(
     () =>
-      categoryData.map((item) => ({
+      allCategory?.map((item) => ({
         value: item.id,
         label: item.name,
       })),
-    [categoryData]
+    [allCategory]
   );
 
   const handleShowAdd = (opts: {
@@ -75,7 +51,7 @@ const CategorySelect = ({
     } = opts;
 
     if (chainDepth > 1 && parent_id) {
-      showErrorMessage("Подкатегория обязательна для выбора");
+      showErrorLocalMessage("Подкатегория обязательна для выбора");
     }
 
     setModals((prev) => [
@@ -95,10 +71,7 @@ const CategorySelect = ({
   const handleCloseModal = (id: number) => {
     setModals((prev) => prev.filter((m) => m.id !== id));
   };
-
-  useEffect(() => {
-    fetchCategory();
-  }, [allCategory]);
+console.log(modals, "ssssss");
 
   return (
     <div className="flex justify-center items-center gap-x-1">
@@ -115,19 +88,19 @@ const CategorySelect = ({
               options={categoryOptions}
               value={
                 field?.value
-                  ? categoryOptions.find(
+                  ? categoryOptions?.find(
                       (opt) => opt.value === field.value.id
                     ) || null
                   : null
               }
-              defaultValue={
-                defaultCategory.length > 0
-                  ? {
-                      value: defaultCategory[0].id,
-                      label: defaultCategory[0].name,
-                    }
-                  : null
-              }
+              // defaultValue={
+              //   defaultCategory.length > 0
+              //     ? {
+              //         value: defaultCategory[0].id,
+              //         label: defaultCategory[0].name,
+              //       }
+              //     : null
+              // }
               onChange={(data) => {
                 const transformed = data
                   ? { id: data.value, name: data.label }
@@ -151,13 +124,13 @@ const CategorySelect = ({
                 isOpen={true}
                 onClose={handleCloseModal}
                 onSuccess={() => {
-                  fetchCategory();
+                  refetch();
                   handleCloseModal(m.id);
                 }}
                 onAddSubCategory={(args) =>
                   handleShowAdd({ ...args, type: "edit" })
                 }
-                setEndSelectCategory={(val) => field.onChange(val)}
+                setEndSelectCategory={(val) => {field.onChange(val)}}
                 allCategory={allCategory ?? []}
               />
             ))}

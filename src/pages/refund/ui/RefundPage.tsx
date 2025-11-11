@@ -20,7 +20,7 @@ import SearchProductTable from "@/features/search-product-table";
 import eventBus from "@/shared/lib/eventBus";
 import { handleBarcodeScanned } from "@/shared/lib/handleScannedBarcode";
 import { handleScannedProduct } from "@/shared/lib/handleScannedProduct";
-import { showErrorMessage } from "@/shared/lib/showMessage";
+import { showErrorLocalMessage } from "@/shared/lib/showMessage";
 import { useDebounce } from "@/shared/lib/useDebounce";
 import { useEffect, useState } from "react";
 
@@ -186,7 +186,7 @@ const RefundPage = () => {
         setBarcode(barcode);
         setIsOpenAddProduct(true);
       } else {
-        showErrorMessage("Товар не найден");
+        showErrorLocalMessage("Товар не найден");
         setBarcode(null);
       }
     }

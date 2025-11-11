@@ -9,6 +9,7 @@ import {
 } from "@/app/constants/payment.types";
 import classNames from "@/shared/lib/classNames";
 import { Button } from "@/shared/ui/kit";
+import FormattedNumber from "@/shared/ui/kit-pro/numeric-format/NumericFormat";
 import { useState } from "react";
 import { IoChevronBackSharp } from "react-icons/io5";
 
@@ -151,7 +152,7 @@ const PaymeTypeCards = ({
                   activeOnlyType?.ind === index && "bg-blue-50"
                 )}
               >
-                {amount}
+                <FormattedNumber value={amount} />
               </Button>
             );
           })}

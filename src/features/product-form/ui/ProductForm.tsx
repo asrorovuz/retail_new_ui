@@ -396,7 +396,6 @@ const ProductForm: FC<ProductFormType> = ({
           </FormItem>
 
           <CategorySelect
-            defaultCategory={[]}
             name={`packages.0.category`}
             control={control}
             label={"Категория"}

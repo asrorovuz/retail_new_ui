@@ -9,7 +9,7 @@ import type {
 } from "@/@types/sale";
 import type { DraftRefundSchema } from "@/@types/refund";
 import classNames from "@/shared/lib/classNames";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import { useSettingsStore } from "@/app/store/useSettingsStore";
 import {
@@ -23,6 +23,7 @@ import type { PaymentAmount } from "@/@types/common";
 import { useCashboxApi } from "@/entities/init/repository";
 import {
   useCreateFiscalizedApi,
+  useFescalDeviceApi,
   useRegisterSellApi,
 } from "@/entities/sale/repository";
 import { showErrorMessage, showSuccessMessage } from "@/shared/lib/showMessage";
@@ -78,6 +79,8 @@ const OrderActions = ({
   const { mutate: registerRefundMutate } = useRegisterRefundApi();
   const { mutate: createFiscalized, isPending: fiscalPending } =
     useCreateFiscalizedApi();
+  const { data: fiscalData = [] } = useFescalDeviceApi(fiscalizedModal);
+  const filterDataFiscal = fiscalData?.filter((elem: any) => elem?.is_enabled);
 
   const onDeleteActivedraft = () => {
     const findIndex = draft?.findIndex((item) => item?.isActive);
@@ -152,8 +155,9 @@ const OrderActions = ({
       if (
         [FiscalizedProviderTypeEPos, FiscalizedProviderTypeHippoPos].includes(
           selectFiscalized?.type
-        ) &&
-        activeSelectPaymetype
+        ) 
+        // &&
+        // (activeSelectPaymetype === 5 || activeSelectPaymetype === 6)
       ) {
         setPayModal(true);
         setFiscalizedModal(false);
@@ -258,9 +262,13 @@ const OrderActions = ({
       onSuccess: (data: any) => {
         if (data?.sale?.id) {
           setSaleId(data?.sale?.id);
-          if (activeDraft?.id && !activeDraft.is_fiscalized)
+          if (
+            activeDraft?.id &&
+            !activeDraft?.is_fiscalized &&
+            filterDataFiscal?.length === 1
+          ) {
             setFiscalizedModal(true);
-          else if (!settings?.auto_print_receipt && settings?.printer_name)
+          } else if (!settings?.auto_print_receipt && settings?.printer_name)
             setPrintSelect(true);
           else handleCancelPrint();
           // setPrintSelect(true);
@@ -307,9 +315,23 @@ const OrderActions = ({
     }
   };
 
+  const activeDraftPaymeTypes = (
+    type === "sale" ? activeDraft?.payment : activeDraft?.payout
+  )?.amounts
+    ?.filter((item) => item?.amount > 0)
+    ?.map((item) => item?.paymentType);
+
   const onSubmit = () => {
     calcPricePayment();
   };
+
+  console.log(activeDraftPaymeTypes);
+
+  useEffect(() => {
+    if (filterDataFiscal?.length === 1) {
+      setSelectFiscalized(filterDataFiscal[0]);
+    }
+  }, [filterDataFiscal]);
 
   return (
     <div className="p-1 bg-gray-50 rounded-2xl flex gap-x-2">
@@ -365,6 +387,7 @@ const OrderActions = ({
 
       <FiscalizedModal
         isOpen={!!saleId && fiscalizedModal}
+        filterData={filterDataFiscal}
         saleId={saleId}
         selectFiscalized={selectFiscalized}
         handleCancel={handleCancelFiscalization}

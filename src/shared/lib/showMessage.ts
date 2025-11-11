@@ -20,6 +20,13 @@ export const showSuccessMessage = (msgUz: string, msgRu?: string) => {
   });
 };
 
+export const showErrorLocalMessage = (message: string) => {
+  toast.error(message, {
+    position: "bottom-left",
+    autoClose: 3000,
+  });
+};
+
 export const showErrorMessage = (err: ErrorResponse | any) => {
   const lang = i18next.language;
 

@@ -1,6 +1,7 @@
 import { messages } from "@/app/constants/message.request";
 import {
   useAddFavouriteProduct,
+  useAllFavoritProductApi,
   useAllProductApi,
 } from "@/entities/products/repository";
 import { showErrorMessage, showSuccessMessage } from "@/shared/lib/showMessage";
@@ -20,16 +21,22 @@ const LikedProducts = () => {
   const [packageName, setPackageName] = useState<null | string>(null);
 
   const { data, isPending } = useAllProductApi(60, 1, isSearch);
+  const { data: favoriteData } = useAllFavoritProductApi();
   const { mutate: addFavouriteProduct, isPending: addFavouritePending } =
     useAddFavouriteProduct();
 
+    const filterdata = useMemo(() => {
+      const favoriteIds = favoriteData?.map((item) => item?.product?.id) || [];
+      return data?.filter((item) => !favoriteIds.includes(item.id));
+    }, [data, favoriteData]);
+
   const optionProduct = useMemo(() => {
-    return data?.map((item) => ({
+    return filterdata?.map((item) => ({
       label: item?.name,
       value: item?.id,
       item: item,
     }));
-  }, [data]);
+  }, [filterdata]);
 
   const handleClose = () => {
     setProduct({
