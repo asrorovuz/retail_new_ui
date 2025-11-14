@@ -124,7 +124,7 @@ const RefundCheckModal = ({
     <Dialog
       width={"80vw"}
       title={"Возвраты чек"}
-      height={"80vh"}
+      height={"84vh"}
       isOpen={isOpen}
       onClose={() => setRefundCheckModal({ isOpen: false, ids: [] })}
     >

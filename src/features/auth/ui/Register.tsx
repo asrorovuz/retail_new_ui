@@ -4,14 +4,20 @@ import Step1Phone from "./Step1";
 import Step2Info from "./Step2";
 import Step3Confirm from "./Step3";
 import { Button, Form, Spinner, Steps } from "@/shared/ui/kit";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
 import { useGlobalLogin, useRegister } from "@/entities/auth/repository";
 import { showErrorMessage } from "@/shared/lib/showMessage";
 import type { Organizationtype } from "@/@types/auth/login";
 
+type OutletContextType = {
+  refetch: any;
+  isRegistered: boolean;
+};
+
 const Register = () => {
   const navigate = useNavigate();
   const [isError, setIsError] = useState<boolean>(false);
+  const { refetch } = useOutletContext<OutletContextType>();
   const { mutate: globalLogin, isPending: globalLoginPending } =
     useGlobalLogin();
   const { mutate: register, isPending: registerLoading } = useRegister();
@@ -75,6 +81,7 @@ const Register = () => {
     }
 
     if (step === 3) {
+      refetch()
       navigate("/login");
     }
   };
@@ -110,7 +117,11 @@ const Register = () => {
       </Steps>
 
       <FormProvider {...form}>
-        <Form layout="vertical" onSubmit={form.handleSubmit(onSubmit)}>
+        <Form
+          className="max-h-[50vh] overflow-x-auto"
+          layout="vertical"
+          onSubmit={form.handleSubmit(onSubmit)}
+        >
           {step === 1 && <Step1Phone />}
           {step === 2 && (
             <Step2Info item={response ? response?.organizations : []} />
@@ -130,7 +141,7 @@ const Register = () => {
               onClick={() => navigate("/login")}
               type="button"
               variant="solid"
-              className="bg-transparent text-gray-700 font-medium rounded-xl"
+              className="bg-transparent hover:bg-transparent text-gray-700 font-medium rounded-xl"
             >
               Выйти
             </Button>

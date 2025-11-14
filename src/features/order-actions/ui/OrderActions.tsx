@@ -70,6 +70,7 @@ const OrderActions = ({
   const [selectFiscalized, setSelectFiscalized] =
     useState<FizcalResponsetype | null>(null);
   const [discountModal, setDiscountModal] = useState<boolean>(false);
+  const [paymeType, setPaymeType] = useState<number[]>([]);
 
   const nationalCurrency = useCurrencyStore((store) => store.nationalCurrency);
   const warehouseId = useSettingsStore((s) => s.wareHouseId);
@@ -146,6 +147,7 @@ const OrderActions = ({
   };
 
   const handleApproveFiscalization = () => {
+
     if (selectFiscalized) {
       let payload = {
         sale_id: saleId,
@@ -155,9 +157,8 @@ const OrderActions = ({
       if (
         [FiscalizedProviderTypeEPos, FiscalizedProviderTypeHippoPos].includes(
           selectFiscalized?.type
-        ) 
-        // &&
-        // (activeSelectPaymetype === 5 || activeSelectPaymetype === 6)
+        ) &&
+        (paymeType.includes(5) || paymeType.includes(6))
       ) {
         setPayModal(true);
         setFiscalizedModal(false);
@@ -169,6 +170,7 @@ const OrderActions = ({
               messages.ru.SUCCESS_MESSAGE
             );
             handleCancelFiscalization();
+            setPaymeType([])
           },
           onError(error) {
             showErrorMessage(error);
@@ -177,6 +179,7 @@ const OrderActions = ({
       }
     } else {
       handleCancelFiscalization();
+      setPaymeType([])
     }
   };
 
@@ -196,6 +199,13 @@ const OrderActions = ({
       items: [],
       cash_box_id: cashboxData?.length ? cashboxData[0]?.id : null,
     };
+
+    const typesPayme =
+      (type === "sale" ? activeDraft?.payment : activeDraft?.payout)?.amounts
+        ?.filter((item) => item?.amount > 0)
+        ?.map((elem) => elem?.paymentType) || [];
+
+    setPaymeType(typesPayme);
 
     // prepare payload
     {
@@ -262,11 +272,7 @@ const OrderActions = ({
       onSuccess: (data: any) => {
         if (data?.sale?.id) {
           setSaleId(data?.sale?.id);
-          if (
-            activeDraft?.id &&
-            !activeDraft?.is_fiscalized &&
-            filterDataFiscal?.length === 1
-          ) {
+          if (activeDraft?.id && !activeDraft?.is_fiscalized) {
             setFiscalizedModal(true);
           } else if (!settings?.auto_print_receipt && settings?.printer_name)
             setPrintSelect(true);
@@ -315,17 +321,15 @@ const OrderActions = ({
     }
   };
 
-  const activeDraftPaymeTypes = (
-    type === "sale" ? activeDraft?.payment : activeDraft?.payout
-  )?.amounts
-    ?.filter((item) => item?.amount > 0)
-    ?.map((item) => item?.paymentType);
+  // const activeDraftPaymeTypes = (
+  //   type === "sale" ? activeDraft?.payment : activeDraft?.payout
+  // )?.amounts
+  //   ?.filter((item) => item?.amount > 0)
+  //   ?.map((item) => item?.paymentType) ?? [];
 
   const onSubmit = () => {
     calcPricePayment();
   };
-
-  console.log(activeDraftPaymeTypes);
 
   useEffect(() => {
     if (filterDataFiscal?.length === 1) {
@@ -408,6 +412,8 @@ const OrderActions = ({
         isOpen={payModal}
         saleId={saleId}
         selectFiscalized={selectFiscalized}
+        activeDraftPaymeTypes={paymeType}
+        setPaymeType={setPaymeType}
         selectedPaymentType={activeSelectPaymetype}
         handleCancelFiscalization={handleCancelFiscalization}
         handleCancelPayment={handleCancelPayment}

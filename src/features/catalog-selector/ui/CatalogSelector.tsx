@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useCatalogSearchApi } from "@/entities/products/repository";
 import { Select } from "@/shared/ui/kit";
 import type { CommonProps } from "@/shared/ui/kit/@types/common";
@@ -9,6 +9,8 @@ interface CatalogSelectorProps extends CommonProps {
   placeholder?: string;
   onChange: (option: any) => void;
   invalid?: boolean;
+  isOpen: boolean;
+  value: any;
   fieldName?: string;
   setPackageNames: (item: Package[] | []) => void;
 }
@@ -16,18 +18,21 @@ interface CatalogSelectorProps extends CommonProps {
 const CatalogSelector = ({
   placeholder,
   onChange,
+  isOpen,
+  value,
   setPackageNames,
   ...props
 }: CatalogSelectorProps) => {
   const [inputValue, setInputValue] = useState("");
   const [selected, setSelected] = useState<any>(null);
-  const [cachedOptions, setCachedOptions] = useState<any[]>([]); 
+  const [cachedOptions, setCachedOptions] = useState<any[]>([]);
 
   // 🔹 Debounced query
   const debouncedQuery = useDebounce(inputValue, 500);
 
   const { data, isLoading } = useCatalogSearchApi(
-    debouncedQuery // 🔹 bo‘sh string yubormaymiz
+    debouncedQuery || value, // 🔹 bo‘sh string yubormaymiz
+    isOpen
   );
 
   // 🔹 Data o‘zgarganda optionlarni tayyorlash
@@ -45,7 +50,7 @@ const CatalogSelector = ({
   // 🔹 Tanlovni o‘zgartirish
   const handleChange = (option: any) => {
     setSelected(option);
-    setPackageNames(option?.data?.package_names || [])
+    setPackageNames(option?.data?.package_names || []);
     onChange(option ? option : null);
   };
 
@@ -53,6 +58,18 @@ const CatalogSelector = ({
   const handleInputChange = (value: string) => {
     setInputValue(value);
   };
+
+  // 🔹 default value update qilish (edit holatda)
+  useEffect(() => {
+    if (value) {
+      const defaultOption = options.find(opt => opt.value === value) || null;
+      setSelected(defaultOption);
+      setPackageNames(defaultOption?.data?.package_names || []);
+    }
+  }, [value, options, setPackageNames]);
+
+  console.log(value, "valkkkk");
+  
 
   return (
     <Select
@@ -67,6 +84,14 @@ const CatalogSelector = ({
       getOptionLabel={(option: any) => option.label}
       getOptionValue={(option: any) => option.value}
       isClearable
+      menuPortalTarget={document.body}
+      menuPosition="fixed"
+      styles={{
+        menuPortal: (base) => ({
+          ...base,
+          zIndex: 9999,
+        }),
+      }}
     />
   );
 };

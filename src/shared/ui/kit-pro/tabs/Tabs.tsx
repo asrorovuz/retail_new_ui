@@ -104,7 +104,7 @@ export default function Tabs({
               )
             }
           >
-            Касса {index > 9 ? index + 1 : "0" + (index + 1)}
+            {type === "sale" ? "Продажа" : "Возврат"} {index > 9 ? index + 1 : "0" + (index + 1)}
           </Button>
         ))}
       </div>

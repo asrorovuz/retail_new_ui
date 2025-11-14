@@ -6,7 +6,7 @@ import { useEffect } from "react";
 export const AuthLayout = () => {
   const navigate = useNavigate();
 
-  const { data } = useAuthStatus();
+  const { data, refetch } = useAuthStatus();
 
   useEffect(() => {
     if (data?.is_registered) navigate("/login");
@@ -19,7 +19,7 @@ export const AuthLayout = () => {
         <img className="w-full object-cover" src={logoHippo} alt="Hippo" />
       </div>
       <>
-        <Outlet context={{ register_status: data?.is_registered ?? false }}/>
+        <Outlet context={{refetch, isRegistered: data?.is_registered}} />
       </>
     </div>
   );

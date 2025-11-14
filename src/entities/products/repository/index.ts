@@ -86,13 +86,13 @@ export const useCategoryApi = () => {
   });
 };
 
-export const useCatalogSearchApi = (query: string) => {
+export const useCatalogSearchApi = (query: string, isOpen: boolean) => {
   return useQuery({
-    queryKey: ["catalog", query],
+    queryKey: ["catalog", query, isOpen],
     queryFn: () => getCatalogSearchApi(query),
-    enabled: !!query,
-    staleTime: 0,
+    enabled: !!query && !!isOpen,
     gcTime: 0,
+    staleTime: 0
   });
 };
 
@@ -123,14 +123,22 @@ export const useUpdateTableSettings = () => {
 };
 
 export const useUpdateAlertOn = () => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data: AlertOntype) => updateAlertOnApi(data),
+    onSuccess() {
+      queryClient.invalidateQueries({ queryKey: ["all-products"] });
+    },
   });
 };
 
 export const useCreateregister = () => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data: RegisterType) => createRegisterApi(data),
+    onSuccess() {
+      queryClient.invalidateQueries({ queryKey: ["all-products"] });
+    },
   });
 };
 

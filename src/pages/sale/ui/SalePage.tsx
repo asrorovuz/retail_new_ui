@@ -192,7 +192,6 @@ const SalePage = () => {
             <SearchProductTable
               type="sale"
               debouncedSearch={debouncedSearch}
-              setSearchValue={setSearch}
               data={data ?? []}
               setExpandedRow={setExpandedRow}
               setExpandedId={setExpandedId}

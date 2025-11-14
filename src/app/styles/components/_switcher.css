@@ -8,6 +8,10 @@
   }
 
   &.switcher-checked {
+    @apply bg-blue-500; 
+  }
+
+  &.switcher-checked {
     .switcher-toggle {
       left: calc(100% - 1.25rem - 0.125rem);
     }

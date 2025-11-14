@@ -8,7 +8,6 @@ import type { PriceType } from "@/widgets/ui/favourite-card/FavouriteCard";
 
 type PropsType = {
   data: Product[] | [];
-  setSearchValue?: React.Dispatch<React.SetStateAction<string>>;
   type?: "sale" | "refund";
   debouncedSearch: string;
   setExpandedRow?: React.Dispatch<React.SetStateAction<string | null>>;
@@ -18,7 +17,6 @@ type PropsType = {
 const SearchProductTable = ({
   type,
   data,
-  setSearchValue,
   debouncedSearch,
   setExpandedRow,
   setExpandedId,
@@ -64,7 +62,6 @@ const SearchProductTable = ({
       catalogName: item?.product_packages?.[0]?.catalog_name,
     };
 
-    setSearchValue?.("");
     update(newItem);
     setExpandedRow?.(null);
     setExpandedId?.(newItem?.productId!);

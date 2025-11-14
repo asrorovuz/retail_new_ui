@@ -46,7 +46,7 @@ const ProductForm: FC<ProductFormType> = ({
   barcode,
   setProductId,
 }) => {
-  const { handleSubmit, control, getValues, reset, watch } = useForm<
+  const { handleSubmit, control, getValues, setValue, reset, watch } = useForm<
     Product | ProductDefaultValues
   >({
     defaultValues: defaultValue,
@@ -66,7 +66,7 @@ const ProductForm: FC<ProductFormType> = ({
     useUpdateProduct();
   const { mutate: alertOnUpdate } = useUpdateAlertOn();
   const { mutate: createRegister } = useCreateregister();
-
+  
   const onClose = () => {
     setBarcode(null);
     setAlertOn(0);
@@ -113,9 +113,9 @@ const ProductForm: FC<ProductFormType> = ({
       };
 
       createRegister(reminderData, {
-        onError(error){
+        onError(error) {
           console.log(error);
-        }
+        },
       });
     }
   };
@@ -140,10 +140,12 @@ const ProductForm: FC<ProductFormType> = ({
         // }
 
         const category_id = pkg?.category?.id ?? null;
-        const catalog_code = pkg?.catalog?.class_code?.toString?.() ?? null;
-        const catalog_name = pkg?.catalog?.class_name ?? null;
-        const package_code = pkg?.package?.code?.toString?.() ?? null;
-        const package_name = pkg?.package?.name_uz ?? null;
+        const catalog_code = pkg.catalog
+          ? pkg.catalog.class_code.toString()
+          : null;
+        const catalog_name = pkg.catalog ? pkg.catalog.class_name : null;
+        const package_code = pkg.package ? pkg.package.code.toString() : null;
+        const package_name = pkg.package ? pkg?.package?.name_uz : null;
 
         return {
           ...pkg,
@@ -237,15 +239,14 @@ const ProductForm: FC<ProductFormType> = ({
 
   useEffect(() => {
     const values = getValues(`packages.0`) || {};
-
     const shouldShow =
       !!values.catalog || !!values.package || !!values.vat_rate;
-
     setIsShow(shouldShow);
   }, [
     watch(`packages.0.catalog_code`),
     watch(`packages.0.package`),
     watch(`packages.0.vat_rate`),
+    isOpen,
   ]);
 
   useEffect(() => {
@@ -479,6 +480,16 @@ const ProductForm: FC<ProductFormType> = ({
             )}
           />
 
+          <FormItem className="col-span-2" label="Штрих-коды">
+            <BarcodeForm
+              fieldName={"packages.0.barcodes"}
+              barcode={barcode}
+              setValue={setValue}
+              control={control}
+              getValues={getValues}
+            />
+          </FormItem>
+
           <Checkbox
             className="ml-1 mb-3"
             checked={isShow}
@@ -487,46 +498,46 @@ const ProductForm: FC<ProductFormType> = ({
             Идентификаторы и измерения в GN
           </Checkbox>
 
-          <FormItem className="col-span-2" label="Штрих-коды">
-            <BarcodeForm
-              fieldName={"packages.0.barcodes"}
-              barcode={barcode}
-              control={control}
-              getValues={getValues}
-            />
-          </FormItem>
-
           {isShow ? (
             <>
               <Controller
                 name={`packages.0.catalog_code`}
                 control={control}
-                render={({ field }) => (
-                  <FormItem label={"ИКПУ-код"}>
-                    <CatalogSelector
-                      {...field}
-                      fieldName={`packages.0`}
-                      placeholder={"Введите ИКПУ-код"}
-                      onChange={field.onChange}
-                      setPackageNames={setPackageNames}
-                    />
-                  </FormItem>
-                )}
+                render={({ field }) => {
+                  return (
+                    <FormItem label={"ИКПУ-код"}>
+                      <CatalogSelector
+                        {...field}
+                        fieldName={`packages.0`}
+                        isOpen={isOpen}
+                        placeholder={"Введите ИКПУ-код"}
+                        value={field.value}
+                        onChange={field.onChange}
+                        setPackageNames={setPackageNames}
+                      />
+                    </FormItem>
+                  );
+                }}
               />
 
               <Controller
                 name={`packages.0.package`}
                 control={control}
-                render={({ field }) => (
-                  <FormItem label={"Ед. изм."}>
-                    <CatalogPackageSelector
-                      {...field}
-                      options={packageNames || []}
-                      placeholder={"Введите Ед. изм."}
-                      onChange={field.onChange}
-                    />
-                  </FormItem>
-                )}
+                render={({ field }) => {
+                  console.log(packageNames, "edizs");
+
+                  return (
+                    <FormItem label={"Ед. изм."}>
+                      <CatalogPackageSelector
+                        {...field}
+                        options={packageNames || []}
+                        value={field?.value}
+                        placeholder={"Введите Ед. изм."}
+                        onChange={field.onChange}
+                      />
+                    </FormItem>
+                  );
+                }}
               />
 
               <Controller
@@ -538,11 +549,24 @@ const ProductForm: FC<ProductFormType> = ({
                       options={options}
                       isSearchable={false}
                       placeholder={"Введите НДС"}
-                      getOptionLabel={(option) => option.label}
-                      getOptionValue={(option) => option.label}
-                      onChange={(option) =>
-                        field.onChange(option ? option.value : null)
+                      getOptionLabel={(option) =>
+                        typeof option?.value === "number"
+                          ? option.label
+                          : "БЕЗ НДС"
                       }
+                      getOptionValue={(option) => String(option.value)}
+                      value={
+                        options.find((opt) => opt.value === field.value) ||
+                        options[0]
+                      }
+                      onChange={(option) =>
+                        field.onChange(option?.value ?? null)
+                      }
+                      menuPortalTarget={document.body}
+                      menuPosition="fixed"
+                      styles={{
+                        menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                      }}
                     />
                   </FormItem>
                 )}
