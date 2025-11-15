@@ -213,7 +213,7 @@ const UpdateShiftDialog = ({ isOpen, onClose }: PropsType) => {
                       field.value !== undefined &&
                       field.value !== ""
                         ? String(Math.floor(Number(field.value) * 100) / 100)
-                        : "";
+                        : "0";
 
                     return (
                       <Input
@@ -259,6 +259,19 @@ const UpdateShiftDialog = ({ isOpen, onClose }: PropsType) => {
                   {errors.balances[index]?.amount?.message}
                 </p>
               )}
+            </div>
+          );
+        },
+        footer: () => {
+          const totalFact =
+            watchedBalances?.reduce((acc, balance) => {
+              const actual = parseFloat(balance.amount || "0");
+              return acc + actual;
+            }, 0) ?? 0;
+
+          return (
+            <div className="text-normal text-sm px-4 py-2">
+              <FormattedNumber value={totalFact} />
             </div>
           );
         },
@@ -347,7 +360,7 @@ const UpdateShiftDialog = ({ isOpen, onClose }: PropsType) => {
       const initialValues = activeShift.cashboxes_expected.balances.map(
         (balance) => ({
           type: balance.type,
-          amount: "",
+          amount: "0",
           expected: balance.amount,
           difference: balance.amount,
         })
@@ -488,10 +501,7 @@ const UpdateShiftDialog = ({ isOpen, onClose }: PropsType) => {
             </div>
           )}
 
-          <form
-            className="mb-4 relative"
-            onSubmit={handleSubmit(onSubmit)}
-          >
+          <form className="mb-4 relative" onSubmit={handleSubmit(onSubmit)}>
             {activeShift && (
               <div className="flex-1 h-[36vh] overflow-auto border border-gray-200 rounded-2xl">
                 <Table overflow={false} compact={true}>

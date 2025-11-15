@@ -155,6 +155,8 @@ const PaymeWhithQR = ({
   return (
     <Dialog
       onClose={onCancel}
+      shouldCloseOnOverlayClick={false} // ❗ tashqariga bosilganda yopilmaydi
+      shouldCloseOnEsc={false} // ❗ ESC bosilganda yopilmaydi
       width={490}
       title={"Хотите совершить QR-платеж "}
       isOpen={isOpen}
@@ -187,7 +189,14 @@ const PaymeWhithQR = ({
                       isSelected && "bg-blue-100"
                     )}
                   >
-                    <div className={classNames("w-10 h-10 absolute -right-2 -top-2", !isSelected && "hidden")}><img className="w-full h-full" src="img/ok.png" alt="" /></div>
+                    <div
+                      className={classNames(
+                        "w-10 h-10 absolute -right-2 -top-2",
+                        !isSelected && "hidden"
+                      )}
+                    >
+                      <img className="w-full h-full" src="img/ok.png" alt="" />
+                    </div>
                     {GetPaymentProviderLogo(Number(item?.type)) && (
                       <div className="w-full flex items-center justify-center">
                         <img

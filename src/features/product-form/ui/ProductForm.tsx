@@ -41,6 +41,7 @@ const ProductForm: FC<ProductFormType> = ({
   productId,
   isOpen,
   setIsOpen,
+  setType,
   defaultValue,
   setBarcode,
   barcode,
@@ -54,7 +55,7 @@ const ProductForm: FC<ProductFormType> = ({
   const inputWrapperRef = useRef<HTMLDivElement>(null);
   const [remainder, setRemainder] = useState<number>(defaultValue?.state || 0);
   const [alertOn, setAlertOn] = useState<string | number>(0);
-  const [isShow, setIsShow] = useState(false);
+  const [isShow, setIsShow] = useState(true);
   const [packageNames, setPackageNames] = useState<Package[] | []>([]);
 
   const { wareHouseId } = useSettingsStore((s) => s);
@@ -66,7 +67,7 @@ const ProductForm: FC<ProductFormType> = ({
     useUpdateProduct();
   const { mutate: alertOnUpdate } = useUpdateAlertOn();
   const { mutate: createRegister } = useCreateregister();
-  
+
   const onClose = () => {
     setBarcode(null);
     setAlertOn(0);
@@ -74,7 +75,7 @@ const ProductForm: FC<ProductFormType> = ({
     reset(defaultValue || {});
     setIsShow(false);
     setIsOpen(false);
-
+    setType("add");
     if (setProductId) {
       setProductId(null);
     }
@@ -121,6 +122,27 @@ const ProductForm: FC<ProductFormType> = ({
   };
 
   const onSubmit: any = async (values: ProductDefaultValues) => {
+    //   {
+    //     "barcode": null,
+    //     "class_code": "00101001001000000",
+    //     "name": "Живые лошади",
+    //     "group_name": "ЖИВЫЕ ЖИВОТНЫЕ",
+    //     "class_name": "Живые лошади, ослы",
+    //     "position_name": "Живые лошади и ослы",
+    //     "sub_position_name": "Живые лошади",
+    //     "package_names": [
+    //         {
+    //             "code": 1378325,
+    //             "name_ru": "шт.",
+    //             "name_uz": "дона",
+    //             "name_lat": "dona"
+    //         }
+    //     ],
+    //     "lgotas": null,
+    //     "use_package": true,
+    //     "use_count": false
+    // },
+
     const transformatedData = await Promise.all(
       values?.packages?.map(async (pkg: any) => {
         const images = await convertImageObjectsToBase64(
@@ -246,7 +268,7 @@ const ProductForm: FC<ProductFormType> = ({
     watch(`packages.0.catalog_code`),
     watch(`packages.0.package`),
     watch(`packages.0.vat_rate`),
-    isOpen,
+    isOpen
   ]);
 
   useEffect(() => {
@@ -512,6 +534,8 @@ const ProductForm: FC<ProductFormType> = ({
                         isOpen={isOpen}
                         placeholder={"Введите ИКПУ-код"}
                         value={field.value}
+                        setValue={setValue}
+                        getValues={getValues}
                         onChange={field.onChange}
                         setPackageNames={setPackageNames}
                       />
@@ -524,8 +548,6 @@ const ProductForm: FC<ProductFormType> = ({
                 name={`packages.0.package`}
                 control={control}
                 render={({ field }) => {
-                  console.log(packageNames, "edizs");
-
                   return (
                     <FormItem label={"Ед. изм."}>
                       <CatalogPackageSelector

@@ -20,7 +20,7 @@ import {
 } from "@/widgets";
 import { useCurrencyStore } from "@/app/store/useCurrencyStore";
 import type { PaymentAmount } from "@/@types/common";
-import { useCashboxApi } from "@/entities/init/repository";
+import { useCashboxApi, useCreatePrintApi } from "@/entities/init/repository";
 import {
   useCreateFiscalizedApi,
   useFescalDeviceApi,
@@ -82,6 +82,7 @@ const OrderActions = ({
     useCreateFiscalizedApi();
   const { data: fiscalData = [] } = useFescalDeviceApi(fiscalizedModal);
   const filterDataFiscal = fiscalData?.filter((elem: any) => elem?.is_enabled);
+  const { mutate: printCheck } = useCreatePrintApi();
 
   const onDeleteActivedraft = () => {
     const findIndex = draft?.findIndex((item) => item?.isActive);
@@ -147,7 +148,6 @@ const OrderActions = ({
   };
 
   const handleApproveFiscalization = () => {
-
     if (selectFiscalized) {
       let payload = {
         sale_id: saleId,
@@ -170,7 +170,7 @@ const OrderActions = ({
               messages.ru.SUCCESS_MESSAGE
             );
             handleCancelFiscalization();
-            setPaymeType([])
+            setPaymeType([]);
           },
           onError(error) {
             showErrorMessage(error);
@@ -179,7 +179,7 @@ const OrderActions = ({
       }
     } else {
       handleCancelFiscalization();
-      setPaymeType([])
+      setPaymeType([]);
     }
   };
 
@@ -272,12 +272,16 @@ const OrderActions = ({
       onSuccess: (data: any) => {
         if (data?.sale?.id) {
           setSaleId(data?.sale?.id);
-          if (activeDraft?.id && !activeDraft?.is_fiscalized) {
-            setFiscalizedModal(true);
-          } else if (!settings?.auto_print_receipt && settings?.printer_name)
+
+          if (settings?.auto_print_receipt && settings?.printer_name) {
+            console.log(data, "response");
+            
+            onPrint(data?.sale?.id);
+          } else if (!settings?.auto_print_receipt && settings?.printer_name) {
             setPrintSelect(true);
-          else handleCancelPrint();
-          // setPrintSelect(true);
+          }else{
+            handleCancelPrint()
+          }
         }
 
         callback(true);
@@ -326,6 +330,30 @@ const OrderActions = ({
   // )?.amounts
   //   ?.filter((item) => item?.amount > 0)
   //   ?.map((item) => item?.paymentType) ?? [];
+
+  const onPrint = (id?: number) => {
+    printCheck(
+      {
+        path: `${type}-receipt-${settings?.receipt_size || 80}`,
+        payload: {
+          sale_id: id ?? saleId,
+          printer_name: settings?.printer_name ?? "",
+        },
+      },
+      {
+        onSuccess() {
+          showSuccessMessage(
+            messages.uz.SUCCESS_MESSAGE,
+            messages.ru.SUCCESS_MESSAGE
+          );
+          handleCancelPrint();
+        },
+        onError(error) {
+          showErrorMessage(error);
+        },
+      }
+    );
+  };
 
   const onSubmit = () => {
     calcPricePayment();

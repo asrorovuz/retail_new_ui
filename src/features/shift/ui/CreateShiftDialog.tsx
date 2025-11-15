@@ -1,11 +1,10 @@
-import type { Balance } from "@/@types/shift/schema";
+import type { AmountType } from "@/@types/cashbox";
 import { messages } from "@/app/constants/message.request";
 import { CurrencyCodeUZSText } from "@/app/constants/paymentType";
 import { useSettingsStore } from "@/app/store/useSettingsStore";
 import {
   useCashboxApi,
   useCreateShiftApi,
-  useLastShiftApi,
 } from "@/entities/init/repository";
 import classNames from "@/shared/lib/classNames";
 import { showErrorMessage, showSuccessMessage } from "@/shared/lib/showMessage";
@@ -42,12 +41,10 @@ export const paymentTypes = {
 };
 
 const CreateShiftDialog = ({ isOpen, onClose }: PropsType) => {
-  const { data: cashboxs } = useCashboxApi();
-  const { data: lastActiveShift, isPending: fetchLastActiveShiftLoading } =
-    useLastShiftApi(cashboxs?.[0]?.id ?? null);
+  const { data: cashboxs, isPending } = useCashboxApi();
   const { mutate: createShiftMutate, isPending: createShiftPending } =
     useCreateShiftApi();
-
+    
   const { setActiveShift } = useSettingsStore();
 
   const handleShiftCreate = async () => {
@@ -73,7 +70,7 @@ const CreateShiftDialog = ({ isOpen, onClose }: PropsType) => {
     });
   };
 
-  const shiftColumns: ColumnDef<Balance>[] = useMemo(
+  const shiftColumns: ColumnDef<AmountType>[] = useMemo(
     () => [
       {
         accessorKey: "type",
@@ -83,7 +80,7 @@ const CreateShiftDialog = ({ isOpen, onClose }: PropsType) => {
           return (
             <div className="flex justify-start px-3">
               <img
-                src={paymentTypes[item.type as keyof typeof paymentTypes]}
+                src={paymentTypes[item?.money_type as keyof typeof paymentTypes]}
                 alt={info.cell.id}
                 className="w-10 object-contain"
               />
@@ -106,26 +103,15 @@ const CreateShiftDialog = ({ isOpen, onClose }: PropsType) => {
     ],
     []
   );
-
-  const shiftData = useMemo(
-    () => lastActiveShift?.cashboxes_balance_closing.balances ?? [],
-    [lastActiveShift]
-  );
-
-  const shiftTable = useReactTable<Balance>({
-    data: shiftData,
+  
+  const shiftTable = useReactTable<AmountType>({
+    data: cashboxs?.length ? cashboxs[0].amounts ?? [] : [],
     columns: shiftColumns,
     getCoreRowModel: getCoreRowModel(),
     defaultColumn: {
       size: 130,
     },
   });
-
-  // useEffect(() => {
-  //   if (isOpen) {
-  //     mutate();
-  //   }
-  // }, [isOpen]);
 
   return (
     <Dialog
@@ -137,12 +123,12 @@ const CreateShiftDialog = ({ isOpen, onClose }: PropsType) => {
       <div className="flex flex-col h-full max-h-[70vh]">
         {/* <p className="text-sm text-gray-500">Остатки с последней смены</p> */}
         <div className="flex-1 overflow-hidden">
-          {fetchLastActiveShiftLoading && (
+          {isPending && (
             <div className="flex items-center justify-center py-16">
               <Loading />
             </div>
           )}
-          {!fetchLastActiveShiftLoading && !lastActiveShift && (
+          {!isPending && !cashboxs?.[0]?.amounts && (
             <div className="border border-gray-200 rounded-2xl">
               <div className="grid grid-cols-2 py-2 px-3 border-b">
                 <p>ТИП ПЛАТЕЖИ</p>
@@ -162,7 +148,7 @@ const CreateShiftDialog = ({ isOpen, onClose }: PropsType) => {
             </div>
           )}
 
-          {!fetchLastActiveShiftLoading && lastActiveShift && (
+          {!isPending && cashboxs?.[0]?.amounts && (
             <div className="h-full overflow-auto">
               <div className="bg-white border border-gray-200 rounded-t-2xl overflow-hidden">
                 <Table className="w-full">
@@ -209,7 +195,7 @@ const CreateShiftDialog = ({ isOpen, onClose }: PropsType) => {
                   </span>
                   <span className="font-medium text-primary flex gap-x-1">
                     <FormattedNumber
-                      value={shiftData.reduce(
+                      value={cashboxs?.[0]?.amounts.reduce(
                         (sum, item) => sum + item.amount,
                         0
                       )}

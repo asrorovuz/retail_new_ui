@@ -23,12 +23,10 @@ const AddProductModal: FC<ProductModalProps> = ({
   const [defaultValues, setDefaultValues] = useState<ProductDefaultValues>();
   const { data: catalogData } = useCatalogSearchApi(barcode || "", isOpen);
   const openModal = () => {
-    console.log("salom");
-
     setType("add");
     setIsOpen(true);
   };
-
+  
   useEffect(() => {
     if (isOpen) {
       const prices = productPriceType?.map(
@@ -105,6 +103,7 @@ const AddProductModal: FC<ProductModalProps> = ({
           type={type}
           isOpen={isOpen}
           setIsOpen={setIsOpen}
+          setType={setType}
           defaultValue={defaultValues!} // '!' bilan null bo'lmasligini bildiramiz
           barcode={barcode}
           setBarcode={setBarcode}

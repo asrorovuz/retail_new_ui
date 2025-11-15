@@ -22,10 +22,16 @@ const FiscalizedModal = ({
   handleCancel,
   handleApproveFiscalization,
 }: ModalProps) => {
-
-
   return (
-    <Dialog onClose={handleCancel} onRequestClose={handleCancel} width={490} isOpen={isOpen} title={"Фискализация"}>
+    <Dialog
+      onClose={handleCancel}
+      onRequestClose={handleCancel}
+      shouldCloseOnOverlayClick={false} // ❗ tashqariga bosilganda yopilmaydi
+      shouldCloseOnEsc={false} // ❗ ESC bosilganda yopilmaydi
+      width={490}
+      isOpen={isOpen}
+      title={"Отправить продажу в налоговую?"}
+    >
       <div className="bg-gray-50 rounded-2xl p-3 mb-6 flex flex-col gap-y-4">
         {filterData?.length ? (
           filterData?.map((item) => {
@@ -71,7 +77,11 @@ const FiscalizedModal = ({
       </div>
       <div className="flex justify-end gap-x-2">
         <Button onClick={handleCancel}>Нет</Button>
-        <Button loading={fiscalPending} onClick={handleApproveFiscalization} variant="solid">
+        <Button
+          loading={fiscalPending}
+          onClick={handleApproveFiscalization}
+          variant="solid"
+        >
           Да
         </Button>
       </div>

@@ -38,13 +38,6 @@ export const getWarhouseApi = async (): Promise<WareHouseDataType[]> => {
   });
 };
 
-export const getLastShiftApi = async (id: number | null): Promise<Shift> => {
-  return await apiRequest<Shift>({
-    url: pathServices.init.lastShiftPath + id,
-    method: "GET",
-  });
-};
-
 export const closeShiftApi = async (payload: any): Promise<Shift> => {
   return await apiRequest<Shift>({
     url: pathServices.init.closeShiftPath,

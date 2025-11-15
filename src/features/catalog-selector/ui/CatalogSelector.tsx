@@ -10,6 +10,8 @@ interface CatalogSelectorProps extends CommonProps {
   onChange: (option: any) => void;
   invalid?: boolean;
   isOpen: boolean;
+  setValue: any;
+  getValues: any;
   value: any;
   fieldName?: string;
   setPackageNames: (item: Package[] | []) => void;
@@ -19,6 +21,8 @@ const CatalogSelector = ({
   placeholder,
   onChange,
   isOpen,
+  setValue,
+  getValues,
   value,
   setPackageNames,
   ...props
@@ -38,7 +42,7 @@ const CatalogSelector = ({
   // 🔹 Data o‘zgarganda optionlarni tayyorlash
   const options = useMemo(() => {
     if (!data || !Array.isArray(data)) return cachedOptions;
-    const newOptions = data.map((item: any) => ({
+    const newOptions = data?.map((item: any) => ({
       label: `${item.class_code} - ${item.class_name}`,
       value: item.class_code,
       data: item,
@@ -49,6 +53,12 @@ const CatalogSelector = ({
 
   // 🔹 Tanlovni o‘zgartirish
   const handleChange = (option: any) => {
+    const currentPackages = getValues("packages") || [];
+    const currentPackage = currentPackages[0] || {};
+    setValue("packages.0", {
+      ...currentPackage,
+      catalog: option?.data,
+    });
     setSelected(option);
     setPackageNames(option?.data?.package_names || []);
     onChange(option ? option : null);
@@ -61,15 +71,16 @@ const CatalogSelector = ({
 
   // 🔹 default value update qilish (edit holatda)
   useEffect(() => {
-    if (value) {
-      const defaultOption = options.find(opt => opt.value === value) || null;
-      setSelected(defaultOption);
-      setPackageNames(defaultOption?.data?.package_names || []);
-    }
-  }, [value, options, setPackageNames]);
+    if (!value) return;
+    console.log(value);
 
-  console.log(value, "valkkkk");
-  
+    // options hali kelmagan bo‘lsa kutamiz
+    const found = options.find((opt) => opt.value === value);
+    if (found) {
+      setSelected(found);
+      setPackageNames(found?.data?.package_names || []);
+    }
+  }, [value, options]);
 
   return (
     <Select

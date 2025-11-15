@@ -37,6 +37,7 @@ const DiscountModal = ({
     <Dialog width={490} isOpen={isOpen} onClose={onClose} title="Скидка">
       <Input
         type="number"
+        autoFocus
         replaceLeadingZero={true}
         value={value}
         onChange={(e) => setValue(e.target.value)}

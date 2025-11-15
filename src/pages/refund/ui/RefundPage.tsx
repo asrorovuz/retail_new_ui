@@ -154,12 +154,7 @@ const RefundPage = () => {
           const newBarcode = code?.slice(1);
           setCheckDode(newBarcode);
           setRefundCheckModal((prev) => ({ ...prev, isOpen: true }));
-
-          if (checkData) {
-            setRefundCheckData(checkData);
-          }
         } else {
-          
           const val: string = handleBarcodeScanned(code);
           if (val) {
             setBarcode(val);
@@ -191,6 +186,13 @@ const RefundPage = () => {
       }
     }
   }, [isError]);
+
+  useEffect(() => {
+    if (checkData) {
+      console.log("Loaded checkData:", checkData);
+      setRefundCheckData(checkData);
+    }
+  }, [checkData]);
 
   return (
     <div className="flex justify-between gap-x-2 h-[calc(100vh-90px)]">
@@ -265,7 +267,6 @@ const RefundPage = () => {
             <SearchProductTable
               type="refund"
               debouncedSearch={debouncedSearch}
-              setSearchValue={setSearch}
               data={data ?? []}
               setExpandedRow={setExpandedRow}
               setExpandedId={setExpandedId}

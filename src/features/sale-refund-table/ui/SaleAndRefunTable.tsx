@@ -201,9 +201,9 @@ const SaleAndRefunTable = ({
             </TBody>
           </Table>
           <div className="w-full sticky bottom-0 bg-white border-t border-gray-300">
-            <div className="flex justify-between items-center px-2 py-2.5">
-              <div className="text-sm font-medium text-gray-500">
-                Итого к Оплату{" "}
+            <div className="flex justify-end gap-x-2 items-center px-2 py-2.5">
+              <div className="text-base font-medium text-gray-500">
+                Итого:{" "}
               </div>{" "}
               <div
                 className={classNames(

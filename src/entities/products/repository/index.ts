@@ -91,8 +91,8 @@ export const useCatalogSearchApi = (query: string, isOpen: boolean) => {
     queryKey: ["catalog", query, isOpen],
     queryFn: () => getCatalogSearchApi(query),
     enabled: !!query && !!isOpen,
-    gcTime: 0,
-    staleTime: 0
+    // gcTime: 0,
+    // staleTime: 0
   });
 };
 

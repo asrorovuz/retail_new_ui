@@ -39,6 +39,9 @@ const RefundCheckModal = ({
 }: RefundCheckModalProps) => {
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
+  console.log(items);
+  
+
   // Modal ochilganda barcha itemlar avtomatik tanlanadi
   useEffect(() => {
     if (isOpen && items?.length) {

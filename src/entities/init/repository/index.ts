@@ -4,7 +4,6 @@ import {
   createPrintApi,
   createShiftApi,
   getCashboxApi,
-  getLastShiftApi,
   getPrinterApi,
   getSettingsApi,
   getShiftApi,
@@ -46,14 +45,6 @@ export const useCashboxApi = () => {
   return useQuery({
     queryKey: ["cashbox"],
     queryFn: getCashboxApi,
-  });
-};
-
-export const useLastShiftApi = (id: number | null) => {
-  return useQuery({
-    queryKey: ["last-shift"],
-    queryFn: () => getLastShiftApi(id),
-    enabled: !!id,
   });
 };
 
