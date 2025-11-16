@@ -9,6 +9,7 @@ import {
 } from "@/app/constants/payment.types";
 import classNames from "@/shared/lib/classNames";
 import { Button } from "@/shared/ui/kit";
+import FormattedNumber from "@/shared/ui/kit-pro/numeric-format/NumericFormat";
 import { useState } from "react";
 import { IoChevronBackSharp } from "react-icons/io5";
 
@@ -71,7 +72,6 @@ const PaymeTypeCards = ({
     setActiveOnlyType({ ...activeOnlyType, ind: index });
     updateDraftPayment(updatedAmounts as (DraftSalePaymentAmountSchema[] | DraftRefundPayoutAmountSchema[]));
   };
-console.log(activeDraft);
 
   return (
     <>
@@ -105,10 +105,9 @@ console.log(activeDraft);
                     }
                   }}
                   className={classNames(
-                    "flex flex-col justify-center items-center border-none overflow-hidden h-[50px]",
-                    payment?.amount > 0 && "border-blue-700",
-                    activeSelectPaymetype === payment?.paymentType &&
-                      "bg-blue-50"
+                    "flex flex-col justify-center items-center overflow-hidden h-[50px]",
+                    payment?.amount ? "border-2 border-blue-300" : "border-none",
+                    +activeSelectPaymetype === +payment?.paymentType && "bg-blue-50",
                   )}
                 >
                   <img
@@ -132,7 +131,7 @@ console.log(activeDraft);
         </div>
       )}
       {activeOnlyType?.isOpen && (
-        <div className="grid grid-cols-3 grid-rows-2 gap-1 p-2 bg-gray-50 rounded-2xl mb-2">
+        <div className="grid grid-cols-3 grid-rows-2 gap-1 p-1 bg-gray-50 rounded-2xl mb-2">
           <Button
             onClick={() =>
               setActiveOnlyType({ ...activeOnlyType, isOpen: false })
@@ -147,13 +146,13 @@ console.log(activeDraft);
             return (
               <Button
                 key={index}
-                onClick={() => onSelectOnlyPayment(amount, index)}
+                onClick={() => {onSelectOnlyPayment(amount, index), setActiveOnlyType({ ...activeOnlyType, isOpen: false })}}
                 className={classNames(
                   "flex flex-col justify-center border-none overflow-hidden items-center h-[50px]",
                   activeOnlyType?.ind === index && "bg-blue-50"
                 )}
               >
-                {amount}
+                <FormattedNumber value={amount} />
               </Button>
             );
           })}

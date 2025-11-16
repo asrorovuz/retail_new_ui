@@ -243,7 +243,7 @@ const PrintCheckProduct = ({ item, type, onClosePrintModal }: PropsType) => {
       width={"90vw"}
       isOpen={type === "print" && !!item?.id}
     >
-      <div className="h-[68vh] overflow-y-auto mb-5">
+      <div className="h-[64vh] overflow-y-auto mb-5">
         <div className="flex justify-between gap-x-12">
           <div className="w-3/5 flex flex-col gap-y-6">
             <div className="flex flex-col gap-y-4">

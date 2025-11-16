@@ -6,6 +6,7 @@ export type ProductFormType = {
   productId?: number | null;
   isOpen: boolean;
   setIsOpen: (val: boolean) => void;
+  setType: (tyep: "add" | "edit") => void;
   defaultValue: Product | ProductDefaultValues;
   barcode: string | null;
   setBarcode: (val: string | null) => void;

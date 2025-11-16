@@ -20,7 +20,7 @@ import SearchProductTable from "@/features/search-product-table";
 import eventBus from "@/shared/lib/eventBus";
 import { handleBarcodeScanned } from "@/shared/lib/handleScannedBarcode";
 import { handleScannedProduct } from "@/shared/lib/handleScannedProduct";
-import { showErrorMessage } from "@/shared/lib/showMessage";
+import { showErrorLocalMessage } from "@/shared/lib/showMessage";
 import { useDebounce } from "@/shared/lib/useDebounce";
 import { useEffect, useState } from "react";
 
@@ -154,16 +154,11 @@ const RefundPage = () => {
           const newBarcode = code?.slice(1);
           setCheckDode(newBarcode);
           setRefundCheckModal((prev) => ({ ...prev, isOpen: true }));
-
-          if (checkData) {
-            setRefundCheckData(checkData);
-          }
         } else {
           const val: string = handleBarcodeScanned(code);
           if (val) {
             setBarcode(val);
           }
-          setSearch(val);
         }
       });
 
@@ -174,7 +169,7 @@ const RefundPage = () => {
   useEffect(() => {
     if (isSuccess && !isFetching) {
       if (findBarcodeData) {
-        handleScannedProduct(findBarcodeData, "sale");
+        handleScannedProduct(findBarcodeData, "refund");
         setBarcode(null); // qayta so‘rov yubormaslik uchun tozalaymiz
       }
     }
@@ -186,11 +181,18 @@ const RefundPage = () => {
         setBarcode(barcode);
         setIsOpenAddProduct(true);
       } else {
-        showErrorMessage("Товар не найден");
+        showErrorLocalMessage("Товар не найден");
         setBarcode(null);
       }
     }
   }, [isError]);
+
+  useEffect(() => {
+    if (checkData) {
+      console.log("Loaded checkData:", checkData);
+      setRefundCheckData(checkData);
+    }
+  }, [checkData]);
 
   return (
     <div className="flex justify-between gap-x-2 h-[calc(100vh-90px)]">
@@ -252,6 +254,7 @@ const RefundPage = () => {
               payModal={payModal}
               setPayModal={setPayModal}
               deleteDraft={deleteDraftRefund}
+              updateDraftDiscount={updateDraftRefundDiscount}
               activeSelectPaymetype={activeSelectPaymetype}
               setActivePaymentSelectType={setActivePaymentSelectType}
               complateActiveDraft={completeActiveDraftRefund}

@@ -20,6 +20,7 @@ type PaymentModalType = {
     callback: (success: boolean) => void
   ) => void;
   activeDraft: DraftSaleSchema & DraftRefundSchema;
+  setActivePaymentSelectType: (val: number) => void;
   setIsOpenPayment: (open: boolean) => void;
 };
 
@@ -27,6 +28,7 @@ const PaymentModal = ({
   type,
   cashBackAmount,
   totalPaymentAmount,
+  setActivePaymentSelectType,
   isOpen,
   activeDraft,
   onSubmitPaymentHandler,
@@ -34,6 +36,9 @@ const PaymentModal = ({
 }: PaymentModalType) => {
   const [loading, setIsLoading] = useState(false);
   const { settings } = useSettingsStore((s) => s);
+
+  const totalAmount =
+    activeDraft?.items?.reduce((acc, item) => acc + item?.totalAmount, 0) ?? 0;
 
   const onSubmitPayment = (): void => {
     setIsLoading(true);
@@ -51,6 +56,7 @@ const PaymentModal = ({
       })!,
       (success) => {
         setIsLoading(false);
+        setActivePaymentSelectType(1);
         if (success) {
           if (type === "sale") {
             setIsOpenPayment(false);
@@ -58,7 +64,6 @@ const PaymentModal = ({
               setIsOpenPayment(false);
             }
           } else if (type === "refund") {
-            setIsOpenPayment(false);
             setIsOpenPayment(false);
           } else {
             return;
@@ -82,12 +87,27 @@ const PaymentModal = ({
         </p>
       </div>
       <div className="bg-gray-50 rounded-2xl p-4 text-gray-900 mb-4">
-        <div className="flex justify-between pb-4 border-b border-dashed">
-          <span className="text-gray-600">Оплачено сумма:</span>{" "}
+        <div className="flex justify-between py-4 border-b border-dashed">
+          <span>Общая сумма:</span>
+          <FormattedNumber value={totalAmount ?? 0} />
+        </div>
+        <div className="flex justify-between py-4 border-b border-dashed">
+          <span>Скидка:</span>
+          <FormattedNumber value={activeDraft?.discountAmount ?? 0} />
+        </div>
+        <div className="flex justify-between py-4 border-b border-dashed">
+          <span>Итого со скидкой:</span>
+          <FormattedNumber
+            value={totalAmount - (activeDraft?.discountAmount ?? 0)}
+          />
+        </div>
+
+        <div className="flex justify-between py-4 border-b border-dashed">
+          <span>Оплаченная сумма:</span>
           <FormattedNumber value={totalPaymentAmount ?? 0} />
         </div>
-        <div className="flex justify-between pt-4">
-          <span>Сдачи:</span>
+        <div className="flex justify-between pt-4 text-xl font-semibold">
+          <span>Сдача:</span>
           <FormattedNumber value={cashBackAmount ?? 0} />
         </div>
       </div>

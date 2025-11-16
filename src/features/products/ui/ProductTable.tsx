@@ -33,6 +33,7 @@ import type { ProductTableProps } from "@/features/modals/model";
 import { useSettingsStore } from "@/app/store/useSettingsStore";
 import PrintCheckProduct from "@/features/print-modal";
 import { useDebounce } from "@/shared/lib/useDebounce";
+import classNames from "@/shared/lib/classNames";
 
 const ProductTable = ({
   search,
@@ -45,7 +46,7 @@ const ProductTable = ({
   const debouncedSearch = useDebounce(search, 500);
   const [confirmProductId, setConfirmProductId] = useState<number | null>(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [item, setItem] = useState<Product | null>(null)
+  const [item, setItem] = useState<Product | null>(null);
   const { tableSettings } = useSettingsStore((s) => s);
 
   const [pagination, setPagination] = useState({
@@ -112,13 +113,14 @@ const ProductTable = ({
         meta: {
           color: tableSettings?.find((i) => i.key === "name")?.color || "#fff",
         },
+        // enable: tableSettings?.find((i) => i.key === "name")?.visible ?? true,
       }),
       columnHelper.display({
         id: "totalReminder",
         header: "ОБЩАЯ ОСТАТОК",
         cell: (info) => {
           const total = info.row.original.warehouse_items?.[0]?.state;
-          return total !== undefined ? total?.toFixed(2) : "0.00";
+          return total !== undefined ? total.toLocaleString() : "0";
         },
         size: 100,
         meta: {
@@ -126,6 +128,9 @@ const ProductTable = ({
             tableSettings?.find((i) => i.key === "totalRemainder")?.color ||
             "#fff",
         },
+        // enable:
+        //   tableSettings?.find((i) => i.key === "totalRemainder")?.visible ??
+        //   true,
       }),
       columnHelper.display({
         id: "packInCount",
@@ -137,6 +142,8 @@ const ProductTable = ({
             tableSettings?.find((i) => i.key === "packInCount")?.color ||
             "#fff",
         },
+        // enable:
+        //   tableSettings?.find((i) => i.key === "packInCount")?.visible ?? true,
       }),
       columnHelper.display({
         id: "package",
@@ -148,6 +155,8 @@ const ProductTable = ({
           color:
             tableSettings?.find((i) => i.key === "package")?.color || "#fff",
         },
+        // enable:
+        //   tableSettings?.find((i) => i.key === "package")?.visible ?? true,
       }),
       columnHelper.display({
         id: "price",
@@ -161,6 +170,7 @@ const ProductTable = ({
         meta: {
           color: tableSettings?.find((i) => i.key === "price")?.color || "#fff",
         },
+        // enable: tableSettings?.find((i) => i.key === "price")?.visible ?? true,
       }),
       columnHelper.display({
         id: "sku",
@@ -170,6 +180,7 @@ const ProductTable = ({
         meta: {
           color: tableSettings?.find((i) => i.key === "sku")?.color || "#fff",
         },
+        // enable: tableSettings?.find((i) => i.key === "sku")?.visible ?? true,
       }),
       columnHelper.display({
         id: "code",
@@ -179,6 +190,7 @@ const ProductTable = ({
         meta: {
           color: tableSettings?.find((i) => i.key === "code")?.color || "#fff",
         },
+        // enable: tableSettings?.find((i) => i.key === "code")?.visible ?? true,
       }),
 
       // 🧩 Actions ustuni
@@ -200,7 +212,7 @@ const ProductTable = ({
               <DropdownItem className="h-auto!">
                 <div
                   onClick={() => {
-                    setItem(info?.row?.original)
+                    setItem(info?.row?.original);
                     setConfirmProductId(productId);
                     setType("print");
                   }}
@@ -240,13 +252,19 @@ const ProductTable = ({
         },
       }),
     ],
-    [pagination]
+    [pagination, tableSettings]
   );
 
   const table = useReactTable({
     data: (data as unknown as Product[]) || [],
     columns,
     getCoreRowModel: getCoreRowModel(),
+    state: {
+      columnVisibility: tableSettings?.reduce((acc: any, i) => {
+        acc[i.key] = i.visible;
+        return acc;
+      }, {} as Record<string, boolean>),
+    },
   });
 
   if (isPending)
@@ -287,8 +305,10 @@ const ProductTable = ({
                   } hover:bg-gray-100 transition`}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <Td key={cell.id}>
-                      <div className="px-4 py-3 text-sm text-gray-800">
+                    <Td className={classNames(cell.column.columnDef.meta?.color || "#fff")} key={cell.id}>
+                      <div
+                        className={classNames("px-4 py-3 text-sm")}
+                      >
                         {flexRender(
                           cell.column.columnDef.cell,
                           cell.getContext()
@@ -351,7 +371,11 @@ const ProductTable = ({
         productPriceType={productPriceType}
       />
 
-      <PrintCheckProduct item={item} type={type} onClosePrintModal={onClosePrintModal}/>
+      <PrintCheckProduct
+        item={item}
+        type={type}
+        onClosePrintModal={onClosePrintModal}
+      />
     </div>
   );
 };

@@ -1,3 +1,5 @@
+import FormattedNumber from "@/shared/ui/kit-pro/numeric-format/NumericFormat";
+
 export type PriceType = {
   id: number;
   product_price_type: {
@@ -22,7 +24,7 @@ export type PriceType = {
 type Propstype = {
   name: string;
   prices?: PriceType[];
-  img: any |{ id: number; name: string; fs_url: string }[] | [];
+  img: any | { id: number; name: string; fs_url: string }[] | [];
   onItemChange: () => void;
 };
 
@@ -32,14 +34,21 @@ const FavouriteCard = ({ name, prices, img, onItemChange }: Propstype) => {
   );
 
   return (
-    <article onClick={onItemChange} className="relative p-4 bg-white rounded-lg max-h-[72px] overflow-hidden active:bg-gray-100 active:scale-105 transition-all duration-300">
-      <div className="w-7/10">
+    <article
+      onClick={onItemChange}
+      className="flex justify-between bg-white rounded-lg max-h-[72px] overflow-hidden active:bg-gray-100 active:scale-105 transition-all duration-300"
+    >
+      <div className="w-full p-4">
         <h4 className="text-base font-semibold line-clamp-1">{name}</h4>
-        <p className="text-sm font-normal">{price?.amount} Сум</p>
+        <p className="text-sm font-normal"><FormattedNumber value={Number(price?.amount ?? 0)}/> Сум</p>
       </div>
       {img?.length > 0 && (
-        <div className="w-3/10 absolute bottom-0 right-0">
-          <img src={img?.[0]?.fs_url} alt={img?.[0]?.name} />
+        <div className="w-[150px] h-[72px]">
+          <img
+            className="w-full h-full object-contain"
+            src={img?.[0]?.fs_url}
+            alt={img?.[0]?.name}
+          />
         </div>
       )}
     </article>

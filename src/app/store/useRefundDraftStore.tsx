@@ -114,6 +114,7 @@ export const useDraftRefundStore = create<
               }
             } else {
               draftRefundItem.quantity = draftItem.quantity;
+              draftRefundItem.totalAmount = draftItem.totalAmount;
             }
           } else {
             if (draftItem.quantity < 0) {

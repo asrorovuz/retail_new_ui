@@ -31,9 +31,9 @@ const Header = () => {
   const navigate = useNavigate();
 
   const { activeShift, setActiveShift } = useSettingsStore();
-  const version = useVersionStore((store) => store.versions)
+  const version = useVersionStore((store) => store.versions);
 
-  const { data: shift, error } = useShiftApi(activeShift?.id ?? null) as {
+  const { data: shift, error } = useShiftApi() as {
     data: Shift | null;
     error: ShiftError | null;
   };
@@ -54,7 +54,7 @@ const Header = () => {
     ) {
       setActiveShift(null);
     }
-  }, [shift, shiftAddModal, shiftUpdateModal]);
+  }, [shift, error]);
 
   return (
     <header className="bg-white rounded-3xl p-2 flex justify-between items-center">
@@ -107,17 +107,6 @@ const Header = () => {
             <span>Фаворит товар</span>
           </div>
         </MenuItem>
-        <MenuItem eventKey="history-check">
-          <div
-            className={`px-4 py-2 rounded-md cursor-pointer text-[16px] transition-colors duration-200 ${
-              activeKey === "history-check"
-                ? "text-blue-500"
-                : "hover:bg-gray-100 text-gray-700"
-            }`}
-          >
-            <span>История чека</span>
-          </div>
-        </MenuItem>
       </Menu>
 
       <div className="flex items-center gap-x-2">
@@ -166,12 +155,18 @@ const Header = () => {
 
       <CreateShiftDialog
         isOpen={shiftAddModal}
-        onClose={() => setShiftAddModal(false)}
+        onClose={() => {
+          setShiftUpdateModal(false);
+          setShiftAddModal(false);
+        }}
       />
 
       <UpdateShiftDialog
         isOpen={shiftUpdateModal}
-        onClose={() => setShiftUpdateModal(false)}
+        onClose={() => {
+          setShiftUpdateModal(false);
+          setShiftAddModal(false);
+        }}
       />
     </header>
   );

@@ -15,9 +15,7 @@ const Calculator = ({
   activeSelectPaymetype,
 }: CalculatorpropsType) => {
   const onClickNumber = (newValue: string) => {
-    // Agar hozirgi qiymat "0" bo‘lsa, uni olib tashlaymiz (boshida nol qolmasin)
-    const updatedValue = value === "0" ? newValue : (value || "") + newValue;
-
+    const updatedValue = value + newValue;
     setValue(updatedValue);
     onPaymentChanged(activeSelectPaymetype, +updatedValue);
   };
@@ -26,7 +24,7 @@ const Calculator = ({
     if (!value.includes(".")) {
       const newStr = value + ".";
       setValue(newStr);
-      onPaymentChanged(activeSelectPaymetype, +newStr);
+      // onPaymentChanged(activeSelectPaymetype, +newStr);
     }
   };
 
@@ -39,13 +37,13 @@ const Calculator = ({
   };
 
   return (
-    <div className="w-full">
-      <div className="grid grid-cols-3 gap-1.5">
+    <div className="w-full min-h-[30vh] max-h-[40vh]">
+      <div className="grid grid-cols-3 grid-rows-4 gap-1.5">
         {["7", "8", "9", "4", "5", "6", "1", "2", "3", "0"].map((num) => (
           <Button
             key={num}
             variant="solid"
-            className="bg-white p-3 font-medium! text-xl text-gray-800 h-full hover:bg-blue-50 transition-all"
+            className="bg-white font-medium! text-xl text-gray-800 h-full hover:bg-blue-50 transition-all"
             onClick={() => onClickNumber(num)}
           >
             {num}
@@ -54,7 +52,7 @@ const Calculator = ({
 
         <Button
           variant="solid"
-          className="bg-white p-3 font-medium! text-xl text-gray-800 h-full hover:bg-blue-50 transition-all"
+          className="bg-white font-medium! text-xl text-gray-800 h-full hover:bg-blue-50 transition-all"
           onClick={onDotBtnFired}
         >
           .
@@ -63,7 +61,7 @@ const Calculator = ({
         <Button
           variant="solid"
           icon={<ClearSvg />}
-          className="bg-white p-3 font-medium! text-xl text-gray-800 h-full w-full hover:bg-blue-50 transition-all"
+          className="bg-white font-medium! text-xl text-gray-800 h-full w-full hover:bg-blue-50 transition-all"
           onClick={onBackSpace}
         />
       </div>

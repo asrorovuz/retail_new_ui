@@ -6,3 +6,4 @@ export { default as Calculator } from "./ui/calculator/Calculator";
 export { CommonDeleteDialog } from "./ui/delete-dialog/CommonDeleteDialog";
 export { default as PaymentModal } from "./ui/payment-modal/PaymentModal";
 export { default as PrinterModal } from "./ui/printer-modal/PrinterModal";
+export { default as DiscountModal } from "./ui/discount-modal/DiscountModal";

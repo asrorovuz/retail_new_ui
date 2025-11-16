@@ -1,5 +1,5 @@
 import { Button, Input, InputGroup } from "@/shared/ui/kit";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Controller, useFieldArray } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { FaTrash } from "react-icons/fa";
@@ -11,36 +11,53 @@ type BarcodeFormProps = {
   barcode: string | null;
   control: any;
   getValues: any;
+  setValue: any;
 };
 
-const BarcodeForm = ({ fieldName, barcode, control, getValues }: BarcodeFormProps) => {
+const BarcodeForm = ({
+  fieldName,
+  barcode,
+  control,
+  getValues,
+  setValue
+}: BarcodeFormProps) => {
   const { t } = useTranslation();
   const { fields, append, remove } = useFieldArray({
     name: fieldName,
     control,
   });
 
+  const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
+
   const addBarcode = () => {
-    append(new Date().getTime().toString().slice(5, 13));
+    append(new Date().getTime().toString().slice(0, 13));
   };
 
   const deleteBarcode = (index: number) => {
     remove(index);
   };
 
-  useEffect(() => {
-    if (barcode) {
-      if ((getValues(fieldName) as string[]).some((i) => i.length === 8))
-        remove(
-          (getValues(fieldName) as string[]).findIndex((i) => i.length === 8)
-        );
+  // useEffect(() => {
+  //   if (barcode) {
+  //     if ((getValues(fieldName) as string[]).some((i) => i.length === 8))
+  //       remove(
+  //         (getValues(fieldName) as string[]).findIndex((i) => i.length === 8)
+  //       );
 
-      if ((getValues(fieldName) as string[]).some((i) => i === barcode)) {
-        remove(
-          (getValues(fieldName) as string[]).findIndex((i) => i === barcode)
-        );
-        append(barcode);
-      } else append(barcode);
+  //     if ((getValues(fieldName) as string[]).some((i) => i === barcode)) {
+  //       remove(
+  //         (getValues(fieldName) as string[]).findIndex((i) => i === barcode)
+  //       );
+  //       append(barcode);
+  //     } else append(barcode);
+  //   }
+  // }, [barcode]);
+  
+  useEffect(() => {
+    if (barcode && focusedIndex !== null) {
+      const values = getValues(fieldName);
+      values[focusedIndex] = barcode;
+      setValue(fieldName, [...values]); // faqat bitta input qiymatini yangilaymiz
     }
   }, [barcode]);
 
@@ -56,6 +73,7 @@ const BarcodeForm = ({ fieldName, barcode, control, getValues }: BarcodeFormProp
                 type={"text"}
                 autoComplete={"off"}
                 placeholder={t("Введите код")}
+                onFocus={() => setFocusedIndex(index)}
                 {...field}
               />
             )}

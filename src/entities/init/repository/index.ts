@@ -4,7 +4,6 @@ import {
   createPrintApi,
   createShiftApi,
   getCashboxApi,
-  getLastShiftApi,
   getPrinterApi,
   getSettingsApi,
   getShiftApi,
@@ -49,14 +48,6 @@ export const useCashboxApi = () => {
   });
 };
 
-export const useLastShiftApi = (id: number | null) => {
-  return useQuery({
-    queryKey: ["last-shift"],
-    queryFn: () => getLastShiftApi(id),
-    enabled: !!id,
-  });
-};
-
 export const useShiftOperationApi = (id: number | null, isOpen: boolean) => {
   return useQuery({
     queryKey: ["last-shift-operation", id, isOpen],
@@ -65,9 +56,9 @@ export const useShiftOperationApi = (id: number | null, isOpen: boolean) => {
   });
 };
 
-export const useShiftApi = (id: number | null) => {
+export const useShiftApi = (isOpen?: boolean) => {
   return useQuery({
-    queryKey: ["shift", id],
+    queryKey: ["shift", isOpen],
     queryFn: getShiftApi
   });
 };

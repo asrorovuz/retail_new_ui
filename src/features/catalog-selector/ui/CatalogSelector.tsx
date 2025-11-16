@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useCatalogSearchApi } from "@/entities/products/repository";
 import { Select } from "@/shared/ui/kit";
 import type { CommonProps } from "@/shared/ui/kit/@types/common";
@@ -9,6 +9,10 @@ interface CatalogSelectorProps extends CommonProps {
   placeholder?: string;
   onChange: (option: any) => void;
   invalid?: boolean;
+  isOpen: boolean;
+  setValue: any;
+  getValues: any;
+  value: any;
   fieldName?: string;
   setPackageNames: (item: Package[] | []) => void;
 }
@@ -16,24 +20,29 @@ interface CatalogSelectorProps extends CommonProps {
 const CatalogSelector = ({
   placeholder,
   onChange,
+  isOpen,
+  setValue,
+  getValues,
+  value,
   setPackageNames,
   ...props
 }: CatalogSelectorProps) => {
   const [inputValue, setInputValue] = useState("");
   const [selected, setSelected] = useState<any>(null);
-  const [cachedOptions, setCachedOptions] = useState<any[]>([]); 
+  const [cachedOptions, setCachedOptions] = useState<any[]>([]);
 
   // 🔹 Debounced query
   const debouncedQuery = useDebounce(inputValue, 500);
 
   const { data, isLoading } = useCatalogSearchApi(
-    debouncedQuery // 🔹 bo‘sh string yubormaymiz
+    debouncedQuery || value, // 🔹 bo‘sh string yubormaymiz
+    isOpen
   );
 
   // 🔹 Data o‘zgarganda optionlarni tayyorlash
   const options = useMemo(() => {
     if (!data || !Array.isArray(data)) return cachedOptions;
-    const newOptions = data.map((item: any) => ({
+    const newOptions = data?.map((item: any) => ({
       label: `${item.class_code} - ${item.class_name}`,
       value: item.class_code,
       data: item,
@@ -44,8 +53,14 @@ const CatalogSelector = ({
 
   // 🔹 Tanlovni o‘zgartirish
   const handleChange = (option: any) => {
+    const currentPackages = getValues("packages") || [];
+    const currentPackage = currentPackages[0] || {};
+    setValue("packages.0", {
+      ...currentPackage,
+      catalog: option?.data,
+    });
     setSelected(option);
-    setPackageNames(option?.data?.package_names || [])
+    setPackageNames(option?.data?.package_names || []);
     onChange(option ? option : null);
   };
 
@@ -53,6 +68,19 @@ const CatalogSelector = ({
   const handleInputChange = (value: string) => {
     setInputValue(value);
   };
+
+  // 🔹 default value update qilish (edit holatda)
+  useEffect(() => {
+    if (!value) return;
+    console.log(value);
+
+    // options hali kelmagan bo‘lsa kutamiz
+    const found = options.find((opt) => opt.value === value);
+    if (found) {
+      setSelected(found);
+      setPackageNames(found?.data?.package_names || []);
+    }
+  }, [value, options]);
 
   return (
     <Select
@@ -67,6 +95,14 @@ const CatalogSelector = ({
       getOptionLabel={(option: any) => option.label}
       getOptionValue={(option: any) => option.value}
       isClearable
+      menuPortalTarget={document.body}
+      menuPosition="fixed"
+      styles={{
+        menuPortal: (base) => ({
+          ...base,
+          zIndex: 9999,
+        }),
+      }}
     />
   );
 };

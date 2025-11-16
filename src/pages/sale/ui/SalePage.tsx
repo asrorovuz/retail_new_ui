@@ -18,7 +18,7 @@ import eventBus from "@/shared/lib/eventBus";
 import { handleBarcodeScanned } from "@/shared/lib/handleScannedBarcode";
 import { handleScannedProduct } from "@/shared/lib/handleScannedProduct";
 import { AddProductModal } from "@/features/modals";
-import { showErrorMessage } from "@/shared/lib/showMessage";
+import { showErrorLocalMessage } from "@/shared/lib/showMessage";
 import { useSettingsStore } from "@/app/store/useSettingsStore";
 import OrderActions from "@/features/order-actions";
 
@@ -85,7 +85,6 @@ const SalePage = () => {
         if (val) {
           setBarcode(val);
         }
-        setSearch(val);
       });
 
       return () => eventBus.remove("BARCODE_SCANNED", onScan);
@@ -99,7 +98,7 @@ const SalePage = () => {
   }, [activeSelectPaymetype, activeDraft?.discountAmount]);
 
   useEffect(() => {
-    if (isSuccess && !isFetching) {
+    if (isSuccess && !isFetching && !payModal) {
       if (findBarcodeData) {
         handleScannedProduct(findBarcodeData, "sale");
         setBarcode(null); // qayta so‘rov yubormaslik uchun tozalaymiz
@@ -108,12 +107,12 @@ const SalePage = () => {
   }, [isSuccess, findBarcodeData, isFetching]);
 
   useEffect(() => {
-    if (isError) {
+    if (isError && !payModal) {
       if (settings?.enable_create_unknown_product) {
         setBarcode(barcode);
         setIsOpenAddProduct(true);
       } else {
-        showErrorMessage("Товар не найден");
+        showErrorLocalMessage("Товар не найден");
         setBarcode(null);
       }
     }
@@ -180,6 +179,7 @@ const SalePage = () => {
               payModal={payModal}
               setPayModal={setPayModal}
               deleteDraft={deleteDraftSale}
+              updateDraftDiscount={updateDraftSaleDiscount}
               activeSelectPaymetype={activeSelectPaymetype}
               setActivePaymentSelectType={setActivePaymentSelectType}
               complateActiveDraft={completeActiveDraftSale}

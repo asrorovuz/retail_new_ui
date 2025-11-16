@@ -35,7 +35,6 @@ const FavouriteProduct = ({
   const { active, update } = getActiveDraft();
 
   const onChange = (item: any) => {
-
     const operationItem = active?.items?.find(
       (p) =>
         p.productId === item.product.id &&
@@ -68,10 +67,15 @@ const FavouriteProduct = ({
   return (
     <div className="h-[27vh] rounded-2xl overflow-hidden">
       <div className="h-[27vh] overflow-y-auto">
-        <div className="bg-gray-50 p-2 grid grid-cols-4 gap-2">
-          {isPending && <Loading />}
+        <div className="min-h-full bg-gray-50 p-2 grid grid-cols-3 gap-2">
+          {isPending && <div className="col-span-3 flex justify-center"><Loading /></div>}
 
-          {!isPending && favoriteProducts?.length ? (
+          {!isPending && !favoriteProducts?.length ? (
+            <div className="col-span-3 flex justify-center"><Empty size={64} textSize="32px" text="Нет избранных товаров" /></div>
+          ): ""}
+
+          {!isPending &&
+            favoriteProducts?.length ?
             favoriteProducts?.map((item) => {
               return (
                 <FavouriteCard
@@ -81,12 +85,7 @@ const FavouriteProduct = ({
                   prices={item?.product_package?.prices}
                 />
               );
-            })
-          ) : (
-            <div className="h-[22vh] w-full flex items-center justify-center col-span-4">
-              <Empty textSize="text-lg" size={60}/>
-            </div>
-          )}
+            }): ""}
         </div>
       </div>
     </div>

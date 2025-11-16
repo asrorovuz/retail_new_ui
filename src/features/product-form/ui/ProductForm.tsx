@@ -41,12 +41,13 @@ const ProductForm: FC<ProductFormType> = ({
   productId,
   isOpen,
   setIsOpen,
+  setType,
   defaultValue,
   setBarcode,
   barcode,
   setProductId,
 }) => {
-  const { handleSubmit, control, getValues, reset, watch } = useForm<
+  const { handleSubmit, control, getValues, setValue, reset, watch } = useForm<
     Product | ProductDefaultValues
   >({
     defaultValues: defaultValue,
@@ -54,7 +55,7 @@ const ProductForm: FC<ProductFormType> = ({
   const inputWrapperRef = useRef<HTMLDivElement>(null);
   const [remainder, setRemainder] = useState<number>(defaultValue?.state || 0);
   const [alertOn, setAlertOn] = useState<string | number>(0);
-  const [isShow, setIsShow] = useState(false);
+  const [isShow, setIsShow] = useState(true);
   const [packageNames, setPackageNames] = useState<Package[] | []>([]);
 
   const { wareHouseId } = useSettingsStore((s) => s);
@@ -74,7 +75,7 @@ const ProductForm: FC<ProductFormType> = ({
     reset(defaultValue || {});
     setIsShow(false);
     setIsOpen(false);
-
+    setType("add");
     if (setProductId) {
       setProductId(null);
     }
@@ -113,14 +114,35 @@ const ProductForm: FC<ProductFormType> = ({
       };
 
       createRegister(reminderData, {
-        onError(error){
+        onError(error) {
           console.log(error);
-        }
+        },
       });
     }
   };
 
   const onSubmit: any = async (values: ProductDefaultValues) => {
+    //   {
+    //     "barcode": null,
+    //     "class_code": "00101001001000000",
+    //     "name": "Живые лошади",
+    //     "group_name": "ЖИВЫЕ ЖИВОТНЫЕ",
+    //     "class_name": "Живые лошади, ослы",
+    //     "position_name": "Живые лошади и ослы",
+    //     "sub_position_name": "Живые лошади",
+    //     "package_names": [
+    //         {
+    //             "code": 1378325,
+    //             "name_ru": "шт.",
+    //             "name_uz": "дона",
+    //             "name_lat": "dona"
+    //         }
+    //     ],
+    //     "lgotas": null,
+    //     "use_package": true,
+    //     "use_count": false
+    // },
+
     const transformatedData = await Promise.all(
       values?.packages?.map(async (pkg: any) => {
         const images = await convertImageObjectsToBase64(
@@ -140,10 +162,12 @@ const ProductForm: FC<ProductFormType> = ({
         // }
 
         const category_id = pkg?.category?.id ?? null;
-        const catalog_code = pkg?.catalog?.class_code?.toString?.() ?? null;
-        const catalog_name = pkg?.catalog?.class_name ?? null;
-        const package_code = pkg?.package?.code?.toString?.() ?? null;
-        const package_name = pkg?.package?.name_uz ?? null;
+        const catalog_code = pkg.catalog
+          ? pkg.catalog.class_code.toString()
+          : null;
+        const catalog_name = pkg.catalog ? pkg.catalog.class_name : null;
+        const package_code = pkg.package ? pkg.package.code.toString() : null;
+        const package_name = pkg.package ? pkg?.package?.name_uz : null;
 
         return {
           ...pkg,
@@ -237,15 +261,14 @@ const ProductForm: FC<ProductFormType> = ({
 
   useEffect(() => {
     const values = getValues(`packages.0`) || {};
-
     const shouldShow =
       !!values.catalog || !!values.package || !!values.vat_rate;
-
     setIsShow(shouldShow);
   }, [
     watch(`packages.0.catalog_code`),
     watch(`packages.0.package`),
     watch(`packages.0.vat_rate`),
+    isOpen
   ]);
 
   useEffect(() => {
@@ -396,7 +419,6 @@ const ProductForm: FC<ProductFormType> = ({
           </FormItem>
 
           <CategorySelect
-            defaultCategory={[]}
             name={`packages.0.category`}
             control={control}
             label={"Категория"}
@@ -480,6 +502,16 @@ const ProductForm: FC<ProductFormType> = ({
             )}
           />
 
+          <FormItem className="col-span-2" label="Штрих-коды">
+            <BarcodeForm
+              fieldName={"packages.0.barcodes"}
+              barcode={barcode}
+              setValue={setValue}
+              control={control}
+              getValues={getValues}
+            />
+          </FormItem>
+
           <Checkbox
             className="ml-1 mb-3"
             checked={isShow}
@@ -488,46 +520,46 @@ const ProductForm: FC<ProductFormType> = ({
             Идентификаторы и измерения в GN
           </Checkbox>
 
-          <FormItem className="col-span-2" label="Штрих-коды">
-            <BarcodeForm
-              fieldName={"packages.0.barcodes"}
-              barcode={barcode}
-              control={control}
-              getValues={getValues}
-            />
-          </FormItem>
-
           {isShow ? (
             <>
               <Controller
                 name={`packages.0.catalog_code`}
                 control={control}
-                render={({ field }) => (
-                  <FormItem label={"ИКПУ-код"}>
-                    <CatalogSelector
-                      {...field}
-                      fieldName={`packages.0`}
-                      placeholder={"Введите ИКПУ-код"}
-                      onChange={field.onChange}
-                      setPackageNames={setPackageNames}
-                    />
-                  </FormItem>
-                )}
+                render={({ field }) => {
+                  return (
+                    <FormItem label={"ИКПУ-код"}>
+                      <CatalogSelector
+                        {...field}
+                        fieldName={`packages.0`}
+                        isOpen={isOpen}
+                        placeholder={"Введите ИКПУ-код"}
+                        value={field.value}
+                        setValue={setValue}
+                        getValues={getValues}
+                        onChange={field.onChange}
+                        setPackageNames={setPackageNames}
+                      />
+                    </FormItem>
+                  );
+                }}
               />
 
               <Controller
                 name={`packages.0.package`}
                 control={control}
-                render={({ field }) => (
-                  <FormItem label={"Ед. изм."}>
-                    <CatalogPackageSelector
-                      {...field}
-                      options={packageNames || []}
-                      placeholder={"Введите Ед. изм."}
-                      onChange={field.onChange}
-                    />
-                  </FormItem>
-                )}
+                render={({ field }) => {
+                  return (
+                    <FormItem label={"Ед. изм."}>
+                      <CatalogPackageSelector
+                        {...field}
+                        options={packageNames || []}
+                        value={field?.value}
+                        placeholder={"Введите Ед. изм."}
+                        onChange={field.onChange}
+                      />
+                    </FormItem>
+                  );
+                }}
               />
 
               <Controller
@@ -539,11 +571,24 @@ const ProductForm: FC<ProductFormType> = ({
                       options={options}
                       isSearchable={false}
                       placeholder={"Введите НДС"}
-                      getOptionLabel={(option) => option.label}
-                      getOptionValue={(option) => option.label}
-                      onChange={(option) =>
-                        field.onChange(option ? option.value : null)
+                      getOptionLabel={(option) =>
+                        typeof option?.value === "number"
+                          ? option.label
+                          : "БЕЗ НДС"
                       }
+                      getOptionValue={(option) => String(option.value)}
+                      value={
+                        options.find((opt) => opt.value === field.value) ||
+                        options[0]
+                      }
+                      onChange={(option) =>
+                        field.onChange(option?.value ?? null)
+                      }
+                      menuPortalTarget={document.body}
+                      menuPosition="fixed"
+                      styles={{
+                        menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                      }}
                     />
                   </FormItem>
                 )}
@@ -553,10 +598,12 @@ const ProductForm: FC<ProductFormType> = ({
             <></>
           )}
 
-          <ImageForm fieldName={`packages.0.images`} control={control} />
+          <div className="col-span-2">
+            <ImageForm fieldName={`packages.0.images`} control={control} />
+          </div>
         </div>
         <div className="mt-5 flex justify-end gap-x-3">
-          <Button type="button" variant="plain" onClick={onClose}>
+          <Button type="button" onClick={onClose}>
             Отменить
           </Button>
           <Button

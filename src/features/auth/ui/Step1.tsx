@@ -63,10 +63,9 @@ const Step1Phone = () => {
               />
               <Button
                 type="button"
-                variant="plain"
                 icon={showPassword ? <FiEyeOff size={20} /> : <FiEye size={20} />}
                 onClick={togglePasswordVisibility}
-                className="absolute right-0 top-1/2 -translate-y-1/2 bg-transparent cursor-pointer text-gray-700"
+                className="absolute border-0 right-0 top-1/2 -translate-y-1/2 bg-transparent cursor-pointer text-gray-700"
               />
             </div>
           </FormItem>

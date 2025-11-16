@@ -9,15 +9,21 @@ import type {
 } from "@/@types/sale";
 import type { DraftRefundSchema } from "@/@types/refund";
 import classNames from "@/shared/lib/classNames";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import { useSettingsStore } from "@/app/store/useSettingsStore";
-import { CommonDeleteDialog, PaymentModal, PrinterModal } from "@/widgets";
+import {
+  CommonDeleteDialog,
+  DiscountModal,
+  PaymentModal,
+  PrinterModal,
+} from "@/widgets";
 import { useCurrencyStore } from "@/app/store/useCurrencyStore";
 import type { PaymentAmount } from "@/@types/common";
-import { useCashboxApi } from "@/entities/init/repository";
+import { useCashboxApi, useCreatePrintApi } from "@/entities/init/repository";
 import {
   useCreateFiscalizedApi,
+  useFescalDeviceApi,
   useRegisterSellApi,
 } from "@/entities/sale/repository";
 import { showErrorMessage, showSuccessMessage } from "@/shared/lib/showMessage";
@@ -39,6 +45,7 @@ type OrderActionType = {
   payModal: boolean;
   setPayModal: (open: boolean) => void;
   deleteDraft: (ind: number) => void;
+  updateDraftDiscount: (val: number) => void;
   setActivePaymentSelectType: (val: number) => void;
   complateActiveDraft: () => void;
 };
@@ -51,6 +58,7 @@ const OrderActions = ({
   payModal,
   setPayModal,
   deleteDraft,
+  updateDraftDiscount,
   setActivePaymentSelectType,
   complateActiveDraft,
 }: OrderActionType) => {
@@ -61,6 +69,8 @@ const OrderActions = ({
   const { settings, activeShift } = useSettingsStore();
   const [selectFiscalized, setSelectFiscalized] =
     useState<FizcalResponsetype | null>(null);
+  const [discountModal, setDiscountModal] = useState<boolean>(false);
+  const [paymeType, setPaymeType] = useState<number[]>([]);
 
   const nationalCurrency = useCurrencyStore((store) => store.nationalCurrency);
   const warehouseId = useSettingsStore((s) => s.wareHouseId);
@@ -70,6 +80,9 @@ const OrderActions = ({
   const { mutate: registerRefundMutate } = useRegisterRefundApi();
   const { mutate: createFiscalized, isPending: fiscalPending } =
     useCreateFiscalizedApi();
+  const { data: fiscalData = [] } = useFescalDeviceApi(fiscalizedModal);
+  const filterDataFiscal = fiscalData?.filter((elem: any) => elem?.is_enabled);
+  const { mutate: printCheck } = useCreatePrintApi();
 
   const onDeleteActivedraft = () => {
     const findIndex = draft?.findIndex((item) => item?.isActive);
@@ -145,7 +158,7 @@ const OrderActions = ({
         [FiscalizedProviderTypeEPos, FiscalizedProviderTypeHippoPos].includes(
           selectFiscalized?.type
         ) &&
-        activeSelectPaymetype
+        (paymeType.includes(5) || paymeType.includes(6))
       ) {
         setPayModal(true);
         setFiscalizedModal(false);
@@ -157,6 +170,7 @@ const OrderActions = ({
               messages.ru.SUCCESS_MESSAGE
             );
             handleCancelFiscalization();
+            setPaymeType([]);
           },
           onError(error) {
             showErrorMessage(error);
@@ -165,6 +179,7 @@ const OrderActions = ({
       }
     } else {
       handleCancelFiscalization();
+      setPaymeType([]);
     }
   };
 
@@ -184,6 +199,13 @@ const OrderActions = ({
       items: [],
       cash_box_id: cashboxData?.length ? cashboxData[0]?.id : null,
     };
+
+    const typesPayme =
+      (type === "sale" ? activeDraft?.payment : activeDraft?.payout)?.amounts
+        ?.filter((item) => item?.amount > 0)
+        ?.map((elem) => elem?.paymentType) || [];
+
+    setPaymeType(typesPayme);
 
     // prepare payload
     {
@@ -250,12 +272,16 @@ const OrderActions = ({
       onSuccess: (data: any) => {
         if (data?.sale?.id) {
           setSaleId(data?.sale?.id);
-          if (activeDraft?.id && !activeDraft.is_fiscalized)
-            setFiscalizedModal(true);
-          else if (!settings?.auto_print_receipt && settings?.printer_name)
+
+          if (settings?.auto_print_receipt && settings?.printer_name) {
+            console.log(data, "response");
+            
+            onPrint(data?.sale?.id);
+          } else if (!settings?.auto_print_receipt && settings?.printer_name) {
             setPrintSelect(true);
-          else handleCancelPrint();
-          // setPrintSelect(true);
+          }else{
+            handleCancelPrint()
+          }
         }
 
         callback(true);
@@ -299,10 +325,45 @@ const OrderActions = ({
     }
   };
 
+  // const activeDraftPaymeTypes = (
+  //   type === "sale" ? activeDraft?.payment : activeDraft?.payout
+  // )?.amounts
+  //   ?.filter((item) => item?.amount > 0)
+  //   ?.map((item) => item?.paymentType) ?? [];
+
+  const onPrint = (id?: number) => {
+    printCheck(
+      {
+        path: `${type}-receipt-${settings?.receipt_size || 80}`,
+        payload: {
+          sale_id: id ?? saleId,
+          printer_name: settings?.printer_name ?? "",
+        },
+      },
+      {
+        onSuccess() {
+          showSuccessMessage(
+            messages.uz.SUCCESS_MESSAGE,
+            messages.ru.SUCCESS_MESSAGE
+          );
+          handleCancelPrint();
+        },
+        onError(error) {
+          showErrorMessage(error);
+        },
+      }
+    );
+  };
+
   const onSubmit = () => {
-    console.log(settings?.enable_create_unknown_product, activeShift);
     calcPricePayment();
   };
+
+  useEffect(() => {
+    if (filterDataFiscal?.length === 1) {
+      setSelectFiscalized(filterDataFiscal[0]);
+    }
+  }, [filterDataFiscal]);
 
   return (
     <div className="p-1 bg-gray-50 rounded-2xl flex gap-x-2">
@@ -323,7 +384,7 @@ const OrderActions = ({
         variant="plain"
         disabled={type === "refund"}
         size="sm"
-        onClick={() => setActivePaymentSelectType(0)}
+        onClick={() => setDiscountModal(true)}
         icon={<MdOutlineDiscount />}
         className={classNames(
           "bg-white w-full",
@@ -340,6 +401,7 @@ const OrderActions = ({
         type={type}
         cashBackAmount={cashBackAmount}
         totalPaymentAmount={totalPaymentAmount}
+        setActivePaymentSelectType={setActivePaymentSelectType}
         onSubmitPaymentHandler={onSubmitPaymentHandler}
         activeDraft={activeDraft}
         isOpen={ipOpenPayment}
@@ -356,7 +418,8 @@ const OrderActions = ({
       />
 
       <FiscalizedModal
-        isOpen={type === "sale" && !!saleId && fiscalizedModal}
+        isOpen={!!saleId && fiscalizedModal}
+        filterData={filterDataFiscal}
         saleId={saleId}
         selectFiscalized={selectFiscalized}
         handleCancel={handleCancelFiscalization}
@@ -366,10 +429,19 @@ const OrderActions = ({
         handleApproveFiscalization={handleApproveFiscalization}
       />
 
+      <DiscountModal
+        isOpen={discountModal}
+        setDiscountModal={setDiscountModal}
+        updateDraftDiscount={updateDraftDiscount}
+        discount={activeDraft?.discountAmount ?? 0}
+      />
+
       <PaymeWhithQR
         isOpen={payModal}
         saleId={saleId}
         selectFiscalized={selectFiscalized}
+        activeDraftPaymeTypes={paymeType}
+        setPaymeType={setPaymeType}
         selectedPaymentType={activeSelectPaymetype}
         handleCancelFiscalization={handleCancelFiscalization}
         handleCancelPayment={handleCancelPayment}

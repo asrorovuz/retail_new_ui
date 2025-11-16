@@ -19,7 +19,9 @@ const TableSettingsModal = () => {
   const { setTableSettings, tableSettings } = useSettingsStore(
     (store) => store
   );
-  const updateTableSettingsMutation = useUpdateTableSettings();
+  const { mutate: updateTableSettingsMutation } = useUpdateTableSettings();
+
+  console.log(tableSettings);
 
   const toggleOpen = () => {
     const merged = tableSettings?.map((col) => {
@@ -58,7 +60,7 @@ const TableSettingsModal = () => {
       tempHiddenColumns
     ) as ProductColumnVisibility;
 
-    updateTableSettingsMutation.mutate(result, {
+    updateTableSettingsMutation(result, {
       onSuccess: () => {
         showSuccessMessage(
           messages.uz.SUCCESS_MESSAGE,
@@ -111,8 +113,16 @@ const TableSettingsModal = () => {
                     onChange={() => changeVisibleColumns(i.key)}
                   />
                   <Select
-                    className={classNames(`w-[200px] ml-2`)}
+                    className={classNames(
+                      `w-[200px] ml-2`,
+                      colors?.find(
+                        (j) =>
+                          j.name ===
+                          tempHiddenColumns?.find((l) => l.key === i.key)?.color
+                      )
+                    )}
                     options={colors}
+                    isSearchable={false}
                     isClearable
                     onChange={(option) =>
                       changeColor(i.key, option?.name || "")
@@ -121,13 +131,21 @@ const TableSettingsModal = () => {
                       colors?.find(
                         (j) =>
                           j.name ===
-                          tempHiddenColumns.find((l) => l.key === i.key)?.color
+                          tempHiddenColumns?.find((l) => l.key === i.key)?.color
                       ) || null
                     }
-                    // hideDropdownIndicator={true}
+                    hideDropdownIndicator={true}
                     getOptionLabel={(option) => t(`colors.${option?.name}`)}
                     getOptionValue={(option) => option?.name}
                     placeholder={t("color")}
+                    menuPortalTarget={document.body}
+                    menuPosition="fixed"
+                    styles={{
+                      menuPortal: (base) => ({
+                        ...base,
+                        zIndex: 9999,
+                      }),
+                    }}
                   />
                 </div>
               </div>
@@ -137,9 +155,7 @@ const TableSettingsModal = () => {
 
         {/* 🔹 Pastki tugmalar */}
         <div className="flex justify-end gap-x-3">
-          <Button variant="plain" onClick={handleCancel}>
-            {t("common.cancel")}
-          </Button>
+          <Button onClick={handleCancel}>{t("common.cancel")}</Button>
           <Button variant="solid" onClick={handleSave}>
             {t("common.save")}
           </Button>

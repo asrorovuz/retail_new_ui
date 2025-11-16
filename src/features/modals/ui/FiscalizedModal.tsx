@@ -1,12 +1,12 @@
 import { GetFiscalizedProviderLogo } from "@/app/constants/fiscalized.constants";
 import type { FizcalResponsetype } from "@/entities/sale/model";
-import { useFescalDeviceApi } from "@/entities/sale/repository";
 import { Button, Checkbox, Dialog } from "@/shared/ui/kit";
 type ModalProps = {
   isOpen: boolean;
   saleId: number | null;
   selectFiscalized: FizcalResponsetype | null;
   fiscalPending: boolean;
+  filterData: FizcalResponsetype[] | null;
   handleCancel: () => void;
   setSelectFiscalized: (val: FizcalResponsetype | null) => void;
   setIsOpen: (open: boolean) => void;
@@ -17,15 +17,21 @@ const FiscalizedModal = ({
   isOpen,
   selectFiscalized,
   fiscalPending,
+  filterData,
   setSelectFiscalized,
   handleCancel,
   handleApproveFiscalization,
 }: ModalProps) => {
-  const { data: fiscalData = [] } = useFescalDeviceApi();
-  const filterData = fiscalData?.filter((elem: any) => elem?.is_enabled);
-
   return (
-    <Dialog onClose={handleCancel} onRequestClose={handleCancel} width={490} isOpen={isOpen} title={"Фискализация"}>
+    <Dialog
+      onClose={handleCancel}
+      onRequestClose={handleCancel}
+      shouldCloseOnOverlayClick={false} // ❗ tashqariga bosilganda yopilmaydi
+      shouldCloseOnEsc={false} // ❗ ESC bosilganda yopilmaydi
+      width={490}
+      isOpen={isOpen}
+      title={"Отправить продажу в налоговую?"}
+    >
       <div className="bg-gray-50 rounded-2xl p-3 mb-6 flex flex-col gap-y-4">
         {filterData?.length ? (
           filterData?.map((item) => {
@@ -71,7 +77,11 @@ const FiscalizedModal = ({
       </div>
       <div className="flex justify-end gap-x-2">
         <Button onClick={handleCancel}>Нет</Button>
-        <Button loading={fiscalPending} onClick={handleApproveFiscalization} variant="solid">
+        <Button
+          loading={fiscalPending}
+          onClick={handleApproveFiscalization}
+          variant="solid"
+        >
           Да
         </Button>
       </div>

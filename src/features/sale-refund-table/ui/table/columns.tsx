@@ -1,5 +1,6 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import FormattedNumber from "@/shared/ui/kit-pro/numeric-format/NumericFormat";
+import { truncateText } from "@/shared/lib/truncateText";
 
 // 🔹 Jadvaldagi qatorlar uchun type
 export interface ProductRow {
@@ -17,6 +18,10 @@ export const columns = (): ColumnDef<any>[] => {
         <div className="text-sm font-medium text-gray-600">НОМЕНКЛАТУРА</div>
       ),
       accessorKey: "productName",
+      cell: ({ row }) => {
+        const name = row.original.productName;
+        return <span>{truncateText(name, 20, 20)}</span>;
+      },
       meta: {
         bodyCellClassName: "text-start",
         headerClassName: "text-xs font-medium text-gray-800",

@@ -26,7 +26,7 @@ export const transformProductColumns = (
     total_warehouses_state: "totalRemainder",
     package_quantity: "packInCount",
     measurement_name: "package",
-    purchase_price: "purchesPrice",
+    // purchase_price: "purchesPrice",
     primary_price: "price",
     sku: "sku",
     code: "code",
@@ -37,7 +37,7 @@ export const transformProductColumns = (
     .map(([key, value]) => ({
       key: keyMap[key],
       visible: (value as ProductColumnValue)?.visible ?? false,
-      color: "",
+      color: (value as any)?.color ?? "#fff",
     }));
 };
 
@@ -50,11 +50,11 @@ export function convertArrayToBackendSettings(
     packInCount: "package_quantity",
     package: "measurement_name",
     price: "primary_price",
-    purchasePrice: "purchase_price",
+    // purchasePrice: "purchase_price",
     sku: "sku",
     code: "code",
   };
-
+  
   return arr.reduce((acc, item) => {
     const backendKey = keyMapping[item.key] || item.key;
     acc[backendKey] = {

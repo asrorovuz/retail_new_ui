@@ -20,6 +20,7 @@ export type ProductModalProps = {
   setBarcode: (val: string | null) => void;
   productPriceType: ProductPriceType[];
   setIsOpen: (val: boolean) => void;
+  // catalogData: any;
   isOpen: boolean;
 };
 

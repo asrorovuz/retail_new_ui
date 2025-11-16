@@ -25,22 +25,27 @@ const PrinterModal = ({
   const { mutate: printCheck, isPending: printerPending } = useCreatePrintApi();
 
   const onPrint = (id?: number) => {
-    printCheck({
-      path: type + `/receipt-${size || 80}`,
-      payload: {
-        sale_id: id ?? saleId,
-        printer_name: printerName ?? "",
+    printCheck(
+      {
+        path: `${type}-receipt-${size || 80}`,
+        payload: {
+          sale_id: id ?? saleId,
+          printer_name: printerName ?? "",
+        },
       },
-    }, 
-    {
-      onSuccess() {
-        showSuccessMessage(messages.uz.SUCCESS_MESSAGE, messages.ru.SUCCESS_MESSAGE)
-      },
-      onError(error){
-        showErrorMessage(error)
+      {
+        onSuccess() {
+          showSuccessMessage(
+            messages.uz.SUCCESS_MESSAGE,
+            messages.ru.SUCCESS_MESSAGE
+          );
+          handleCancelPrint();
+        },
+        onError(error) {
+          showErrorMessage(error);
+        },
       }
-    }
-  );
+    );
   };
 
   return (
@@ -48,6 +53,8 @@ const PrinterModal = ({
       width={490}
       onClose={handleCancelPrint}
       onRequestClose={handleCancelPrint}
+      shouldCloseOnOverlayClick={false} // ❗ tashqariga bosilganda yopilmaydi
+      shouldCloseOnEsc={false} // ❗ ESC bosilganda yopilmaydi
       isOpen={isOpen}
       title={"Распечатать"}
     >

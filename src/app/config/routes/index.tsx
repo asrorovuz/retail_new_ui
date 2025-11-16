@@ -1,5 +1,10 @@
 import { createBrowserRouter, Navigate } from "react-router";
-import { HistoryCheckPage, PavouriteProductPage, ProductsPage, RefundPage, SalePage } from "./RoutePath";
+import {
+  PavouriteProductPage,
+  ProductsPage,
+  RefundPage,
+  SalePage,
+} from "./RoutePath";
 import { PrivateRoute, PublicRoute } from "./PrivateRoute";
 import { AuthLayout } from "@/app/layouts/AuthLayout";
 import LoginPage from "@/pages/login/ui/LoginPage";
@@ -18,23 +23,19 @@ export const router = createBrowserRouter([
     element: <PublicRoute />,
     children: [
       {
-        element: <AuthLayout />,
+        element: (
+          <Suspense fallback={<Loading />}>
+            <AuthLayout />
+          </Suspense>
+        ),
         children: [
-          { 
-            path: "/login", 
-            element: (
-              <Suspense fallback={<Loading />}>
-                <LoginPage />
-              </Suspense>
-            )
+          {
+            path: "/login",
+            element: <LoginPage />,
           },
-          { 
-            path: "/register", 
-            element: (
-              <Suspense fallback={<Loading />}>
-                <Register />
-              </Suspense>
-            )
+          {
+            path: "/register",
+            element: <Register />,
           },
         ],
       },
@@ -52,45 +53,21 @@ export const router = createBrowserRouter([
           </Suspense>
         ),
         children: [
-          { 
-            path: "/sales", 
-            element: (
-              <Suspense fallback={<Loading />}>
-                <SalePage />
-              </Suspense>
-            )
+          {
+            path: "/sales",
+            element: <SalePage />,
           },
-          { 
-            path: "/refund", 
-            element: (
-              <Suspense fallback={<Loading />}>
-                <RefundPage />
-              </Suspense>
-            )
+          {
+            path: "/refund",
+            element: <RefundPage />,
           },
-          { 
-            path: "/products", 
-            element: (
-              <Suspense fallback={<Loading />}>
-                <ProductsPage />
-              </Suspense>
-            )
+          {
+            path: "/products",
+            element: <ProductsPage />,
           },
-          { 
-            path: "/favoutite-products", 
-            element: (
-              <Suspense fallback={<Loading />}>
-                <PavouriteProductPage />
-              </Suspense>
-            )
-          },
-          { 
-            path: "/history-check", 
-            element: (
-              <Suspense fallback={<Loading />}>
-                <HistoryCheckPage />
-              </Suspense>
-            )
+          {
+            path: "/favoutite-products",
+            element: <PavouriteProductPage />,
           },
           // Boshqa routelar...
         ],

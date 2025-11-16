@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState, Fragment } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { FiPlusCircle } from "react-icons/fi";
 import { Button, Dialog, Form, FormItem, Input, Select } from "@/shared/ui/kit";
-import { showErrorMessage, showSuccessMessage } from "@/shared/lib/showMessage";
+import { showErrorLocalMessage, showErrorMessage, showSuccessMessage } from "@/shared/lib/showMessage";
 import { messages } from "@/app/constants/message.request";
 import {
   useCreateCategory,
@@ -12,7 +12,7 @@ import type { CategoryResponse } from "@/@types/products";
 
 interface ModalCategoryProps {
   id: number;
-  type: "add" | "edit" | "print";
+  type: "add" | "edit";
   isOpen: boolean;
   parent_id: number | null;
   parentName: string | null;
@@ -47,8 +47,8 @@ const ModalCategory = ({
   allCategory,
 }: ModalCategoryProps) => {
   const [loading, setLoading] = useState(false);
-  const createCategory = useCreateCategory();
-  const updateCategory = useUpdateCategory();
+  const { mutateAsync: createCategory } = useCreateCategory();
+  const { mutateAsync: updateCategory } = useUpdateCategory();
 
   const methods = useForm({
     defaultValues: {
@@ -91,8 +91,13 @@ const ModalCategory = ({
     try {
       setLoading(true);
       if (isInitialCreate) {
+        if(!values?.name) {
+          showErrorLocalMessage("Введите название категории");
+          setLoading(false);
+          return;
+        }
         // CREATE
-        const res = await createCategory.mutateAsync({
+        const res = await createCategory({
           name: values?.name,
           parent_id: values?.parent_id ?? parent_id ?? null,
         });
@@ -101,18 +106,20 @@ const ModalCategory = ({
           setEndSelectCategory({ id: res?.id, name: res.name });
         }
 
-        showSuccessMessage(messages.uz.SUCCESS_MESSAGE);
+        showSuccessMessage(messages.uz.SUCCESS_MESSAGE, messages.ru.SUCCESS_MESSAGE);
         onSuccess();
       } else {
         // UPDATE
         const idToUpdate = editId ?? parent_id;
 
         if (!idToUpdate) throw new Error("Update uchun ID topilmadi.");
+        console.log(values, "dd");
+        
 
         const parentToSend =
           type === "edit" ? values?.parent_id ?? parent_id ?? null : null;
 
-        await updateCategory.mutateAsync({
+        await updateCategory({
           id: idToUpdate,
           payload: {
             name: values?.name,
@@ -120,11 +127,11 @@ const ModalCategory = ({
           },
         });
 
-        showSuccessMessage(messages.uz.SUCCESS_MESSAGE);
+        showSuccessMessage(messages.uz.SUCCESS_MESSAGE, messages.ru.SUCCESS_MESSAGE);
         onSuccess();
       }
     } catch (err: any) {
-      showErrorMessage(err?.message || "Xatolik yuz berdi");
+      showErrorMessage(err);
     } finally {
       setLoading(false);
     }
@@ -141,15 +148,24 @@ const ModalCategory = ({
         onClose={() => onClose(id)}
       >
         <FormProvider {...methods}>
-          <Form>
+          <Form
+            onSubmit={(e) => {
+              e.stopPropagation();
+              methods.handleSubmit(onSubmit)(e);
+            }}
+          >
             <div className="">
-              <FormItem asterisk label="Название">
-                <Input
-                  placeholder="Введите название"
-                  className="bg-white border-gray-300 font-medium rounded"
-                  {...methods.register("name", {
-                    required: "Обязательное поле",
-                  })}
+              <FormItem asterisk={true} label="Название">
+                <Controller
+                  name="name"
+                  control={methods.control}
+                  render={({ field }) => (
+                    <Input
+                      placeholder="Введите название"
+                      className="bg-white border-gray-300 font-medium rounded"
+                      {...field}
+                    />
+                  )}
                 />
               </FormItem>
 
@@ -171,6 +187,12 @@ const ModalCategory = ({
                         onChange={(val) =>
                           field.onChange(val ? val.value : null)
                         }
+                        styles={{
+                          menuPortal: (base) => ({
+                            ...base,
+                            zIndex: 9999,
+                          }),
+                        }}
                       />
                     )}
                   />
@@ -183,7 +205,7 @@ const ModalCategory = ({
                   onClick={() => {
                     const selectedId = methods.getValues("parent_id");
                     if (!selectedId) {
-                      showErrorMessage("Выберите подкатегорию");
+                      showErrorLocalMessage("Выберите подкатегорию");
                       return;
                     }
                     const selectedOption = optionCategory.find(
@@ -202,13 +224,12 @@ const ModalCategory = ({
             </div>
 
             <div className="flex items-center justify-end gap-2">
-              <Button type="button" variant="plain" onClick={() => onClose(id)}>
+              <Button type="button" onClick={() => onClose(id)}>
                 Отмена
               </Button>
               <Button
                 variant="solid"
-                onClick={methods.handleSubmit(onSubmit)}
-                type="button"
+                type="submit"
                 disabled={loading}
               >
                 {loading ? "Сохранение..." : "Сохранить"}

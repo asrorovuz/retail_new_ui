@@ -1,15 +1,21 @@
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import { useAuthContext } from "@/app/providers/AuthProvider";
-import { useNavigate } from "react-router";
+import { useNavigate, useOutletContext } from "react-router";
 import { Button, Form, FormItem, Input } from "@/shared/ui/kit";
 import type { LoginPayload } from "@/@types/auth/login";
 import { useState, useEffect, useRef } from "react";
 import { showErrorMessage, showSuccessMessage } from "@/shared/lib/showMessage";
 import { messages } from "@/app/constants/message.request";
 
+type OutletContextType = {
+  refetch: any;
+  isRegistered: boolean;
+};
+
 const Login = () => {
   const { login, loading } = useAuthContext();
+  const { isRegistered } = useOutletContext<OutletContextType>();
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const timeoutRef = useRef<number | null>(null);
@@ -21,10 +27,13 @@ const Login = () => {
   const onSubmit = async (formData: LoginPayload) => {
     try {
       await login(formData);
-      showSuccessMessage(messages.uz.SUCCESS_MESSAGE, messages.ru.SUCCESS_MESSAGE)
+      showSuccessMessage(
+        messages.uz.SUCCESS_MESSAGE,
+        messages.ru.SUCCESS_MESSAGE
+      );
       navigate("/sales");
     } catch (err: any) {
-      showErrorMessage(err)
+      showErrorMessage(err);
     }
   };
 
@@ -51,6 +60,12 @@ const Login = () => {
     };
   }, []);
 
+  useEffect(() => {
+    if (!isRegistered) {
+      navigate("/register");
+    }
+  }, []);
+
   return (
     <div className="w-full max-w-[512px]">
       <div className="bg-white rounded-lg p-6 shadow-sm mb-6">
@@ -73,10 +88,7 @@ const Login = () => {
                   invalid={!!fieldState.error}
                   errorMessage={fieldState.error?.message}
                 >
-                  <Input
-                    {...field}
-                    placeholder="Имя пользовательства"
-                  />
+                  <Input {...field} placeholder="Имя пользовательства" />
                 </FormItem>
               )}
             />
@@ -103,16 +115,16 @@ const Login = () => {
                     />
                     <Button
                       type="button"
-                      variant="plain"
-                      icon={showPassword ? (
-                        <FiEyeOff size={20} />
-                      ) : (
-                        <FiEye size={20} />
-                      )}
+                      icon={
+                        showPassword ? (
+                          <FiEyeOff size={20} />
+                        ) : (
+                          <FiEye size={20} />
+                        )
+                      }
                       onClick={togglePasswordVisibility}
                       className="absolute right-0 top-1/2 -translate-y-1/2 bg-transparent cursor-pointer text-gray-700"
-                    >
-                    </Button>
+                    ></Button>
                   </div>
                 </FormItem>
               )}
@@ -135,7 +147,9 @@ const Login = () => {
       </div>
       <div className="flex justify-between text-[16px] text-gray-700 font-normal">
         <a href="tel:+998712006363">+998 71 200 63 63</a>
-        <a target="_blank" href="https://t.me/HippoEDI">Телеграм канал</a>
+        <a target="_blank" href="https://t.me/HippoEDI">
+          Телеграм канал
+        </a>
       </div>
     </div>
   );

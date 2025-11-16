@@ -10,13 +10,14 @@ import { showErrorMessage } from "@/shared/lib/showMessage";
 import type { Organizationtype } from "@/@types/auth/login";
 
 type OutletContextType = {
-  register_status: boolean;
+  refetch: any;
+  isRegistered: boolean;
 };
 
 const Register = () => {
   const navigate = useNavigate();
-  const { register_status } = useOutletContext<OutletContextType>();
   const [isError, setIsError] = useState<boolean>(false);
+  const { refetch } = useOutletContext<OutletContextType>();
   const { mutate: globalLogin, isPending: globalLoginPending } =
     useGlobalLogin();
   const { mutate: register, isPending: registerLoading } = useRegister();
@@ -40,10 +41,6 @@ const Register = () => {
 
   const nextStep = () => setStep((s) => s + 1);
   const prevStep = () => {
-    if (step === 1 && register_status) {
-      navigate("/login");
-    }
-
     if (step === 2) {
       setStep((s) => s - 1);
     }
@@ -55,7 +52,6 @@ const Register = () => {
 
   const onSubmit = (values: any) => {
     if (step === 1) {
-      
       globalLogin(
         { username: values?.login, password: values?.pass },
         {
@@ -84,8 +80,9 @@ const Register = () => {
       );
     }
 
-    if(step === 3) {
-      navigate("/login")
+    if (step === 3) {
+      refetch()
+      navigate("/login");
     }
   };
 
@@ -97,6 +94,7 @@ const Register = () => {
 
       <Steps
         current={step}
+        className="mb-4"
         status={
           globalLoginPending ? "pending" : isError ? "error" : "in-progress"
         }
@@ -119,19 +117,33 @@ const Register = () => {
       </Steps>
 
       <FormProvider {...form}>
-        <Form layout="vertical" onSubmit={form.handleSubmit(onSubmit)}>
+        <Form
+          className="max-h-[50vh] overflow-x-auto"
+          layout="vertical"
+          onSubmit={form.handleSubmit(onSubmit)}
+        >
           {step === 1 && <Step1Phone />}
-          {step === 2 && <Step2Info item={response ? response?.organizations : []} />}
+          {step === 2 && (
+            <Step2Info item={response ? response?.organizations : []} />
+          )}
           {step === 3 && <Step3Confirm />}
 
           <div className="flex justify-between mt-6">
             <Button
               type="button"
-              variant="plain"
               className="text-gray-700 font-medium rounded-xl"
               onClick={prevStep}
             >
               Назад
+            </Button>
+
+            <Button
+              onClick={() => navigate("/login")}
+              type="button"
+              variant="solid"
+              className="bg-transparent hover:bg-transparent text-gray-700 font-medium rounded-xl"
+            >
+              Выйти
             </Button>
 
             {step < 3 ? (

@@ -39,6 +39,9 @@ const RefundCheckModal = ({
 }: RefundCheckModalProps) => {
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
+  console.log(items);
+  
+
   // Modal ochilganda barcha itemlar avtomatik tanlanadi
   useEffect(() => {
     if (isOpen && items?.length) {
@@ -124,7 +127,7 @@ const RefundCheckModal = ({
     <Dialog
       width={"80vw"}
       title={"Возвраты чек"}
-      height={"80vh"}
+      height={"84vh"}
       isOpen={isOpen}
       onClose={() => setRefundCheckModal({ isOpen: false, ids: [] })}
     >
