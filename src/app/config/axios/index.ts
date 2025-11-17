@@ -23,7 +23,7 @@ AxiosBase.interceptors.request.use(
       config.headers["Authorization"] = `Basic ${token}`;
     }
     // 🔸 har bir so‘rovga retry hisoblagichini qo‘shamiz
-    (config as any).__retryCount = (config as any).__retryCount || 0;
+    // (config as any).__retryCount = (config as any).__retryCount || 0;
     return config;
   },
   (error) => Promise.reject(error)
