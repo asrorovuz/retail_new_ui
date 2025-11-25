@@ -1,29 +1,21 @@
 import "@tanstack/react-table";
 
-export {}
-
 declare global {
   interface Window {
     astilectron?: {
-      sendMessage?: (
-        message: any,
-        callback?: (message: any) => void
-      ) => void
+      sendMessage?: (message: any, callback?: (message: any) => void) => void;
       onMessage?: (
         callback: (message: { name: string; payload: any }) => void
-      ) => void
-    }
+      ) => void;
+    };
   }
 
   const astilectron: {
-    sendMessage?: (
-      message: any,
-      callback?: (message: any) => void
-    ) => void
+    sendMessage?: (message: any, callback?: (message: any) => void) => void;
     onMessage?: (
       callback: (message: { name: string; payload: any }) => void
-    ) => void
-  }
+    ) => void;
+  };
 }
 
 declare module "@tanstack/react-table" {
@@ -33,3 +25,5 @@ declare module "@tanstack/react-table" {
     headerClassName?: string;
   }
 }
+
+export {};

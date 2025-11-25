@@ -76,7 +76,7 @@ const PaymeTypeCards = ({
   return (
     <>
       {!activeOnlyType?.isOpen && (
-        <div className="grid grid-cols-3 grid-rows-2 gap-1 p-1 bg-gray-50 rounded-2xl mb-2">
+        <div className="grid grid-cols-3 grid-rows-2 gap-1 p-2 bg-gray-50 rounded-2xl mb-2">
           {count >= 5 && (
             <Button
               onClick={() => setCount((prev) => prev - 5)}

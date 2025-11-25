@@ -1,14 +1,17 @@
-import { RouterProvider } from "react-router-dom";
-import { router } from "./config/routes";
-import { AuthProvider, QueryProvider } from "./providers";
+import { AppRouter } from "./config/routes";
+import { AuthProvider } from "./providers";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { queryConfig } from "./config/app.config";
 
 function App() {
+  const queryClient = new QueryClient(queryConfig);
+
   return (
-    <QueryProvider>
+    <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <RouterProvider router={router} />
+        <AppRouter />
       </AuthProvider>
-    </QueryProvider>
+    </QueryClientProvider>
   );
 }
 

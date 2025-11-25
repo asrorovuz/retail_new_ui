@@ -186,6 +186,18 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
       );
     }
 
+    if (error.shift_disabled) {
+      return toast.error(
+        lang === "ru"
+          ? "Открытие смены запрещено"
+          : "Shift ochishga ruxsat yo‘q",
+        {
+          position: "bottom-left",
+          autoClose: 3000,
+        }
+      );
+    }
+
     if (error.message) {
       return toast.error(
         lang === "ru"

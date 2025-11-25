@@ -119,7 +119,7 @@ const SaleAndRefunTable = ({
   });
 
   return (
-    <div className="overflow-hidden h-[44vh] mb-3 rounded-2xl">
+    <div className="overflow-hidden min-h-[44vh] mb-3 rounded-2xl">
       <div className="bg-gray-50 border-2 border-gray-50 overflow-y-auto rounded-2xl h-[44vh]">
         <div className="flex flex-col justify-between h-full bg-white">
           <Table
@@ -193,7 +193,7 @@ const SaleAndRefunTable = ({
                 <Tr>
                   <Td colSpan={table.getAllColumns().length}>
                     <div className="py-10 flex justify-center">
-                      <Empty textSize="text-lg" size={60} />
+                      <Empty textSize="text-base" size={60} />
                     </div>
                   </Td>
                 </Tr>
@@ -239,7 +239,7 @@ const SaleAndRefunTable = ({
                   size="sm"
                   type="number"
                   autoFocus={true}
-                  className="!w-[220px]"
+                  className="!w-[140px] xl:!w-[220px]"
                   value={currentItem?.priceAmount}
                   onChange={(val) => {
                     updateDraftItemPrice(
@@ -263,10 +263,10 @@ const SaleAndRefunTable = ({
               ) : (
                 <div
                   onClick={() => setIsEditing({ isOpen: true, type: "price" })}
-                  className="w-[210px] bg-white px-3 py-3 flex items-center justify-between gap-2 rounded-lg"
+                  className="w-[140px] xl:w-[220px] bg-white px-3 py-3 flex items-center justify-between gap-2 rounded-lg"
                 >
-                  <span className="text-base font-normal">Цена:</span>
-                  <div className="text-base font-medium text-gray-800">
+                  <span className="text-[14px] xl:text-base font-normal">Цена:</span>
+                  <div className="text-[14px] xl:text-base font-medium text-gray-800">
                     <FormattedNumber value={currentItem?.priceAmount} />
                     <span className="ml-1">сум</span>
                   </div>
@@ -305,7 +305,7 @@ const SaleAndRefunTable = ({
                   <Input
                     size="md"
                     type="number"
-                    className="!w-[100px]"
+                    className="!w-[80px] xl:!w-[100px]"
                     autoFocus={true}
                     value={currentItem?.quantity}
                     onChange={(val) => {
@@ -332,9 +332,9 @@ const SaleAndRefunTable = ({
                     onClick={() =>
                       setIsEditing({ isOpen: true, type: "quantity" })
                     }
-                    className="w-[100px] h-12 text-base font-medium text-gray-800 flex items-center justify-center bg-white rounded-lg"
+                    className="w-[80px] xl:w-[100px] h-12 text-[14px] xl:text-base font-medium text-gray-800 flex items-center justify-center bg-white rounded-lg"
                   >
-                    <FormattedNumber value={currentItem?.quantity} />
+                    <FormattedNumber value={currentItem?.quantity} scale={2}/>
                   </div>
                 )}
 
@@ -356,7 +356,7 @@ const SaleAndRefunTable = ({
                   size="sm"
                   type="number"
                   autoFocus
-                  className="!w-[220px]"
+                  className="!w-[140px] xl:!w-[220px]"
                   value={currentItem?.totalAmount}
                   onChange={(val) => {
                     const recalculatedQuantity =
@@ -384,11 +384,11 @@ const SaleAndRefunTable = ({
                   onClick={() =>
                     setIsEditing({ isOpen: true, type: "totalPrice" })
                   }
-                  className="w-[220px] bg-white px-3 py-3 flex items-center justify-between gap-2 rounded-lg"
+                  className="w-[140px] xl:w-[220px] bg-white px-3 py-3 flex items-center justify-between gap-2 rounded-lg"
                 >
-                  <span className="text-base font-normal">Сумма:</span>
-                  <div className="text-base font-medium text-gray-800">
-                    <FormattedNumber value={currentItem?.totalAmount} />
+                  <span className="text-[14px] xl:text-base font-normal">Сумма:</span>
+                  <div className="text-[14px] xl:text-base font-medium text-gray-800">
+                    <FormattedNumber value={currentItem?.totalAmount} scale={2}/>
                     <span className="ml-1">сум</span>
                   </div>
                 </div>

@@ -6,14 +6,9 @@ import path from "path";
 export default defineConfig({
   base: './',
   plugins: [
-    // react(),
-    react({
-      babel: {
-        plugins: [["babel-plugin-react-compiler"]],
-      },
-    }),
+    react(),
   ],
-  // assetsInclude: ['**/*.md'],
+  assetsInclude: ['**/*.md'],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "src"),
