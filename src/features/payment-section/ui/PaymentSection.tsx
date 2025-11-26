@@ -107,7 +107,7 @@ const PaymentSection = ({
   ]);
 
   return (
-    <div className="rounded-2xl bg-gray-50 p-2 flex flex-col gap-y-1 mb-2">
+    <div className="rounded-2xl bg-gray-50 p-2 flex flex-col gap-y-2 mb-2">
       <PriceForm
         type={type}
         value={value}

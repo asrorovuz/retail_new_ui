@@ -381,7 +381,7 @@ const UpdateShiftDialog = ({ isOpen, onClose }: PropsType) => {
 
   return (
     <Dialog
-      width={1114}
+      width={"96vw"}
       isOpen={isOpen}
       onClose={onClose} //handleClose
       title={"Закрыть смену"}

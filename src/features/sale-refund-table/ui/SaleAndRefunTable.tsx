@@ -229,7 +229,7 @@ const SaleAndRefunTable = ({
               >
                 <Button
                   variant="plain"
-                  icon={<HiTrash />}
+                  icon={<HiTrash size={20}/>}
                   className="bg-red-100 text-red-500 hover:text-red-400 active:scale-90 active:bg-red-200 transition-all duration-300"
                 />
               </CommonDeleteDialog>
@@ -239,7 +239,7 @@ const SaleAndRefunTable = ({
                   size="sm"
                   type="number"
                   autoFocus={true}
-                  className="!w-[140px] xl:!w-[220px]"
+                  className="!w-[155px] xl:!w-[220px]"
                   value={currentItem?.priceAmount}
                   onChange={(val) => {
                     updateDraftItemPrice(
@@ -263,7 +263,7 @@ const SaleAndRefunTable = ({
               ) : (
                 <div
                   onClick={() => setIsEditing({ isOpen: true, type: "price" })}
-                  className="w-[140px] xl:w-[220px] bg-white px-3 py-3 flex items-center justify-between gap-2 rounded-lg"
+                  className=" xl:w-[220px] bg-white px-3 py-3 flex items-center justify-between gap-2 rounded-lg"
                 >
                   <span className="text-[14px] xl:text-base font-normal">Цена:</span>
                   <div className="text-[14px] xl:text-base font-medium text-gray-800">
@@ -273,7 +273,7 @@ const SaleAndRefunTable = ({
                 </div>
               )}
 
-              <div className="flex items-center gap-x-2">
+              <div className="flex items-center gap-x-2 w-[154px] xl:w-auto">
                 {isEditing?.type !== "quantity" && currentItem?.quantity > 1 ? (
                   <Button
                     variant="solid"
@@ -305,7 +305,7 @@ const SaleAndRefunTable = ({
                   <Input
                     size="md"
                     type="number"
-                    className="!w-[80px] xl:!w-[100px]"
+                    className="!w-[154px] xl:!w-[100px]"
                     autoFocus={true}
                     value={currentItem?.quantity}
                     onChange={(val) => {
@@ -356,7 +356,7 @@ const SaleAndRefunTable = ({
                   size="sm"
                   type="number"
                   autoFocus
-                  className="!w-[140px] xl:!w-[220px]"
+                  className="!w-[155px] xl:!w-[220px]"
                   value={currentItem?.totalAmount}
                   onChange={(val) => {
                     const recalculatedQuantity =
@@ -384,7 +384,7 @@ const SaleAndRefunTable = ({
                   onClick={() =>
                     setIsEditing({ isOpen: true, type: "totalPrice" })
                   }
-                  className="w-[140px] xl:w-[220px] bg-white px-3 py-3 flex items-center justify-between gap-2 rounded-lg"
+                  className=" xl:w-[220px] bg-white px-3 py-3 flex items-center justify-between gap-2 rounded-lg"
                 >
                   <span className="text-[14px] xl:text-base font-normal">Сумма:</span>
                   <div className="text-[14px] xl:text-base font-medium text-gray-800">
