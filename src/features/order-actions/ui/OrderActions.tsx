@@ -274,8 +274,6 @@ const OrderActions = ({
           setSaleId(data?.sale?.id);
 
           if (settings?.auto_print_receipt && settings?.printer_name) {
-            console.log(data, "response");
-            
             onPrint(data?.sale?.id);
           } else if (!settings?.auto_print_receipt && settings?.printer_name) {
             setPrintSelect(true);
@@ -366,7 +364,7 @@ const OrderActions = ({
   }, [filterDataFiscal]);
 
   return (
-    <div className="p-1 bg-gray-50 rounded-2xl flex gap-x-2">
+    <div className="p-2 bg-gray-50 rounded-2xl flex gap-x-2">
       <CommonDeleteDialog
         description="Удалить корзину? Действие нельзя будет отменить"
         onDelete={onDeleteActivedraft}

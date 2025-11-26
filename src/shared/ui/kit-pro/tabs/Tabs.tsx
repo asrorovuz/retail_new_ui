@@ -77,7 +77,7 @@ export default function Tabs({
   }, [drafts]); // drafts o‘zgarganda ishlaydi
 
   return (
-    <div className="w-full max-w-[calc(100%-130px)] flex items-center gap-x-2">
+    <div className="w-full max-w-[calc(100%-110px)] xl:max-w-[calc(100%-130px)] flex items-center gap-x-2">
       {/* Tabs */}
       <div
         ref={scrollRef}
@@ -98,9 +98,9 @@ export default function Tabs({
             onClick={() => activateDraft(index)}
             className={
               classNames(
-                "px-5 text-sm font-medium rounded-lg transition-colors bg-transparent",
-                draft?.isActive && type === "sale" && "text-primary bg-white",
-                draft?.isActive && type === "refund" && "text-red-500 bg-white"
+                "px-3 xl:px-5 !text-xs !xl:text-sm font-medium rounded-lg transition-colors bg-transparent",
+                draft?.isActive && type === "sale" && "!text-primary bg-white",
+                draft?.isActive && type === "refund" && "!text-red-500 bg-white"
               )
             }
           >
@@ -115,9 +115,9 @@ export default function Tabs({
         size="sm"
         iconAlignment="end"
         icon={<FaPlus className="text-sm" />}
-        className="bg-white text-sm font-medium rounded-lg"
+        className="bg-white !text-xs xl:text-sm font-medium rounded-lg"
       >
-        Добавить касса
+        Добавить {type === "sale" ? "продажа" : "возврат"}
       </Button>
     </div>
   );

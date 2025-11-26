@@ -65,7 +65,7 @@ const Header = () => {
       >
         <MenuItem eventKey="sales">
           <div
-            className={`px-4 py-2 rounded-md cursor-pointer text-[16px] transition-colors duration-200 ${
+            className={`px-4 py-2 rounded-md cursor-pointer text-[14px] xl:text-[16px] transition-colors duration-200 ${
               activeKey === "sales"
                 ? "text-blue-500"
                 : "hover:bg-gray-100 text-gray-700"
@@ -76,7 +76,7 @@ const Header = () => {
         </MenuItem>
         <MenuItem eventKey="refund">
           <div
-            className={`px-4 py-2 rounded-md cursor-pointer text-[16px] transition-colors duration-200 ${
+            className={`px-4 py-2 rounded-md cursor-pointer text-[14px] xl:text-[16px] transition-colors duration-200 ${
               activeKey === "refund"
                 ? "text-red-500"
                 : "hover:bg-gray-100 text-gray-700"
@@ -87,7 +87,7 @@ const Header = () => {
         </MenuItem>
         <MenuItem eventKey="products">
           <div
-            className={`px-4 py-2 rounded-md cursor-pointer text-[16px] transition-colors duration-200 ${
+            className={`px-4 py-2 rounded-md cursor-pointer text-[14px] xl:text-[16px] transition-colors duration-200 ${
               activeKey === "products"
                 ? "text-blue-500"
                 : "hover:bg-gray-100 text-gray-700"
@@ -98,7 +98,7 @@ const Header = () => {
         </MenuItem>
         <MenuItem eventKey="favoutite-products">
           <div
-            className={`px-4 py-2 rounded-md cursor-pointer text-[16px] transition-colors duration-200 ${
+            className={`px-4 py-2 rounded-md cursor-pointer text-[14px] xl:text-[16px] transition-colors duration-200 ${
               activeKey === "favoutite-products"
                 ? "text-blue-500"
                 : "hover:bg-gray-100 text-gray-700"
@@ -121,6 +121,7 @@ const Header = () => {
                 setShiftAddModal(true);
               }
             }}
+            className="!text-[14px] !xl:text-base !font-medium !xl:font-semibold"
             variant="solid"
             icon={<FiRefreshCcw />}
           >
@@ -132,7 +133,7 @@ const Header = () => {
         </div>
         <Button
           onClick={() => setShowAlert(true)}
-          className="bg-red-100 text-red-500 text-base font-semibold active:bg-red-200 active:text-red-500 hover:text-red-500 transition duration-300"
+          className="bg-red-100 text-red-500 text-[14px] xl:text-base font-semibold active:bg-red-200 active:text-red-500 hover:text-red-500 transition duration-300"
           variant="plain"
           icon={<LogoutSvg height={20} width={20} />}
         >

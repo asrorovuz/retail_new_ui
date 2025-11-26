@@ -2,10 +2,7 @@ import type { AmountType } from "@/@types/cashbox";
 import { messages } from "@/app/constants/message.request";
 import { CurrencyCodeUZSText } from "@/app/constants/paymentType";
 import { useSettingsStore } from "@/app/store/useSettingsStore";
-import {
-  useCashboxApi,
-  useCreateShiftApi,
-} from "@/entities/init/repository";
+import { useCashboxApi, useCreateShiftApi } from "@/entities/init/repository";
 import classNames from "@/shared/lib/classNames";
 import { showErrorMessage, showSuccessMessage } from "@/shared/lib/showMessage";
 import { Button, Dialog, Table } from "@/shared/ui/kit";
@@ -44,7 +41,7 @@ const CreateShiftDialog = ({ isOpen, onClose }: PropsType) => {
   const { data: cashboxs, isPending } = useCashboxApi();
   const { mutate: createShiftMutate, isPending: createShiftPending } =
     useCreateShiftApi();
-    
+
   const { setActiveShift } = useSettingsStore();
 
   const handleShiftCreate = async () => {
@@ -80,7 +77,9 @@ const CreateShiftDialog = ({ isOpen, onClose }: PropsType) => {
           return (
             <div className="flex justify-start px-3">
               <img
-                src={paymentTypes[item?.money_type as keyof typeof paymentTypes]}
+                src={
+                  paymentTypes[item?.money_type as keyof typeof paymentTypes]
+                }
                 alt={info.cell.id}
                 className="w-10 object-contain"
               />
@@ -103,7 +102,7 @@ const CreateShiftDialog = ({ isOpen, onClose }: PropsType) => {
     ],
     []
   );
-  
+
   const shiftTable = useReactTable<AmountType>({
     data: cashboxs?.length ? cashboxs[0].amounts ?? [] : [],
     columns: shiftColumns,
@@ -123,12 +122,12 @@ const CreateShiftDialog = ({ isOpen, onClose }: PropsType) => {
       <div className="flex flex-col h-full max-h-[70vh]">
         {/* <p className="text-sm text-gray-500">Остатки с последней смены</p> */}
         <div className="flex-1 overflow-hidden">
-          {isPending && (
+          {isPending ? (
             <div className="flex items-center justify-center py-16">
               <Loading />
             </div>
-          )}
-          {!isPending && !cashboxs?.[0]?.amounts && (
+          ) : null}
+          {!isPending && !cashboxs?.[0]?.amounts?.length ? (
             <div className="border border-gray-200 rounded-2xl">
               <div className="grid grid-cols-2 py-2 px-3 border-b">
                 <p>ТИП ПЛАТЕЖИ</p>
@@ -146,9 +145,9 @@ const CreateShiftDialog = ({ isOpen, onClose }: PropsType) => {
                 <p className="text-primary">0 сум</p>
               </div>
             </div>
-          )}
+          ) : null}
 
-          {!isPending && cashboxs?.[0]?.amounts && (
+          {!isPending && cashboxs?.[0]?.amounts?.length ? (
             <div className="h-full overflow-auto">
               <div className="bg-white border border-gray-200 rounded-t-2xl overflow-hidden">
                 <Table className="w-full">
@@ -156,9 +155,7 @@ const CreateShiftDialog = ({ isOpen, onClose }: PropsType) => {
                     {shiftTable?.getHeaderGroups().map((headerGroup) => (
                       <Tr key={headerGroup.id}>
                         {headerGroup.headers.map((header) => (
-                          <Th
-                            key={header.id}
-                          >
+                          <Th key={header.id}>
                             {flexRender(
                               header.column.columnDef.header,
                               header.getContext()
@@ -190,9 +187,7 @@ const CreateShiftDialog = ({ isOpen, onClose }: PropsType) => {
 
               <div className="p-3 bg-white border border-gray-200 rounded-b-2xl">
                 <div className="flex justify-between items-center">
-                  <span className="text-base font-medium">
-                    Общая сумма:
-                  </span>
+                  <span className="text-base font-medium">Общая сумма:</span>
                   <span className="font-medium text-primary flex gap-x-1">
                     <FormattedNumber
                       value={cashboxs?.[0]?.amounts.reduce(
@@ -205,7 +200,7 @@ const CreateShiftDialog = ({ isOpen, onClose }: PropsType) => {
                 </div>
               </div>
             </div>
-          )}
+          ) : null}
         </div>
 
         <div className="flex gap-2 justify-end mt-6">

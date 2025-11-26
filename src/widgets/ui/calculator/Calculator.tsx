@@ -37,13 +37,13 @@ const Calculator = ({
   };
 
   return (
-    <div className="w-full min-h-[30vh] max-h-[40vh]">
-      <div className="grid grid-cols-3 grid-rows-4 gap-1.5">
+    <div className="w-full xl:min-h-[31vh]">
+      <div className="grid grid-cols-3 grid-rows-4 gap-1.5 xl:min-h-[31vh]">
         {["7", "8", "9", "4", "5", "6", "1", "2", "3", "0"].map((num) => (
           <Button
             key={num}
             variant="solid"
-            className="bg-white font-medium! text-xl text-gray-800 h-full hover:bg-blue-50 transition-all"
+            className="bg-white font-medium text-xl text-gray-800 hover:bg-blue-50 transition-all"
             onClick={() => onClickNumber(num)}
           >
             {num}
@@ -52,7 +52,7 @@ const Calculator = ({
 
         <Button
           variant="solid"
-          className="bg-white font-medium! text-xl text-gray-800 h-full hover:bg-blue-50 transition-all"
+          className="bg-white font-medium text-xl text-gray-800 hover:bg-blue-50 transition-all"
           onClick={onDotBtnFired}
         >
           .
@@ -61,7 +61,7 @@ const Calculator = ({
         <Button
           variant="solid"
           icon={<ClearSvg />}
-          className="bg-white font-medium! text-xl text-gray-800 h-full w-full hover:bg-blue-50 transition-all"
+          className="bg-white font-medium text-xl text-gray-800 w-full hover:bg-blue-50 transition-all"
           onClick={onBackSpace}
         />
       </div>

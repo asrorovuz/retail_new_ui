@@ -17,7 +17,7 @@ type OutletContextType = {
 const Register = () => {
   const navigate = useNavigate();
   const [isError, setIsError] = useState<boolean>(false);
-  const { refetch } = useOutletContext<OutletContextType>();
+  const { refetch } = useOutletContext<OutletContextType>() || { refetch: () => {} };
   const { mutate: globalLogin, isPending: globalLoginPending } =
     useGlobalLogin();
   const { mutate: register, isPending: registerLoading } = useRegister();

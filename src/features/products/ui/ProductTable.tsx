@@ -122,7 +122,7 @@ const ProductTable = ({
           const total = info.row.original.warehouse_items?.[0]?.state;
           return total !== undefined ? total.toLocaleString() : "0";
         },
-        size: 100,
+        size: 80,
         meta: {
           color:
             tableSettings?.find((i) => i.key === "totalRemainder")?.color ||
@@ -166,7 +166,7 @@ const ProductTable = ({
             info.row.original.product_packages?.[0]?.prices?.[0]?.amount;
           return price ? `${price.toLocaleString()} сум` : "-";
         },
-        size: 100,
+        size: 140,
         meta: {
           color: tableSettings?.find((i) => i.key === "price")?.color || "#fff",
         },
@@ -285,7 +285,7 @@ const ProductTable = ({
                 <Tr key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
                     <Th key={header.id}>
-                      <div className="px-4 text-left font-medium text-sm text-gray-800">
+                      <div className="px-4 text-left font-medium text-xs xl:text-sm text-gray-800">
                         {flexRender(
                           header.column.columnDef.header,
                           header.getContext()
@@ -307,7 +307,7 @@ const ProductTable = ({
                   {row.getVisibleCells().map((cell) => (
                     <Td className={classNames(cell.column.columnDef.meta?.color || "#fff")} key={cell.id}>
                       <div
-                        className={classNames("px-4 py-3 text-sm")}
+                        className={classNames("px-4 py-3 text-xs xl:text-sm")}
                       >
                         {flexRender(
                           cell.column.columnDef.cell,
