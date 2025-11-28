@@ -26,7 +26,7 @@ const AddProductModal: FC<ProductModalProps> = ({
     setType("add");
     setIsOpen(true);
   };
-  
+
   useEffect(() => {
     if (isOpen) {
       const prices = productPriceType?.map(
@@ -43,6 +43,15 @@ const AddProductModal: FC<ProductModalProps> = ({
 
       setDefaultValues({
         name: catalogData?.[0]?.name ?? "",
+        barcodes: [
+          catalogData?.[0]?.barcode ||
+            barcode ||
+            Date.now().toString().slice(0, 13),
+        ],
+        catalog_code: catalogData?.[0]?.class_code,
+        catalog_name: catalogData?.[0]?.class_name,
+        package_code: null,
+        package_name: null,
         purchase_price: {
           amount: null,
           currency: {
@@ -51,34 +60,17 @@ const AddProductModal: FC<ProductModalProps> = ({
             rate: CurrencyRateUZS,
           },
         },
-        packages: [
-          {
-            is_default: true,
-            isActive: true,
-            category: null,
-            barcodes: [
-              catalogData?.[0]?.barcode ||
-                barcode ||
-                Date.now().toString().slice(0, 13),
-            ],
-            images: [],
-            catalog_code: catalogData?.[0]?.class_code,
-            catalog_name: catalogData?.[0]?.class_name,
-            package_code: null,
-            package_name: null,
-            sku: null,
-            code: null,
-            measurement_name: "Штук",
-            vat_rate: null,
-            prices,
-            count: 1,
-            catalog: catalogData?.[0],
-            package:
-              catalogData?.length && catalogData[0]?.package_names.length === 1
-                ? catalogData[0]?.package_names?.[0]
-                : null,
-          },
-        ],
+        images: [],
+        category: null,
+        isActive: true,
+        sku: null,
+        code: null,
+        measurement_name: "Штук",
+        vat_rate: null,
+        prices,
+        count: 1,
+        catalog: catalogData?.[0],
+        is_default: true,
       });
     }
   }, [isOpen, productPriceType, catalogData]);

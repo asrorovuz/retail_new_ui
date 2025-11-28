@@ -35,28 +35,29 @@ const FavouriteProduct = ({
   const { active, update } = getActiveDraft();
 
   const onChange = (item: any) => {
+    console.log(item, active, "item 5");
+    
     const operationItem = active?.items?.find(
       (p) =>
-        p.productId === item.product.id &&
-        p.productPackageId === item.product_package.id
+        p.productId === item.product.id
     );
     const packagePrice =
-      item?.product_package.prices?.find(
+      item?.product?.prices?.find(
         (p: PriceType) => p.product_price_type.is_primary
-      ) || item.product_package.prices[0];
+      ) || item.product.prices[0];
     const quantity = operationItem?.quantity ?? 0;
 
     const newItem = {
-      productId: item?.product.id,
+      productId: item?.product?.id,
       productName: item?.product.name,
-      productPackageId: item?.product_package.id,
-      productPackageName: item?.product_package.measurement_name,
-      priceTypeId: packagePrice?.product_price_type.id,
+      // productPackageId: item?.product.id,
+      productPackageName: item?.product.measurement_name,
+      priceTypeId: packagePrice?.product_price_type?.id,
       priceAmount: packagePrice?.amount,
       quantity: quantity + 1,
       totalAmount: (quantity + 1) * packagePrice?.amount,
-      catalogCode: item?.product_package?.catalog_code,
-      catalogName: item?.product_package?.catalog_name,
+      catalogCode: item?.product?.catalog_code,
+      catalogName: item?.product?.catalog_name,
     };
 
     update(newItem);
@@ -81,8 +82,8 @@ const FavouriteProduct = ({
                 <FavouriteCard
                   name={item?.product?.name}
                   onItemChange={() => onChange(item)}
-                  img={item?.product_package?.images ?? []}
-                  prices={item?.product_package?.prices}
+                  img={item?.product?.images ?? []}
+                  prices={item?.product?.prices}
                 />
               );
             }): ""}

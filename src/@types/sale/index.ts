@@ -10,7 +10,7 @@ export type DraftSaleSchema = {
 };
 
 export type SaleItemModel = {
-  product_package_id: number;
+  product_id: number;
   warehouse_id: number | null;
   quantity: number;
   price: Money;
@@ -183,7 +183,7 @@ export type DraftSaleItemSchema = {
   id?: number;
   productId: number;
   productName: string;
-  productPackageId: number;
+  // productPackageId: number;
   productPackageName: string;
   priceAmount: number;
   priceTypeId: number;

@@ -25,10 +25,10 @@ const LikedProducts = () => {
   const { mutate: addFavouriteProduct, isPending: addFavouritePending } =
     useAddFavouriteProduct();
 
-    const filterdata = useMemo(() => {
-      const favoriteIds = favoriteData?.map((item) => item?.product?.id) || [];
-      return data?.filter((item) => !favoriteIds.includes(item.id));
-    }, [data, favoriteData]);
+  const filterdata = useMemo(() => {
+    const favoriteIds = favoriteData?.map((item) => item?.product?.id) || [];
+    return data?.filter((item) => !favoriteIds.includes(item.id));
+  }, [data, favoriteData]);
 
   const optionProduct = useMemo(() => {
     return filterdata?.map((item) => ({
@@ -68,7 +68,7 @@ const LikedProducts = () => {
           handleClose();
         },
         onError(error) {
-          showErrorMessage(error)
+          showErrorMessage(error);
         },
       });
   };

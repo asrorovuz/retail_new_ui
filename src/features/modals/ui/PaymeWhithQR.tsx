@@ -156,7 +156,7 @@ const PaymeWhithQR = ({
     <Dialog
       onClose={onCancel}
       shouldCloseOnOverlayClick={false} // ❗ tashqariga bosilganda yopilmaydi
-      shouldCloseOnEsc={false} // ❗ ESC bosilganda yopilmaydi
+      shouldCloseOnEsc={false} // ❗ ESC bosilganda yopilmaydi.
       width={490}
       title={"Хотите совершить QR-платеж "}
       isOpen={isOpen}

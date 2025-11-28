@@ -11,7 +11,7 @@ export type DraftRefundItemSchema = {
   id?: number;
   productId: number;
   productName: string;
-  productPackageId: number;
+  // productPackageId: number;
   productPackageName: string;
   priceAmount: number;
   priceTypeId: number;
@@ -96,7 +96,7 @@ type MoneyMovement = Money & {
 };
 
 export type RefundItemModel = {
-  product_package_id: number;
+  product_id: number;
   warehouse_id: number | null;
   quantity: number;
   price: Money;

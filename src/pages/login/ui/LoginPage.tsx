@@ -1,6 +1,5 @@
 import { Login } from "@/features/auth";
 
-
 const LoginPage = () => {
   return (
     <>

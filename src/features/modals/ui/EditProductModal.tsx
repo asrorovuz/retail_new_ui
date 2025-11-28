@@ -11,10 +11,8 @@ import {
   CurrencyRateUZS,
 } from "@/app/constants/paymentType";
 import {
-  useCatalogSearchApi,
   useProductByIdApi,
 } from "@/entities/products/repository";
-import type { ProductPackage } from "@/@types/products";
 
 type EXtraPropsType = {
   productId: number | null;
@@ -37,7 +35,6 @@ const EditProductModal: FC<ProductTableProps & EXtraPropsType> = ({
     useState<ProductDefaultValues | null>(null);
 
   const { data: product } = useProductByIdApi(productId ?? null);
-  const { data: catalogData } = useCatalogSearchApi(barcode || "", isOpen);
 
   // 🔥 DEFAULT VALUES NI useEffect ICHIDA HISOBLAYMIZ
   useEffect(() => {
@@ -75,81 +72,51 @@ const EditProductModal: FC<ProductTableProps & EXtraPropsType> = ({
             },
 
       state: product?.warehouse_items?.[0]?.state || 0,
-
-      packages: product?.product_packages?.length
-        ? product?.product_packages?.map(
-            (pkg: ProductPackage, inx: number) => ({
-              id: pkg?.id,
-              is_default: pkg?.is_default || inx === 0,
-              isActive: inx === 0,
-              category: pkg?.category,
-              barcodes: pkg?.barcodes?.map((i) => i.value) || [],
-              images: pkg?.images?.length
-                ? [
-                    {
-                      id: pkg?.images[0]?.id,
-                      img: pkg?.images[0]?.fs_url,
-                      name: pkg?.images[0]?.name,
-                    },
-                  ]
-                : [],
-              catalog: pkg?.catalog_code
-                ? {
-                    class_code: pkg.catalog_code,
-                    class_name: pkg.catalog_name || "",
-                    package_names: [], // Bu CatalogSelector ichida to'ldiriladi
-                  }
-                : null,
-
-              catalog_code: pkg?.catalog_code || null,
-              catalog_name: pkg?.catalog_name || null,
-              package: null,
-              package_code: pkg?.package_code || null,
-              package_name: pkg?.package_name || null,
-              sku: pkg?.sku || null,
-              code: pkg?.code || null,
-              measurement_name: pkg?.measurement_name || "Штук",
-              prices: pkg?.prices?.length
-                ? prices.map((i) => {
-                    const price = pkg?.prices?.find(
-                      (j) => j?.product_price_type?.id === i?.price_type?.id
-                    );
-                    if (price)
-                      return {
-                        id: price?.id,
-                        amount: price?.amount,
-                        price_type: price?.product_price_type,
-                        currency: price?.currency,
-                      };
-                    return i;
-                  })
-                : prices,
-              count: pkg?.count || 1,
-            })
-          )
-        : [
+      barcodes: product?.barcodes?.map((i) => i.value) || [],
+      category: product?.category,
+      images: product?.images?.length
+        ? [
             {
-              is_default: true,
-              isActive: true,
-              category: null,
-              barcodes: [new Date().getTime().toString().slice(5, 13)],
-              images: [],
-              catalog: null,
-              catalog_code: null,
-              catalog_name: null,
-              package_code: null,
-              package_name: null,
-              sku: null,
-              code: null,
-              measurement_name: "Штук",
-              prices,
-              count: 1,
+              id: product?.images[0]?.id,
+              img: product?.images[0]?.fs_url,
+              name: product?.images[0]?.name,
             },
-          ],
+          ]
+        : [],
+      catalog: product?.catalog_code
+        ? {
+            value: product.catalog_code,
+            label: product.catalog_name || "",
+            package_names: [], // Bu CatalogSelector ichida to'ldiriladi
+          }
+        : null,
+      package_code: product?.package_code || null,
+      package_name: product?.package_name || null,
+      catalog_code: product?.catalog_code || null,
+      catalog_name: product?.catalog_name || null,
+      sku: product?.sku || null,
+      code: product?.code || null,
+      measurement_name: product?.measurement_name || "Штук",
+      prices: product?.prices?.length
+        ? prices.map((i) => {
+            const price = product?.prices?.find(
+              (j) => j?.product_price_type?.id === i?.price_type?.id
+            );
+            if (price)
+              return {
+                id: price?.id,
+                amount: price?.amount,
+                price_type: price?.product_price_type,
+                currency: price?.currency,
+              };
+            return i;
+          })
+        : prices,
+      count: product?.count || 1,
     };
 
     setDefaultValues(computed);
-  }, [product, productPriceType, catalogData]);
+  }, [product, productPriceType, isOpen]);
 
   // 🔥 MODAL OCHILGANDA BARCODE SET QILAMIZ
   useEffect(() => {

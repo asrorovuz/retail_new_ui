@@ -40,7 +40,9 @@ const FavouriteCard = ({ name, prices, img, onItemChange }: Propstype) => {
     >
       <div className="w-full p-4">
         <h4 className="text-base font-semibold line-clamp-1">{name}</h4>
-        <p className="text-sm font-normal"><FormattedNumber value={Number(price?.amount ?? 0)}/> Сум</p>
+        <p className="text-sm font-normal">
+          <FormattedNumber value={Number(price?.amount ?? 0)} /> Сум
+        </p>
       </div>
       {img?.length > 0 && (
         <div className="w-[150px] h-[72px]">

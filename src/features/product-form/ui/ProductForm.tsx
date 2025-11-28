@@ -56,7 +56,7 @@ const ProductForm: FC<ProductFormType> = ({
   const [remainder, setRemainder] = useState<number>(defaultValue?.state || 0);
   const [alertOn, setAlertOn] = useState<string | number>(0);
   const [isShow, setIsShow] = useState(true);
-  const [packageNames, setPackageNames] = useState<Package[] | []>([]);
+  const [packageNames, setPackageNames] = useState<Package[] | []>();
 
   const { wareHouseId } = useSettingsStore((s) => s);
 
@@ -106,7 +106,7 @@ const ProductForm: FC<ProductFormType> = ({
         is_approved: true,
         items: [
           {
-            product_package_id: id,
+            product_id: id,
             warehouse_id: wareHouseId,
             quantity: remainder,
           },
@@ -122,70 +122,25 @@ const ProductForm: FC<ProductFormType> = ({
   };
 
   const onSubmit: any = async (values: ProductDefaultValues) => {
-    //   {
-    //     "barcode": null,
-    //     "class_code": "00101001001000000",
-    //     "name": "Живые лошади",
-    //     "group_name": "ЖИВЫЕ ЖИВОТНЫЕ",
-    //     "class_name": "Живые лошади, ослы",
-    //     "position_name": "Живые лошади и ослы",
-    //     "sub_position_name": "Живые лошади",
-    //     "package_names": [
-    //         {
-    //             "code": 1378325,
-    //             "name_ru": "шт.",
-    //             "name_uz": "дона",
-    //             "name_lat": "dona"
-    //         }
-    //     ],
-    //     "lgotas": null,
-    //     "use_package": true,
-    //     "use_count": false
-    // },
-
-    const transformatedData = await Promise.all(
-      values?.packages?.map(async (pkg: any) => {
-        const images = await convertImageObjectsToBase64(
-          pkg?.images || [],
-          pkg?.images?.[0]?.img || ""
-        );
-
-        const prices = (pkg?.prices || [])?.map((p: PriceType) => ({
-          price_type_id: p?.price_type?.id ?? null,
-          amount: p?.amount ? +p?.amount : 0,
-          currency_code: p?.currency?.code ?? "",
-        }));
-
-        // const purchase_price = {
-        //   amount: pkg?.purchase_price?.amount ?? 0,
-        //   currency_code: pkg?.purchase_price?.currency?.code ?? "",
-        // }
-
-        const category_id = pkg?.category?.id ?? null;
-        const catalog_code = pkg.catalog
-          ? pkg.catalog.class_code.toString()
-          : null;
-        const catalog_name = pkg.catalog ? pkg.catalog.class_name : null;
-        const package_code = pkg.package ? pkg.package.code.toString() : null;
-        const package_name = pkg.package ? pkg?.package?.name_uz : null;
-
-        return {
-          ...pkg,
-          count: +pkg?.count || 0,
-          images,
-          prices,
-          // purchase_price,
-          category_id,
-          catalog_code,
-          catalog_name,
-          package_code,
-          package_name,
-        };
-      }) ?? []
+    const images = await convertImageObjectsToBase64(
+      values?.images || [],
+      values?.images?.[0]?.img || ""
     );
+    const prices = (values?.prices || [])?.map((p: PriceType) => ({
+      price_type_id: p?.price_type?.id ?? null,
+      amount: p?.amount ? +p?.amount : 0,
+      currency_code: p?.currency?.code ?? "",
+    }));
+    const category_id = values?.category?.id ?? null;
+    const category_name = values?.category?.name ?? null;
+    const catalog_code = values.catalog
+      ? values.catalog.value.toString()
+      : null;
+    const catalog_name = values.catalog ? values.catalog.label : null;
+    const package_code = values.package ? values.package.code.toString() : null;
+    const package_name = values.package ? values?.package?.name_uz : null;
 
     const data = {
-      ...values,
       ...(type === "edit" ? { id: defaultValue?.id } : {}),
       ...(type !== "edit"
         ? {
@@ -195,9 +150,25 @@ const ProductForm: FC<ProductFormType> = ({
             },
           }
         : {}),
-      packages: transformatedData,
+      ...{
+        name: values?.name,
+        measurement_name: values?.measurement_name,
+        code: values?.code,
+        sku: values?.sku,
+        vat_rate: values?.vat_rate,
+        barcodes: values?.barcodes || [],
+        count: +values?.count || 0,
+        images,
+        prices,
+        category_id,
+        category_name,
+        catalog_code,
+        catalog_name,
+        package_code,
+        package_name,
+      },
     };
-
+    
     if (type === "edit" && productId) {
       updateProduct(
         { productId, data },
@@ -211,12 +182,12 @@ const ProductForm: FC<ProductFormType> = ({
             if (alertOn && wareHouseId) {
               alertOnUpdate({
                 warehouse_id: wareHouseId,
-                product_id: res?.product?.id,
+                product_id: res?.id,
                 alert_on: +alertOn,
               });
             }
-            if (res && res?.package) {
-              remenderSubmit(res?.package[0]?.id);
+            if (res?.id) {
+              remenderSubmit(res?.id);
             }
             onClose();
           },
@@ -236,12 +207,12 @@ const ProductForm: FC<ProductFormType> = ({
           if (alertOn && wareHouseId) {
             alertOnUpdate({
               warehouse_id: wareHouseId,
-              product_id: res?.product?.id,
+              product_id: res?.id,
               alert_on: +alertOn,
             });
           }
-          if (res && res?.package) {
-            remenderSubmit(res?.package[0]?.id);
+          if (res?.id) {
+            remenderSubmit(res?.id);
           }
           onClose();
         },
@@ -260,16 +231,13 @@ const ProductForm: FC<ProductFormType> = ({
   }, [defaultValue?.warehouse_items]);
 
   useEffect(() => {
-    const values = getValues(`packages.0`) || {};
-    const shouldShow =
-      !!values.catalog || !!values.package || !!values.vat_rate;
+
+    const catalog = getValues(`catalog_code`);
+    const packages = getValues(`package`);
+    const vat_rate = getValues(`vat_rate`);
+    const shouldShow = !!catalog || !!packages || !!vat_rate;
     setIsShow(shouldShow);
-  }, [
-    watch(`packages.0.catalog_code`),
-    watch(`packages.0.package`),
-    watch(`packages.0.vat_rate`),
-    isOpen
-  ]);
+  }, [watch(`catalog_code`), watch(`package`), watch(`vat_rate`), isOpen]);
 
   useEffect(() => {
     setRemainder(defaultValue?.state || 0);
@@ -281,6 +249,7 @@ const ProductForm: FC<ProductFormType> = ({
     }
   }, [isOpen, defaultValue, reset]);
 
+  
   return (
     <Dialog
       width={630}
@@ -307,6 +276,7 @@ const ProductForm: FC<ProductFormType> = ({
                   {...field}
                   type="text"
                   autoComplete="off"
+                  autoFocus={!!fieldState?.error}
                   invalid={!!fieldState?.error}
                   placeholder="Введите название товара"
                   className="w-full"
@@ -344,7 +314,7 @@ const ProductForm: FC<ProductFormType> = ({
           <FormItem asterisk label="Розничный цена" className="w-full p-0">
             <InputGroup>
               <Controller
-                name="packages.0.prices.0.amount"
+                name="prices.0.amount"
                 control={control}
                 rules={{
                   required: "Розничная цена обязательна к заполнению", // 🔥 xabarni to‘g‘riladik
@@ -353,6 +323,7 @@ const ProductForm: FC<ProductFormType> = ({
                 render={({ field, fieldState }) => (
                   <Input
                     {...field}
+                    autoFocus={!!fieldState?.error}
                     type="number"
                     invalid={!!fieldState?.error}
                     autoComplete="off"
@@ -363,7 +334,7 @@ const ProductForm: FC<ProductFormType> = ({
                 )}
               />
               <Controller
-                name="packages.0.prices.0.currency"
+                name="prices.0.currency"
                 control={control}
                 render={({ field, fieldState }) => (
                   <Select
@@ -374,7 +345,7 @@ const ProductForm: FC<ProductFormType> = ({
                     options={currencies?.filter((i) => i.is_active)}
                     getOptionLabel={(option) => option?.name}
                     getOptionValue={(option) => String(option?.code)}
-                    className="w-[90px]"
+                    className="w-[90px] !whitespace-normal"
                     placeholder={"Валюта"}
                   />
                 )}
@@ -385,7 +356,7 @@ const ProductForm: FC<ProductFormType> = ({
           <FormItem label="Оптовая цена" className="w-full p-0">
             <InputGroup>
               <Controller
-                name="packages.0.prices.1.amount"
+                name="prices.1.amount"
                 control={control}
                 render={({ field }) => (
                   <Input
@@ -399,7 +370,7 @@ const ProductForm: FC<ProductFormType> = ({
                 )}
               />
               <Controller
-                name="packages.0.prices.1.currency"
+                name="prices.1.currency"
                 control={control}
                 render={({ field, fieldState }) => (
                   <Select
@@ -419,14 +390,14 @@ const ProductForm: FC<ProductFormType> = ({
           </FormItem>
 
           <CategorySelect
-            name={`packages.0.category`}
+            name={`category`}
             control={control}
             label={"Категория"}
             placeholder={"Категория"}
           />
 
           <Controller
-            name="packages.0.measurement_name"
+            name="measurement_name"
             control={control}
             render={({ field, fieldState }) => (
               <FormItem label="Название упаковка" invalid={!!fieldState?.error}>
@@ -442,7 +413,7 @@ const ProductForm: FC<ProductFormType> = ({
           />
 
           <Controller
-            name="packages.0.sku"
+            name="sku"
             control={control}
             render={({ field }) => (
               <FormItem asterisk={false} label="Артикул">
@@ -461,7 +432,7 @@ const ProductForm: FC<ProductFormType> = ({
           />
 
           <Controller
-            name="packages.0.count"
+            name="count"
             control={control}
             rules={{
               required: "Кол-во в уп. обязательно для заполнения", // 🔥 majburiy xabar
@@ -486,7 +457,7 @@ const ProductForm: FC<ProductFormType> = ({
           />
 
           <Controller
-            name="packages.0.code"
+            name="code"
             control={control}
             render={({ field }) => (
               <FormItem label="Код">
@@ -504,7 +475,7 @@ const ProductForm: FC<ProductFormType> = ({
 
           <FormItem className="col-span-2" label="Штрих-коды">
             <BarcodeForm
-              fieldName={"packages.0.barcodes"}
+              fieldName={"barcodes"}
               barcode={barcode}
               setValue={setValue}
               control={control}
@@ -523,14 +494,14 @@ const ProductForm: FC<ProductFormType> = ({
           {isShow ? (
             <>
               <Controller
-                name={`packages.0.catalog_code`}
+                name={`catalog_code`}
                 control={control}
                 render={({ field }) => {
                   return (
                     <FormItem label={"ИКПУ-код"}>
                       <CatalogSelector
                         {...field}
-                        fieldName={`packages.0`}
+                        fieldName={`catalog`}
                         isOpen={isOpen}
                         placeholder={"Введите ИКПУ-код"}
                         value={field.value}
@@ -545,7 +516,7 @@ const ProductForm: FC<ProductFormType> = ({
               />
 
               <Controller
-                name={`packages.0.package`}
+                name={`package_code`}
                 control={control}
                 render={({ field }) => {
                   return (
@@ -554,6 +525,7 @@ const ProductForm: FC<ProductFormType> = ({
                         {...field}
                         options={packageNames || []}
                         value={field?.value}
+                        setValue={setValue}
                         placeholder={"Введите Ед. изм."}
                         onChange={field.onChange}
                       />
@@ -599,7 +571,7 @@ const ProductForm: FC<ProductFormType> = ({
           )}
 
           <div className="col-span-2">
-            <ImageForm fieldName={`packages.0.images`} control={control} />
+            <ImageForm fieldName={`images`} control={control} />
           </div>
         </div>
         <div className="mt-5 flex justify-end gap-x-3">

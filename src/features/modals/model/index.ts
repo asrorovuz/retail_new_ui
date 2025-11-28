@@ -72,27 +72,6 @@ export interface CatalogItem {
   use_count: boolean;
 }
 
-// 📦 Paket tipi
-interface PackageType {
-  is_default: boolean;
-  isActive: boolean;
-  category: string | null;
-  barcodes: string[];
-  images: string[] | [];
-  catalog: CatalogItem[] | [];
-  catalog_code: string | null;
-  catalog_name: string | null;
-  package_code: string | null;
-  package_name: string | null;
-  sku: string | null;
-  code: string | null;
-  package?: any;
-  measurement_name: string;
-  vat_rate: number | null;
-  prices: PriceType[];
-  count: number;
-}
-
 // 🏷️ Asosiy mahsulot tipi
 export interface ProductDefaultValues {
   id?: number | null;
@@ -100,9 +79,28 @@ export interface ProductDefaultValues {
   state?: number;
   purchase_price: {
     amount: number | null;
-    currency: CurrencyType;
+    currency: {
+      code: number;
+      name: string;
+      rate: number;
+    };
   };
   warehouse_items?: WarehouseItem[];
   vat_rate?: number | null;
-  packages: PackageType[];
+  barcodes: string[];
+  catalog_code?: string | null;
+  catalog_name?: string | null;
+  package_code: string | null;
+  package_name: string | null;
+  images: any[];
+  category: any;
+  isActive?: boolean;
+  sku: string | null;
+  code: string | null;
+  measurement_name: string;
+  prices: any;
+  count: number;
+  catalog: any;
+  is_default?: boolean;
+  package?: any;
 }

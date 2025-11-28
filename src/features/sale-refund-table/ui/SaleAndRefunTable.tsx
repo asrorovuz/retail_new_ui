@@ -95,7 +95,6 @@ const SaleAndRefunTable = ({
       ) ?? 0
     );
   }, [activeDraft]);
-  
 
   useEffect(() => {
     if (expendedId) {
@@ -202,9 +201,7 @@ const SaleAndRefunTable = ({
           </Table>
           <div className="w-full sticky bottom-0 bg-white border-t border-gray-300">
             <div className="flex justify-end gap-x-2 items-center px-2 py-2.5">
-              <div className="text-base font-medium text-gray-500">
-                Итого:{" "}
-              </div>{" "}
+              <div className="text-base font-medium text-gray-500">Итого: </div>{" "}
               <div
                 className={classNames(
                   "text-base font-semibold",
@@ -229,7 +226,7 @@ const SaleAndRefunTable = ({
               >
                 <Button
                   variant="plain"
-                  icon={<HiTrash size={20}/>}
+                  icon={<HiTrash size={20} />}
                   className="bg-red-100 text-red-500 hover:text-red-400 active:scale-90 active:bg-red-200 transition-all duration-300"
                 />
               </CommonDeleteDialog>
@@ -265,7 +262,9 @@ const SaleAndRefunTable = ({
                   onClick={() => setIsEditing({ isOpen: true, type: "price" })}
                   className=" xl:w-[220px] bg-white px-3 py-3 flex items-center justify-between gap-2 rounded-lg"
                 >
-                  <span className="text-[14px] xl:text-base font-normal">Цена:</span>
+                  <span className="text-[14px] xl:text-base font-normal">
+                    Цена:
+                  </span>
                   <div className="text-[14px] xl:text-base font-medium text-gray-800">
                     <FormattedNumber value={currentItem?.priceAmount} />
                     <span className="ml-1">сум</span>
@@ -334,7 +333,7 @@ const SaleAndRefunTable = ({
                     }
                     className="w-[80px] xl:w-[100px] h-12 text-[14px] xl:text-base font-medium text-gray-800 flex items-center justify-center bg-white rounded-lg"
                   >
-                    <FormattedNumber value={currentItem?.quantity} scale={2}/>
+                    <FormattedNumber value={currentItem?.quantity} scale={2} />
                   </div>
                 )}
 
@@ -386,9 +385,14 @@ const SaleAndRefunTable = ({
                   }
                   className=" xl:w-[220px] bg-white px-3 py-3 flex items-center justify-between gap-2 rounded-lg"
                 >
-                  <span className="text-[14px] xl:text-base font-normal">Сумма:</span>
+                  <span className="text-[14px] xl:text-base font-normal">
+                    Сумма:
+                  </span>
                   <div className="text-[14px] xl:text-base font-medium text-gray-800">
-                    <FormattedNumber value={currentItem?.totalAmount} scale={2}/>
+                    <FormattedNumber
+                      value={currentItem?.totalAmount}
+                      scale={2}
+                    />
                     <span className="ml-1">сум</span>
                   </div>
                 </div>

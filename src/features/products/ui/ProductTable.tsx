@@ -113,7 +113,6 @@ const ProductTable = ({
         meta: {
           color: tableSettings?.find((i) => i.key === "name")?.color || "#fff",
         },
-        // enable: tableSettings?.find((i) => i.key === "name")?.visible ?? true,
       }),
       columnHelper.display({
         id: "totalReminder",
@@ -128,69 +127,57 @@ const ProductTable = ({
             tableSettings?.find((i) => i.key === "totalRemainder")?.color ||
             "#fff",
         },
-        // enable:
-        //   tableSettings?.find((i) => i.key === "totalRemainder")?.visible ??
-        //   true,
       }),
       columnHelper.display({
         id: "packInCount",
         header: "КОЛ-ВО В УП.",
-        cell: (info) => info.row.original.product_packages?.[0]?.count || "-",
+        cell: (info) => info.row.original.count || "-",
         size: 100,
         meta: {
           color:
             tableSettings?.find((i) => i.key === "packInCount")?.color ||
             "#fff",
         },
-        // enable:
-        //   tableSettings?.find((i) => i.key === "packInCount")?.visible ?? true,
       }),
       columnHelper.display({
         id: "package",
         header: "ЕД. ИЗМ.",
-        cell: (info) =>
-          info.row.original.product_packages?.[0]?.measurement_name || "-",
+        cell: (info) => info.row.original.measurement_name || "-",
         size: 100,
         meta: {
           color:
             tableSettings?.find((i) => i.key === "package")?.color || "#fff",
         },
-        // enable:
-        //   tableSettings?.find((i) => i.key === "package")?.visible ?? true,
       }),
       columnHelper.display({
         id: "price",
         header: "ЦЕНА",
         cell: (info) => {
-          const price =
-            info.row.original.product_packages?.[0]?.prices?.[0]?.amount;
+          const price = info.row.original.prices?.[0]?.amount;
           return price ? `${price.toLocaleString()} сум` : "-";
         },
         size: 140,
         meta: {
           color: tableSettings?.find((i) => i.key === "price")?.color || "#fff",
         },
-        // enable: tableSettings?.find((i) => i.key === "price")?.visible ?? true,
       }),
       columnHelper.display({
         id: "sku",
         header: "АРТИКУЛ",
-        cell: (info) => info.row.original.product_packages?.[0]?.sku || "-",
+        cell: (info) => info.row.original.sku || "-",
         size: 100,
         meta: {
           color: tableSettings?.find((i) => i.key === "sku")?.color || "#fff",
         },
-        // enable: tableSettings?.find((i) => i.key === "sku")?.visible ?? true,
       }),
       columnHelper.display({
         id: "code",
         header: "КОД",
-        cell: (info) => info.row.original.product_packages?.[0]?.code || "-",
+        cell: (info) => info.row.original.code || "-",
         size: 100,
         meta: {
           color: tableSettings?.find((i) => i.key === "code")?.color || "#fff",
         },
-        // enable: tableSettings?.find((i) => i.key === "code")?.visible ?? true,
       }),
 
       // 🧩 Actions ustuni
@@ -285,7 +272,12 @@ const ProductTable = ({
                 <Tr key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
                     <Th key={header.id}>
-                      <div className="px-4 text-left font-medium text-xs xl:text-sm text-gray-800">
+                      <div
+                        className={classNames(
+                          "px-4 text-left font-medium text-xs xl:text-sm text-gray-800",
+                          header.column.columnDef.meta?.headerClassName
+                        )}
+                      >
                         {flexRender(
                           header.column.columnDef.header,
                           header.getContext()
@@ -305,7 +297,12 @@ const ProductTable = ({
                   } hover:bg-gray-100 transition`}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <Td className={classNames(cell.column.columnDef.meta?.color || "#fff")} key={cell.id}>
+                    <Td
+                      className={classNames(
+                        cell.column.columnDef.meta?.color || "#fff"
+                      )}
+                      key={cell.id}
+                    >
                       <div
                         className={classNames("px-4 py-3 text-xs xl:text-sm")}
                       >

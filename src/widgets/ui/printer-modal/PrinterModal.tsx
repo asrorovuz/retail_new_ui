@@ -54,7 +54,7 @@ const PrinterModal = ({
       onClose={handleCancelPrint}
       onRequestClose={handleCancelPrint}
       shouldCloseOnOverlayClick={false} // ❗ tashqariga bosilganda yopilmaydi
-      shouldCloseOnEsc={false} // ❗ ESC bosilganda yopilmaydi
+      shouldCloseOnEsc={false} // ❗ ESC bosilganda yopilmaydi.
       isOpen={isOpen}
       title={"Распечатать"}
     >

@@ -224,7 +224,7 @@ const OrderActions = ({
         const draftItem = draftItems[i];
 
         const saleAndRefunItem: SaleItemModel = {
-          product_package_id: draftItem.productPackageId,
+          product_id: draftItem.productId,
           warehouse_id: warehouseId ?? null, // todo set default warehouse id
           quantity: draftItem.quantity,
           price: {

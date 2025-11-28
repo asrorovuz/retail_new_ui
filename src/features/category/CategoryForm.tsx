@@ -11,7 +11,9 @@ const CategoryForm = ({ checkedId }: { checkedId?: number | null }) => {
   const { data: allCategory } = useCategoryApi();
 
   // 🔹 Kategoriyalarni flatten qilish (ota-bola tuzilmani tekis formatga o‘tkazish)
-  const flattenCategories = (data: any[] = []): { label: string; value: number }[] => {
+  const flattenCategories = (
+    data: any[] = []
+  ): { label: string; value: number }[] => {
     const result: { label: string; value: number }[] = [];
     const traverse = (items: any[]) => {
       items.forEach((item) => {
@@ -23,7 +25,10 @@ const CategoryForm = ({ checkedId }: { checkedId?: number | null }) => {
     return result;
   };
 
-  const optionCategory = useMemo(() => flattenCategories(allCategory || []), [allCategory]);
+  const optionCategory = useMemo(
+    () => flattenCategories(allCategory || []),
+    [allCategory]
+  );
 
   return (
     <>
@@ -48,7 +53,9 @@ const CategoryForm = ({ checkedId }: { checkedId?: number | null }) => {
             <ReactSelect
               {...field}
               placeholder="Выбрать"
-              value={optionCategory.find((opt) => opt.value === field.value) || null}
+              value={
+                optionCategory.find((opt) => opt.value === field.value) || null
+              }
               options={optionCategory}
               isSearchable={false}
               onChange={(val) => field.onChange(val ? val.value : null)}

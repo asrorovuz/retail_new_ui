@@ -1,4 +1,7 @@
-import type { DraftRefundPayoutAmountSchema, DraftRefundSchema } from "@/@types/refund";
+import type {
+  DraftRefundPayoutAmountSchema,
+  DraftRefundSchema,
+} from "@/@types/refund";
 import type {
   DraftSalePaymentAmountSchema,
   DraftSaleSchema,
@@ -22,7 +25,9 @@ type PropsType = {
   type: "sale" | "refund";
   activeDraft: DraftSaleSchema & DraftRefundSchema;
   activeSelectPaymetype: number;
-  updateDraftPayment: (val: DraftSalePaymentAmountSchema[] | DraftRefundPayoutAmountSchema[]) => void;
+  updateDraftPayment: (
+    val: DraftSalePaymentAmountSchema[] | DraftRefundPayoutAmountSchema[]
+  ) => void;
   setActivePaymentSelectType: (val: number) => void;
   activeOnlyType: ActiveOnlyType;
   setActiveOnlyType: (val: ActiveOnlyType) => void;
@@ -56,8 +61,9 @@ const PaymeTypeCards = ({
       // mavjud bo‘lsa — qiymatini yangilaymiz
       updatedAmounts = (
         type === "sale" ? activeDraft?.payment : activeDraft?.payout
-      )?.amounts.map((p: DraftSalePaymentAmountSchema | DraftRefundPayoutAmountSchema) =>
-        p.paymentType === 1 ? { paymentType: 1, amount } : p
+      )?.amounts.map(
+        (p: DraftSalePaymentAmountSchema | DraftRefundPayoutAmountSchema) =>
+          p.paymentType === 1 ? { paymentType: 1, amount } : p
       );
     } else {
       // yo‘q bo‘lsa — yangi qo‘shamiz
@@ -70,7 +76,11 @@ const PaymeTypeCards = ({
 
     onSelectActiveType(1);
     setActiveOnlyType({ ...activeOnlyType, ind: index });
-    updateDraftPayment(updatedAmounts as (DraftSalePaymentAmountSchema[] | DraftRefundPayoutAmountSchema[]));
+    updateDraftPayment(
+      updatedAmounts as
+        | DraftSalePaymentAmountSchema[]
+        | DraftRefundPayoutAmountSchema[]
+    );
   };
 
   return (
@@ -106,8 +116,11 @@ const PaymeTypeCards = ({
                   }}
                   className={classNames(
                     "flex flex-col justify-center items-center overflow-hidden h-[50px]",
-                    payment?.amount ? "border-2 border-blue-300" : "border-none",
-                    +activeSelectPaymetype === +payment?.paymentType && "bg-blue-50",
+                    payment?.amount
+                      ? "border-2 border-blue-300"
+                      : "border-none",
+                    +activeSelectPaymetype === +payment?.paymentType &&
+                      "bg-blue-50"
                   )}
                 >
                   <img
@@ -146,7 +159,10 @@ const PaymeTypeCards = ({
             return (
               <Button
                 key={index}
-                onClick={() => {onSelectOnlyPayment(amount, index), setActiveOnlyType({ ...activeOnlyType, isOpen: false })}}
+                onClick={() => {
+                  onSelectOnlyPayment(amount, index),
+                    setActiveOnlyType({ ...activeOnlyType, isOpen: false });
+                }}
                 className={classNames(
                   "flex flex-col justify-center border-none overflow-hidden items-center h-[50px]",
                   activeOnlyType?.ind === index && "bg-blue-50"
