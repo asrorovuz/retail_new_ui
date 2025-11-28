@@ -206,7 +206,7 @@ const SalePage = () => {
           barcode={barcode}
           isOpen={isOpenAddProduct}
           setIsOpen={setIsOpenAddProduct}
-          productPriceType={productPriceType}
+          productPriceType={productPriceType!}
         />
       </div>
     </div>

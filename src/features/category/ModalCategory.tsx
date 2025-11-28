@@ -2,7 +2,11 @@ import { useEffect, useMemo, useState, Fragment } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { FiPlusCircle } from "react-icons/fi";
 import { Button, Dialog, Form, FormItem, Input, Select } from "@/shared/ui/kit";
-import { showErrorLocalMessage, showErrorMessage, showSuccessMessage } from "@/shared/lib/showMessage";
+import {
+  showErrorLocalMessage,
+  showErrorMessage,
+  showSuccessMessage,
+} from "@/shared/lib/showMessage";
 import { messages } from "@/app/constants/message.request";
 import {
   useCreateCategory,
@@ -91,7 +95,7 @@ const ModalCategory = ({
     try {
       setLoading(true);
       if (isInitialCreate) {
-        if(!values?.name) {
+        if (!values?.name) {
           showErrorLocalMessage("Введите название категории");
           setLoading(false);
           return;
@@ -106,7 +110,10 @@ const ModalCategory = ({
           setEndSelectCategory({ id: res?.id, name: res.name });
         }
 
-        showSuccessMessage(messages.uz.SUCCESS_MESSAGE, messages.ru.SUCCESS_MESSAGE);
+        showSuccessMessage(
+          messages.uz.SUCCESS_MESSAGE,
+          messages.ru.SUCCESS_MESSAGE
+        );
         onSuccess();
       } else {
         // UPDATE
@@ -114,7 +121,6 @@ const ModalCategory = ({
 
         if (!idToUpdate) throw new Error("Update uchun ID topilmadi.");
         console.log(values, "dd");
-        
 
         const parentToSend =
           type === "edit" ? values?.parent_id ?? parent_id ?? null : null;
@@ -127,7 +133,10 @@ const ModalCategory = ({
           },
         });
 
-        showSuccessMessage(messages.uz.SUCCESS_MESSAGE, messages.ru.SUCCESS_MESSAGE);
+        showSuccessMessage(
+          messages.uz.SUCCESS_MESSAGE,
+          messages.ru.SUCCESS_MESSAGE
+        );
         onSuccess();
       }
     } catch (err: any) {
@@ -227,11 +236,7 @@ const ModalCategory = ({
               <Button type="button" onClick={() => onClose(id)}>
                 Отмена
               </Button>
-              <Button
-                variant="solid"
-                type="submit"
-                disabled={loading}
-              >
+              <Button variant="solid" type="submit" disabled={loading}>
                 {loading ? "Сохранение..." : "Сохранить"}
               </Button>
             </div>

@@ -69,7 +69,7 @@ const ProductsPage = () => {
           barcode={barcode}
           isOpen={isOpen}
           setIsOpen={setIsOpen}
-          productPriceType={productPriceType}
+          productPriceType={productPriceType!}
         />
       </div>
       <ProductTable
@@ -78,7 +78,7 @@ const ProductsPage = () => {
         setType={setModalType}
         setBarcode={setBarcode}
         barcode={barcode}
-        productPriceType={productPriceType}
+        productPriceType={productPriceType!}
       />
     </div>
   );

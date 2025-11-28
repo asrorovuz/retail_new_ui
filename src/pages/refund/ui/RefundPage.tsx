@@ -107,33 +107,33 @@ const RefundPage = () => {
 
     // ⚡ Yangi refundni yaratamiz va uni lokalga saqlab ishlatamiz
     const tempRefund = { ...newDraftRefund };
-
     refundCheckData.items
       .filter((item: any) => selectedIds.includes(item.id))
       .forEach((item: any) => {
-        const product = item.warehouse_operation_from?.product_package?.product;
-        const productPackage = item.warehouse_operation_from?.product_package;
-        if (!product || !productPackage) return;
+        console.log(item, "item: 7");
+        
+        const product = item.warehouse_operation_from?.product;
+        // const productPackage = item.warehouse_operation_from?.product_package;
+        if (!product) return;
 
         const priceAmount = item?.price_amount || 0;
 
         // 🔒 Local tekshiruv (state emas)
         const isAlreadyAdded = tempRefund.items.some(
-          (i) => i.productPackageId === productPackage.id
+          (i) => i.productId === product.id
         );
         if (isAlreadyAdded) return;
 
         tempRefund.items.push({
           productId: product.id,
           productName: product.name,
-          productPackageId: productPackage.id,
-          productPackageName: productPackage.measurement_name,
+          productPackageName: product.measurement_name,
           priceAmount: item?.price_amount || 0,
           priceTypeId: item?.price_type_id || 0,
           quantity: item.quantity || 1,
           totalAmount: (item.quantity || 1) * priceAmount,
-          catalogName: productPackage.catalog_name,
-          catalogCode: productPackage.catalog_code,
+          catalogName: product.catalog_name,
+          catalogCode: product.catalog_code,
         });
       });
 
@@ -189,7 +189,6 @@ const RefundPage = () => {
 
   useEffect(() => {
     if (checkData) {
-      console.log("Loaded checkData:", checkData);
       setRefundCheckData(checkData);
     }
   }, [checkData]);
@@ -288,7 +287,7 @@ const RefundPage = () => {
           barcode={barcode}
           isOpen={isOpenAddProduct}
           setIsOpen={setIsOpenAddProduct}
-          productPriceType={productPriceType}
+          productPriceType={productPriceType!}
         />
       </div>
     </div>

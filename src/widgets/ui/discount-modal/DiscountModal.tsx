@@ -16,7 +16,7 @@ const DiscountModal = ({
 }: ModalProps) => {
   const [value, setValue] = useState<string>(String(discount ?? 0));
 
-  // 🔹 discount o‘zgarganda input qiymatini yangilash
+  // 🔹 discount o‘zgarganda input qiymatini yangilash.
   useEffect(() => {
     setValue(String(discount ?? 0));
   }, [discount, isOpen]);

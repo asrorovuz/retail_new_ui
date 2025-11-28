@@ -71,8 +71,6 @@ const CategorySelect = ({
   const handleCloseModal = (id: number) => {
     setModals((prev) => prev.filter((m) => m.id !== id));
   };
-console.log(modals, "ssssss");
-
   return (
     <div className="flex justify-center items-center gap-x-1">
       <Controller
@@ -93,14 +91,6 @@ console.log(modals, "ssssss");
                     ) || null
                   : null
               }
-              // defaultValue={
-              //   defaultCategory.length > 0
-              //     ? {
-              //         value: defaultCategory[0].id,
-              //         label: defaultCategory[0].name,
-              //       }
-              //     : null
-              // }
               onChange={(data) => {
                 const transformed = data
                   ? { id: data.value, name: data.label }

@@ -1,76 +1,16 @@
-export interface Product {
+interface CategoryType {
   id: number;
   created_at: string;
   updated_at: string;
   deleted_at: string | null;
   is_deleted: boolean;
   name: string;
-  vat_rate: number | null;
-  state?: number;
-  product_packages?: ProductPackage[];
-  warehouse_items?: WarehouseItem[];
-}
-
-export interface FavouriteProductType {
-  id: number;
-  created_at: string;
-  updated_at: string;
-  deleted_at: string | null;
-  is_deleted: boolean;
-  key_code: null | number | string;
-  ctrl: boolean;
-  alt: boolean;
-  shift: boolean;
-  product_package: ProductPackage;
-  product: Product;
-}
-
-export interface ProductPackage {
-  id: number;
-  created_at: string;
-  updated_at: string;
-  deleted_at: string | null;
-  is_deleted: boolean;
-  product_id: number;
-  category: string | null;
-  barcodes?: Barcode[];
-  is_default?: number;
-  images?:
-    | {
-        id: number;
-        img?: string;
-        name: string;
-        fs_url?: string;
-      }[]
-    | [];
-  prices?: Price[];
-  catalog_code: string | null;
-  catalog_name: string | null;
-  package_code: string | null;
-  package_name: string | null;
-  sku: string | null;
-  code: string | null;
-  measurement_name: string | null;
-  count: number;
+  parent_id: number | null;
 }
 
 export interface Barcode {
   id: number;
   value: string;
-}
-
-export interface Price {
-  id: number;
-  product_price_type: ProductPriceType;
-  currency: Currency;
-  amount: number;
-}
-
-export interface ProductPriceType {
-  id: number;
-  name: string;
-  is_primary: boolean;
-  is_bulk: boolean;
 }
 
 export interface Currency {
@@ -84,6 +24,27 @@ export interface Currency {
   is_default: boolean;
 }
 
+export interface ProductPriceType {
+  id: number;
+  name: string;
+  is_primary: boolean;
+  is_bulk: boolean;
+}
+
+export interface Price {
+  id: number;
+  product_price_type: ProductPriceType;
+  currency: Currency;
+  amount: number;
+}
+
+export interface Warehouse {
+  id: number;
+  created_at: string;
+  updated_at: string;
+  name: string;
+}
+
 export interface WarehouseItem {
   id: number;
   warehouse: Warehouse;
@@ -93,11 +54,50 @@ export interface WarehouseItem {
   purchase_price_currency: Currency;
 }
 
-export interface Warehouse {
+export interface Product {
   id: number;
   created_at: string;
   updated_at: string;
+  deleted_at: string | null;
+  is_deleted: boolean;
   name: string;
+  vat_rate: number | null;
+  measurement_name: string | null;
+  count: number;
+  state?: number;
+  package?: any;
+  category_id: number | null;
+  catalog_code: string | null;
+  catalog_name: string | null;
+  package_code: string | null;
+  package_name: string | null;
+  sku: string | null;
+  code: string | null;
+  category: CategoryType | null;
+  barcodes?: Barcode[] | [];
+  images?:
+    | {
+        id: number;
+        img?: string;
+        name: string;
+        fs_url?: string;
+      }[]
+    | [];
+  prices?: Price[];
+  warehouse_items?: WarehouseItem[];
+}
+
+export interface FavouriteProductType {
+  id: number;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string | null;
+  is_deleted: boolean;
+  key_code: null | number | string;
+  ctrl: boolean;
+  alt: boolean;
+  shift: boolean;
+  product: Product;
 }
 
 export type ProductColumnVisibility = {
@@ -131,30 +131,6 @@ export type VatRateSelectorOption = {
   value: number | null;
 };
 
-export type ProductResponse = {
-  product: {
-    id: number;
-    created_at: string;
-    updated_at: string;
-    deleted_at: string | null;
-    is_deleted: boolean;
-    name: string;
-    vat_rate: number;
-  };
-  package: {
-    id: number;
-    product_id: number;
-    catalog_code: string | null;
-    catalog_name: string | null;
-    package_code: string | null;
-    package_name: string | null;
-    sku: string | null;
-    code: string | null;
-    measurement_name: string;
-    count: number;
-  }[];
-};
-
 export type AlertOntype = {
   warehouse_id: number;
   product_id: number;
@@ -174,7 +150,7 @@ export type AlertOntypeResponse = {
 export type RegisterType = {
   is_approved: boolean;
   items: {
-    product_package_id: number;
+    product_id: number;
     warehouse_id: number | null;
     quantity: number;
   }[];

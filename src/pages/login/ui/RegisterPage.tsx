@@ -1,9 +1,11 @@
 import Register from "@/features/auth/ui/Register";
 
 const RegisterPage = () => {
-  return <>
-    <Register/>
-  </>;
+  return (
+    <>
+      <Register />
+    </>
+  );
 };
 
 export default RegisterPage;

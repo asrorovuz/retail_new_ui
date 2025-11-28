@@ -7,7 +7,7 @@ import type {
   FavouriteProductType,
   Product,
   ProductColumnVisibility,
-  ProductResponse,
+  ProductPriceType,
   RegisterType,
 } from "@/@types/products";
 import type { FavouriteProduct } from "@/features/modals/model";
@@ -65,8 +65,8 @@ export const getTableSettingsApi = async (): Promise<any> => {
   });
 };
 
-export const getPriceTypeApi = async (): Promise<any> => {
-  return await apiRequest<any>({
+export const getPriceTypeApi = async (): Promise<ProductPriceType[]> => {
+  return await apiRequest<ProductPriceType[]>({
     url: pathServices.products.getPriceTypesList,
     method: "GET",
   });
@@ -87,15 +87,15 @@ export const getCatalogSearchApi = async (query: string): Promise<any> => {
   });
 };
 
-export const getProductByIdApi = async (productId: number | null): Promise<any> => {
-  return await apiRequest<ProductResponse>({
+export const getProductByIdApi = async (productId: number | null): Promise<Product> => {
+  return await apiRequest<Product>({
     url: `${pathServices.products.getByIdPath}${productId}`,
     method: "GET",
   });
 };
 
-export const getProductBarcodeApi = async (barcode: string | null): Promise<any> => {
-  return await apiRequest<ProductResponse>({
+export const getProductBarcodeApi = async (barcode: string | null): Promise<Product> => {
+  return await apiRequest<Product>({
     url: `${pathServices.products.findByBarcode}${barcode}`,
     method: "GET",
   });
@@ -126,8 +126,8 @@ export const updateAlertOnApi = async (
 export const updateProductApi = async (
   productId: number,
   payload: ProductFormType
-): Promise<ProductResponse> => {
-  return await apiRequest<ProductResponse>({
+): Promise<Product> => {
+  return await apiRequest<Product>({
     url: `${pathServices.products.updateProduct}${productId}`,
     method: "POST",
     data: payload,
@@ -179,8 +179,8 @@ export const createCategoryApi = async (
 
 export const createProductApi = async (
   payload: ProductFormType
-): Promise<ProductResponse> => {
-  return await apiRequest<ProductResponse>({
+): Promise<Product> => {
+  return await apiRequest<Product>({
     url: pathServices.products.createProductPath,
     method: "POST",
     data: payload,

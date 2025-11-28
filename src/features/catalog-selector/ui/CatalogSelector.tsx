@@ -27,7 +27,7 @@ const CatalogSelector = ({
   setPackageNames,
   ...props
 }: CatalogSelectorProps) => {
-  const [inputValue, setInputValue] = useState("");
+  const [inputValue, setInputValue] = useState(value);
   const [selected, setSelected] = useState<any>(null);
   const [cachedOptions, setCachedOptions] = useState<any[]>([]);
 
@@ -35,10 +35,10 @@ const CatalogSelector = ({
   const debouncedQuery = useDebounce(inputValue, 500);
 
   const { data, isLoading } = useCatalogSearchApi(
-    debouncedQuery || value, // 🔹 bo‘sh string yubormaymiz
+    debouncedQuery, // 🔹 bo‘sh string yubormaymiz
     isOpen
   );
-
+  
   // 🔹 Data o‘zgarganda optionlarni tayyorlash
   const options = useMemo(() => {
     if (!data || !Array.isArray(data)) return cachedOptions;
@@ -53,13 +53,8 @@ const CatalogSelector = ({
 
   // 🔹 Tanlovni o‘zgartirish
   const handleChange = (option: any) => {
-    const currentPackages = getValues("packages") || [];
-    const currentPackage = currentPackages[0] || {};
-    setValue("packages.0", {
-      ...currentPackage,
-      catalog: option?.data,
-    });
     setSelected(option);
+    setValue("catalog", option)
     setPackageNames(option?.data?.package_names || []);
     onChange(option ? option : null);
   };
@@ -72,9 +67,7 @@ const CatalogSelector = ({
   // 🔹 default value update qilish (edit holatda)
   useEffect(() => {
     if (!value) return;
-    console.log(value);
-
-    // options hali kelmagan bo‘lsa kutamiz
+ 
     const found = options.find((opt) => opt.value === value);
     if (found) {
       setSelected(found);

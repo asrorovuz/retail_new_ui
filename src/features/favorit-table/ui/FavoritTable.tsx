@@ -53,12 +53,12 @@ const FavoritTable = () => {
         header: "Изображение",
         size: 100,
         cell: (info) =>
-          info.row.original?.product_package?.images?.length > 0 ? (
+          info.row.original?.product?.images?.length > 0 ? (
             <div className="h-[100px] w-[100px]">
               <img
                 className="w-full h-full object-contain"
-                src={info.row.original?.product_package?.images[0]?.fs_url}
-                alt="info.row.original.product.name"
+                src={info.row.original?.product?.images?.[0]?.fs_url}
+                alt={info.row.original?.product?.name}
               />
             </div>
           ) : (

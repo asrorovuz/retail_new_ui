@@ -21,8 +21,6 @@ const TableSettingsModal = () => {
   );
   const { mutate: updateTableSettingsMutation } = useUpdateTableSettings();
 
-  console.log(tableSettings);
-
   const toggleOpen = () => {
     const merged = tableSettings?.map((col) => {
       const existing = tableSettings.find((h) => h?.key === col?.key);

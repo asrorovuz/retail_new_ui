@@ -95,8 +95,9 @@ export const useDraftSaleStore = create<
         if (activeSale) {
           const draftSaleItem = activeSale.items.find((i) => {
             return (
-              i.productId === draftItem.productId &&
-              i.productPackageId === draftItem.productPackageId
+              i.productId === draftItem.productId 
+              // &&
+              // i.productPackageId === draftItem.productPackageId
             );
           });
 
@@ -107,8 +108,9 @@ export const useDraftSaleStore = create<
             if (draftItem.quantity <= 0) {
               const draftSaleItemIndex = activeSale.items.findIndex((i) => {
                 return (
-                  i.productId === draftItem.productId &&
-                  i.productPackageId === draftItem.productPackageId
+                  i.productId === draftItem.productId 
+                  // &&
+                  // i.productPackageId === draftItem.productPackageId
                 );
               });
               if (draftSaleItemIndex >= 0) {

@@ -45,7 +45,7 @@ const PaymentSection = ({
     const totalAmount =
       list?.reduce((acc, item) => acc + (item?.amount || 0), 0) || 0;
 
-    return (netPrice - totalAmount) - (activeDraft?.discountAmount || 0);
+    return netPrice - totalAmount - (activeDraft?.discountAmount || 0);
   }, [activeDraft, type]);
 
   const toDebtAmount = netPrice;

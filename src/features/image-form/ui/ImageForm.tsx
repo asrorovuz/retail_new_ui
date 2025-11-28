@@ -92,6 +92,7 @@ const ImageList = ({
       </Dialog>
 
       <ConfirmDialog
+        width={609}
         isOpen={deleteConfirmationOpen}
         type="danger"
         title="Rasmni o‘chirish"

@@ -154,25 +154,16 @@ const PrintCheckProduct = ({ item, type, onClosePrintModal }: PropsType) => {
   };
 
   useEffect(() => {
-    if (item?.product_packages?.length) {
-      const pack = item.product_packages[0];
+    const defaultBarcode = item?.barcodes?.[0]?.value || "12345670";
+    const defaultPrice =
+      item?.prices?.find((p) => p.product_price_type?.is_primary)?.amount || 0;
+    const defaultCurrency =
+      item?.prices?.find((p) => p.product_price_type?.is_primary)?.currency ||
+      null;
 
-      const defaultBarcode = pack.barcodes?.[0]?.value || "12345670";
-      const defaultPrice =
-        pack.prices?.find((p) => p.product_price_type?.is_primary)?.amount || 0;
-      const defaultCurrency =
-        pack.prices?.find((p) => p.product_price_type?.is_primary)?.currency ||
-        null;
-
-      setBarcode(defaultBarcode);
-      setPriceAmount(defaultPrice.toString());
-      setItemCurrency(defaultCurrency);
-    } else {
-      // fallback agar item bo'sh bo'lsa ham chiqsin
-      setBarcode("12345670");
-      setPriceAmount("0");
-      setItemCurrency({ name: "UZS" } as Currency);
-    }
+    setBarcode(defaultBarcode);
+    setPriceAmount(defaultPrice.toString());
+    setItemCurrency(defaultCurrency);
   }, [item]);
 
   useEffect(() => {
@@ -622,7 +613,7 @@ const PrintCheckProduct = ({ item, type, onClosePrintModal }: PropsType) => {
                     fontSize: itemSkuFontSize + "px",
                   }}
                 >
-                  {item?.product_packages?.[0]?.catalog_code}
+                  {item?.catalog_code}
                 </div>
               ) : null}
             </div>
