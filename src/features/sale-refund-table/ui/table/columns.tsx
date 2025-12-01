@@ -35,7 +35,7 @@ export const columns = (): ColumnDef<any>[] => {
       meta: {
         bodyCellClassName: "text-right min-w-full max-w-full",
       },
-      cell: ({ row }) => <FormattedNumber value={row.original.priceAmount} scale={2}/>,
+      cell: ({ row }) => <FormattedNumber value={row.original.priceAmount ?? 0} scale={2}/>,
     },
     {
       header: () => (
@@ -55,7 +55,7 @@ export const columns = (): ColumnDef<any>[] => {
       meta: {
         bodyCellClassName: "text-right min-w-full max-w-full",
       },
-      cell: ({ row }) => <FormattedNumber value={row.original.totalAmount} scale={2}/>,
+      cell: ({ row }) => <FormattedNumber value={row.original.totalAmount ?? 0} scale={2}/>,
     },
   ];
 };

@@ -35,7 +35,6 @@ const FavouriteProduct = ({
   const { active, update } = getActiveDraft();
 
   const onChange = (item: any) => {
-    console.log(item, active, "item 5");
     
     const operationItem = active?.items?.find(
       (p) =>

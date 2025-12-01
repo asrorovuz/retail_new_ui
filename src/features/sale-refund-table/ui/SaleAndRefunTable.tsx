@@ -81,6 +81,7 @@ const SaleAndRefunTable = ({
   const increase = () => {
     const newVal = (currentItem?.quantity || 0) + 1;
     updateDraftItemQuantity(Number(expandedRow), newVal);
+    
     updateDraftItemTotalPrice(
       Number(expandedRow),
       newVal * (currentItem?.priceAmount || 0)
@@ -237,7 +238,7 @@ const SaleAndRefunTable = ({
                   type="number"
                   autoFocus={true}
                   className="!w-[155px] xl:!w-[220px]"
-                  value={currentItem?.priceAmount}
+                  value={currentItem?.priceAmount ?? 0}
                   onChange={(val) => {
                     updateDraftItemPrice(
                       Number(expandedRow),
@@ -266,7 +267,7 @@ const SaleAndRefunTable = ({
                     Цена:
                   </span>
                   <div className="text-[14px] xl:text-base font-medium text-gray-800">
-                    <FormattedNumber value={currentItem?.priceAmount} />
+                    <FormattedNumber value={currentItem?.priceAmount ?? 0} />
                     <span className="ml-1">сум</span>
                   </div>
                 </div>

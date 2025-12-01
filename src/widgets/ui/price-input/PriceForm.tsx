@@ -26,9 +26,10 @@ const PriceForm = ({
   };
 
   const onMagent = () => {
+    
     if(toPayAmount === 0) return;
-    setValue(toPayAmount?.toString());
-    onPaymentChanged(activeSelectPaymetype, toPayAmount);
+    setValue((+toPayAmount + +value)?.toString());
+    onPaymentChanged(activeSelectPaymetype, +toPayAmount + +value);
   };
 
   return (

@@ -110,7 +110,6 @@ const RefundPage = () => {
     refundCheckData.items
       .filter((item: any) => selectedIds.includes(item.id))
       .forEach((item: any) => {
-        console.log(item, "item: 7");
         
         const product = item.warehouse_operation_from?.product;
         // const productPackage = item.warehouse_operation_from?.product_package;

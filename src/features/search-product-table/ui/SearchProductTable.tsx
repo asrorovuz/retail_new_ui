@@ -66,8 +66,6 @@ const SearchProductTable = ({
     setExpandedRow?.(null);
     setExpandedId?.(newItem?.productId!);
   };
-
-  console.log(data, "item6");
   
   return (
     <div className="h-[69vh] overflow-y-auto">

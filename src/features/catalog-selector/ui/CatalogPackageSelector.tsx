@@ -29,8 +29,6 @@ const CatalogPackageSelector = ({
   // 🔹 Default yoki value bo‘lganda tanlovni yangilash
   useEffect(() => {
     if (value) {
-      console.log(typeof options?.[0]?.code, typeof value);
-      
       // Agar value obyekt bo‘lsa yoki faqat code bo‘lsa
       const found =
         typeof value === "object"

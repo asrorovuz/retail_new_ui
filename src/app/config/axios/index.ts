@@ -30,7 +30,6 @@ export const ipcFetch = async <T>(request: {
   data?: any;
   responseType?: "json" | "blob" | "arraybuffer" | "document" | "text";
 }): Promise<T> => {
-  console.log(window?.astilectron, "bla-bla-bla");
 
   if (
     !window?.astilectron ||

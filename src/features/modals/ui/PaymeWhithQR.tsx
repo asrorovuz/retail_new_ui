@@ -134,8 +134,6 @@ const PaymeWhithQR = ({
       (item) => item === 5 || item === 6
     );
 
-    console.log(activeSelectType);
-
     // payment ichidan mos type topish
     if (activeSelectType === 5) {
       const findItem = payment.find(

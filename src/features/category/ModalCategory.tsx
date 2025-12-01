@@ -120,7 +120,6 @@ const ModalCategory = ({
         const idToUpdate = editId ?? parent_id;
 
         if (!idToUpdate) throw new Error("Update uchun ID topilmadi.");
-        console.log(values, "dd");
 
         const parentToSend =
           type === "edit" ? values?.parent_id ?? parent_id ?? null : null;
