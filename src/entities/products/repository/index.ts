@@ -3,6 +3,7 @@ import {
   createCategoryApi,
   createFavouriteProductApi,
   createProductApi,
+  createProductWithExcel,
   createRegisterApi,
   deleteFavoritProductApi,
   deleteProductApi,
@@ -200,6 +201,12 @@ export const useCreateProduct = () => {
     },
   });
 };
+
+export const useCreateProductWithExcel = () => {
+  return useMutation({
+    mutationFn: (data: any) => createProductWithExcel(data)
+  })
+}
 
 // DELETE
 export const useDeleteProduct = () => {

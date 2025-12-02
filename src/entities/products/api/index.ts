@@ -187,6 +187,14 @@ export const createProductApi = async (
   });
 };
 
+export const createProductWithExcel = async (payload: any): Promise<any> => {
+  return await apiRequest<any>({
+    url: pathServices.products.createExcelFileProduct,
+    method: "POST",
+    data: payload
+  })
+}
+
 /* ------------------------------ DELETE APIs ------------------------------ */
 
 export const deleteProductApi = async (id: number): Promise<any> => {

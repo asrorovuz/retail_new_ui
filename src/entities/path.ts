@@ -49,6 +49,7 @@ export const pathServices = {
     createProductPath: "/api/product/create",
     createFavouriteProductPath: "/api/favorite-product/add",
     createRegister: "/api/revision/register",
+    createExcelFileProduct: `/api/excel/parse`,
 
     // DELETE
     deleteProductPath: `/api/product/delete`,

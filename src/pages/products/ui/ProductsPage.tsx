@@ -6,6 +6,7 @@ import {
 import AddProductModal from "@/features/modals/ui/AddProductModal";
 import ProductTable from "@/features/products";
 import SearchProduct from "@/features/search-product";
+import UploadExcelFile from "@/features/upload-excel-file";
 import eventBus from "@/shared/lib/eventBus";
 import { handleBarcodeScanned } from "@/shared/lib/handleScannedBarcode";
 import { showErrorLocalMessage } from "@/shared/lib/showMessage";
@@ -61,6 +62,7 @@ const ProductsPage = () => {
     <div className="bg-white rounded-3xl p-6 h-[calc(100vh-100px)]">
       <div className="mb-3 flex items-center gap-x-4">
         <SearchProduct setSearch={setSearch} search={search} />
+        <UploadExcelFile/>
         <AddProductModal
           type={modalType}
           pageType={"products"}

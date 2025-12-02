@@ -13,6 +13,7 @@ export interface PaginationProps extends CommonProps {
   onChange?: (pageNumber: number, pageSize?: number) => void;
   pageSize?: number;
   total?: number;
+  showSizeOption?: boolean;
   pageSizeOptions?: number[]; // 🔹 qo‘shildi: sahifa o‘lcham variantlari
 }
 
@@ -26,6 +27,7 @@ const Pagination = (props: PaginationProps) => {
     onChange,
     pageSize = 20,
     total = 5,
+    showSizeOption = true,
     pageSizeOptions = [10, 20, 50, 100], // 🔹 default variantlar
   } = props;
 
@@ -39,7 +41,7 @@ const Pagination = (props: PaginationProps) => {
 
   const getInternalPageCount = useMemo(() => {
     if (typeof paginationTotal === "number") {
-      return Math.ceil(paginationTotal / internalPageSize);
+      return Math.floor(paginationTotal / internalPageSize);
     }
     return null;
   }, [paginationTotal, internalPageSize]);
@@ -138,17 +140,17 @@ const Pagination = (props: PaginationProps) => {
           pagerClass={pagerClass}
           onNext={onNext}
         />
-        <select
+        {showSizeOption && <select
           value={internalPageSize}
           onChange={onPageSizeChange}
           className="border border-gray-300 rounded-md px-2 py-1 text-[14px] mr-3 focus:outline-none focus:ring-1 focus:ring-blue-500"
         >
-          {pageSizeOptions.map((size) => (
+          {pageSizeOptions?.map((size) => (
             <option key={size} value={size}>
               {size} / страница
             </option>
           ))}
-        </select>
+        </select>}
       </div>
     </div>
   );
