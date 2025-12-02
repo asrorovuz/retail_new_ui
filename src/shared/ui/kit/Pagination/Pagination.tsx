@@ -28,7 +28,7 @@ const Pagination = (props: PaginationProps) => {
     pageSize = 20,
     total = 5,
     showSizeOption = true,
-    pageSizeOptions = [10, 20, 50, 100], // 🔹 default variantlar
+    pageSizeOptions = [10, 25, 50, 100, 1000], // 🔹 default variantlar
   } = props;
 
   const [paginationTotal] = useControllableState({
@@ -41,7 +41,7 @@ const Pagination = (props: PaginationProps) => {
 
   const getInternalPageCount = useMemo(() => {
     if (typeof paginationTotal === "number") {
-      return Math.floor(paginationTotal / internalPageSize);
+      return Math.ceil(paginationTotal / internalPageSize);
     }
     return null;
   }, [paginationTotal, internalPageSize]);

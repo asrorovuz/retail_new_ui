@@ -323,12 +323,6 @@ const OrderActions = ({
     }
   };
 
-  // const activeDraftPaymeTypes = (
-  //   type === "sale" ? activeDraft?.payment : activeDraft?.payout
-  // )?.amounts
-  //   ?.filter((item) => item?.amount > 0)
-  //   ?.map((item) => item?.paymentType) ?? [];
-
   const onPrint = (id?: number) => {
     printCheck(
       {

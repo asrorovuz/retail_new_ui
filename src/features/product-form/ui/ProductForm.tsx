@@ -72,7 +72,7 @@ const ProductForm: FC<ProductFormType> = ({
     setBarcode(null);
     setAlertOn(0);
     setRemainder(0);
-    reset(defaultValue || {});
+    reset();
     setIsShow(false);
     setIsOpen(false);
     setType("add");
@@ -168,7 +168,7 @@ const ProductForm: FC<ProductFormType> = ({
         package_name,
       },
     };
-    
+
     if (type === "edit" && productId) {
       updateProduct(
         { productId, data },
@@ -228,10 +228,9 @@ const ProductForm: FC<ProductFormType> = ({
     if (purchase_price?.alert_on) {
       setAlertOn(purchase_price?.alert_on);
     }
-  }, [defaultValue?.warehouse_items]);
+  }, [defaultValue?.warehouse_items, isOpen]);
 
   useEffect(() => {
-
     const catalog = getValues(`catalog_code`);
     const packages = getValues(`package`);
     const vat_rate = getValues(`vat_rate`);
@@ -241,7 +240,7 @@ const ProductForm: FC<ProductFormType> = ({
 
   useEffect(() => {
     setRemainder(defaultValue?.state || 0);
-  }, [defaultValue?.state]);
+  }, [defaultValue?.state, isOpen]);
 
   useEffect(() => {
     if (isOpen && defaultValue) {
@@ -249,7 +248,6 @@ const ProductForm: FC<ProductFormType> = ({
     }
   }, [isOpen, defaultValue, reset]);
 
-  
   return (
     <Dialog
       width={630}

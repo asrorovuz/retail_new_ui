@@ -16,9 +16,7 @@ import classNames from "@/shared/lib/classNames";
 type RefundItem = {
   id: number;
   warehouse_operation_from?: {
-    product_package?: {
-      product?: { name?: string };
-    };
+    product?: { name?: string };
   };
   price_amount: number;
   quantity: number;
@@ -38,7 +36,7 @@ const RefundCheckModal = ({
   handleRefundCheckInputItem,
 }: RefundCheckModalProps) => {
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
-  
+
   // Modal ochilganda barcha itemlar avtomatik tanlanadi
   useEffect(() => {
     if (isOpen && items?.length) {
@@ -85,8 +83,7 @@ const RefundCheckModal = ({
         accessorKey: "productName",
         header: "Наименование",
         cell: ({ row }) =>
-          row.original.warehouse_operation_from?.product_package?.product
-            ?.name ?? "-",
+          row.original.warehouse_operation_from?.product?.name ?? "-",
       },
       {
         accessorKey: "price_amount",

@@ -39,7 +39,7 @@ const FavoritTable = () => {
       columnHelper.display({
         id: "index",
         header: "№",
-        cell: (info) => <div className="max-w-16">{info.row.index}</div>,
+        cell: (info) => <div className="max-w-16">{info.row.index + 1}</div>,
         size: 60,
       }),
       columnHelper.display({

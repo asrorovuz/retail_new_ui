@@ -35,7 +35,6 @@ const FavouriteProduct = ({
   const { active, update } = getActiveDraft();
 
   const onChange = (item: any) => {
-    
     const operationItem = active?.items?.find(
       (p) =>
         p.productId === item.product.id
@@ -49,8 +48,7 @@ const FavouriteProduct = ({
     const newItem = {
       productId: item?.product?.id,
       productName: item?.product.name,
-      // productPackageId: item?.product.id,
-      productPackageName: item?.product.measurement_name,
+      productPackageName: item?.product?.measurement_name,
       priceTypeId: packagePrice?.product_price_type?.id,
       priceAmount: packagePrice?.amount,
       quantity: quantity + 1,

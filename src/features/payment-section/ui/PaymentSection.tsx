@@ -50,17 +50,6 @@ const PaymentSection = ({
 
   const toDebtAmount = netPrice;
 
-  // const totalMoumentPrice = useMemo(() => {
-  //   const sum =
-  //     activeDraft?.items?.reduce(
-  //       (sum, current) =>
-  //         sum + Number(current?.priceAmount * current?.quantity || 0),
-  //       0
-  //     ) || 0;
-
-  //   return sum - (activeDraft?.discountAmount || 0);
-  // }, [activeDraft, toDebtAmount]);
-
   const onPaymentChanged = (paymentType: number, amount: number) => {
     if (paymentType === 0) {
       updateDraftDiscount(amount);

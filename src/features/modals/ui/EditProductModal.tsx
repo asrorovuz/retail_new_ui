@@ -10,9 +10,7 @@ import {
   CurrencyCodeUZSText,
   CurrencyRateUZS,
 } from "@/app/constants/paymentType";
-import {
-  useProductByIdApi,
-} from "@/entities/products/repository";
+import { useProductByIdApi } from "@/entities/products/repository";
 
 type EXtraPropsType = {
   productId: number | null;
@@ -54,7 +52,6 @@ const EditProductModal: FC<ProductTableProps & EXtraPropsType> = ({
 
     const computed: ProductDefaultValues = {
       ...product,
-
       purchase_price:
         product?.warehouse_items?.[0]?.purchase_price_amount &&
         product?.warehouse_items?.[0]?.purchase_price_currency

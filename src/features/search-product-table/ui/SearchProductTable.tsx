@@ -40,26 +40,26 @@ const SearchProductTable = ({
   const onChange = (item: any) => {
     const operationItem = active?.items?.find(
       (p) =>
-        p.productId === item?.id 
-      // &&
-      //   p.productPackageId === item?.product_packages?.[0]?.id
+        p.productId === item?.id
     );
+    console.log(item, "item togo");
+    
     const packagePrice =
-      item?.product?.[0]?.prices?.find(
+      item?.prices?.find(
         (p: PriceType) => p?.product_price_type?.is_primary
-      ) || item?.product?.[0]?.prices?.[0];
+      ) || item?.prices?.[0];
     const quantity = operationItem?.quantity ?? 0;
 
     const newItem = {
       productId: item?.id,
       productName: item?.name,
-      productPackageName: item?.product?.measurement_name,
-      priceTypeId: packagePrice?.product_price_type.id,
+      productPackageName: item?.measurement_name,
+      priceTypeId: packagePrice?.product_price_type?.id,
       priceAmount: packagePrice?.amount,
       quantity: quantity + 1,
       totalAmount: (quantity + 1) * packagePrice?.amount,
-      catalogCode: item?.product?.[0]?.catalog_code,
-      catalogName: item?.product?.[0]?.catalog_name,
+      catalogCode: item?.catalog_code,
+      catalogName: item?.catalog_name,
     };
 
     update(newItem);

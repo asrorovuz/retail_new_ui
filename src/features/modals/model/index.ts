@@ -2,7 +2,6 @@ import type { WarehouseItem } from "@/@types/products";
 
 export type FavouriteProduct = {
   product_id: number | null;
-  product_package_id: number | null;
 };
 
 export type ProductPriceType = {

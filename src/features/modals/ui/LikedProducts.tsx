@@ -13,10 +13,8 @@ const LikedProducts = () => {
   const [isSearch, setIsSearch] = useState("");
   const [product, setProduct] = useState<{
     product_id: number | null;
-    product_package_id: number | null;
   }>({
     product_id: null,
-    product_package_id: null,
   });
   const [packageName, setPackageName] = useState<null | string>(null);
 
@@ -40,8 +38,7 @@ const LikedProducts = () => {
 
   const handleClose = () => {
     setProduct({
-      product_id: null,
-      product_package_id: null,
+      product_id: null
     });
     setOpenModal(false);
     setIsSearch("");
@@ -49,10 +46,9 @@ const LikedProducts = () => {
   };
 
   const onChangeValue = (item: any) => {
-    const packName = item?.product_packages?.[0]?.measurement_name;
+    const packName = item?.measurement_name;
     setProduct({
       product_id: item?.id,
-      product_package_id: item?.product_packages?.[0]?.id,
     });
     setPackageName(packName);
   };
