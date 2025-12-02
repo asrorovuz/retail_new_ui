@@ -53,7 +53,7 @@ const SearchProductTable = ({
     const newItem = {
       productId: item?.id,
       productName: item?.name,
-      productPackageName: item?.product?.[0]?.measurement_name,
+      productPackageName: item?.product?.measurement_name,
       priceTypeId: packagePrice?.product_price_type.id,
       priceAmount: packagePrice?.amount,
       quantity: quantity + 1,

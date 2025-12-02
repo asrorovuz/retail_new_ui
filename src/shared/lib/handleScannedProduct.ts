@@ -20,28 +20,29 @@ export const handleScannedProduct = (
 
   const operationItem = active.items.find(
     (p) =>
-      p.productId === product?.id &&
-      p.productPackageId === product?.product_package?.[0]?.id
+      p.productId === product?.id 
+    // &&
+    //   p.productPackageId === product?.product_package?.[0]?.id
   );
 
   const packagePrice =
-    product?.product_packages?.[0]?.prices?.find(
+    product?.prices?.find(
       (p: PriceType) => p?.product_price_type?.is_primary
-    ) || product?.product_package?.[0]?.prices?.[0];
+    ) || product?.prices?.[0];
 
   const quantity = operationItem?.quantity ?? 0;
 
   const newItem = {
     productId: product?.id,
     productName: product?.name,
-    productPackageId: product?.product_package?.[0]?.id,
-    productPackageName: product?.product_package?.[0]?.measurement_name,
+    // productPackageId: product?.product_package?.[0]?.id,
+    productPackageName: product?.measurement_name,
     priceTypeId: packagePrice?.product_price_type.id,
     priceAmount: packagePrice?.amount,
     quantity: quantity + 1,
     totalAmount: (quantity + 1) * packagePrice?.amount,
-    catalogCode: product?.product_package?.[0]?.catalog_code,
-    catalogName: product?.product_package?.[0]?.catalog_name,
+    catalogCode: product?.catalog_code,
+    catalogName: product?.catalog_name,
   };
 
   update(newItem);

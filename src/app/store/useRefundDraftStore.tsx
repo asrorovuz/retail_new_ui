@@ -93,8 +93,9 @@ export const useDraftRefundStore = create<
         if (activeRefund) {
           const draftRefundItem = activeRefund.items.find((i) => {
             return (
-              i.productId === draftItem.productId &&
-              i.productPackageId === draftItem.productPackageId
+              i.productId === draftItem.productId 
+              // &&
+              // i.productPackageId === draftItem.productPackageId
             );
           });
 
@@ -105,8 +106,9 @@ export const useDraftRefundStore = create<
             if (draftItem.quantity <= 0) {
               const draftRefundItemIndex = activeRefund.items.findIndex((i) => {
                 return (
-                  i.productId === draftItem.productId &&
-                  i.productPackageId === draftItem.productPackageId
+                  i.productId === draftItem.productId 
+                  // &&
+                  // i.productPackageId === draftItem.productPackageId
                 );
               });
               if (draftRefundItemIndex >= 0) {
@@ -245,24 +247,6 @@ export const useDraftRefundStore = create<
           activeRefund.items.splice(draftRefundItemIndex, 1);
         }
       }),
-    // incrementDraftRefundItemQuantity: (draftRefundItemIndex) => set((state) => {
-    //     const activeRefund = state.draftRefunds.find(s => s.isActive)
-    //     if (activeRefund) {
-    //         const item = activeRefund.items[draftRefundItemIndex]
-    //         const count = item.quantity + 1
-    //         item.quantity = count
-    //         item.totalAmount = item.priceAmount * count
-    //     }
-    // }),
-    // decrementDraftRefundItemQuantity: (draftRefundItemIndex) => set((state) => {
-    //     const activeRefund = state.draftRefunds.find((sale) => sale.isActive)
-    //     if (activeRefund && activeRefund.items[draftRefundItemIndex].quantity > 1) {
-    //         const item = activeRefund.items[draftRefundItemIndex]
-    //         const count = item.quantity - 1
-    //         item.quantity = count
-    //         item.totalAmount = item.priceAmount * count
-    //     }
-    // }),
     updateDraftRefundItemQuantity: (draftRefundItemIndex, quantity) =>
       set((state) => {
         const activeRefund = state.draftRefunds.find((s) => s.isActive);
