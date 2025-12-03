@@ -42,7 +42,6 @@ const SearchProductTable = ({
       (p) =>
         p.productId === item?.id
     );
-    console.log(item, "item togo");
     
     const packagePrice =
       item?.prices?.find(
@@ -68,7 +67,7 @@ const SearchProductTable = ({
   };
   
   return (
-    <div className="h-[69vh] overflow-y-auto">
+    <div className="h-[69vh] overflow-y-auto w-full">
       {data?.map((item, index) => {
         const price = item?.prices?.find(
           (el) => el?.product_price_type?.is_primary

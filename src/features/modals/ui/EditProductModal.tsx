@@ -11,6 +11,7 @@ import {
   CurrencyRateUZS,
 } from "@/app/constants/paymentType";
 import { useProductByIdApi } from "@/entities/products/repository";
+import { showMeasurmentName } from "@/shared/lib/showMeausermentName";
 
 type EXtraPropsType = {
   productId: number | null;
@@ -49,7 +50,7 @@ const EditProductModal: FC<ProductTableProps & EXtraPropsType> = ({
         },
       };
     });
-
+    
     const computed: ProductDefaultValues = {
       ...product,
       purchase_price:
@@ -93,7 +94,7 @@ const EditProductModal: FC<ProductTableProps & EXtraPropsType> = ({
       catalog_name: product?.catalog_name || null,
       sku: product?.sku || null,
       code: product?.code || null,
-      measurement_name: product?.measurement_name || "Штук",
+      measurement_name: showMeasurmentName(product?.measurement_code) || "шт",
       prices: product?.prices?.length
         ? prices.map((i) => {
             const price = product?.prices?.find(

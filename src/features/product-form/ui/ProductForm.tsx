@@ -131,6 +131,8 @@ const ProductForm: FC<ProductFormType> = ({
       amount: p?.amount ? +p?.amount : 0,
       currency_code: p?.currency?.code ?? "",
     }));
+
+    // product qo'shishda catalog nomlarida xatolik bor
     const category_id = values?.category?.id ?? null;
     const category_name = values?.category?.name ?? null;
     const catalog_code = values.catalog

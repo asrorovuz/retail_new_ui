@@ -34,6 +34,7 @@ import { useSettingsStore } from "@/app/store/useSettingsStore";
 import PrintCheckProduct from "@/features/print-modal";
 import { useDebounce } from "@/shared/lib/useDebounce";
 import classNames from "@/shared/lib/classNames";
+import { showMeasurmentName } from "@/shared/lib/showMeausermentName";
 
 const ProductTable = ({
   search,
@@ -142,7 +143,7 @@ const ProductTable = ({
       columnHelper.display({
         id: "package",
         header: "ЕД. ИЗМ.",
-        cell: (info) => info.row.original.measurement_name || "-",
+        cell: (info) => showMeasurmentName(info.row.original.measurement_code) || "-",
         size: 100,
         meta: {
           color:

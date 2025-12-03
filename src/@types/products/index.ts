@@ -62,7 +62,8 @@ export interface Product {
   is_deleted: boolean;
   name: string;
   vat_rate: number | null;
-  measurement_name: string | null;
+  measurement_name?: string | null;
+  measurement_code: number;
   count: number;
   state?: number;
   package?: any;

@@ -18,6 +18,7 @@ const CatalogPackageSelector = ({
   options = [],
   ...props
 }: CatalogPackageSelectorProps) => {
+  
   const [selected, setSelected] = useState(value || null);
 
   const handleChange = (option: any) => {

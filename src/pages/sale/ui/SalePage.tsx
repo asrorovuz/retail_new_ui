@@ -120,7 +120,7 @@ const SalePage = () => {
 
   return (
     <div className="flex justify-between gap-x-2 h-[calc(100vh-90px)]">
-      <div className="bg-white p-3 rounded-2xl w-[685px] xl:w-3/5">
+      <div className="bg-white p-3 rounded-2xl w-[623px] shrink-0 xl:w-3/5">
         <Cashbox
           type={"sale"}
           drafts={draftSales}
@@ -147,7 +147,7 @@ const SalePage = () => {
         />
       </div>
 
-      <div className="bg-white p-3 rounded-2xl xl:w-2/5">
+      <div className="bg-white p-3 rounded-2xl flex-1 xl:w-2/5">
         <div className="rounded-2xl mb-2">
           <SearchProduct search={search} setSearch={setSearch} />
         </div>
