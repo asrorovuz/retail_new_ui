@@ -544,7 +544,7 @@ const UpdateShiftDialog = ({ isOpen, onClose }: PropsType) => {
                       </Tr>
                     ) : (
                       table.getRowModel().rows.map((row) => (
-                        <Tr key={row.id} className="hover:bg-gray-50">
+                        <Tr key={row.id} className="hover:bg-gray-100">
                           {row.getVisibleCells().map((cell) => (
                             <Td key={cell.id} className="py-2 px-4">
                               {flexRender(

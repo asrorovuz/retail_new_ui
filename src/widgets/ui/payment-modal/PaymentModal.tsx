@@ -86,7 +86,7 @@ const PaymentModal = ({
           Оплачено успешно
         </p>
       </div>
-      <div className="bg-gray-50 rounded-2xl p-4 text-gray-900 mb-4">
+      <div className="bg-gray-100 rounded-2xl p-4 text-gray-900 mb-4">
         <div className="flex justify-between py-4 border-b border-dashed">
           <span>Общая сумма:</span>
           <FormattedNumber value={totalAmount ?? 0} />

@@ -150,12 +150,12 @@ const RefundCheckModal = ({
               table.getRowModel().rows.map((row, index) => (
                 <Tr
                   key={row.id}
-                  className="border-b hover:bg-gray-50 transition-colors"
+                  className="border-b hover:bg-gray-100 transition-colors"
                 >
                   {row.getVisibleCells().map((cell) => (
                     <Td
                       key={cell.id}
-                      className={classNames("p-2", index % 2 && "bg-gray-50")}
+                      className={classNames("p-2", index % 2 && "bg-gray-100")}
                     >
                       {flexRender(
                         cell.column.columnDef.cell,

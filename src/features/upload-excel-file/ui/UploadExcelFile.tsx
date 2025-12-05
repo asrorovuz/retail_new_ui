@@ -447,7 +447,7 @@ const UploadExcelFile = () => {
       >
         <div>
           {!file ? (
-            <div className="relative border border-dashed border-gray-300 bg-gray-50 px-8 py-12 rounded-lg text-center mb-10">
+            <div className="relative border border-dashed border-gray-300 bg-gray-100 px-8 py-12 rounded-lg text-center mb-10">
               <label
                 htmlFor="fileInput"
                 className="cursor-pointer flex flex-col items-center text-gray-600"

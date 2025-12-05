@@ -32,7 +32,7 @@ const FiscalizedModal = ({
       isOpen={isOpen}
       title={"Отправить продажу в налоговую?"}
     >
-      <div className="bg-gray-50 rounded-2xl p-3 mb-6 flex flex-col gap-y-4">
+      <div className="bg-gray-100 rounded-2xl p-3 mb-6 flex flex-col gap-y-4">
         {filterData?.length ? (
           filterData?.map((item) => {
             const isSelected =

@@ -120,7 +120,7 @@ const SaleAndRefunTable = ({
 
   return (
     <div className="overflow-hidden min-h-[44vh] mb-3 rounded-2xl">
-      <div className="bg-gray-50 border-2 border-gray-50 overflow-y-auto rounded-2xl h-[44vh]">
+      <div className="bg-gray-100 border-2 border-gray-100 overflow-y-auto rounded-2xl h-[44vh]">
         <div className="flex flex-col justify-between h-full bg-white">
           <Table
             tabIndex={Number(expandedRow)}
@@ -165,7 +165,7 @@ const SaleAndRefunTable = ({
                         setExpandedRow(String(rowIndex));
                       }}
                       className={classNames(
-                        oddEven ? "bg-gray-50" : "bg-white",
+                        oddEven ? "bg-gray-100" : "bg-white",
                         expandedRow?.toString() === row.id &&
                           (type === "sale" ? "text-primary" : "text-red-500")
                       )}
@@ -218,7 +218,7 @@ const SaleAndRefunTable = ({
                 expandedRow && activeDraft?.items?.length
                   ? "flex items-center justify-between"
                   : "hidden",
-                `px-2 py-2.5 bg-gray-50 border-t border-gray-200`
+                `px-2 py-2.5 bg-gray-100 border-t border-gray-200`
               )}
             >
               <CommonDeleteDialog
@@ -278,7 +278,7 @@ const SaleAndRefunTable = ({
                   <Button
                     variant="solid"
                     className={classNames(
-                      "w-12 h-12 p-3 flex items-center justify-center !bg-white hover:bg-gray-50 rounded-lg active:!bg-gray-200 text-gray-800"
+                      "w-12 h-12 p-3 flex items-center justify-center !bg-white hover:bg-gray-100 rounded-lg active:!bg-gray-200 text-gray-800"
                     )}
                     onClick={decrease}
                   >
@@ -292,7 +292,7 @@ const SaleAndRefunTable = ({
                     <Button
                       variant="solid"
                       className={classNames(
-                        "w-12 h-12 p-3 flex items-center justify-center !bg-white hover:bg-gray-50 rounded-lg active:!bg-gray-200 text-gray-800"
+                        "w-12 h-12 p-3 flex items-center justify-center !bg-white hover:bg-gray-100 rounded-lg active:!bg-gray-200 text-gray-800"
                       )}
                       onClick={decrease}
                     >
@@ -342,7 +342,7 @@ const SaleAndRefunTable = ({
                   <Button
                     variant="solid"
                     className={classNames(
-                      "w-12 h-12 p-3 flex items-center justify-center !bg-white hover:bg-gray-50 rounded-lg active:!bg-gray-200 text-gray-800"
+                      "w-12 h-12 p-3 flex items-center justify-center !bg-white hover:bg-gray-100 rounded-lg active:!bg-gray-200 text-gray-800"
                     )}
                     onClick={increase}
                   >

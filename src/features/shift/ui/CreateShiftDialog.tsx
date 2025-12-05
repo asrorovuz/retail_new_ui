@@ -169,7 +169,7 @@ const CreateShiftDialog = ({ isOpen, onClose }: PropsType) => {
                     {shiftTable?.getRowModel().rows.map((row, ind) => (
                       <Tr
                         key={row.id}
-                        className={classNames(!(ind % 2) && "bg-gray-50")}
+                        className={classNames(!(ind % 2) && "bg-gray-100")}
                       >
                         {row.getVisibleCells().map((cell) => (
                           <Td key={cell.id} className="px-3 py-2 text-center">

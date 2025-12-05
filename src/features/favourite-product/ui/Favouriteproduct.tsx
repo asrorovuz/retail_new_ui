@@ -65,7 +65,7 @@ const FavouriteProduct = ({
   return (
     <div className="xl:h-[27vh] h-[170px] rounded-2xl overflow-hidden">
       <div className="xl:h-[27vh] h-[170px] overflow-y-auto">
-        <div className="min-h-full bg-gray-50 p-2 grid grid-cols-3 gap-2">
+        <div className="min-h-full bg-gray-100 p-2 grid grid-cols-3 gap-2">
           {isPending && <div className="col-span-3 flex justify-center"><Loading /></div>}
 
           {!isPending && !favoriteProducts?.length ? (

@@ -30,7 +30,6 @@ const AddProductModal: FC<ProductModalProps> = ({
   useEffect(() => {
     
     if (isOpen) {
-      console.log(catalogData);
       const prices = productPriceType?.map(
         (i: ProductPriceType, inx: number) => ({
           amount: inx ? 0 : null,

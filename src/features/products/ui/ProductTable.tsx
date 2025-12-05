@@ -130,17 +130,6 @@ const ProductTable = ({
         },
       }),
       columnHelper.display({
-        id: "packInCount",
-        header: "КОЛ-ВО В УП.",
-        cell: (info) => info.row.original.count ?? "-",
-        size: 100,
-        meta: {
-          color:
-            tableSettings?.find((i) => i.key === "packInCount")?.color ||
-            "#fff",
-        },
-      }),
-      columnHelper.display({
         id: "package",
         header: "ЕД. ИЗМ.",
         cell: (info) => showMeasurmentName(info.row.original.measurement_code) || "-",
@@ -204,7 +193,7 @@ const ProductTable = ({
                     setConfirmProductId(productId);
                     setType("print");
                   }}
-                  className="flex items-center gap-2 text-gray-700 hover:bg-gray-50 py-3 px-5 rounded-xl"
+                  className="flex items-center gap-2 text-gray-700 hover:bg-gray-100 py-3 px-5 rounded-xl"
                 >
                   <ShtrixCod />
                   Печать штрих код товара
@@ -216,7 +205,7 @@ const ProductTable = ({
                     setConfirmProductId(productId);
                     setType("edit");
                   }}
-                  className="flex items-center gap-2 text-orange-500 hover:bg-gray-50 py-3 px-5 rounded-xl"
+                  className="flex items-center gap-2 text-orange-500 hover:bg-gray-100 py-3 px-5 rounded-xl"
                 >
                   <FaRegEdit />
                   Редактировать
@@ -229,7 +218,7 @@ const ProductTable = ({
                     setConfirmProductId(productId);
                     setDeleteModalOpen(true);
                   }}
-                  className="w-full bg-transparent flex items-center gap-2 text-red-500 hover:bg-gray-50 active:bg-gray-100 py-3 px-5 rounded-xl"
+                  className="w-full bg-transparent flex items-center gap-2 text-red-500 hover:bg-gray-100 active:bg-gray-100 py-3 px-5 rounded-xl"
                 >
                   <IoTrashOutline />
                   Удалить
@@ -294,7 +283,7 @@ const ProductTable = ({
                 <Tr
                   key={row.id}
                   className={`${
-                    index % 2 ? "bg-white" : "bg-gray-50"
+                    index % 2 ? "bg-white" : "bg-gray-100"
                   } hover:bg-gray-100 transition`}
                 >
                   {row.getVisibleCells().map((cell) => (

@@ -358,7 +358,7 @@ const OrderActions = ({
   }, [filterDataFiscal]);
 
   return (
-    <div className="p-2 bg-gray-50 rounded-2xl flex gap-x-2">
+    <div className="p-2 bg-gray-100 rounded-2xl flex gap-x-2">
       <CommonDeleteDialog
         description="Удалить корзину? Действие нельзя будет отменить"
         onDelete={onDeleteActivedraft}

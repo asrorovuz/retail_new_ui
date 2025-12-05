@@ -79,7 +79,7 @@ const FavoritTable = () => {
                 setConfirmProductId(productId);
                 setDeleteModalOpen(true);
               }}
-              className="w-full bg-transparent flex items-center gap-2 text-red-500 hover:bg-gray-50 hover:text-red-400 active:bg-gray-100 py-3 px-5 rounded-xl"
+              className="w-full bg-transparent flex items-center gap-2 text-red-500 hover:bg-gray-100 hover:text-red-400 active:bg-gray-100 py-3 px-5 rounded-xl"
             >
               <IoTrashOutline />
               Удалить
@@ -153,7 +153,7 @@ const FavoritTable = () => {
                 <Tr
                   key={row.id}
                   className={`${
-                    index % 2 ? "bg-white" : "bg-gray-50"
+                    index % 2 ? "bg-white" : "bg-gray-100"
                   } hover:bg-gray-100 transition`}
                 >
                   {row.getVisibleCells().map((cell) => (
