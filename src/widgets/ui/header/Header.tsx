@@ -5,12 +5,13 @@ import { useVersionStore } from "@/app/store/useVersionStore";
 import { useShiftApi } from "@/entities/init/repository";
 import { CreateShiftDialog, UpdateShiftDialog } from "@/features/shift";
 import UpdateVersion from "@/features/update";
-import { Button } from "@/shared/ui/kit";
+import { Button, Dropdown } from "@/shared/ui/kit";
 import Alert from "@/shared/ui/kit-pro/alert/Alert";
 import Menu from "@/shared/ui/kit/Menu/Menu";
 import MenuItem from "@/shared/ui/kit/Menu/MenuItem";
 import { LogoutSvg } from "@/shared/ui/svg/LogoutSvg";
 import { useEffect, useState } from "react";
+import { BsThreeDotsVertical } from "react-icons/bs";
 import { FiRefreshCcw } from "react-icons/fi";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -107,6 +108,47 @@ const Header = () => {
             <span>Фаворит товар</span>
           </div>
         </MenuItem>
+        <Dropdown renderTitle={<BsThreeDotsVertical color="#333" size={20} />}>
+          <Dropdown.Item>
+            <MenuItem eventKey="settings">
+              <div
+                className={`px-4 py-2 rounded-md cursor-pointer text-[14px] xl:text-[16px] transition-colors duration-200 ${
+                  activeKey === "settings"
+                    ? "text-blue-500"
+                    : "hover:bg-gray-100 text-gray-700"
+                }`}
+              >
+                <span>Настройки</span>
+              </div>
+            </MenuItem>
+          </Dropdown.Item>
+          <Dropdown.Item>
+            <MenuItem eventKey="fiscalized">
+              <div
+                className={`px-4 py-2 rounded-md cursor-pointer text-[14px] xl:text-[16px] transition-colors duration-200 ${
+                  activeKey === "fiscalized"
+                    ? "text-blue-500"
+                    : "hover:bg-gray-100 text-gray-700"
+                }`}
+              >
+                <span>Фискализации</span>
+              </div>
+            </MenuItem>
+          </Dropdown.Item>
+          <Dropdown.Item>
+            <MenuItem eventKey="payment-provider">
+              <div
+                className={`px-4 py-2 rounded-md cursor-pointer text-[14px] xl:text-[16px] transition-colors duration-200 ${
+                  activeKey === "payment-provider"
+                    ? "text-blue-500"
+                    : "hover:bg-gray-100 text-gray-700"
+                }`}
+              >
+                <span>Платёжные системы</span>
+              </div>
+            </MenuItem>
+          </Dropdown.Item>
+        </Dropdown>
       </Menu>
 
       <div className="flex items-center gap-x-2">

@@ -69,7 +69,11 @@ const AddProductModal: FC<ProductModalProps> = ({
         vat_rate: null,
         prices,
         count: 1,
-        catalog: catalogData?.[0],
+        catalog: {
+          data: catalogData?.[0],
+          label: catalogData?.[0]?.class_name,
+          value: catalogData?.[0]?.class_code
+        },
         is_default: true,
       });
     }

@@ -6,7 +6,7 @@ import { InitProvider } from "@/app/providers";
 import Loading from "@/shared/ui/loading";
 import LoginPage from "@/pages/login/ui/LoginPage";
 import { Register } from "@/features/auth";
-import { SalePage, RefundPage, ProductsPage, PavouriteProductPage } from "./RoutePath";
+import { SalePage, RefundPage, ProductsPage, PavouriteProductPage, SettingsPage, FiscalizedPage, PaymePoviderPage } from "./RoutePath";
 import { PrivateRoute, PublicRoute } from "./PrivateRoute";
 
 export const AppRouter = () => (
@@ -41,11 +41,14 @@ export const AppRouter = () => (
           <Route path="/refund" element={<RefundPage />} />
           <Route path="/products" element={<ProductsPage />} />
           <Route path="/favoutite-products" element={<PavouriteProductPage />} />
+          <Route path="/settings" element={<SettingsPage />} />
+          <Route path="/fiscalized" element={<FiscalizedPage />} />
+          <Route path="/payment-provider" element={<PaymePoviderPage />} />
         </Route>
       </Route>
 
       {/* Default / fallback */}
-      <Route path="*" element={<Navigate to="/sales" replace />} />
+      <Route path="*" element={<Navigate to="/register" replace />} />
     </Routes>
   </HashRouter>
 );

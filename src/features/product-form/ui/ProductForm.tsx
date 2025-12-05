@@ -122,6 +122,8 @@ const ProductForm: FC<ProductFormType> = ({
   };
 
   const onSubmit: any = async (values: ProductDefaultValues) => {
+    console.log(values, "add");
+    
     const images = await convertImageObjectsToBase64(
       values?.images || [],
       values?.images?.[0]?.img || ""

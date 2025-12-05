@@ -17,6 +17,10 @@ export const pathServices = {
     // GET
     getSettingsPath: `/api/settings/organization/get`,
     getPrinterName: `/api/print/printers/get`,
+
+    // UPDATE 
+    settingsUpdata: "/api/settings/organization/update",
+    settingsShiftUpdat: "/api/settings/organization/shift/update"
   },
   warhouse: {
     getList: "/api/warehouse/get",
@@ -71,5 +75,35 @@ export const pathServices = {
   },
   versions: {
     getVersions: "/api/auto-updater/current-version/get",
+  },
+
+  fiscalized: {
+    // UPDATE
+    updateCashRegisterArca: `/api/fiscal-device/arca/update/`,
+    updateCashRegisterSimurg: `/api/fiscal-device/simurg/update/`,
+    updateCashRegisterHippoPos: `/api/fiscal-device/hippo-pos/update/`,
+    updateCashRegisterEPos: `/api/fiscal-device/e-pos/update/`,
+
+    // CREATE
+    addCashRegisterArca: `/api/fiscal-device/arca/add`,
+    addCashRegisterSimurg: `/api/fiscal-device/simurg/add`,
+    addCashRegisterHippoPos: `/api/fiscal-device/hippo-pos/add`,
+    addCashRegisterEPos: `/api/fiscal-device/e-pos/add`,
+
+    // DELETE
+    deleteFiscalized: "/api/fiscal-device/delete/",
+  },
+
+  paymentProvider: {
+    // UPDATE
+    updatePaymentPay: "/api/payment-provider/payme/update/",
+    updatePaymentClick: "/api/payment-provider/click/update/",
+
+    // CREATE
+    addPaymentPay: `/api/payment-provider/payme/add`,
+    addPaymentClick: `/api/payment-provider/click/add`,
+
+    //DELETE
+    deletePaymentProvider: "/api/payment-provider/delete/",
   },
 };

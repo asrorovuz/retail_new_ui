@@ -10,6 +10,7 @@ interface CommonDeleteDialogType extends CommonProps {
   deleteButtonTitle?: string;
   onDelete: () => void;
   children?: ReactElement;
+  loading?: boolean;
 }
 
 export const CommonDeleteDialog = (props: CommonDeleteDialogType) => {
@@ -21,6 +22,7 @@ export const CommonDeleteDialog = (props: CommonDeleteDialogType) => {
     deleteButtonTitle,
     cancelButtonTitle,
     onDelete,
+    loading
   } = props;
 
   const handleClose = () => setShow(false);
@@ -63,6 +65,7 @@ export const CommonDeleteDialog = (props: CommonDeleteDialogType) => {
 
             <Button
               variant={"solid"}
+              loading={loading}
               className={
                 "bg-red-700 text-white hover:bg-red-700 hover:opacity-90"
               }
