@@ -46,6 +46,8 @@ const LikedProducts = () => {
   };
 
   const onChangeValue = (item: any) => {
+    console.log(item);
+    
     const packName = item?.measurement_name;
     setProduct({
       product_id: item?.id,

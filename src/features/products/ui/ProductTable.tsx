@@ -132,7 +132,7 @@ const ProductTable = ({
       columnHelper.display({
         id: "packInCount",
         header: "КОЛ-ВО В УП.",
-        cell: (info) => info.row.original.count || "-",
+        cell: (info) => info.row.original.count ?? "-",
         size: 100,
         meta: {
           color:

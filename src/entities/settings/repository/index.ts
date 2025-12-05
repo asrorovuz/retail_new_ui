@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   deleteFiscalizedDevice,
-    deletePaymentProvider,
-    postCashRegisterArca,
+  deletePaymentProvider,
+  postCashRegisterArca,
   postCashRegisterEPos,
   postCashRegisterHippoPos,
   postCashRegisterSimurg,
@@ -94,8 +94,7 @@ export const useUpdateSettings = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (payload: any) =>
-      updateSettings(payload),
+    mutationFn: (payload: any) => updateSettings(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["init-settings"] });
     },
@@ -106,22 +105,21 @@ export const useUpdateSettingsShift = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (payload: any) =>
-      updateSettingsShift(payload),
+    mutationFn: (payload: any) => updateSettingsShift(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["init-settings"] });
+      queryClient.invalidateQueries({ queryKey: ["last-shift"] });
+      queryClient.invalidateQueries({ queryKey: ["shift"] });
     },
   });
 };
-
 
 // CTREATE
 export const useCreateArca = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (payload: any) =>
-      postCashRegisterArca(payload),
+    mutationFn: (payload: any) => postCashRegisterArca(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["fiscalized"] });
     },
@@ -132,8 +130,7 @@ export const useCreateSimurg = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (payload: any) =>
-      postCashRegisterSimurg(payload),
+    mutationFn: (payload: any) => postCashRegisterSimurg(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["fiscalized"] });
     },
@@ -144,8 +141,7 @@ export const useCreateEPos = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (payload: any) =>
-      postCashRegisterEPos(payload),
+    mutationFn: (payload: any) => postCashRegisterEPos(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["fiscalized"] });
     },
@@ -156,8 +152,7 @@ export const useCreateHippoPos = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (payload: any) =>
-      postCashRegisterHippoPos(payload),
+    mutationFn: (payload: any) => postCashRegisterHippoPos(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["fiscalized"] });
     },
@@ -168,8 +163,7 @@ export const useCreatePayme = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (payload: any) =>
-      postPayme(payload),
+    mutationFn: (payload: any) => postPayme(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["payment-provider"] });
     },
@@ -180,16 +174,14 @@ export const useCreateClick = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (payload: any) =>
-      postClick(payload),
+    mutationFn: (payload: any) => postClick(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["payment-provider"] });
     },
   });
 };
 
-
-// DELETE 
+// DELETE
 export const useDeleteFiscalized = () => {
   const queryClient = useQueryClient();
 
