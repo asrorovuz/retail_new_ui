@@ -119,8 +119,8 @@ const SaleAndRefunTable = ({
   });
 
   return (
-    <div className="overflow-hidden min-h-[44vh] mb-3 rounded-2xl">
-      <div className="bg-gray-100 border-2 border-gray-100 overflow-y-auto rounded-2xl h-[44vh]">
+    <div className="overflow-hidden min-h-[48vh] xl:min-h-[44vh] mb-3 rounded-2xl">
+      <div className="bg-gray-100 border-2 border-gray-100 overflow-y-auto rounded-2xl h-[48vh] xl:h-[44vh]">
         <div className="flex flex-col justify-between h-full bg-white">
           <Table
             tabIndex={Number(expandedRow)}

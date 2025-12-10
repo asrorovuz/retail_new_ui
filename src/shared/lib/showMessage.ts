@@ -186,6 +186,18 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
       );
     }
 
+    if (error.sale_item_catalog_not_found) {
+      return toast.error(
+        lang === "ru"
+          ? "Единица измерения не найдена"
+          : "Bunday o‘lchov birligi (package) topilmadi",
+        {
+          position: "bottom-left",
+          autoClose: 3000,
+        }
+      );
+    }
+
     if (error.shift_disabled) {
       return toast.error(
         lang === "ru"
@@ -210,6 +222,17 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
       );
     }
 
+    if (error.error) {
+      return toast.error(
+        lang === "ru"
+          ? `Ошибка: ${error.error}`
+          : `Xatolik: ${error.error}`,
+        {
+          position: "bottom-left",
+          autoClose: 3000,
+        }
+      );
+    }
   }
 
   // 3️⃣ - noma’lum xatolik

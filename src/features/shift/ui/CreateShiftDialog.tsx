@@ -38,7 +38,7 @@ export const paymentTypes = {
 };
 
 const CreateShiftDialog = ({ isOpen, onClose }: PropsType) => {
-  const { data: cashboxs, isPending } = useCashboxApi();
+  const { data: cashboxs, isPending } = useCashboxApi(isOpen);
   const { mutate: createShiftMutate, isPending: createShiftPending } =
     useCreateShiftApi();
 

@@ -137,11 +137,11 @@ const ProductForm: FC<ProductFormType> = ({
     // product qo'shishda catalog nomlarida xatolik bor
     const category_id = values?.category?.id ?? null;
     const category_name = values?.category?.name ?? null;
-    const catalog_code = values.catalog
-      ? values.catalog.value.toString()
+    const catalog_code = values.catalog?.value
+      ? String(values?.catalog?.value)
       : null;
-    const catalog_name = values.catalog ? values.catalog.label : null;
-    const package_code = values.package ? values.package.code.toString() : null;
+    const catalog_name = values.catalog ? values?.catalog?.label : null;
+    const package_code = values?.package?.code ? String(values?.package?.code) : null;
     const package_name = values.package ? values?.package?.name_uz : null;
 
     const data = {
@@ -236,11 +236,11 @@ const ProductForm: FC<ProductFormType> = ({
 
   useEffect(() => {
     const catalog = getValues(`catalog_code`);
-    const packages = getValues(`package`);
+    const packages = getValues(`package_code`);
     const vat_rate = getValues(`vat_rate`);
     const shouldShow = !!catalog || !!packages || !!vat_rate;
     setIsShow(shouldShow);
-  }, [watch(`catalog_code`), watch(`package`), watch(`vat_rate`), isOpen]);
+  }, [watch(`catalog_code`), watch(`package_code`), watch(`vat_rate`), isOpen]);
 
   useEffect(() => {
     setRemainder(defaultValue?.state || 0);
@@ -509,7 +509,7 @@ const ProductForm: FC<ProductFormType> = ({
                         value={field.value}
                         setValue={setValue}
                         getValues={getValues}
-                        onChange={field.onChange}
+                        onChange={(opt) => field.onChange(opt.value)}
                         setPackageNames={setPackageNames}
                       />
                     </FormItem>

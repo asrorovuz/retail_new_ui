@@ -57,6 +57,9 @@ const Header = () => {
     }
   }, [shift, error]);
 
+  console.log(activeShift, "active shift");
+  
+
   return (
     <header className="bg-white rounded-3xl p-2 flex justify-between items-center">
       <Menu

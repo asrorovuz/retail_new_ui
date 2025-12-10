@@ -65,6 +65,8 @@ const ProductTable = ({
   const { mutate: deleteProduct, isPending: productDeleteLoading } =
     useDeleteProduct();
 
+  console.log(data, countData, "product all search");
+
   const columnHelper = createColumnHelper<Product>();
 
   // 🧱 Mahsulot o‘chirish
@@ -132,7 +134,8 @@ const ProductTable = ({
       columnHelper.display({
         id: "package",
         header: "ЕД. ИЗМ.",
-        cell: (info) => showMeasurmentName(info.row.original.measurement_code) || "-",
+        cell: (info) =>
+          showMeasurmentName(info.row.original.measurement_code) || "-",
         size: 100,
         meta: {
           color:

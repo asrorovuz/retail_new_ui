@@ -356,6 +356,8 @@ const UpdateShiftDialog = ({ isOpen, onClose }: PropsType) => {
   });
 
   useEffect(() => {
+    console.log(activeShift, "activeShift");
+    
     if (isOpen && activeShift?.cashboxes_expected?.balances) {
       const initialValues = activeShift.cashboxes_expected.balances.map(
         (balance) => ({

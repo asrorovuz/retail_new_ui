@@ -4,6 +4,7 @@ import {
   useAllFavoritProductApi,
   useAllProductApi,
 } from "@/entities/products/repository";
+import { showMeasurmentName } from "@/shared/lib/showMeausermentName";
 import { showErrorMessage, showSuccessMessage } from "@/shared/lib/showMessage";
 import { Button, Dialog, Input, Select } from "@/shared/ui/kit";
 import { useMemo, useState } from "react";
@@ -16,7 +17,7 @@ const LikedProducts = () => {
   }>({
     product_id: null,
   });
-  const [packageName, setPackageName] = useState<null | string>(null);
+  const [packageName, setPackageName] = useState<number | null>(null);
 
   const { data, isPending } = useAllProductApi(60, 1, isSearch);
   const { data: favoriteData } = useAllFavoritProductApi();
@@ -46,9 +47,8 @@ const LikedProducts = () => {
   };
 
   const onChangeValue = (item: any) => {
-    console.log(item);
     
-    const packName = item?.measurement_name;
+    const packName = item?.measurement_code;
     setProduct({
       product_id: item?.id,
     });
@@ -97,13 +97,13 @@ const LikedProducts = () => {
           <div>
             <Input
               disabled={true}
-              value={packageName}
+              value={showMeasurmentName(packageName || 0)}
               placeholder="Единица измерения (автоматически)"
             />
           </div>
         </div>
         <div className="flex justify-end gap-x-2">
-          <Button onClick={handleClose} variant="plain">
+          <Button onClick={handleClose}>
             Отменить
           </Button>
           <Button

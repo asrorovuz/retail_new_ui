@@ -28,7 +28,6 @@ const AddProductModal: FC<ProductModalProps> = ({
   };
 
   useEffect(() => {
-    
     if (isOpen) {
       const prices = productPriceType?.map(
         (i: ProductPriceType, inx: number) => ({
@@ -70,11 +69,14 @@ const AddProductModal: FC<ProductModalProps> = ({
         vat_rate: null,
         prices,
         count: 1,
-        catalog: catalogData && catalogData?.length > 0 ? {
-          data: catalogData?.[0],
-          label: catalogData?.[0]?.class_name,
-          value: catalogData?.[0]?.class_code
-        } : null,
+        catalog:
+          catalogData && catalogData?.length > 0
+            ? {
+                data: catalogData?.[0],
+                label: catalogData?.[0]?.class_name,
+                value: catalogData?.[0]?.class_code,
+              }
+            : null,
         is_default: true,
       });
     }

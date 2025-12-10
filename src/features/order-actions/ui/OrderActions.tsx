@@ -273,6 +273,8 @@ const OrderActions = ({
         if (data?.sale?.id) {
           setSaleId(data?.sale?.id);
 
+          console.log(data, "print data");
+          
           if (settings?.auto_print_receipt && settings?.printer_name) {
             onPrint(data?.sale?.id);
           } else if (!settings?.auto_print_receipt && settings?.printer_name) {
@@ -342,6 +344,7 @@ const OrderActions = ({
         },
         onError(error) {
           showErrorMessage(error);
+          handleCancelPrint();
         },
       }
     );

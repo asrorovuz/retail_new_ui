@@ -41,9 +41,9 @@ export const useVersionApi = () => {
   });
 };
 
-export const useCashboxApi = () => {
+export const useCashboxApi = (isOpen?: boolean) => {
   return useQuery({
-    queryKey: ["cashbox"],
+    queryKey: ["cashbox", isOpen],
     queryFn: getCashboxApi,
   });
 };

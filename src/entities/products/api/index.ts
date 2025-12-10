@@ -23,7 +23,7 @@ export const getAllProductApi = async (
   index?: number,
   search?: string
 ): Promise<Product[]> => {
-  const skip = index && size ? (index - 1) * size : undefined;
+  const skip = index && size ? (index - 1) * size : 0;
 
   return await apiRequest<Product[]>({
     url: pathServices.products.getAllProductsPath,

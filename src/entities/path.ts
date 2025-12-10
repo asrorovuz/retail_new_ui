@@ -70,7 +70,7 @@ export const pathServices = {
   },
 
   refund: {
-    getCheck: "api/sale/get-by-receipt",
+    getCheck: "/api/sale/get-by-receipt",
     register: "/api/refund/register",
   },
   versions: {

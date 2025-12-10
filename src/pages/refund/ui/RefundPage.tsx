@@ -57,7 +57,9 @@ const RefundPage = () => {
     isError,
     isFetching,
   } = useFindBarcode(barcode);
-  const { data: checkData } = useCheckRefundApi(checkCode);
+
+  const { data: checkData, isPending: isCheckPending } =
+    useCheckRefundApi(checkCode);
 
   const { draftRefunds, addDraftRefund, activateDraftRefund } =
     useDraftRefundStore((store) => store);
@@ -110,7 +112,6 @@ const RefundPage = () => {
     refundCheckData.items
       .filter((item: any) => selectedIds.includes(item.id))
       .forEach((item: any) => {
-        
         const product = item.warehouse_operation_from?.product;
         // const productPackage = item.warehouse_operation_from?.product_package;
         if (!product) return;
@@ -151,6 +152,8 @@ const RefundPage = () => {
       const onScan = eventBus.on("BARCODE_SCANNED", (code) => {
         if (code && code?.trim().startsWith("*")) {
           const newBarcode = code?.slice(1);
+          console.log(newBarcode, code, "hammasi");
+
           setCheckDode(newBarcode);
           setRefundCheckModal((prev) => ({ ...prev, isOpen: true }));
         } else {
@@ -169,7 +172,7 @@ const RefundPage = () => {
     if (isSuccess && !isFetching) {
       if (findBarcodeData) {
         handleScannedProduct(findBarcodeData, "refund");
-        setBarcode(null); // qayta so‘rov yubormaslik uchun tozalaymiz
+        setBarcode(null);
       }
     }
   }, [isSuccess, findBarcodeData, isFetching]);
@@ -185,9 +188,12 @@ const RefundPage = () => {
       }
     }
   }, [isError]);
+  console.log(checkData, "checkData ");
 
   useEffect(() => {
     if (checkData) {
+      console.log(checkCode, "checkData 2");
+
       setRefundCheckData(checkData);
     }
   }, [checkData]);
@@ -273,7 +279,8 @@ const RefundPage = () => {
         )}
 
         <RefundCheckModal
-          isOpen={refundCheckModal.isOpen}
+          loading={isCheckPending}
+          isOpen={refundCheckModal?.isOpen}
           setRefundCheckModal={setRefundCheckModal}
           handleRefundCheckInputItem={handleRefundCheckInputItem}
           items={refundCheckData?.items || []}

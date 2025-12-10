@@ -50,7 +50,7 @@ const EditProductModal: FC<ProductTableProps & EXtraPropsType> = ({
         },
       };
     });
-    
+
     const computed: ProductDefaultValues = {
       ...product,
       purchase_price:
@@ -88,6 +88,10 @@ const EditProductModal: FC<ProductTableProps & EXtraPropsType> = ({
             package_names: [], // Bu CatalogSelector ichida to'ldiriladi
           }
         : null,
+      package: {
+        value: product?.package_code || null,
+        label: product?.package_name || "",
+      },
       package_code: product?.package_code || null,
       package_name: product?.package_name || null,
       catalog_code: product?.catalog_code || null,

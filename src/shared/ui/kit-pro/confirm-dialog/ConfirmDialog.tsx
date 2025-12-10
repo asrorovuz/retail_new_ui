@@ -90,8 +90,6 @@ const ConfirmDialog = (props: ConfirmDialogProps) => {
       <div className="px-2 w-full flex justify-end gap-2">
         <Button
           size="md"
-          variant="plain"
-          className="hover:bg-gray-100"
           onClick={onCancel}
           {...cancelButtonProps}
         >

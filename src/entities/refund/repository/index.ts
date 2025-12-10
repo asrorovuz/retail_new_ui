@@ -10,7 +10,7 @@ export const useRegisterRefundApi = () => {
 
 export const useCheckRefundApi = (params: string) => {
   return useQuery({
-    queryKey: ["check-refund"],
+    queryKey: ["check-refund", params],
     queryFn: () => getCheckRefundApi(params),
     enabled: !!params
   });

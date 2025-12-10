@@ -85,10 +85,12 @@ const INITIAL_STATUS: StatusState = {
   status: true,
 };
 
-const generateBarcode = (): string => {
-  return (
-    Date.now().toString() + Math.floor(Math.random() * 1_000_000).toString()
-  ).slice(-13);
+const generateBarcode = (): string[] => {
+  return [
+    (
+      Date.now().toString() + Math.floor(Math.random() * 1_000_000).toString()
+    ).slice(-13),
+  ];
 };
 
 const UploadExcelFile = () => {
@@ -190,11 +192,13 @@ const UploadExcelFile = () => {
 
   const downloadFailedExcel = () => {
     try {
-      const failedRows = faildData.map(({ index, row }) => {
+      const failedRows = faildData?.map(({ index, row }) => {
         const selectedCols = Object.keys(selectedSelect)
           .map(Number)
           .sort((a, b) => a - b)
           .map((colIndex) => row[colIndex] ?? "");
+
+        console.log(errorStatus, index, row, "lll");
 
         return [...selectedCols, errorStatus[index] || "Неизвестная ошибка"];
       });
@@ -356,7 +360,6 @@ const UploadExcelFile = () => {
         let res;
 
         if (initialState?.edit) {
-          console.log(item, "item555");
           // updateProduct mutateAsync bilan
           res = await updateProduct({ productId: item?.id, data: sendItem });
         } else {
@@ -675,13 +678,19 @@ const RenderTable = ({
   }, [currencies]);
 
   useEffect(() => {
-    setInitialState((prev) => ({
-      ...prev,
-      currency: activeCurrencies?.[0]?.code ?? 0,
-    }));
-  }, [currencies, activeCurrencies]);
+    const newCurrency = activeCurrencies?.[0]?.code ?? 0;
 
-  const startIndex = pagination.pageIndex * pagination.pageSize;
+    setInitialState((prev) => {
+      if (prev.currency === newCurrency) return prev; // ✅ loopni to‘xtatadi
+
+      return {
+        ...prev,
+        currency: newCurrency,
+      };
+    });
+  }, [activeCurrencies]);
+
+  const startIndex = (pagination.pageIndex - 1) * pagination.pageSize;
   const endIndex = startIndex + pagination.pageSize;
   const paginatedData = Array.isArray(data)
     ? data.slice(startIndex, endIndex)

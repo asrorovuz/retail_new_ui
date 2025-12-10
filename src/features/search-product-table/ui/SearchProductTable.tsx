@@ -42,6 +42,7 @@ const SearchProductTable = ({
       (p) =>
         p.productId === item?.id
     );
+    console.log(data, "sale search");
     
     const packagePrice =
       item?.prices?.find(

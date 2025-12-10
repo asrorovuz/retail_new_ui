@@ -30,7 +30,6 @@ export const ipcFetch = async <T>(request: {
   data?: any;
   responseType?: "json" | "blob" | "arraybuffer" | "document" | "text";
 }): Promise<T> => {
-
   if (
     !window?.astilectron ||
     typeof window?.astilectron.sendMessage !== "function"
@@ -38,6 +37,21 @@ export const ipcFetch = async <T>(request: {
     throw new Error("Astilectron is not available");
   }
   const token = sessionStorage.getItem(TOKEN) || "";
+
+  // let url = request.url;
+  // if (request.params && Object.keys(request.params).length) {
+  //   const query = new URLSearchParams(
+  //     Object.entries(request.params)
+  //       .filter(([_, v]) => v !== undefined && v !== null && v !== "")
+  //       .reduce((acc, [k, v]) => {
+  //         acc[k] = String(v);
+  //         return acc;
+  //       }, {} as Record<string, string>)
+  //   ).toString();
+
+  //   url += `?${query}`;
+  // }
+
   return new Promise<T>((resolve, reject) => {
     window?.astilectron!.sendMessage!(
       {

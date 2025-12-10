@@ -28,7 +28,6 @@ const SettingsPage = () => {
     useUpdateSettings();
   const { mutate: updateSettingsShift, isPending: shiftLoading } =
     useUpdateSettingsShift();
-  console.log(settingsData);
 
   const form = useForm();
 
