@@ -10,4 +10,9 @@ export const PavouriteProductPage = lazy(
 );
 export const SettingsPage = lazy(() => import("@/pages/settings"));
 export const FiscalizedPage = lazy(() => import("@/pages/fiscalized"));
-export const PaymePoviderPage = lazy(() => import("@/pages/payment-providers"))
+export const PaymePoviderPage = lazy(() => import("@/pages/payment-providers"));
+export const PurchasePricePage = lazy(() => import("@/pages/purchase"));
+export const CashboxPage = lazy(() => import("@/pages/cashbox"));
+export const CashboxOperations = lazy(
+  () => import("@/pages/cashbox-operations")
+);

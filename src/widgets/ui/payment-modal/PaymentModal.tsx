@@ -11,7 +11,7 @@ import SuccessSvg from "@/shared/ui/svg/SuccessSvg";
 import { useState } from "react";
 
 type PaymentModalType = {
-  type: "sale" | "refund";
+  type: "sale" | "refund" | "purchase";
   cashBackAmount: number;
   totalPaymentAmount: number;
   isOpen: boolean;
@@ -47,7 +47,7 @@ const PaymentModal = ({
       (type === "sale"
         ? activeDraft?.payment
         : activeDraft?.payout
-      )?.amounts.map((item: DraftSalePaymentAmountSchema) => {
+      )?.amounts?.map((item: DraftSalePaymentAmountSchema) => {
         if (!subtracted && item?.amount > cashBackAmount) {
           subtracted = true;
           return { ...item, amount: item?.amount - cashBackAmount };
@@ -63,7 +63,7 @@ const PaymentModal = ({
             if (!settings?.fiscalization_enabled) {
               setIsOpenPayment(false);
             }
-          } else if (type === "refund") {
+          } else if (type === "refund" || type === "purchase") {
             setIsOpenPayment(false);
           } else {
             return;

@@ -1,3 +1,4 @@
+import type { DraftPurchasePayoutAmountSchema } from "@/@types/purchase";
 import type {
   DraftRefundPayoutAmountSchema,
   DraftRefundSchema,
@@ -22,7 +23,7 @@ type ActiveOnlyType = {
 };
 
 type PropsType = {
-  type: "sale" | "refund";
+  type: "sale" | "refund" | "purchase";
   activeDraft: DraftSaleSchema & DraftRefundSchema;
   activeSelectPaymetype: number;
   updateDraftPayment: (
@@ -62,8 +63,12 @@ const PaymeTypeCards = ({
       updatedAmounts = (
         type === "sale" ? activeDraft?.payment : activeDraft?.payout
       )?.amounts.map(
-        (p: DraftSalePaymentAmountSchema | DraftRefundPayoutAmountSchema) =>
-          p.paymentType === 1 ? { paymentType: 1, amount } : p
+        (
+          p:
+            | DraftSalePaymentAmountSchema
+            | DraftRefundPayoutAmountSchema
+            | DraftPurchasePayoutAmountSchema
+        ) => (p.paymentType === 1 ? { paymentType: 1, amount } : p)
       );
     } else {
       // yo‘q bo‘lsa — yangi qo‘shamiz

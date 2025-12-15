@@ -11,7 +11,7 @@ export interface ProductRow {
 }
 
 // 🔹 Ustunlarni qaytaruvchi funksiya
-export const columns = (): ColumnDef<any>[] => {
+export const columns = (type: "sale" | "refund" | "purchase"): ColumnDef<any>[] => {
   return [
     {
       header: () => (
@@ -35,7 +35,11 @@ export const columns = (): ColumnDef<any>[] => {
       meta: {
         bodyCellClassName: "text-right min-w-full max-w-full",
       },
-      cell: ({ row }) => <FormattedNumber value={row.original.priceAmount ?? 0} scale={2}/>,
+      cell: ({ row }) => {
+        console.log(row.original);
+        
+        return <FormattedNumber value={row.original.priceAmount ?? 0} scale={2}/>
+      },
     },
     {
       header: () => (

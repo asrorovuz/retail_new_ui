@@ -5,6 +5,7 @@ export const pathServices = {
     globalLogin: "/public/auth/global-login",
     register: "/public/auth/register",
   },
+  
   init: {
     printPath: "/api/print/",
     lastShiftPath: "/api/shift/last-active/get?cash_box_id=",
@@ -13,21 +14,49 @@ export const pathServices = {
     getShiftoperation: "/api/shift/operation/get/",
     closeShiftPath: "/api/shift/close",
   },
+
   settings: {
     // GET
     getSettingsPath: `/api/settings/organization/get`,
     getPrinterName: `/api/print/printers/get`,
 
-    // UPDATE 
+    // UPDATE
     settingsUpdata: "/api/settings/organization/update",
-    settingsShiftUpdat: "/api/settings/organization/shift/update"
+    settingsShiftUpdat: "/api/settings/organization/shift/update",
   },
+
   warhouse: {
     getList: "/api/warehouse/get",
   },
+
   cashbox: {
     getAllCashbox: "/api/cash-box/get",
+    getCashboxByIdCashIn: "/api/cash-box/cash-in/",
+    getCashboxByIdCashOut: "/api/cash-box/cash-out/",
+    getCashboxByIdExpense: "/api/cash-box/cash-expense/",
+    getCashboxOperationsCategoy: `/api/cash-box/operation-category/get`,
+    getCashIn: "/api/cash-box/cash-ins/get",
+    getCashOut: "/api/cash-box/cash-outs/get",
+    getCashExpense: "/api/cash-box/expenses/get",
+    getCashInCount: "/api/cash-box/cash-ins/count/get",
+    getCashOutCount: "/api/cash-box/cash-outs/count/get",
+    getCashExpenseCount: "/api/cash-box/expenses/count/get",
+    // CREATE
+    createCashIn: "/api/cash-box/cash-in/create",
+    createCashOut: "/api/cash-box/cash-out/create",
+    createCashExpense: "/api/cash-box/expense/create",
+
+    // UPDATE 
+    updateCashIn: "/api/cash-box/cash-in/update/",
+    updateCashOut: "/api/cash-box/cash-out/update/",
+    updateCashExpense: "/api/cash-box/expense/update/",
+
+    // DELETE 
+    deleteCashIn: "/api/cash-box/cash-in/delete/",
+    deleteCashOut: "/api/cash-box/cash-out/delete/",
+    deleteCashExpense: "/api/cash-box/expense/delete/",
   },
+
   products: {
     // GET
     getAllProductsPath: "/api/product/get",
@@ -59,6 +88,7 @@ export const pathServices = {
     deleteProductPath: `/api/product/delete`,
     deleteFavoritProductPath: "/api/favorite-product/delete",
   },
+
   sale: {
     // GET
     register: "/api/sale/register",
@@ -73,6 +103,12 @@ export const pathServices = {
     getCheck: "/api/sale/get-by-receipt",
     register: "/api/refund/register",
   },
+
+  purchase: {
+    // GET
+    register: "/api/purchase/register",
+  },
+
   versions: {
     getVersions: "/api/auto-updater/current-version/get",
   },

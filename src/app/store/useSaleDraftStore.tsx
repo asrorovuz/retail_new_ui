@@ -225,23 +225,6 @@ export const useDraftSaleStore = create<
         }
       }),
 
-    // addDraftSalePaymentAmount: (payload: DraftSalePaymentAmountSchema) => set((state) => {
-
-    // }),
-    // updateDraftSalePaymentAmounts: (paymentAmounts: DraftSalePaymentAmountSchema[]) => set((state) => {
-    //     const activeSale = state.draftSales.find(s => s.isActive)
-    //     if (!activeSale) return
-
-    //     const newPaymentAmounts: DraftSalePaymentAmountSchema[] = []
-    //     for (let i = 0; i < paymentAmounts.length; i++) {
-    //         newPaymentAmounts.push({
-    //             amount: paymentAmounts[i].amount,
-    //             paymentType: paymentAmounts[i].paymentType
-    //         })
-    //     }
-    //     activeSale.payment = { amounts: newPaymentAmounts }
-    // }),
-
     // addDraftSaleItem: (draftItem) => set((state) => {
     //     const activeSale = state.draftSales.find(s => s.isActive)
     //     const [mark] = draftItem.marks ?? []
@@ -283,29 +266,5 @@ export const useDraftSaleStore = create<
     //     }
 
     // }),
-
-    // incrementDraftSaleItemQuantity: (index) => set((state) => {
-    //     const active = state.draftSales.find(s => s.isActive)
-    //     if (!active) return
-    //     const item = active.items[index]
-    //     item.quantity++
-    //     item.totalAmount = item.priceAmount * item.quantity
-    // }),
-    // decrementDraftSaleItemQuantity: (index) => set((state) => {
-    //     const active = state.draftSales.find(s => s.isActive)
-    //     if (!active) return
-    //     const item = active.items[index]
-    //     if (item.quantity > 1) {
-    //         item.quantity--
-    //         item.totalAmount = item.priceAmount * item.quantity
-    //     }
-    // }),
-
-    // deleteDraftSaleMark: (item) => set(state => {
-    //     const activeSale = state.draftSales.find(s => s.isActive)
-    //     if (activeSale) {
-    //         activeSale.items.find(i => i.productId === item.productId)?.marks?.splice(item.index, 1)
-    //     }
-    // })
   }))
 );

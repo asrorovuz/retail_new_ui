@@ -188,12 +188,9 @@ const RefundPage = () => {
       }
     }
   }, [isError]);
-  console.log(checkData, "checkData ");
 
   useEffect(() => {
     if (checkData) {
-      console.log(checkCode, "checkData 2");
-
       setRefundCheckData(checkData);
     }
   }, [checkData]);

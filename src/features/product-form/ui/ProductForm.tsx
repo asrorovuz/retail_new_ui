@@ -122,8 +122,6 @@ const ProductForm: FC<ProductFormType> = ({
   };
 
   const onSubmit: any = async (values: ProductDefaultValues) => {
-    console.log(values, "add");
-    
     const images = await convertImageObjectsToBase64(
       values?.images || [],
       values?.images?.[0]?.img || ""
@@ -149,8 +147,8 @@ const ProductForm: FC<ProductFormType> = ({
       ...(type !== "edit"
         ? {
             purchase_price: {
-              amount: values?.purchase_price?.amount ?? 0,
-              currency_code: values?.purchase_price?.currency?.code ?? "",
+              amount: Number(values?.purchase_price?.amount) ?? 0,
+              currency_code: Number(values?.purchase_price?.currency?.code) ?? 0,
             },
           }
         : {}),
@@ -287,32 +285,6 @@ const ProductForm: FC<ProductFormType> = ({
             )}
           />
 
-          {type === "add" && (
-            <FormItem label="Остаток">
-              <Input
-                type="number"
-                autoComplete="off"
-                value={remainder}
-                placeholder="Введите остаток"
-                replaceLeadingZero={true}
-                className="w-full"
-                onChange={(e) => setRemainder(+e.target.value)}
-              />
-            </FormItem>
-          )}
-
-          <FormItem label="Мин. остаток для оповещения">
-            <Input
-              type="number"
-              autoComplete="off"
-              value={alertOn}
-              placeholder="Введите остаток"
-              replaceLeadingZero={true}
-              className="w-full"
-              onChange={(e) => setAlertOn(+e.target.value)}
-            />
-          </FormItem>
-
           <FormItem asterisk label="Розничный цена" className="w-full p-0">
             <InputGroup>
               <Controller
@@ -355,6 +327,19 @@ const ProductForm: FC<ProductFormType> = ({
             </InputGroup>
           </FormItem>
 
+          {/* {type === "add" && ( */}
+            <FormItem label="Остаток">
+              <Input
+                type="number"
+                autoComplete="off"
+                value={remainder}
+                placeholder="Введите остаток"
+                replaceLeadingZero={true}
+                className="w-full"
+                onChange={(e) => setRemainder(+e.target.value)}
+              />
+            </FormItem>
+          {/* // )} */}
           <FormItem label="Оптовая цена" className="w-full p-0">
             <InputGroup>
               <Controller
@@ -373,6 +358,55 @@ const ProductForm: FC<ProductFormType> = ({
               />
               <Controller
                 name="prices.1.currency"
+                control={control}
+                render={({ field, fieldState }) => (
+                  <Select
+                    {...field}
+                    isDisabled={true}
+                    invalid={!!fieldState?.error}
+                    hideDropdownIndicator={true}
+                    options={(currencies || [])?.filter((i) => i.is_active)}
+                    getOptionLabel={(option) => option?.name}
+                    getOptionValue={(option) => String(option?.code)}
+                    className="w-[90px]"
+                    placeholder="Валюта"
+                  />
+                )}
+              />
+            </InputGroup>
+          </FormItem>
+
+          <FormItem label="Мин. остаток для оповещения">
+            <Input
+              type="number"
+              autoComplete="off"
+              value={alertOn}
+              placeholder="Введите остаток"
+              replaceLeadingZero={true}
+              className="w-full"
+              onChange={(e) => setAlertOn(+e.target.value)}
+            />
+          </FormItem>
+
+          <FormItem label="Закупочная цена" className="w-full p-0">
+            <InputGroup>
+              <Controller
+                name="purchase_price.amount"
+                control={control}
+                render={({ field }) => (
+                  <Input
+                    {...field}
+                    type="number"
+                    disabled={type === "edit"}
+                    autoComplete="off"
+                    placeholder="Сумма"
+                    replaceLeadingZero={true}
+                    className="w-full"
+                  />
+                )}
+              />
+              <Controller
+                name="purchase_price.currency"
                 control={control}
                 render={({ field, fieldState }) => (
                   <Select
@@ -475,7 +509,7 @@ const ProductForm: FC<ProductFormType> = ({
             )}
           />
 
-          <FormItem className="col-span-2" label="Штрих-коды">
+          <FormItem label="Штрих-коды">
             <BarcodeForm
               fieldName={"barcodes"}
               barcode={barcode}

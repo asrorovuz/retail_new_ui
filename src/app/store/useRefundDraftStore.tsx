@@ -170,20 +170,6 @@ export const useDraftRefundStore = create<
           }
         }
       }),
-    // resetActiveDraftRefund: () => set((state) => {
-    //     const activeRefund = state.draftRefunds.find(s => s.isActive)
-    //     if (activeRefund) {
-    //         activeRefund.items = []
-    //         activeRefund.discountAmount = 0
-    //         if (activeRefund.payout) {
-    //             activeRefund.payout.amounts.forEach(a => a.amount = 0)
-    //         }
-    //     }
-    // }),
-
-    // addDraftRefundPaymentAmount: (payload: DraftRefundPayoutAmountSchema) => set((state) => {
-
-    // }),
     updateDraftRefundPaymentAmounts: (
       paymentAmounts: DraftRefundPayoutAmountSchema[]
     ) =>

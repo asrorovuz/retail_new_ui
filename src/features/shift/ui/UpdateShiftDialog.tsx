@@ -72,7 +72,7 @@ const UpdateShiftDialog = ({ isOpen, onClose }: PropsType) => {
     useShiftOperationApi(shift?.id ?? null, isOpen);
   const { data: activeShift, isPending } = useShiftApi(isOpen);
   const { mutate: closeShiftMutate, isPending: isClosing } = useCloseShiftApi();
-
+  
   const columns: ColumnDef<(typeof fields)[0]>[] = useMemo(
     () => [
       {
@@ -357,6 +357,11 @@ const UpdateShiftDialog = ({ isOpen, onClose }: PropsType) => {
 
   useEffect(() => {
     console.log(activeShift, "activeShift");
+
+    if(isOpen && !activeShift) {
+      setActiveShift(null);
+      return
+    }
     
     if (isOpen && activeShift?.cashboxes_expected?.balances) {
       const initialValues = activeShift.cashboxes_expected.balances.map(

@@ -62,7 +62,7 @@ const BarcodeForm = ({
   }, [barcode]);
 
   return (
-    <div className="w-1/2">
+    <div>
       {fields?.map((field, index) => (
         <InputGroup className={"mb-3"} key={field.id}>
           <Controller

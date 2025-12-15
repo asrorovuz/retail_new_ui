@@ -1,3 +1,4 @@
+import { useDraftPurchaseStore } from "@/app/store/usePurchaseDraftStore";
 import { useDraftRefundStore } from "@/app/store/useRefundDraftStore";
 import { useDraftSaleStore } from "@/app/store/useSaleDraftStore";
 import { useAllFavoritProductApi } from "@/entities/products/repository";
@@ -7,7 +8,7 @@ import { FavouriteCard } from "@/widgets";
 import type { PriceType } from "@/widgets/ui/favourite-card/FavouriteCard";
 
 type LikedType = {
-  type?: "sale" | "refund";
+  type?: "sale" | "refund" | "purchase";
   setExpandedRow?: React.Dispatch<React.SetStateAction<string | null>>;
   setExpandedId?: React.Dispatch<React.SetStateAction<number | null>>;
 };
@@ -20,36 +21,49 @@ const FavouriteProduct = ({
   const { data: favoriteProducts, isPending } = useAllFavoritProductApi();
   const { updateDraftSaleItem, draftSales } = useDraftSaleStore();
   const { updateDraftRefundItem, draftRefunds } = useDraftRefundStore();
+  const { updateDraftPurchaseItem, draftPurchases } = useDraftPurchaseStore();
 
   const activeDraftSale = draftSales?.find((s) => s.isActive);
   const activeDraftRefund = draftRefunds?.find((s) => s.isActive);
+  const activeDraftPurchase = draftPurchases?.find((s) => s.isActive);
 
   const getActiveDraft = () => {
     if (type === "sale")
       return { active: activeDraftSale, update: updateDraftSaleItem };
     if (type === "refund")
       return { active: activeDraftRefund, update: updateDraftRefundItem };
+    if (type === "purchase")
+      return { active: activeDraftPurchase, update: updateDraftPurchaseItem };
     return { active: null, update: () => {} };
   };
 
   const { active, update } = getActiveDraft();
 
+  const onBuildPrice = (item: any) => {
+    return {
+      amount: item?.purchase_price_amount,
+      currency: item?.purchase_price_currency,
+    };
+  };
+
   const onChange = (item: any) => {
     const operationItem = active?.items?.find(
-      (p) =>
-        p.productId === item.product.id
+      (p) => p.productId === item.product.id
     );
-    const packagePrice =
+
+    const packagePrice = type === "purchase" ? onBuildPrice(item?.product?.warehouse_items?.[0]) :
       item?.product?.prices?.find(
         (p: PriceType) => p.product_price_type.is_primary
       ) || item.product.prices[0];
     const quantity = operationItem?.quantity ?? 0;
+    console.log(item, "45s");
+    
 
     const newItem = {
       productId: item?.product?.id,
       productName: item?.product.name,
       productPackageName: item?.product?.measurement_name,
-      priceTypeId: packagePrice?.product_price_type?.id,
+      priceTypeId: type === "purchase" ? 0 : packagePrice?.product_price_type?.id,
       priceAmount: packagePrice?.amount,
       quantity: quantity + 1,
       totalAmount: (quantity + 1) * packagePrice?.amount,
@@ -66,24 +80,32 @@ const FavouriteProduct = ({
     <div className="xl:h-[27vh] h-[170px] rounded-2xl overflow-hidden">
       <div className="xl:h-[27vh] h-[170px] overflow-y-auto">
         <div className="min-h-full bg-gray-100 p-2 grid grid-cols-3 gap-2">
-          {isPending && <div className="col-span-3 flex justify-center"><Loading /></div>}
+          {isPending && (
+            <div className="col-span-3 flex justify-center">
+              <Loading />
+            </div>
+          )}
 
           {!isPending && !favoriteProducts?.length ? (
-            <div className="col-span-3 flex justify-center"><Empty size={64} textSize="32px" text="Нет избранных товаров" /></div>
-          ): ""}
+            <div className="col-span-3 flex justify-center">
+              <Empty size={64} textSize="32px" text="Нет избранных товаров" />
+            </div>
+          ) : (
+            ""
+          )}
 
-          {!isPending &&
-            favoriteProducts?.length ?
-            favoriteProducts?.map((item) => {
-              return (
-                <FavouriteCard
-                  name={item?.product?.name}
-                  onItemChange={() => onChange(item)}
-                  img={item?.product?.images ?? []}
-                  prices={item?.product?.prices}
-                />
-              );
-            }): ""}
+          {!isPending && favoriteProducts?.length
+            ? favoriteProducts?.map((item) => {
+                return (
+                  <FavouriteCard
+                    name={item?.product?.name}
+                    onItemChange={() => onChange(item)}
+                    img={item?.product?.images ?? []}
+                    prices={item?.product?.prices}
+                  />
+                );
+              })
+            : ""}
         </div>
       </div>
     </div>

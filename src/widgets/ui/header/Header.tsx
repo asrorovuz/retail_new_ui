@@ -56,12 +56,10 @@ const Header = () => {
       setActiveShift(null);
     }
   }, [shift, error]);
-
-  console.log(activeShift, "active shift");
   
 
   return (
-    <header className="bg-white rounded-3xl p-2 flex justify-between items-center">
+    <header className="bg-white rounded-2xl p-2 flex justify-between items-center">
       <Menu
         className="menu-horizontal"
         onSelect={handleSelect}
@@ -87,6 +85,17 @@ const Header = () => {
             }`}
           >
             <span>Возврат</span>
+          </div>
+        </MenuItem>
+        <MenuItem eventKey="purchase">
+          <div
+            className={`px-4 py-2 rounded-md cursor-pointer text-[14px] xl:text-[16px] transition-colors duration-200 ${
+              activeKey === "purchase"
+                ? "text-green-500"
+                : "hover:bg-gray-100 text-gray-700"
+            }`}
+          >
+            <span>Приход</span>
           </div>
         </MenuItem>
         <MenuItem eventKey="products">
@@ -122,6 +131,19 @@ const Header = () => {
                 }`}
               >
                 <span>Настройки</span>
+              </div>
+            </MenuItem>
+          </Dropdown.Item>
+          <Dropdown.Item>
+            <MenuItem eventKey="cashbox">
+              <div
+                className={`px-4 py-2 rounded-md cursor-pointer text-[14px] xl:text-[16px] transition-colors duration-200 ${
+                  activeKey === "cashbox"
+                    ? "text-blue-500"
+                    : "hover:bg-gray-100 text-gray-700"
+                }`}
+              >
+                <span>Касса</span>
               </div>
             </MenuItem>
           </Dropdown.Item>

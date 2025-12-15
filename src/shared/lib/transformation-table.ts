@@ -17,16 +17,16 @@ interface TableColumn {
 }
 
 export const transformProductColumns = (
-  data: ProductColumnsResponse
+  settingsTable: ProductColumnsResponse
 ): TableColumn[] => {
-  const columns = data?.product?.data_table_column || {};
+  const columns = settingsTable?.product?.data_table_column || {};
 
   const keyMap: Record<string, string> = {
     product_name: "name",
     total_warehouses_state: "totalRemainder",
     package_quantity: "packInCount",
     measurement_name: "package",
-    // purchase_price: "purchesPrice",
+    purchase_price: "purchesPrice",
     primary_price: "price",
     sku: "sku",
     code: "code",
@@ -50,7 +50,7 @@ export function convertArrayToBackendSettings(
     packInCount: "package_quantity",
     package: "measurement_name",
     price: "primary_price",
-    // purchasePrice: "purchase_price",
+    purchesPrice: "purchase_price",
     sku: "sku",
     code: "code",
   };

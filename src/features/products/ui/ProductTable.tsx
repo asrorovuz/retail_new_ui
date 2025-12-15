@@ -54,7 +54,7 @@ const ProductTable = ({
     pageIndex: 1,
     pageSize: 20,
   });
-
+  
   // 🚀 API chaqiruv
   const { data, isPending } = useAllProductApi(
     pagination.pageSize,
@@ -64,8 +64,6 @@ const ProductTable = ({
   const { data: countData } = useAllProductCountApi(debouncedSearch || "");
   const { mutate: deleteProduct, isPending: productDeleteLoading } =
     useDeleteProduct();
-
-  console.log(data, countData, "product all search");
 
   const columnHelper = createColumnHelper<Product>();
 
@@ -97,7 +95,7 @@ const ProductTable = ({
     setType("add");
     setConfirmProductId(null);
   };
-
+  
   // 🧱 Ustunlar
   const columns = useMemo(
     () => [
@@ -152,6 +150,18 @@ const ProductTable = ({
         size: 140,
         meta: {
           color: tableSettings?.find((i) => i.key === "price")?.color || "#fff",
+        },
+      }),
+      columnHelper.display({
+        id: "purchesPrice",
+        header: "Приходная цена",
+        cell: (info) => {
+          const price = info.row.original.warehouse_items?.[0]?.purchase_price_amount;
+          return price ? `${price.toLocaleString()} сум` : "-";
+        },
+        size: 140,
+        meta: {
+          color: tableSettings?.find((i) => i.key === "purchesPrice")?.color || "#fff",
         },
       }),
       columnHelper.display({

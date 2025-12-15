@@ -7,7 +7,7 @@ import { Calculator, Discount, PriceForm } from "@/widgets";
 import { useEffect, useMemo } from "react";
 
 type PaymentSectionPropsType = {
-  type: "sale" | "refund";
+  type: "sale" | "refund" | "purchase";
   activeDraft: DraftSaleSchema & DraftRefundSchema;
   activeSelectPaymetype: number;
   value: string;

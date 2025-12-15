@@ -152,7 +152,7 @@ const FiscalizedPage = () => {
   const { TBody, Tr, Td } = Table;
 
   return (
-    <div className="overflow-x-auto bg-white shadow rounded-3xl p-6 h-[calc(100vh-100px)]">
+    <div className="overflow-x-auto bg-white rounded-3xl p-6 h-[calc(100vh-100px)]">
       <div className="flex justify-end mb-3">
         <AddFiscalDevice />
       </div>

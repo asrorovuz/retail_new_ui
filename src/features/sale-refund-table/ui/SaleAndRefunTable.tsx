@@ -19,11 +19,12 @@ import { HiTrash } from "react-icons/hi";
 import Empty from "@/shared/ui/kit-pro/empty/Empty";
 import type { DraftRefundSchema } from "@/@types/refund";
 import { CommonDeleteDialog } from "@/widgets/ui/delete-dialog/CommonDeleteDialog";
+import type { DraftPurchaseSchema } from "@/@types/purchase";
 
 type PropsType = {
-  type: "sale" | "refund";
-  draft: DraftSaleSchema[] | DraftRefundSchema[];
-  activeDraft: DraftSaleSchema | DraftRefundSchema;
+  type: "sale" | "refund" | "purchase";
+  draft: DraftSaleSchema[] | DraftRefundSchema[] | DraftPurchaseSchema[];
+  activeDraft: DraftSaleSchema | DraftRefundSchema | DraftPurchaseSchema;
   expandedRow: string | null;
   expendedId: number | null;
   setExpandedRow: React.Dispatch<React.SetStateAction<string | null>>;
@@ -109,7 +110,7 @@ const SaleAndRefunTable = ({
 
   const table = useReactTable({
     data: activeDraft?.items ?? [],
-    columns: columns(),
+    columns: columns(type),
     getRowCanExpand: () => true,
     getCoreRowModel: getCoreRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
@@ -167,7 +168,8 @@ const SaleAndRefunTable = ({
                       className={classNames(
                         oddEven ? "bg-gray-100" : "bg-white",
                         expandedRow?.toString() === row.id &&
-                          (type === "sale" ? "text-primary" : "text-red-500")
+                          (type === "sale" ? "text-primary" : type === "refund" ? "text-red-500" : "text-green-600"),
+                        "cursor-pointer"
                       )}
                     >
                       {row.getVisibleCells().map((cell) => (
@@ -206,7 +208,7 @@ const SaleAndRefunTable = ({
               <div
                 className={classNames(
                   "text-base font-semibold",
-                  type === "sale" ? "text-primary" : "text-red-500"
+                  type === "sale" ? "text-primary" : type === "refund" ? "text-red-500" : "text-green-600"
                 )}
               >
                 <FormattedNumber value={totalPrice} scale={2} /> сум{" "}

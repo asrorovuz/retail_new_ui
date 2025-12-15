@@ -29,7 +29,6 @@ const ProductsPage = () => {
   const { settings } = useSettingsStore((s) => s);
 
   useEffect(() => {
-
     const onScan = eventBus.on("BARCODE_SCANNED", (code) => {
       const val: string = handleBarcodeScanned(code);
       setBarcode(val);
@@ -62,7 +61,7 @@ const ProductsPage = () => {
     <div className="bg-white rounded-3xl p-6 h-[calc(100vh-100px)]">
       <div className="mb-3 flex items-center gap-x-4">
         <SearchProduct setSearch={setSearch} search={search} />
-        <UploadExcelFile/>
+        <UploadExcelFile />
         <AddProductModal
           type={modalType}
           pageType={"products"}

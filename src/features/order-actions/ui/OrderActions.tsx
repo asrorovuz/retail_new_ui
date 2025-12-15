@@ -7,7 +7,7 @@ import type {
   RegisterSaleModel,
   SaleItemModel,
 } from "@/@types/sale";
-import type { DraftRefundSchema } from "@/@types/refund";
+import type { DraftRefundSchema, RegisterRefundModel } from "@/@types/refund";
 import classNames from "@/shared/lib/classNames";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
@@ -36,9 +36,11 @@ import {
 } from "@/app/constants/fiscalized.constants";
 import PaymeWhithQR from "@/features/modals/ui/PaymeWhithQR";
 import { useRegisterRefundApi } from "@/entities/refund/repository";
+import { useRegisterPurchaseApi } from "@/entities/purchase/repository";
+import type { RegisterPurchaseModel } from "@/@types/purchase";
 
 type OrderActionType = {
-  type: "sale" | "refund";
+  type: "sale" | "refund" | "purchase";
   draft: DraftSaleSchema[] & DraftRefundSchema[];
   activeDraft: DraftSaleSchema & DraftRefundSchema;
   activeSelectPaymetype: number;
@@ -78,6 +80,7 @@ const OrderActions = ({
   const { data: cashboxData } = useCashboxApi();
   const { mutate: registerSaleMutate } = useRegisterSellApi();
   const { mutate: registerRefundMutate } = useRegisterRefundApi();
+  const { mutate: registerPurchaseMutate } = useRegisterPurchaseApi();
   const { mutate: createFiscalized, isPending: fiscalPending } =
     useCreateFiscalizedApi();
   const { data: fiscalData = [] } = useFescalDeviceApi(fiscalizedModal);
@@ -131,7 +134,8 @@ const OrderActions = ({
 
   const handleCancelPrint = () => {
     setPrintSelect(false);
-    if (settings?.fiscalization_enabled) setFiscalizedModal(true);
+    if (settings?.fiscalization_enabled && type === "sale")
+      setFiscalizedModal(true);
     else setSaleId(null);
   };
 
@@ -193,7 +197,7 @@ const OrderActions = ({
     callback: (success: boolean) => void
   ) {
     // init payload
-    const payload: RegisterSaleModel = {
+    const payload: RegisterSaleModel & RegisterRefundModel & RegisterPurchaseModel = {
       is_approved: true,
       exact_discount: [],
       items: [],
@@ -239,25 +243,33 @@ const OrderActions = ({
       }
       // set payment
       if (paymentAmounts) {
-        payload.payment = {
+        console.log(payload, paymentAmounts, "payload");
+
+        const paymentKey = type === "sale" ? "payment" : "payout";
+
+        // Boshlang'ich obyekt yaratamiz
+        payload[paymentKey] = {
           debt_states: [],
           cash_box_states: [],
         };
 
         for (let i = 0; i < paymentAmounts.length; i++) {
           const saleAndRefundPayment = paymentAmounts[i];
+
           if (saleAndRefundPayment?.amount > 0) {
-            // append debt state
-            payload?.payment?.debt_states.push({
-              amount: saleAndRefundPayment?.amount,
+            const paymentObject = payload[paymentKey];
+
+            // Debt
+            paymentObject.debt_states.push({
+              amount: saleAndRefundPayment.amount,
               currency_code: nationalCurrency?.code,
             });
 
-            // append cash-box state
-            payload?.payment?.cash_box_states.push({
-              amount: saleAndRefundPayment?.amount,
+            // Cash-box
+            paymentObject.cash_box_states.push({
+              amount: saleAndRefundPayment.amount,
               currency_code: nationalCurrency?.code,
-              type: saleAndRefundPayment?.paymentType,
+              type: saleAndRefundPayment.paymentType,
             });
           }
         }
@@ -265,22 +277,23 @@ const OrderActions = ({
     }
 
     const registerMutate =
-      type === "sale" ? registerSaleMutate : registerRefundMutate;
+      type === "sale"
+        ? registerSaleMutate
+        : type === "refund"
+        ? registerRefundMutate
+        : registerPurchaseMutate;
 
     // register sale
     registerMutate(payload, {
       onSuccess: (data: any) => {
-        if (data?.sale?.id) {
-          setSaleId(data?.sale?.id);
-
-          console.log(data, "print data");
-          
+        if (data?.sale?.id || data?.purchase?.id) {
+          setSaleId(data?.sale?.id || data?.purchase?.id);
           if (settings?.auto_print_receipt && settings?.printer_name) {
             onPrint(data?.sale?.id);
           } else if (!settings?.auto_print_receipt && settings?.printer_name) {
             setPrintSelect(true);
-          }else{
-            handleCancelPrint()
+          } else {
+            handleCancelPrint();
           }
         }
 
@@ -377,7 +390,7 @@ const OrderActions = ({
       </CommonDeleteDialog>
       <Button
         variant="plain"
-        disabled={type === "refund"}
+        disabled={type === "refund" || type === "purchase"}
         size="sm"
         onClick={() => setDiscountModal(true)}
         icon={<MdOutlineDiscount />}
