@@ -56,7 +56,6 @@ const Header = () => {
       setActiveShift(null);
     }
   }, [shift, error]);
-  
 
   return (
     <header className="bg-white rounded-2xl p-2 flex justify-between items-center">
@@ -121,6 +120,46 @@ const Header = () => {
           </div>
         </MenuItem>
         <Dropdown renderTitle={<BsThreeDotsVertical color="#333" size={20} />}>
+          <Dropdown.Item>
+            <MenuItem eventKey="history/sales">
+              <div
+                className={`px-4 py-2 rounded-md cursor-pointer text-[14px] xl:text-[16px] transition-colors duration-200 ${
+                  activeKey === "history/sales"
+                    ? "text-blue-500"
+                    : "hover:bg-gray-100 text-gray-700"
+                }`}
+              >
+                <span>Продажа</span>
+              </div>
+            </MenuItem>
+          </Dropdown.Item>
+          <Dropdown.Item>
+            <MenuItem eventKey="history/refund">
+              <div
+                className={`px-4 py-2 rounded-md cursor-pointer text-[14px] xl:text-[16px] transition-colors duration-200 ${
+                  activeKey === "history/refund"
+                    ? "text-red-500"
+                    : "hover:bg-gray-100 text-gray-700"
+                }`}
+              >
+                <span>Возврат</span>
+              </div>
+            </MenuItem>
+          </Dropdown.Item>
+          <Dropdown.Item>
+            <MenuItem eventKey="history/purchase">
+              <div
+                className={`px-4 py-2 rounded-md cursor-pointer text-[14px] xl:text-[16px] transition-colors duration-200 ${
+                  activeKey === "history/purchase"
+                    ? "text-green-500"
+                    : "hover:bg-gray-100 text-gray-700"
+                }`}
+              >
+                <span>Приход</span>
+              </div>
+            </MenuItem>
+          </Dropdown.Item>
+
           <Dropdown.Item>
             <MenuItem eventKey="settings">
               <div

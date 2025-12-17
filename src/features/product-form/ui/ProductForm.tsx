@@ -40,6 +40,7 @@ const ProductForm: FC<ProductFormType> = ({
   type,
   productId,
   isOpen,
+  catalogLoading,
   setIsOpen,
   setType,
   defaultValue,
@@ -276,6 +277,7 @@ const ProductForm: FC<ProductFormType> = ({
                   {...field}
                   type="text"
                   autoComplete="off"
+                  disabled={catalogLoading}
                   autoFocus={!!fieldState?.error}
                   invalid={!!fieldState?.error}
                   placeholder="Введите название товара"

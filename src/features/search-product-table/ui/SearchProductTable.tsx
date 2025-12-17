@@ -60,14 +60,12 @@ const SearchProductTable = ({
         (p: PriceType) => p?.product_price_type?.is_primary
       ) || item?.prices?.[0];
     const quantity = operationItem?.quantity ?? 0;
-    console.log(item, "455454");
-    
 
     const newItem = {
       productId: item?.id,
       productName: item?.name,
       productPackageName: item?.measurement_name,
-      priceTypeId: type !== "purchase" ? packagePrice?.product_price_type?.id : 0,
+      priceTypeId: type === "purchase" ? 0 : packagePrice?.product_price_type?.id,
       priceAmount: packagePrice?.amount,
       quantity: quantity + 1,
       totalAmount: (quantity + 1) * packagePrice?.amount,

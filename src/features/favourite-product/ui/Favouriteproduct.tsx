@@ -56,8 +56,6 @@ const FavouriteProduct = ({
         (p: PriceType) => p.product_price_type.is_primary
       ) || item.product.prices[0];
     const quantity = operationItem?.quantity ?? 0;
-    console.log(item, "45s");
-    
 
     const newItem = {
       productId: item?.product?.id,

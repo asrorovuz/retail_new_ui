@@ -115,7 +115,6 @@ const CashboxFormModal = ({
     };
 
     if (modalType === "edit") {
-      console.log(payload, "55");
 
       updateMutateFunction(
         { id: cashboxDataById?.id, payload },
@@ -147,7 +146,6 @@ const CashboxFormModal = ({
       });
     }
   };
-console.log(type);
 
   useEffect(() => {
     if (!isOpen) {
@@ -233,15 +231,17 @@ console.log(type);
                 invalid={Boolean(fieldState.error)}
                 asterisk={true}
               >
-                <DatePicker
-                  {...field}
-                  size={"sm"}
-                  className={"w-full"}
-                  inputtable={true}
-                  inputFormat={"DD-MM-YYYY"}
-                  closePickerOnChange={true}
-                  placeholder={"Выберите дату"}
-                />
+                <div className="relative">
+                  <DatePicker
+                    {...field}
+                    size={"sm"}
+                    className={"w-full"}
+                    inputtable={true}
+                    inputFormat={"DD-MM-YYYY"}
+                    closePickerOnChange={true}
+                    placeholder={"Выберите дату"}
+                  />
+                </div>
               </FormItem>
             )}
           />

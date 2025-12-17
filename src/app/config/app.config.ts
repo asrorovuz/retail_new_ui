@@ -6,8 +6,8 @@ export const queryConfig = {
       refetchOnReconnect: false,         // revalidateOnReconnect
       staleTime: 0,                       // ma’lumot qancha vaqt eskirmaydi
       cacheTime: 2000,                     // dedupingInterval ga yaqin
-      retry: 4,                           // errorRetryCount
-      retryDelay: () => 10000, // errorRetryInterval
+      retry: 2,                           // errorRetryCount
+      retryDelay: () => 5000, // errorRetryInterval
       onError: (error: any) => {
         console.error("React Query Error:", error);
       },

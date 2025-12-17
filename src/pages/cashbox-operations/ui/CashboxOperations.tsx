@@ -14,7 +14,7 @@ import { useCashboxApi } from "@/entities/init/repository";
 import CashboxFormModal from "@/features/cashbox-form";
 import classNames from "@/shared/lib/classNames";
 import CurrencyName from "@/shared/lib/CurrencyName";
-import { Button, Pagination, Table } from "@/shared/ui/kit";
+import { Button, DatePicker, Pagination, Table } from "@/shared/ui/kit";
 import Empty from "@/shared/ui/kit-pro/empty/Empty";
 import TBody from "@/shared/ui/kit/Table/TBody";
 import Td from "@/shared/ui/kit/Table/Td";
@@ -35,11 +35,18 @@ import { IoIosArrowRoundBack } from "react-icons/io";
 import { IoTrashOutline } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 
+const defaultStart = dayjs().startOf("day");
+const defaultEnd = dayjs().endOf("day");
+
 const CashboxOperations = () => {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [modalType, setModalType] = useState<"add" | "edit">("add");
   const [id, setId] = useState<number | null>(null);
+  const [startDate, setStartDate] = useState<Date | null>(
+    defaultStart.toDate()
+  );
+  const [endDate, setEndDate] = useState<Date | null>(defaultStart.toDate());
   const { type, setType } = useCashboxStore((state) => state);
 
   const { data } = useCashboxApi();
@@ -54,8 +61,8 @@ const CashboxOperations = () => {
     skip: 0,
     limit: 20,
     cash_box_id: data?.[0]?.id,
-    date_start: dayjs().startOf("day").format("DD-MM-YYYY HH:mm:ss"),
-    date_end: dayjs().endOf("day").format("DD-MM-YYYY HH:mm:ss"),
+    date_start: defaultStart.format("YYYY-MM-DD HH:mm:ss"),
+    date_end: defaultEnd.format("YYYY-MM-DD HH:mm:ss"),
   });
 
   const { data: cashInData, isPending: cashInPending } = useCashInApi(
@@ -222,6 +229,30 @@ const CashboxOperations = () => {
     []
   );
 
+  const handleStartDateChange = (date: Date | null) => {
+    const start = dayjs(date).startOf("day");
+
+    setStartDate(date);
+
+    setParams((prev: any) => ({
+      ...prev,
+      skip: 0,
+      date_start: start.format("YYYY-MM-DD HH:mm:ss"),
+    }));
+  };
+
+  const handleEndDateChange = (date: Date | null) => {
+    const end = dayjs(date).endOf("day");
+
+    setEndDate(date);
+
+    setParams((prev: any) => ({
+      ...prev,
+      skip: 0,
+      date_end: end.format("YYYY-MM-DD HH:mm:ss"),
+    }));
+  };
+
   const table = useReactTable({
     data: (selectedData as unknown as any) || [],
     columns,
@@ -252,16 +283,42 @@ const CashboxOperations = () => {
             {type === 3 && "Расход"}
           </h2>
         </Button>
-        <Button
-          onClick={() => {
-            setIsOpen(true);
-            setModalType("add");
-          }}
-          size="sm"
-          variant="solid"
-        >
-          + Добавить
-        </Button>
+        <div className="flex items-center gap-x-3">
+          <div className="relative">
+            <DatePicker
+              inputFormat="DD-MM-YYYY"
+              size="sm"
+              placeholder={"Выберите дату"}
+              closePickerOnChange={true}
+              inputtable={true}
+              onChange={handleStartDateChange}
+              defaultValue={startDate}
+              value={startDate}
+            />
+          </div>
+          <div className="relative">
+            <DatePicker
+              inputFormat="DD-MM-YYYY"
+              size="sm"
+              placeholder={"Выберите дату"}
+              closePickerOnChange={true}
+              inputtable={true}
+              onChange={handleEndDateChange}
+              defaultValue={endDate}
+              value={endDate}
+            />
+          </div>
+          <Button
+            onClick={() => {
+              setIsOpen(true);
+              setModalType("add");
+            }}
+            size="sm"
+            variant="solid"
+          >
+            + Добавить
+          </Button>
+        </div>
       </div>
 
       <div className="flex-1 mb-3 border border-gray-300 rounded-3xl overflow-y-auto">

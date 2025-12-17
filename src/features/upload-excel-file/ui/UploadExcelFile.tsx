@@ -39,6 +39,7 @@ import { useSettingsStore } from "@/app/store/useSettingsStore";
 import StatusBar from "@/widgets/ui/status-bar/StatusBar";
 import { exportToExcel } from "@/shared/lib/arrayToExcelConvert";
 import { handleError } from "@/shared/lib/handleErrorExcel";
+import Empty from "@/shared/ui/kit-pro/empty/Empty";
 
 interface InitialState {
   rowsCount: number;
@@ -97,8 +98,10 @@ const UploadExcelFile = () => {
   const { data: productData } = useAllProductApi();
   const { data: currencies } = useCurrancyApi();
   const { data: categoryData } = useCategoryApi();
-  const { mutate: createWithExcel, isPending: loadingExcel } =
-    useCreateProductWithExcel();
+  const {
+    mutate: createWithExcel,
+    isPending: loadingExcel
+  } = useCreateProductWithExcel();
   const { mutate: createRegister } = useCreateregister();
   const { mutateAsync: createProduct } = useCreateProduct();
   const { mutateAsync: updateProduct } = useUpdateProduct();
@@ -110,6 +113,7 @@ const UploadExcelFile = () => {
   const [selectedSelect, setSelectedSelect] = useState<Record<number, string>>(
     {}
   );
+  const [loadData, setLoadData] = useState(false)
   const [faildData, setFaildData] = useState<
     Array<{ index: number; row: (string | number | null)[] }>
   >([]);
@@ -155,6 +159,7 @@ const UploadExcelFile = () => {
   }, []);
 
   const onClose = useCallback(() => {
+    setLoadData(true)
     setIsOpen(false);
     clearFile();
   }, [clearFile]);
@@ -174,6 +179,7 @@ const UploadExcelFile = () => {
         { content: base64Files[0].content },
         {
           onSuccess(response) {
+            setLoadData(!!response?.length)
             setData(response);
             showSuccessMessage(
               messages.uz.SUCCESS_MESSAGE,
@@ -483,7 +489,7 @@ const UploadExcelFile = () => {
           ) : (
             ""
           )}
-          {data && data?.length ? (
+          {data && data?.length > 0 && !loadingExcel ? (
             <>
               <ProductHeader
                 count={data?.length - initialState?.rowsCount}
@@ -511,6 +517,17 @@ const UploadExcelFile = () => {
             <div className="h-20">{loadingExcel ? <Loading /> : ""}</div>
           )}
         </div>
+        {!loadData ? (
+          <div>
+            <Empty
+              size={150}
+              textSize="22px"
+              text="Данные не найдены или формат файла некорректен"
+            />
+          </div>
+        ) : (
+          ""
+        )}
       </Dialog>
       <StatusBar
         handleCloseBar={handleCloseBar}

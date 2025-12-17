@@ -54,7 +54,7 @@
 }
 
 .picker {
-  @apply z-40;
+  @apply z-40 !top-10;
 }
 
 .picker-panel {

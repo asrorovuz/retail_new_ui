@@ -110,7 +110,7 @@ const SaleAndRefunTable = ({
 
   const table = useReactTable({
     data: activeDraft?.items ?? [],
-    columns: columns(type),
+    columns: columns(),
     getRowCanExpand: () => true,
     getCoreRowModel: getCoreRowModel(),
     getExpandedRowModel: getExpandedRowModel(),

@@ -356,7 +356,7 @@ const UpdateShiftDialog = ({ isOpen, onClose }: PropsType) => {
   });
 
   useEffect(() => {
-    console.log(activeShift, "activeShift");
+    console.log(activeShift, shift, "activeShift");
 
     if(isOpen && !activeShift) {
       setActiveShift(null);

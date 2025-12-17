@@ -197,7 +197,9 @@ const OrderActions = ({
     callback: (success: boolean) => void
   ) {
     // init payload
-    const payload: RegisterSaleModel & RegisterRefundModel & RegisterPurchaseModel = {
+    const payload: RegisterSaleModel &
+      RegisterRefundModel &
+      RegisterPurchaseModel = {
       is_approved: true,
       exact_discount: [],
       items: [],

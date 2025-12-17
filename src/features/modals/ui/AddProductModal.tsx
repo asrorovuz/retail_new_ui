@@ -21,7 +21,7 @@ const AddProductModal: FC<ProductModalProps> = ({
   isOpen,
 }) => {
   const [defaultValues, setDefaultValues] = useState<ProductDefaultValues>();
-  const { data: catalogData } = useCatalogSearchApi(barcode || "", isOpen);
+  const { data: catalogData, isLoading } = useCatalogSearchApi(barcode || "", isOpen);
   const openModal = () => {
     setType("add");
     setIsOpen(true);
@@ -102,6 +102,7 @@ const AddProductModal: FC<ProductModalProps> = ({
           type={type}
           isOpen={isOpen}
           setIsOpen={setIsOpen}
+          catalogLoading={isLoading}
           setType={setType}
           defaultValue={defaultValues!} // '!' bilan null bo'lmasligini bildiramiz
           barcode={barcode}

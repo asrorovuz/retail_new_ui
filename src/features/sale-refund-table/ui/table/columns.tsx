@@ -11,7 +11,7 @@ export interface ProductRow {
 }
 
 // 🔹 Ustunlarni qaytaruvchi funksiya
-export const columns = (type: "sale" | "refund" | "purchase"): ColumnDef<any>[] => {
+export const columns = (): ColumnDef<any>[] => {
   return [
     {
       header: () => (

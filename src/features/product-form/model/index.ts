@@ -5,6 +5,7 @@ export type ProductFormType = {
   type: "add" | "edit" | "print";
   productId?: number | null;
   isOpen: boolean;
+  catalogLoading?: boolean;
   setIsOpen: (val: boolean) => void;
   setType: (tyep: "add" | "edit") => void;
   defaultValue: Product | ProductDefaultValues;
