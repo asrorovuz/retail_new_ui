@@ -1,15 +1,34 @@
-import { Button, DatePicker, Form } from "@/shared/ui/kit";
+import {
+  useContragentApi,
+  useEmployeeApi,
+} from "@/entities/history/repository";
+import { useWarehouseApi } from "@/entities/init/repository";
+import { Button, DatePicker, Form, Select } from "@/shared/ui/kit";
 import dayjs from "dayjs";
+import { useEffect, useMemo } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { FiSearch } from "react-icons/fi";
+import { MdClose } from "react-icons/md";
 
 interface ParamType {
   date_start: Date | null;
   date_end: Date | null;
-  is_approved: boolean | null;
-  contractor_id: number | null;
-  used_warehouses: number[] | null;
-  employee_id: number | null;
-  is_for_debt: boolean | null;
+  is_approved: any | OptionType;
+  contractor_id: any | null;
+  used_warehouses: any | null;
+  employee_id: any | null;
+  is_for_debt: null | OptionType;
+}
+
+interface PropsType {
+  type: "sale" | "refund" | "purchase";
+  isOpenFilter: boolean;
+  setParams: any;
+}
+
+interface OptionType {
+  value: boolean;
+  label: string;
 }
 
 const initialValue = {
@@ -22,13 +41,54 @@ const initialValue = {
   is_for_debt: null,
 };
 
-const Filter = () => {
+const booleanOptions = [
+  { value: true, label: "Да" },
+  { value: false, label: "Нет" },
+];
+const statusOptions = [
+  { value: true, label: "Одобренный" },
+  { value: false, label: "Неодобренный" },
+];
+
+const Filter = ({ type, isOpenFilter = false, setParams }: PropsType) => {
   const { control, handleSubmit, reset } = useForm<ParamType>({
     defaultValues: initialValue,
   });
 
+  const { data: wareHouseData } = useWarehouseApi();
+  const { data: employeeData } = useEmployeeApi(isOpenFilter);
+  const { data: contragentData } = useContragentApi(isOpenFilter);
+
+  const employeeOption = useMemo(() => {
+    return employeeData?.map((item: any) => {
+      return {
+        label: item?.name,
+        value: item?.id,
+      };
+    });
+  }, [employeeData]);
+
+  const contragentOption = useMemo(() => {
+    return contragentData?.map((item: any) => {
+      return {
+        label: item?.name,
+        value: item?.id,
+      };
+    });
+  }, [contragentData]);
+
+  const wareHouseOption = useMemo(() => {
+    return wareHouseData?.map((item: any) => {
+      return {
+        label: item?.name,
+        value: item?.id,
+      };
+    });
+  }, [contragentData]);
+
   const clearField = () => {
     reset(initialValue);
+    setParams((prev: any) => ({...prev, ...initialValue}))
   };
 
   const onSubmit = (data: ParamType) => {
@@ -41,29 +101,39 @@ const Filter = () => {
       date_end: data.date_end
         ? dayjs(data.date_end).endOf("day").format("YYYY-MM-DD HH:mm:ss")
         : null,
+      is_approved: data?.is_approved?.value ?? null,
+      is_for_debt: data?.is_for_debt?.value ?? null,
+      used_warehouses: data?.used_warehouses?.value ?? null,
+      contractor_id: data?.contractor_id?.value ?? null,
+      employee_id: data?.employee_id?.value ?? null,
     };
 
-    console.log(formattedData, "formattedData");
+    setParams((prev: any) => ({...prev, ...formattedData}))
   };
 
-  return (
+  useEffect(() => {
+    clearField()
+  }, [type, isOpenFilter]);
+
+  return isOpenFilter ? (
     <Form onSubmit={handleSubmit(onSubmit)}>
-      <div className="flex items-center flex-wrap gap-x-5 mb-5">
+      <div className="grid grid-cols-3 xl:grid-cols-4 gap-x-2 gap-y-5 mb-5">
         <Controller
           name="date_start"
           control={control}
           render={({ field }) => {
             return (
-              <DatePicker
-                inputFormat="DD-MM-YYYY"
-                size="sm"
-                className="max-w-[250px]"
-                placeholder={"Выберите дату"}
-                closePickerOnChange={true}
-                inputtable={true}
-                onChange={field.onChange}
-                value={field.value}
-              />
+              <div className="relative">
+                <DatePicker
+                  inputFormat="DD-MM-YYYY"
+                  size="sm"
+                  placeholder={"Дата начала"}
+                  closePickerOnChange={true}
+                  inputtable={true}
+                  onChange={field.onChange}
+                  value={field.value}
+                />
+              </div>
             );
           }}
         />
@@ -73,25 +143,111 @@ const Filter = () => {
           control={control}
           render={({ field }) => {
             return (
-              <DatePicker
-                inputFormat="DD-MM-YYYY"
+              <div className="relative">
+                <DatePicker
+                  inputFormat="DD-MM-YYYY"
+                  size="sm"
+                  placeholder={"Дата окончания"}
+                  closePickerOnChange={true}
+                  inputtable={true}
+                  onChange={field.onChange}
+                  value={field.value}
+                />
+              </div>
+            );
+          }}
+        />
+
+        <Controller
+          name="is_approved"
+          control={control}
+          render={({ field }) => {
+            return (
+              <Select
                 size="sm"
-                className="max-w-[250px]"
-                placeholder={"Выберите дату"}
-                closePickerOnChange={true}
-                inputtable={true}
-                onChange={field.onChange}
                 value={field.value}
+                isClearable
+                placeholder={"Статус"}
+                options={statusOptions}
+                onChange={field.onChange}
+              />
+            );
+          }}
+        />
+
+        <Controller
+          name="contractor_id"
+          control={control}
+          render={({ field }) => {
+            return (
+              <Select
+                size="sm"
+                value={field.value}
+                placeholder={"Контрагент"}
+                options={contragentOption}
+                onChange={field.onChange}
+              />
+            );
+          }}
+        />
+
+        <Controller
+          name="used_warehouses"
+          control={control}
+          render={({ field }) => {
+            return (
+              <Select
+                size="sm"
+                value={field.value}
+                options={wareHouseOption}
+                placeholder={"Склад"}
+                onChange={field.onChange}
+              />
+            );
+          }}
+        />
+
+        <Controller
+          name="employee_id"
+          control={control}
+          render={({ field }) => {
+            return (
+              <Select
+                size="sm"
+                value={field.value}
+                placeholder={"Сотрудник"}
+                options={employeeOption}
+                onChange={field.onChange}
+              />
+            );
+          }}
+        />
+
+        <Controller
+          name="is_for_debt"
+          control={control}
+          render={({ field }) => {
+            return (
+              <Select
+                size="sm"
+                value={field.value}
+                placeholder={"По долгу"}
+                options={booleanOptions}
+                onChange={field.onChange}
               />
             );
           }}
         />
       </div>
-      <div className="flex justify-end gap-x-2 w-full">
-        <Button onClick={clearField}>Сбросить</Button>
-        <Button variant="solid" type="submit">Найти</Button>
+      <div className="flex justify-end gap-x-2 w-full mb-5">
+        <Button icon={<MdClose />} onClick={clearField}>Сбросить</Button>
+        <Button icon={<FiSearch />} variant="solid" type="submit">
+          Найти
+        </Button>
       </div>
     </Form>
+  ) : (
+    ""
   );
 };
 

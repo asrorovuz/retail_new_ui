@@ -123,34 +123,38 @@ const Pagination = (props: PaginationProps) => {
 
       {/* 🔹 Sahifa o‘lchami tanlash */}
       <div className="pagination">
-        <Prev
-          currentPage={internalCurrentPage}
-          pagerClass={pagerClass}
-          onPrev={onPrev}
-        />
-        <Pager
-          pageCount={getInternalPageCount as number}
-          currentPage={internalCurrentPage}
-          pagerClass={pagerClass}
-          onChange={onPaginationChange}
-        />
-        <Next
-          currentPage={internalCurrentPage}
-          pageCount={getInternalPageCount as number}
-          pagerClass={pagerClass}
-          onNext={onNext}
-        />
-        {showSizeOption && <select
-          value={internalPageSize}
-          onChange={onPageSizeChange}
-          className="border border-gray-300 rounded-md px-2 py-1 text-[14px] mr-3 focus:outline-none focus:ring-1 focus:ring-blue-500"
-        >
-          {pageSizeOptions?.map((size) => (
-            <option key={size} value={size}>
-              {size} / страница
-            </option>
-          ))}
-        </select>}
+        <div className="inline-flex items-center">
+          <Prev
+            currentPage={internalCurrentPage}
+            pagerClass={pagerClass}
+            onPrev={onPrev}
+          />
+          <Pager
+            pageCount={getInternalPageCount as number}
+            currentPage={internalCurrentPage}
+            pagerClass={pagerClass}
+            onChange={onPaginationChange}
+          />
+          <Next
+            currentPage={internalCurrentPage}
+            pageCount={getInternalPageCount as number}
+            pagerClass={pagerClass}
+            onNext={onNext}
+          />
+        </div>
+        {showSizeOption && (
+          <select
+            value={internalPageSize}
+            onChange={onPageSizeChange}
+            className="border border-gray-300 rounded-md px-2 py-1 text-[14px] mr-3 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          >
+            {pageSizeOptions?.map((size) => (
+              <option key={size} value={size}>
+                {size} / страница
+              </option>
+            ))}
+          </select>
+        )}
       </div>
     </div>
   );

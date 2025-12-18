@@ -19,7 +19,7 @@ const initialState: SettingsStoreInitialState = {
     { key: "sku", visible: true, color: "" },
     { key: "code", visible: true, color: "" },
   ],
-  wareHouseId: null
+  wareHouseId: null,
 };
 
 export const useSettingsStore = create<SettingsStoreInitialState & SettingsStoreActions>(

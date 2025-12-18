@@ -1,5 +1,5 @@
 .pagination {
-  @apply relative z-0 inline-flex items-center rounded-lg;
+  @apply w-full relative z-0 inline-flex justify-between items-center rounded-lg;
 }
 
 .pagination-pager {

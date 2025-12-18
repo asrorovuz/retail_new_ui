@@ -142,4 +142,12 @@ export const pathServices = {
     //DELETE
     deletePaymentProvider: "/api/payment-provider/delete/",
   },
+
+  history: {
+    getEmployePath: "/api/employee/get",
+    getContragentPath: "/api/contractor/get",
+    getSellPath: "/api/sale/get",
+    getRefundPath: "/api/refund/get",
+    getPurchasePath: "/api/purchase/get"
+  }
 };
