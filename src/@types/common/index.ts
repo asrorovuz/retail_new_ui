@@ -34,6 +34,10 @@ export type PrinterPostType =
   | {
       purchase_id: number | null;
       printer_name: string;
+    }
+  | {
+      refund_id: number | null;
+      printer_name: string;
     };
 
 export type PaymentType = {

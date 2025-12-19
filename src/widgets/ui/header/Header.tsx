@@ -1,8 +1,6 @@
-import type { Shift } from "@/@types/shift/schema";
 import { useAuthContext } from "@/app/providers/AuthProvider";
 import { useSettingsStore } from "@/app/store/useSettingsStore";
 import { useVersionStore } from "@/app/store/useVersionStore";
-import { useShiftApi } from "@/entities/init/repository";
 import { CreateShiftDialog, UpdateShiftDialog } from "@/features/shift";
 import UpdateVersion from "@/features/update";
 import { Button, Dropdown } from "@/shared/ui/kit";
@@ -10,19 +8,10 @@ import Alert from "@/shared/ui/kit-pro/alert/Alert";
 import Menu from "@/shared/ui/kit/Menu/Menu";
 import MenuItem from "@/shared/ui/kit/Menu/MenuItem";
 import { LogoutSvg } from "@/shared/ui/svg/LogoutSvg";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { FiRefreshCcw } from "react-icons/fi";
 import { useLocation, useNavigate } from "react-router-dom";
-
-interface ShiftError extends Error {
-  active_shift_not_found?: boolean;
-  response?: {
-    data?: {
-      active_shift_not_found?: boolean;
-    };
-  };
-}
 
 const Header = () => {
   const location = useLocation();
@@ -31,13 +20,8 @@ const Header = () => {
   const [shiftUpdateModal, setShiftUpdateModal] = useState(false);
   const navigate = useNavigate();
 
-  const { activeShift, setActiveShift } = useSettingsStore();
+  const { activeShift } = useSettingsStore();
   const version = useVersionStore((store) => store.versions);
-
-  const { data: shift, error } = useShiftApi() as {
-    data: Shift | null;
-    error: ShiftError | null;
-  };
 
   const activeKey = location.pathname.replace("/", "") || "sales";
   const { logout } = useAuthContext();
@@ -45,17 +29,6 @@ const Header = () => {
   const handleSelect = (eventKey: string) => {
     navigate(eventKey);
   };
-
-  useEffect(() => {
-    if (shift) {
-      setActiveShift(shift);
-    } else if (
-      error?.active_shift_not_found ||
-      error?.response?.data?.active_shift_not_found
-    ) {
-      setActiveShift(null);
-    }
-  }, [shift, error]);
 
   return (
     <header className="bg-white rounded-2xl p-2 flex justify-between items-center">
@@ -220,13 +193,9 @@ const Header = () => {
         <UpdateVersion />
         <div className="relative">
           <Button
-            onClick={() => {
-              if (activeShift) {
-                setShiftUpdateModal(true);
-              } else {
-                setShiftAddModal(true);
-              }
-            }}
+            onClick={() =>
+              activeShift ? setShiftUpdateModal(true) : setShiftAddModal(true)
+            }
             className="!text-[14px] !xl:text-base !font-medium !xl:font-semibold"
             variant="solid"
             icon={<FiRefreshCcw />}

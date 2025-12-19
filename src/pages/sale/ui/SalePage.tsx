@@ -42,6 +42,8 @@ const SalePage = () => {
     (store) => store
   );
 
+  console.log(draftSales, "draft");
+  
   const { data, isPending } = useAllProductApi(50, 1, debouncedSearch || "");
   const {
     data: findBarcodeData,

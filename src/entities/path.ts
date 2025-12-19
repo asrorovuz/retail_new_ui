@@ -147,7 +147,15 @@ export const pathServices = {
     getEmployePath: "/api/employee/get",
     getContragentPath: "/api/contractor/get",
     getSellPath: "/api/sale/get",
+    getSellIdPath: "/api/sale/",
     getRefundPath: "/api/refund/get",
-    getPurchasePath: "/api/purchase/get"
+    getRefundIdPath: "/api/refund/",
+    getPurchasePath: "/api/purchase/get",
+    getPurchaseIdPath: "/api/purchase/",
+
+    // DELETE 
+    deleteSalePath: "/api/sale/delete/",
+    deleteRefundPath: "/api/refund/delete/",
+    deletePurchasePath: "/api/purchase/delete/"
   }
 };

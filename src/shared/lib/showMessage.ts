@@ -36,28 +36,6 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
     err || { message: "Unknown error" };
   const statusCode = err?.code || err?.status_code;
 
-  // 🔹 err.data yoki err.data.message bo‘lishi mumkin
-  // if (typeof err === "object" && err !== null) {
-  //   const maybeErr = err as Record<string, any>;
-  //   if (maybeErr.data) {
-  //     error = maybeErr.data.message || maybeErr.data;
-  //   }
-  // }
-
-  // 1️⃣ - server (runtime) xatoliklar
-  // if (error instanceof Error) {
-  //   return toast.error(
-  //     lang === "ru"
-  //       ? `Ошибка: ${error.message}`
-  //       : `Xatolik: ${error.message}`
-  //   );
-  // }
-
-  // if(status_code >= 500){
-
-  //   return
-  // }
-
   if (typeof error === "string" && statusCode === 404) {
     return toast.error(
       lang === "ru" ? "Такая страница не найдена" : "Bunday sahifa mavjud emas",

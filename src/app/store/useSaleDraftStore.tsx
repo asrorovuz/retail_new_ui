@@ -96,8 +96,6 @@ export const useDraftSaleStore = create<
           const draftSaleItem = activeSale.items.find((i) => {
             return (
               i.productId === draftItem.productId 
-              // &&
-              // i.productPackageId === draftItem.productPackageId
             );
           });
 

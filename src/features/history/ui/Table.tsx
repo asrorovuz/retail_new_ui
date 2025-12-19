@@ -1,7 +1,12 @@
+import { messages } from "@/app/constants/message.request";
+import { PaymentTypes } from "@/app/constants/payment.types";
+import { useDraftSaleStore } from "@/app/store/useSaleDraftStore";
+import { useDeleteTransactions } from "@/entities/history/repository";
 import classNames from "@/shared/lib/classNames";
 import CurrencyName from "@/shared/lib/CurrencyName";
 import { onChangePagination } from "@/shared/lib/onPaginationChange";
 import payment from "@/shared/lib/payment";
+import { showErrorMessage, showSuccessMessage } from "@/shared/lib/showMessage";
 import { Pagination, Table, Tag, Tooltip } from "@/shared/ui/kit";
 import Empty from "@/shared/ui/kit-pro/empty/Empty";
 import FormattedNumber from "@/shared/ui/kit-pro/numeric-format/NumericFormat";
@@ -10,6 +15,7 @@ import Td from "@/shared/ui/kit/Table/Td";
 import Th from "@/shared/ui/kit/Table/Th";
 import THead from "@/shared/ui/kit/Table/THead";
 import Tr from "@/shared/ui/kit/Table/Tr";
+import { CommonDeleteDialog } from "@/widgets";
 import {
   useReactTable,
   getCoreRowModel,
@@ -18,26 +24,84 @@ import {
 } from "@tanstack/react-table";
 import { useMemo } from "react";
 import { TbEdit, TbEye, TbTrash } from "react-icons/tb";
+import { useNavigate } from "react-router-dom";
 
 const TableHistory = ({
   data,
   count,
   setParams,
+  setViewModal,
   params,
   loading,
   pay,
   payKey,
+  type,
 }: {
   data: any[];
   count: number;
   setParams: any;
+  setViewModal: any;
   params: any;
   loading: boolean;
   pay: boolean;
   payKey: string;
+  type: "sale" | "refund" | "purchase";
 }) => {
+  const navigate = useNavigate();
+  const { mutate: deleteMutation, isPending: deletePending } =
+    useDeleteTransactions(type);
   const onPaginationChange = (updater: any) => {
     onChangePagination(updater, params, setParams);
+  };
+
+  const { addDraftSale } = useDraftSaleStore();
+
+  const onDeleteFunc = (id: number) => {
+    deleteMutation(id, {
+      onSuccess() {
+        showSuccessMessage(
+          messages.uz.SUCCESS_MESSAGE,
+          messages.ru.SUCCESS_MESSAGE
+        );
+      },
+      onError(err) {
+        showErrorMessage(err);
+      },
+    });
+  };
+
+  const onSubmit = (sale: any) => {
+    console.log(sale, "sale, refund, purchase");
+    const items = sale?.items?.map((item: any) => {
+      return {
+        catalogCode: null,
+        catalogName: null,
+        
+      }
+    })
+    const payload = {
+      items: sale?.items,
+      isActive: true,
+      discountAmount: sale?.exact_discounts?.[0]?.amount,
+      payment: {
+        amounts: PaymentTypes.map((paymentType) => {
+          return { amount: 0, paymentType: paymentType.type };
+        }),
+      },
+    };
+
+    if (type === "sale") {
+      addDraftSale(payload);
+      navigate("/sales");
+    }
+
+    if (type === "refund") {
+      navigate("/refund");
+    }
+
+    if (type === "purchase") {
+      navigate("/purchase");
+    }
   };
 
   const columns = useMemo<ColumnDef<any>[]>(() => {
@@ -287,16 +351,18 @@ const TableHistory = ({
         header: () => {
           return "Действие";
         },
-        cell: () => {
+        cell: ({ row }) => {
           return (
-            <div className="flex justify-end text-lg gap-1">
+            <div className="flex justify-end items-center text-lg gap-1">
               <Tooltip wrapperClass="flex" title="View">
                 <span
                   className={`cursor-pointer p-2`}
-                  onClick={() => {
-                    // setVeiwModal(true);
-                    // setVeiwedItemId(row.original.id);
-                  }}
+                  onClick={() =>
+                    setViewModal({
+                      isOpen: true,
+                      id: row?.id,
+                    })
+                  }
                 >
                   <TbEye />
                 </span>
@@ -304,19 +370,18 @@ const TableHistory = ({
               <Tooltip wrapperClass="flex" title="View">
                 <span
                   className={`cursor-pointer p-2`}
-                  //   onClick={() => navigate(`/${operationType}/${row.id}`)}
+                  onClick={() => onSubmit(row.original)}
                 >
                   <TbEdit />
                 </span>
               </Tooltip>
-              <Tooltip wrapperClass="flex" title="Delete">
-                <span
-                  className="cursor-pointer p-2 hover:text-red-500"
-                  //   onClick={() => onOpenDeleteDataDialog(row.original)}
-                >
-                  <TbTrash />
-                </span>
-              </Tooltip>
+              <CommonDeleteDialog
+                children={<TbTrash />}
+                loading={deletePending}
+                title="Удалить"
+                description="Вы уверены, что хотите продолжить?"
+                onDelete={() => onDeleteFunc(row.original?.id)}
+              />
             </div>
           );
         },
@@ -402,7 +467,7 @@ const TableHistory = ({
             </TBody>
           </Table>
         ) : (
-          <Empty size={150} textSize="32px"/>
+          <Empty size={150} textSize="32px" />
         )}
       </div>
 

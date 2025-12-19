@@ -1,35 +1,59 @@
-import { useOperationCountApi, useRefundApi } from "@/entities/history/repository";
-import { Filter } from "@/features/history";
+import {
+  useOperationCountApi,
+  useRefundApi,
+  useRefundIdApi,
+} from "@/entities/history/repository";
+import { Filter, TransactionModal } from "@/features/history";
 import TableHistory from "@/features/history/ui/Table";
-import { Button } from "@/shared/ui/kit";
+import { Button, Dialog } from "@/shared/ui/kit";
+import Loading from "@/shared/ui/loading";
 import { useState } from "react";
 import { FaPlus } from "react-icons/fa";
 import { MdOutlineFilterAltOff } from "react-icons/md";
-
+import { useNavigate } from "react-router-dom";
 
 const RefundHistory = () => {
+  const navigate = useNavigate();
   const [isOpenFilter, setIsOpenFilter] = useState(false);
   const [params, setParams] = useState({
     skip: 0,
     limit: 10,
   });
+  const [viewModal, setViewModal] = useState({
+    isOpen: false,
+    id: null,
+  });
 
   const { data, isLoading } = useRefundApi(params);
+  const { data: dataId, isPending: isLoadingId } = useRefundIdApi(
+    viewModal?.id
+  );
   const { data: count } = useOperationCountApi(params, "refund");
+
+  const closeModal = () => {
+    setViewModal({ isOpen: false, id: null });
+  };
 
   return (
     <div>
       <Filter type="refund" isOpenFilter={isOpenFilter} setParams={setParams} />
-      <div className="bg-white flex justify-end gap-x-2 w-full mb-5">
-        <Button
-          icon={<MdOutlineFilterAltOff />}
-          onClick={() => setIsOpenFilter(!isOpenFilter)}
-        >
-          Фильтр
-        </Button>
-        <Button icon={<FaPlus />} variant="solid">
-          Создать
-        </Button>
+      <div className="bg-white flex justify-between items-center w-full mb-5">
+        <h2 className="text-lg font-semibold text-gray-800 ">Возвраты</h2>
+        <div className="flex gap-x-2">
+          <Button
+            icon={<MdOutlineFilterAltOff />}
+            onClick={() => setIsOpenFilter(!isOpenFilter)}
+          >
+            Фильтр
+          </Button>
+          <Button
+            icon={<FaPlus />}
+            variant="solid"
+            onClick={() => navigate("/refund")}
+          >
+            Создать
+          </Button>
+        </div>
       </div>
       <div>
         <TableHistory
@@ -37,13 +61,33 @@ const RefundHistory = () => {
           count={count}
           loading={isLoading}
           setParams={setParams}
+          setViewModal={setViewModal}
           pay={true}
           payKey={"payout"}
           params={params}
+          type="refund"
         />
       </div>
+      <Dialog
+        onClose={closeModal}
+        title={`Возврат № ${dataId?.number}`}
+        isOpen={viewModal?.isOpen}
+      >
+        {!isLoadingId ? (
+          <TransactionModal
+            data={dataId}
+            payKey={"payout"}
+            viewModal={viewModal}
+            type={"refund"}
+          />
+        ) : (
+          <div className="h-[70vh]">
+            <Loading />
+          </div>
+        )}
+      </Dialog>
     </div>
   );
 };
 
-export default RefundHistory
+export default RefundHistory;
