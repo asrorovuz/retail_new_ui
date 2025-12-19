@@ -46,8 +46,6 @@ const AddFiscalDevice = () => {
   };
 
   const onSubmit = (data: any) => {
-    console.log(data);
-    
     if (Number(data.type) === CashRegisterProviderTypeArca) {
       mutateArca(
         {

@@ -54,7 +54,6 @@ export const InitProvider = ({ children }: { children: ReactNode }) => {
   }, [settings, setSettings]);
 
   useEffect(() => {
-    console.log(!!error, "sssss");
     if(!!error) setActiveShift(null)
     else if (data) setActiveShift(data);
     else setActiveShift(null);

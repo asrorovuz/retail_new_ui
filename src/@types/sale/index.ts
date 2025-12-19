@@ -183,7 +183,6 @@ export type DraftSaleItemSchema = {
   id?: number;
   productId: number;
   productName: string;
-  // productPackageId: number;
   productPackageName: string;
   priceAmount: number;
   priceTypeId: number;

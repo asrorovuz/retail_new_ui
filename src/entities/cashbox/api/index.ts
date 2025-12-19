@@ -20,8 +20,6 @@ export const getCashboxIdApi = async (
     3: pathServices.cashbox.getCashboxByIdExpense,
   };
 
-  console.log(type, "type");
-  
   const url = urlMap[Number(type)];
 
   if (!url) {

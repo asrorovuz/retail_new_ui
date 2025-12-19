@@ -203,9 +203,6 @@ const UploadExcelFile = () => {
           .map(Number)
           .sort((a, b) => a - b)
           .map((colIndex) => row[colIndex] ?? "");
-
-        console.log(errorStatus, index, row, "lll");
-
         return [...selectedCols, errorStatus[index] || "Неизвестная ошибка"];
       });
 
@@ -860,8 +857,6 @@ const RenderTable = ({
           showSizeOption={false}
           pageSize={pagination?.pageSize}
           onChange={(pageNumber: number) => {
-            console.log(pageNumber);
-
             setPagination((prev: any) => ({
               ...prev,
               pageIndex: pageNumber,

@@ -6,7 +6,6 @@ export const updateCashRegisterArca = async (
   payload: any,
   id: number | string
 ) => {
-  console.log(id, payload, "555");
 
   return await apiRequest({
     method: "POST",

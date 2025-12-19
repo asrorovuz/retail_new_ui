@@ -41,8 +41,6 @@ const SalePage = () => {
   const { draftSales, addDraftSale, activateDraftSale } = useDraftSaleStore(
     (store) => store
   );
-
-  console.log(draftSales, "draft");
   
   const { data, isPending } = useAllProductApi(50, 1, debouncedSearch || "");
   const {

@@ -31,8 +31,6 @@ export default function AddPaymentProvider() {
   };
 
   const onSubmit = (formData: any) => {
-    console.log(formData);
-    
     if (Number(formData.type) === PaymentProviderTypePayme) {
       mutatePayme(
         {

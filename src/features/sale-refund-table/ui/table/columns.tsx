@@ -36,8 +36,6 @@ export const columns = (): ColumnDef<any>[] => {
         bodyCellClassName: "text-right min-w-full max-w-full",
       },
       cell: ({ row }) => {
-        console.log(row.original);
-        
         return <FormattedNumber value={row.original.priceAmount ?? 0} scale={2}/>
       },
     },

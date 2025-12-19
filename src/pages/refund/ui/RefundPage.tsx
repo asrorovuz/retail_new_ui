@@ -152,8 +152,6 @@ const RefundPage = () => {
       const onScan = eventBus.on("BARCODE_SCANNED", (code) => {
         if (code && code?.trim().startsWith("*")) {
           const newBarcode = code?.slice(1);
-          console.log(newBarcode, code, "hammasi");
-
           setCheckDode(newBarcode);
           setRefundCheckModal((prev) => ({ ...prev, isOpen: true }));
         } else {

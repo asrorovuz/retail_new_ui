@@ -322,8 +322,6 @@ const CashboxFormModal = ({
                     name={`amounts.${index}.type`}
                     control={control}
                     render={({ field }) => {
-                      console.log(field, "5ws45");
-
                       return (
                         <FormItem>
                           <Select

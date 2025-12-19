@@ -245,8 +245,6 @@ const OrderActions = ({
       }
       // set payment
       if (paymentAmounts) {
-        console.log(payload, paymentAmounts, "payload");
-
         const paymentKey = type === "sale" ? "payment" : "payout";
 
         // Boshlang'ich obyekt yaratamiz

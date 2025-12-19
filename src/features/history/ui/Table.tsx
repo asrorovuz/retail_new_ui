@@ -1,5 +1,7 @@
 import { messages } from "@/app/constants/message.request";
 import { PaymentTypes } from "@/app/constants/payment.types";
+import { useDraftPurchaseStore } from "@/app/store/usePurchaseDraftStore";
+import { useDraftRefundStore } from "@/app/store/useRefundDraftStore";
 import { useDraftSaleStore } from "@/app/store/useSaleDraftStore";
 import { useDeleteTransactions } from "@/entities/history/repository";
 import classNames from "@/shared/lib/classNames";
@@ -54,7 +56,11 @@ const TableHistory = ({
     onChangePagination(updater, params, setParams);
   };
 
-  const { addDraftSale } = useDraftSaleStore();
+  const { addDraftSale, draftSales, activateDraftSale } = useDraftSaleStore();
+  const { addDraftRefund, draftRefunds, activateDraftRefund } =
+    useDraftRefundStore();
+  const { addDraftPurchase, draftPurchases, activateDraftPurchase } =
+    useDraftPurchaseStore();
 
   const onDeleteFunc = (id: number) => {
     deleteMutation(id, {
@@ -70,36 +76,79 @@ const TableHistory = ({
     });
   };
 
-  const onSubmit = (sale: any) => {
-    console.log(sale, "sale, refund, purchase");
-    const items = sale?.items?.map((item: any) => {
+  const onSubmit = (data: any) => {
+    const items = data?.items?.map((item: any) => {
       return {
-        catalogCode: null,
-        catalogName: null,
-        
-      }
-    })
+        id: item?.id,
+        productId: item?.warehouse_operation_from?.product?.id,
+        productName: item?.warehouse_operation_from?.product?.name,
+        productPackageName:
+          item?.warehouse_operation_from?.product?.package_name,
+        priceAmount: item?.price_amount,
+        priceTypeId: item?.price_type_id,
+        quantity: item?.quantity,
+        totalAmount: item?.quantity * item?.price_amount,
+        marks: item?.marks,
+        catalogCode: item?.warehouse_operation_from?.product?.catalog_code,
+        catalogName: item?.warehouse_operation_from?.product?.catalog_name,
+      };
+    });
+
+    const cashBoxStates =
+      type === "sale"
+        ? data?.payment?.cash_box_states || []
+        : data?.payout?.cash_box_states || [];
+
+    const paymentAmounts = PaymentTypes.map((paymentType) => {
+      const founded = cashBoxStates.find(
+        (state: any) => state.type === paymentType.type
+      );
+
+      return {
+        paymentType: paymentType.type,
+        amount: founded ? founded.amount : 0,
+      };
+    });
+
     const payload = {
-      items: sale?.items,
+      id: data?.id,
+      items: items,
       isActive: true,
-      discountAmount: sale?.exact_discounts?.[0]?.amount,
+      discountAmount: data?.exact_discounts?.[0]?.amount,
       payment: {
-        amounts: PaymentTypes.map((paymentType) => {
-          return { amount: 0, paymentType: paymentType.type };
-        }),
+        amounts: paymentAmounts,
       },
     };
 
     if (type === "sale") {
-      addDraftSale(payload);
+      if (!draftSales?.some((item) => item.id === data?.id)) {
+        addDraftSale(payload);
+      } else {
+        const index = draftSales?.findIndex((item) => item?.id === data?.id);
+        activateDraftSale(index ?? 0);
+      }
       navigate("/sales");
     }
 
     if (type === "refund") {
+      if (!draftRefunds?.some((item) => item.id === data?.id)) {
+        addDraftRefund(payload);
+      } else {
+        const index = draftRefunds?.findIndex((item) => item?.id === data?.id);
+        activateDraftRefund(index ?? 0);
+      }
       navigate("/refund");
     }
 
     if (type === "purchase") {
+      if (!draftPurchases?.some((item) => item.id === data?.id)) {
+        addDraftPurchase(payload);
+      } else {
+        const index = draftPurchases?.findIndex(
+          (item) => item?.id === data?.id
+        );
+        activateDraftPurchase(index ?? 0);
+      }
       navigate("/purchase");
     }
   };
