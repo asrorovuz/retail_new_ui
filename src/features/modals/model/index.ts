@@ -14,20 +14,19 @@ export type ProductPriceType = {
 export type ProductModalProps = {
   type: "add" | "edit" | "print";
   pageType?: string;
-  setType: (value: "add" | "edit" | "print") => void;
   barcode: string | null;
   setBarcode: (val: string | null) => void;
   productPriceType: ProductPriceType[];
   setIsOpen: (val: boolean) => void;
-  // catalogData: any;
   isOpen: boolean;
 };
 
 export type ProductTableProps = {
-  type: "add" | "edit" | "print";
-  setType: (value: "add" | "edit" | "print") => void;
+  type?: "add" | "edit" | "print";
   barcode: string | null;
   setBarcode: (val: string | null) => void;
+  setIsOpen: (val: boolean) => void;
+  isOpen: boolean;
   productPriceType: ProductPriceType[];
 };
 
@@ -86,7 +85,7 @@ export interface ProductDefaultValues {
   };
   warehouse_items?: WarehouseItem[];
   vat_rate?: number | null;
-  barcodes: string[];
+  barcodes: any[];
   catalog_code?: string | null;
   catalog_name?: string | null;
   package_code: string | null;

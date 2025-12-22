@@ -8,9 +8,10 @@ export type ProductFormType = {
   pageType?: string | undefined;
   catalogLoading?: boolean;
   setIsOpen: (val: boolean) => void;
-  setType: (tyep: "add" | "edit") => void;
   defaultValue: Product | ProductDefaultValues;
   barcode: string | null;
   setBarcode: (val: string | null) => void;
   setProductId?: (val: number | null) => void;
+  catalogData?: any[];
+  setDefaultValues: any;
 };

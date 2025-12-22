@@ -28,7 +28,7 @@ import {
   CatalogPackageSelector,
   CatalogSelector,
 } from "@/features/catalog-selector";
-import type { Product, VatRateSelectorOption } from "@/@types/products";
+import type { VatRateSelectorOption } from "@/@types/products";
 import ImageForm from "@/features/image-form";
 import BarcodeForm from "@/features/barcode-form/ui/BarcodeForm";
 import { convertImageObjectsToBase64 } from "@/shared/lib/convertFilesToBase64";
@@ -36,6 +36,7 @@ import { showErrorMessage, showSuccessMessage } from "@/shared/lib/showMessage";
 import { messages } from "@/app/constants/message.request";
 import { useSettingsStore } from "@/app/store/useSettingsStore";
 import { useDraftSaleStore } from "@/app/store/useSaleDraftStore";
+import { useUpdatePurchasedPriceApi } from "@/entities/purchase/repository";
 
 const ProductForm: FC<ProductFormType> = ({
   type,
@@ -44,18 +45,16 @@ const ProductForm: FC<ProductFormType> = ({
   isOpen,
   catalogLoading,
   setIsOpen,
-  setType,
   defaultValue,
   setBarcode,
   barcode,
   setProductId,
+  catalogData,
+  setDefaultValues,
 }) => {
-  const { handleSubmit, control, getValues, setValue, reset, watch } = useForm<
-    Product | ProductDefaultValues
-  >({
-    defaultValues: defaultValue,
-  });
+  const { handleSubmit, control, getValues, setValue, reset, watch } = useForm();
   const inputWrapperRef = useRef<HTMLDivElement>(null);
+  const isCatalogApplied = useRef(false);
   const [remainder, setRemainder] = useState<number>(defaultValue?.state || 0);
   const [alertOn, setAlertOn] = useState<string | number>(0);
   const [isShow, setIsShow] = useState(true);
@@ -72,15 +71,16 @@ const ProductForm: FC<ProductFormType> = ({
     useUpdateProduct();
   const { mutate: alertOnUpdate } = useUpdateAlertOn();
   const { mutate: createRegister } = useCreateregister();
+  const { mutate: updatepurchasePrice } = useUpdatePurchasedPriceApi();
 
   const onClose = () => {
     setBarcode(null);
     setAlertOn(0);
     setRemainder(0);
-    reset();
     setIsShow(false);
     setIsOpen(false);
-    setType("add");
+    setDefaultValues(null);
+    reset();
     if (setProductId) {
       setProductId(null);
     }
@@ -188,6 +188,18 @@ const ProductForm: FC<ProductFormType> = ({
               messages.ru.SUCCESS_MESSAGE
             );
 
+            if (values?.purchase_price) {
+              const payload = {
+                amount: Number(values?.purchase_price?.amount) ?? 0,
+                currency_code:
+                  Number(values?.purchase_price?.currency?.code) ?? 0,
+                warehouse_id: wareHouseId,
+                product_id: res?.id,
+              };
+
+              updatepurchasePrice(payload);
+            }
+
             if (alertOn && wareHouseId) {
               alertOnUpdate({
                 warehouse_id: wareHouseId,
@@ -276,10 +288,40 @@ const ProductForm: FC<ProductFormType> = ({
   }, [defaultValue?.state, isOpen]);
 
   useEffect(() => {
-    if (isOpen && defaultValue) {
-      reset(defaultValue);
+    if (!catalogData?.length) return;
+
+    // agar user allaqachon yozib bo‘lgan bo‘lsa – tegmaymiz
+    if (isCatalogApplied.current) return;
+
+    setValue("name", catalogData[0]?.name ?? "");
+    setValue("catalog_code", catalogData[0]?.class_code ?? null);
+    setValue("catalog_name", catalogData[0]?.class_name ?? null);
+    setValue("catalog", {
+      label: catalogData[0]?.class_name,
+      value: catalogData[0]?.class_code,
+      data: catalogData[0],
+    });
+
+    isCatalogApplied.current = true;
+  }, [catalogData]);
+
+  useEffect(() => {
+    if (!barcode) return;
+
+    const currentBarcodes = getValues("barcodes") || [];
+
+    if (!currentBarcodes.includes(barcode)) {
+      setValue("barcodes", [...currentBarcodes, barcode], {
+        shouldDirty: true,
+      });
     }
-  }, [isOpen, defaultValue, reset]);
+  }, [barcode]);
+
+  useEffect(() => {
+    if (isOpen) {
+      reset(defaultValue); // modal ochilganda reset qilish
+    }
+  }, [defaultValue, reset]);
 
   return (
     <Dialog
@@ -429,7 +471,7 @@ const ProductForm: FC<ProductFormType> = ({
                   <Input
                     {...field}
                     type="number"
-                    disabled={type === "edit"}
+                    // disabled={type === "edit"}
                     autoComplete="off"
                     placeholder="Сумма"
                     replaceLeadingZero={true}

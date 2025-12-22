@@ -14,12 +14,24 @@ import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/app/config/axios";
 import printJS from "print-js";
+import { useDraftSaleStore } from "@/app/store/useSaleDraftStore";
+import { useDraftRefundStore } from "@/app/store/useRefundDraftStore";
+import { useDraftPurchaseStore } from "@/app/store/usePurchaseDraftStore";
+import { useNavigate } from "react-router-dom";
+import { PaymentTypes } from "@/app/constants/payment.types";
 
 const TransactionModal = ({ data, payKey, type, viewModal }: any) => {
+  const navigate = useNavigate();
   const [printerStatus, setPrinterStatus] = useState({
     isOpen: false,
     size: "80",
   });
+
+  const { addDraftSale, draftSales, activateDraftSale } = useDraftSaleStore();
+  const { addDraftRefund, draftRefunds, activateDraftRefund } =
+    useDraftRefundStore();
+  const { addDraftPurchase, draftPurchases, activateDraftPurchase } =
+    useDraftPurchaseStore();
 
   const { settings } = useSettingsStore();
   const { mutate: printerMutate, isPending: printLoading } =
@@ -121,6 +133,83 @@ const TransactionModal = ({ data, payKey, type, viewModal }: any) => {
     );
   };
 
+  const onSubmit = (data: any) => {
+    const items = data?.items?.map((item: any) => {
+      return {
+        id: item?.id,
+        productId: item?.warehouse_operation_from?.product?.id,
+        productName: item?.warehouse_operation_from?.product?.name,
+        productPackageName:
+          item?.warehouse_operation_from?.product?.package_name,
+        priceAmount: item?.price_amount,
+        priceTypeId: item?.price_type_id,
+        quantity: item?.quantity,
+        totalAmount: item?.quantity * item?.price_amount,
+        marks: item?.marks,
+        catalogCode: item?.warehouse_operation_from?.product?.catalog_code,
+        catalogName: item?.warehouse_operation_from?.product?.catalog_name,
+      };
+    });
+
+    const cashBoxStates =
+      type === "sale"
+        ? data?.payment?.cash_box_states || []
+        : data?.payout?.cash_box_states || [];
+
+    const paymentAmounts = PaymentTypes?.map((paymentType) => {
+      const founded = cashBoxStates?.find(
+        (state: any) => state?.type === paymentType?.type
+      );
+
+      return {
+        paymentType: paymentType.type,
+        amount: founded ? founded.amount : 0,
+      };
+    });
+
+    const payload = {
+      id: data?.id,
+      items: items,
+      isActive: true,
+      discountAmount: data?.exact_discounts?.[0]?.amount,
+      [payKey]: {
+        amounts: paymentAmounts,
+      },
+    };
+
+    if (type === "sale") {
+      if (!draftSales?.some((item) => item.id === data?.id)) {
+        addDraftSale(payload);
+      } else {
+        const index = draftSales?.findIndex((item) => item?.id === data?.id);
+        activateDraftSale(index ?? 0);
+      }
+      navigate("/sales");
+    }
+
+    if (type === "refund") {
+      if (!draftRefunds?.some((item) => item.id === data?.id)) {
+        addDraftRefund(payload);
+      } else {
+        const index = draftRefunds?.findIndex((item) => item?.id === data?.id);
+        activateDraftRefund(index ?? 0);
+      }
+      navigate("/refund");
+    }
+
+    if (type === "purchase") {
+      if (!draftPurchases?.some((item) => item.id === data?.id)) {
+        addDraftPurchase(payload);
+      } else {
+        const index = draftPurchases?.findIndex(
+          (item) => item?.id === data?.id
+        );
+        activateDraftPurchase(index ?? 0);
+      }
+      navigate("/purchase");
+    }
+  };
+
   return (
     <div className="h-[75vh] overflow-y-auto">
       <div className="sticky top-0 bg-white">
@@ -171,7 +260,7 @@ const TransactionModal = ({ data, payKey, type, viewModal }: any) => {
                   : "Распечатать чек (80mm)"}
               </Dropdown.Item>
             </Dropdown>
-            <Button icon={<FaEdit />} variant="solid">
+            <Button onClick={onSubmit} icon={<FaEdit />} variant="solid">
               Редактировать
             </Button>
           </div>

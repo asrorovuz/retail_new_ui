@@ -20,11 +20,11 @@ import printJS from "print-js";
 
 type PropsType = {
   item: Product | null;
-  type: "print" | "edit" | "add";
+  isOpen: boolean;
   onClosePrintModal: () => void;
 };
 
-const PrintCheckProduct = ({ item, type, onClosePrintModal }: PropsType) => {
+const PrintCheckProduct = ({ item, isOpen, onClosePrintModal }: PropsType) => {
   const { t } = useTranslation();
 
   const viewTypes = [
@@ -232,7 +232,7 @@ const PrintCheckProduct = ({ item, type, onClosePrintModal }: PropsType) => {
       onClose={onClose}
       height={"90vh"}
       width={"90vw"}
-      isOpen={type === "print" && !!item?.id}
+      isOpen={isOpen && !!item?.id}
     >
       <div className="h-[64vh] overflow-y-auto mb-5">
         <div className="flex justify-between gap-x-12">

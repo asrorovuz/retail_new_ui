@@ -100,15 +100,19 @@ const PaymeWhithQR = ({
   };
 
   useEffect(() => {
-    if (isOpen) {
-      const listener = (code: string) => {
-        setQrCode(code);
-      };
-      eventBus.on("BARCODE_SCANNED", listener);
+    // if (!isOpen) return;
+880344916917876655
 
-      return () => eventBus.remove("BARCODE_SCANNED", listener);
-    }
-  }, []);
+    const listener = (code: string) => {
+      setQrCode(code);
+    };
+
+    eventBus.on("BARCODE_SCANNED", listener);
+
+    return () => {
+      eventBus.remove("BARCODE_SCANNED", listener);
+    };
+  }, [isOpen]);
 
   useEffect(() => {
     if (!activeDraftPaymeTypes?.length || !payment?.length) return;
@@ -132,6 +136,8 @@ const PaymeWhithQR = ({
       setSelectedPayment(findItem ?? null);
     }
   }, [isOpen]);
+
+  console.log(qrCode, "55");
 
   return (
     <Dialog
@@ -176,7 +182,11 @@ const PaymeWhithQR = ({
                         !isSelected && "hidden"
                       )}
                     >
-                      <img className="w-full h-full" src="img/ok.png" alt="" />
+                      <img
+                        className="w-full h-full"
+                        src="img/ok.png"
+                        alt="qr img"
+                      />
                     </div>
                     {GetPaymentProviderLogo(Number(item?.type)) && (
                       <div className="w-full flex items-center justify-center">

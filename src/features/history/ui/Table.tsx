@@ -224,13 +224,14 @@ const TableHistory = ({
         },
         cell: ({ row }) => {
           const totals = row?.original?.totals;
+          
           return (
             <div>
               {totals ? (
                 totals?.map((item: any, index: number) => (
                   <p key={index} className={"heading-text font-bold text-nowrap flex gap-x-1"}>
                     <FormattedNumber value={item?.amount} />
-                    <CurrencyName currency={item.currency} />
+                    <CurrencyName currency={item?.currency} />
                   </p>
                 ))
               ) : (
@@ -261,7 +262,7 @@ const TableHistory = ({
                   <div>
                     {cash_box_states ? (
                       payment
-                        .calculateToPay(cash_box_states)
+                        ?.calculateToPay(cash_box_states)
                         ?.map((item: any, index: number) => (
                           <p key={index} className={"heading-text font-bold text-nowrap flex gap-x-1"}>
                             <FormattedNumber value={item?.amount} />

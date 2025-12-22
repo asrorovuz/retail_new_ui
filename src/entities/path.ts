@@ -110,6 +110,7 @@ export const pathServices = {
     // GET
     register: "/api/purchase/register",
     updatePurchasePath: "/api/purchase/update/",
+    updatePurchasePricePath: "/api/warehouse-item/update-purchase-price",
   },
 
   versions: {

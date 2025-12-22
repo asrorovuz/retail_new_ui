@@ -9,8 +9,10 @@ const ProductTable = ({
 }: {
   items: any[];
   totals: any[];
-  discount: number;
+  discount: any;
 }) => {
+  console.log(totals, discount);
+  
   return (
     <div className="mb-6">
       <Card className="overflow-hidden shadow-md">
@@ -61,15 +63,14 @@ const ProductTable = ({
                   Итого со скидкой:
                 </td>
                 <td className="px-4 py-3 text-center text-blue-700 font-bold">
-                  {(totals?.[0]?.amount - discount) || 0}
+                  {(totals?.[0]?.amount - discount?.amount) || 0}
                 </td>
                 <td colSpan={1} className="px-4 py-3 text-right text-gray-700">
                   Скидка:
                 </td>
                 <td className="px-4 py-3 text-center text-blue-700 font-bold">
-                  {discount ?? 0}
+                  {discount?.amount ?? 0}
                 </td>
-                {/* <td className="px-4 py-3 text-center text-blue-700 font-bold"></td> */}
                 <td colSpan={2}></td>
               </tr>
             </tfoot>

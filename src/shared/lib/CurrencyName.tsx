@@ -22,7 +22,7 @@ const CurrencyName = ({ currency, className }: CurrencyNameProps) => {
         className
       )}
     >
-      {currency.name}
+      {currency?.name}
     </span>
   );
 };

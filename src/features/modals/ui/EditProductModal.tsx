@@ -19,16 +19,15 @@ type EXtraPropsType = {
 };
 
 const EditProductModal: FC<ProductTableProps & EXtraPropsType> = ({
-  type,
   setBarcode,
   barcode,
-  setType,
   productPriceType,
+  setIsOpen,
+  isOpen,
   productId,
   setProductId,
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
-
+  const safeProductPriceType = productPriceType ?? [];
   // 🔹 DEFAULT VALUES STATE ORNATAMIZ
   const [defaultValues, setDefaultValues] =
     useState<ProductDefaultValues | null>(null);
@@ -39,7 +38,7 @@ const EditProductModal: FC<ProductTableProps & EXtraPropsType> = ({
   useEffect(() => {
     if (!product) return;
 
-    const prices = productPriceType?.map((i: ProductPriceType, inx: number) => {
+    const prices = safeProductPriceType?.map((i: ProductPriceType, inx: number) => {
       return {
         amount: inx ? 0 : null,
         price_type: i,
@@ -120,24 +119,17 @@ const EditProductModal: FC<ProductTableProps & EXtraPropsType> = ({
     setDefaultValues(computed);
   }, [product, productPriceType, isOpen]);
 
-  // 🔥 MODAL OCHILGANDA BARCODE SET QILAMIZ
-  useEffect(() => {
-    if (productId && type === "edit") {
-      setIsOpen(true);
-    }
-  }, [productId]);
-
-  if (!defaultValues) return null; // loading holat
+  if (!defaultValues && !isOpen) return null; // loading holat
 
   return (
     <ProductForm
-      type={type}
+      type={"edit"}
       productId={productId}
+      setDefaultValues={setDefaultValues}
       isOpen={isOpen}
       setIsOpen={setIsOpen}
-      setType={setType}
       setProductId={setProductId}
-      defaultValue={defaultValues}
+      defaultValue={defaultValues!}
       barcode={barcode}
       setBarcode={setBarcode}
     />

@@ -201,7 +201,6 @@ const SalePage = () => {
 
         <AddProductModal
           type={"add"}
-          setType={() => {}}
           setBarcode={setBarcode}
           barcode={barcode}
           isOpen={isOpenAddProduct}

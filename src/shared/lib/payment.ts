@@ -27,7 +27,7 @@ export default {
   },
 
   calculateToPay(prices: any[] = []) {
-    if (prices.length === 0) return [];
+    if (prices?.length === 0) return [];
 
     const map = new Map();
 

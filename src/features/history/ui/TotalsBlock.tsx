@@ -14,7 +14,7 @@ const TotalsBlock = ({ data, payKey }: { data: any, payKey: any }) => {
     },
     {
       label: "Скидка",
-      value: `${data?.percent_discount ?? 0} %`,
+      value: `${data?.exact_discounts?.[0]?.amount ?? 0} ${data?.exact_discounts?.[0]?.currency?.name ?? 0}`,
       bg: "bg-gradient-to-r from-yellow-100 to-yellow-200",
       textColor: "text-yellow-800",
       icon: "🏷️",

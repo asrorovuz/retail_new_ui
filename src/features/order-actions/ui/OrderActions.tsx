@@ -418,6 +418,8 @@ const OrderActions = ({
       setSelectFiscalized(filterDataFiscal[0]);
     }
   }, [filterDataFiscal]);
+  console.log(!!paymentData, payModal, "paymentData");
+  
 
   return (
     <div className="p-2 bg-gray-100 rounded-2xl flex gap-x-2">
@@ -491,7 +493,7 @@ const OrderActions = ({
       />
 
       <PaymeWhithQR
-        isOpen={payModal && !!paymentData?.length}
+        isOpen={payModal && paymentData?.length > 0}
         saleId={saleId}
         paymentData={paymentData}
         selectFiscalized={selectFiscalized}
