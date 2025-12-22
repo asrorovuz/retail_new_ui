@@ -16,6 +16,15 @@ export const getCheckRefundApi = async (params: string) => {
     method: "GET",
     params: {
       data: params,
-    }
+    },
+  });
+};
+
+// Update
+export const updateRefundApi = async (id: number | null, payload: any) => {
+  return await apiRequest({
+    url: pathServices.refund.updateRefundPath + id,
+    method: "POST",
+    data: payload,
   });
 };

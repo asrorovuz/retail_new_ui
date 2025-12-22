@@ -20,7 +20,16 @@ import CashRegisterForm from "./FiscalizedForm";
 
 const AddFiscalDevice = () => {
   const [show, setShow] = useState(false);
-  const methods = useForm();
+  const methods = useForm({
+    defaultValues: {
+      hippopos: {
+        printerSize: "80",
+      },
+      epos: {
+        printerSize: "80",
+      },
+    },
+  });
 
   const { mutate: mutateArca, isPending: arcaLoading } = useCreateArca();
   const { mutate: mutateSimurg, isPending: simurgLoading } = useCreateSimurg();
@@ -135,7 +144,12 @@ const AddFiscalDevice = () => {
       <Button onClick={handleShow} size="sm" variant="solid">
         + Добавить кассовый аппарат
       </Button>
-      <Dialog title={"Добавление кассового аппарата"} className="w-full max-w-2xl" isOpen={show} onClose={handleClose}>
+      <Dialog
+        title={"Добавление кассового аппарата"}
+        className="w-full max-w-2xl"
+        isOpen={show}
+        onClose={handleClose}
+      >
         <FormProvider {...methods}>
           <Form onSubmit={methods.handleSubmit(onSubmit)}>
             <div className="max-h-[60vh] overflow-y-auto p-4">

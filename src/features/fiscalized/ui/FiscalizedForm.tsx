@@ -424,8 +424,8 @@ const HippoPosForm = () => {
                 message: "ИНН должен состоять только из цифр",
               },
               minLength: {
-                value: 9,
-                message: "ИНН должен содержать минимум 9 цифр",
+                value: 6,
+                message: "ИНН должен содержать минимум 6 цифр",
               },
             }}
             render={({ field }) => (
@@ -464,7 +464,7 @@ const HippoPosForm = () => {
                   options={printerSizeOptions}
                   value={printerSizeOptions.find(
                     (opt) => opt.value === field.value
-                  )}
+                  ) ?? printerSizeOptions?.[0]}
                   onChange={(newValue) => field.onChange(newValue?.value)}
                   onBlur={field.onBlur}
                   menuPortalTarget={document.body}
@@ -560,8 +560,8 @@ const EPosForm = () => {
                 message: "ИНН должен состоять только из цифр",
               },
               minLength: {
-                value: 9,
-                message: "ИНН должен содержать минимум 9 цифр",
+                value: 6,
+                message: "ИНН должен содержать минимум 6 цифр",
               },
             }}
             render={({ field }) => (

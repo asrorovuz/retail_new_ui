@@ -61,6 +61,8 @@ const SaleAndRefunTable = ({
     }
   };
 
+  console.log(activeDraft, "ac");
+
   const decrease = () => {
     const newVal = (currentItem?.quantity || 0) - 1;
 
@@ -82,7 +84,7 @@ const SaleAndRefunTable = ({
   const increase = () => {
     const newVal = (currentItem?.quantity || 0) + 1;
     updateDraftItemQuantity(Number(expandedRow), newVal);
-    
+
     updateDraftItemTotalPrice(
       Number(expandedRow),
       newVal * (currentItem?.priceAmount || 0)
@@ -168,7 +170,11 @@ const SaleAndRefunTable = ({
                       className={classNames(
                         oddEven ? "bg-gray-100" : "bg-white",
                         expandedRow?.toString() === row.id &&
-                          (type === "sale" ? "text-primary" : type === "refund" ? "text-red-500" : "text-green-600"),
+                          (type === "sale"
+                            ? "text-primary"
+                            : type === "refund"
+                            ? "text-red-500"
+                            : "text-green-600"),
                         "cursor-pointer"
                       )}
                     >
@@ -203,16 +209,76 @@ const SaleAndRefunTable = ({
             </TBody>
           </Table>
           <div className="w-full sticky bottom-0 bg-white border-t border-gray-300">
-            <div className="flex justify-end gap-x-2 items-center px-2 py-2.5">
-              <div className="text-base font-medium text-gray-500">Итого: </div>{" "}
-              <div
-                className={classNames(
-                  "text-base font-semibold",
-                  type === "sale" ? "text-primary" : type === "refund" ? "text-red-500" : "text-green-600"
-                )}
-              >
-                <FormattedNumber value={totalPrice} scale={2} /> сум{" "}
+            <div className="flex items-center justify-end gap-x-2">
+              <div className="flex justify-end gap-x-2 items-center px-2 py-2.5">
+                <div className="text-base font-medium text-gray-500">
+                  Итого:{" "}
+                </div>{" "}
+                <div
+                  className={classNames(
+                    "text-base font-semibold",
+                    type === "sale"
+                      ? "text-primary"
+                      : type === "refund"
+                      ? "text-red-500"
+                      : "text-green-600"
+                  )}
+                >
+                  <FormattedNumber value={totalPrice} scale={2} /> сум{" "}
+                </div>
               </div>
+
+              {type === "sale" ? (
+                <div className="flex justify-end gap-x-2 items-center px-2 py-2.5">
+                  <div className="text-base font-medium text-gray-500">
+                    Со скидкой:{" "}
+                  </div>{" "}
+                  <div
+                    className={classNames(
+                      "text-base font-semibold",
+                      type === "sale"
+                        ? "text-primary"
+                        : type === "refund"
+                        ? "text-red-500"
+                        : "text-green-600"
+                    )}
+                  >
+                    <FormattedNumber
+                      value={totalPrice - (activeDraft?.discountAmount ?? 0)}
+                      scale={2}
+                    />{" "}
+                    сум{" "}
+                  </div>
+                </div>
+              ) : (
+                ""
+              )}
+
+              {type === "sale" ? (
+                <div className="flex justify-end gap-x-2 items-center px-2 py-2.5">
+                  <div className="text-base font-medium text-gray-500">
+                    Скидка:{" "}
+                  </div>{" "}
+                  <div
+                    className={classNames(
+                      "text-base font-semibold",
+                      type === "sale"
+                        ? "text-primary"
+                        : type === "refund"
+                        ? "text-red-500"
+                        : "text-green-600"
+                    )}
+                  >
+                    <FormattedNumber
+                      value={activeDraft?.discountAmount ?? 0}
+                      scale={2}
+                    />{" "}
+                    сум{" "}
+                  </div>
+                </div>
+              ) : (
+                ""
+              )}
             </div>
 
             <div
@@ -276,32 +342,32 @@ const SaleAndRefunTable = ({
               )}
 
               <div className="flex items-center gap-x-2 w-[154px] xl:w-auto">
-                {isEditing?.type !== "quantity" && currentItem?.quantity > 1 ? (
-                  <Button
-                    variant="solid"
-                    className={classNames(
-                      "w-12 h-12 p-3 flex items-center justify-center !bg-white hover:bg-gray-100 rounded-lg active:!bg-gray-200 text-gray-800"
-                    )}
-                    onClick={decrease}
-                  >
-                    -
-                  </Button>
-                ) : (
-                  <CommonDeleteDialog
-                    description={`Удалить товар "${currentItem?.productName}"? Действие нельзя будет отменить.`}
-                    onDelete={onDeleteDraftItem}
-                  >
+                {(() => {
+                  const showDeleteDialog = !(
+                    isEditing?.type !== "quantity" && currentItem?.quantity > 1
+                  );
+
+                  const minusButton = (
                     <Button
                       variant="solid"
-                      className={classNames(
-                        "w-12 h-12 p-3 flex items-center justify-center !bg-white hover:bg-gray-100 rounded-lg active:!bg-gray-200 text-gray-800"
-                      )}
+                      className="w-12 h-12 p-3 flex items-center justify-center !bg-white hover:bg-gray-100 rounded-lg active:!bg-gray-200 text-gray-800"
                       onClick={decrease}
                     >
                       -
                     </Button>
-                  </CommonDeleteDialog>
-                )}
+                  );
+
+                  return showDeleteDialog ? (
+                    <CommonDeleteDialog
+                      description={`Удалить товар "${currentItem?.productName}"? Действие нельзя будет отменить.`}
+                      onDelete={onDeleteDraftItem}
+                    >
+                      {minusButton}
+                    </CommonDeleteDialog>
+                  ) : (
+                    minusButton
+                  );
+                })()}
 
                 {isEditing?.isOpen && isEditing?.type === "quantity" ? (
                   <Input

@@ -24,7 +24,9 @@ import { useCashboxApi, useCreatePrintApi } from "@/entities/init/repository";
 import {
   useCreateFiscalizedApi,
   useFescalDeviceApi,
+  usePaymentProviderApi,
   useRegisterSellApi,
+  useUpdateSellApi,
 } from "@/entities/sale/repository";
 import { showErrorMessage, showSuccessMessage } from "@/shared/lib/showMessage";
 import { messages } from "@/app/constants/message.request";
@@ -35,8 +37,14 @@ import {
   FiscalizedProviderTypeHippoPos,
 } from "@/app/constants/fiscalized.constants";
 import PaymeWhithQR from "@/features/modals/ui/PaymeWhithQR";
-import { useRegisterRefundApi } from "@/entities/refund/repository";
-import { useRegisterPurchaseApi } from "@/entities/purchase/repository";
+import {
+  useRegisterRefundApi,
+  useUpdateRefundApi,
+} from "@/entities/refund/repository";
+import {
+  useRegisterPurchaseApi,
+  useUpdatePurchasedApi,
+} from "@/entities/purchase/repository";
 import type { RegisterPurchaseModel } from "@/@types/purchase";
 
 type OrderActionType = {
@@ -78,6 +86,7 @@ const OrderActions = ({
   const warehouseId = useSettingsStore((s) => s.wareHouseId);
 
   const { data: cashboxData } = useCashboxApi();
+  const { data: paymentData = [] } = usePaymentProviderApi();
   const { mutate: registerSaleMutate } = useRegisterSellApi();
   const { mutate: registerRefundMutate } = useRegisterRefundApi();
   const { mutate: registerPurchaseMutate } = useRegisterPurchaseApi();
@@ -86,6 +95,10 @@ const OrderActions = ({
   const { data: fiscalData = [] } = useFescalDeviceApi(fiscalizedModal);
   const filterDataFiscal = fiscalData?.filter((elem: any) => elem?.is_enabled);
   const { mutate: printCheck } = useCreatePrintApi();
+
+  const { mutate: updatePurchase } = useUpdatePurchasedApi();
+  const { mutate: updateRefund } = useUpdateRefundApi();
+  const { mutate: updateSale } = useUpdateSellApi();
 
   const onDeleteActivedraft = () => {
     const findIndex = draft?.findIndex((item) => item?.isActive);
@@ -116,21 +129,21 @@ const OrderActions = ({
     );
   }, [(type === "sale" ? activeDraft?.payment : activeDraft?.payout)?.amounts]);
 
-  const toDebtAmount = useMemo<number>(() => {
-    const debtAmount = netPrice - totalPaymentAmount;
-    return debtAmount > 0 ? debtAmount : 0;
-  }, [netPrice, totalPaymentAmount]);
+  // const toDebtAmount = useMemo<number>(() => {
+  //   const debtAmount = netPrice - totalPaymentAmount;
+  //   return debtAmount > 0 ? debtAmount : 0;
+  // }, [netPrice, totalPaymentAmount]);
 
-  const totalMoumentPrice = useMemo(() => {
-    const sum =
-      activeDraft?.items?.reduce(
-        (sum, current) =>
-          sum + Number(current?.priceAmount * current?.quantity || 0),
-        0
-      ) || 0;
+  // const totalMoumentPrice = useMemo(() => {
+  //   const sum =
+  //     activeDraft?.items?.reduce(
+  //       (sum, current) =>
+  //         sum + Number(current?.priceAmount * current?.quantity || 0),
+  //       0
+  //     ) || 0;
 
-    return sum - (activeDraft?.discountAmount || 0);
-  }, [activeDraft, toDebtAmount]);
+  //   return sum - (activeDraft?.discountAmount || 0);
+  // }, [activeDraft, toDebtAmount]);
 
   const handleCancelPrint = () => {
     setPrintSelect(false);
@@ -142,6 +155,7 @@ const OrderActions = ({
   const handleCancelFiscalization = () => {
     setSaleId(null);
     setFiscalizedModal(false);
+    setPayModal(false);
     setSelectFiscalized(null);
   };
 
@@ -158,11 +172,13 @@ const OrderActions = ({
         fiscal_device_id: selectFiscalized?.id,
         payment_card_type: selectFiscalized.type,
       };
+      const activePaymentData = paymentData?.filter((elem) => elem?.is_enabled);
       if (
         [FiscalizedProviderTypeEPos, FiscalizedProviderTypeHippoPos].includes(
           selectFiscalized?.type
         ) &&
-        (paymeType.includes(5) || paymeType.includes(6))
+        (paymeType.includes(5) || paymeType.includes(6)) &&
+        activePaymentData?.length > 0
       ) {
         setPayModal(true);
         setFiscalizedModal(false);
@@ -283,53 +299,83 @@ const OrderActions = ({
         ? registerRefundMutate
         : registerPurchaseMutate;
 
-    // register sale
-    registerMutate(payload, {
-      onSuccess: (data: any) => {
-        if (data?.sale?.id || data?.purchase?.id) {
-          setSaleId(data?.sale?.id || data?.purchase?.id);
-          if (settings?.auto_print_receipt && settings?.printer_name) {
-            onPrint(data?.sale?.id);
-          } else if (!settings?.auto_print_receipt && settings?.printer_name) {
-            setPrintSelect(true);
-          } else {
-            handleCancelPrint();
-          }
-        }
+    const updateRegister =
+      type === "sale"
+        ? updateSale
+        : type === "refund"
+        ? updateRefund
+        : updatePurchase;
 
-        callback(true);
-        complateActiveDraft();
-        showSuccessMessage(
-          messages.uz.SUCCESS_MESSAGE,
-          messages.ru.SUCCESS_MESSAGE
-        );
-      },
-      onError: (error) => {
-        showErrorMessage(error);
-        callback(true);
-      },
-    });
+    // register sale
+    if (activeDraft?.id) {
+      updateRegister(
+        { id: activeDraft?.id, payload },
+        {
+          onSuccess: (data: any) => {
+            if (data?.sale?.id || data?.purchase?.id || data?.refund?.id) {
+              setSaleId(
+                data?.sale?.id || data?.purchase?.id || data?.refund?.id
+              );
+              if (settings?.auto_print_receipt && settings?.printer_name) {
+                onPrint(data?.sale?.id);
+              } else if (
+                !settings?.auto_print_receipt &&
+                settings?.printer_name
+              ) {
+                setPrintSelect(true);
+              } else {
+                handleCancelPrint();
+              }
+            }
+
+            callback(true);
+            complateActiveDraft();
+            showSuccessMessage(
+              messages.uz.SUCCESS_MESSAGE,
+              messages.ru.SUCCESS_MESSAGE
+            );
+          },
+          onError: (error) => {
+            showErrorMessage(error);
+            callback(true);
+          },
+        }
+      );
+    } else {
+      registerMutate(payload, {
+        onSuccess: (data: any) => {
+          if (data?.sale?.id || data?.purchase?.id || data?.refund?.id) {
+            setSaleId(data?.sale?.id || data?.purchase?.id || data?.refund?.id);
+            if (settings?.auto_print_receipt && settings?.printer_name) {
+              onPrint(data?.sale?.id);
+            } else if (
+              !settings?.auto_print_receipt &&
+              settings?.printer_name
+            ) {
+              setPrintSelect(true);
+            } else {
+              handleCancelPrint();
+            }
+          }
+
+          callback(true);
+          complateActiveDraft();
+          showSuccessMessage(
+            messages.uz.SUCCESS_MESSAGE,
+            messages.ru.SUCCESS_MESSAGE
+          );
+        },
+        onError: (error) => {
+          showErrorMessage(error);
+          callback(true);
+        },
+      });
+    }
   }
 
   const calcPricePayment = () => {
-    const amounts =
-      (type === "sale" ? activeDraft?.payment : activeDraft?.payout)?.amounts ||
-      [];
-
-    const total = amounts.reduce(
-      (sum, current) => sum + Number(current?.amount || 0),
-      0
-    );
-
-    const debt = netPrice - total;
-
     if (!activeShift && settings?.shift?.shift_enabled) {
       toast.error("Смена не открыта.");
-      return;
-    }
-
-    if (debt >= 1 && totalMoumentPrice) {
-      toast.error("Продажа в долг невозможна.");
       return;
     }
 
@@ -445,8 +491,9 @@ const OrderActions = ({
       />
 
       <PaymeWhithQR
-        isOpen={payModal}
+        isOpen={payModal && !!paymentData?.length}
         saleId={saleId}
+        paymentData={paymentData}
         selectFiscalized={selectFiscalized}
         activeDraftPaymeTypes={paymeType}
         setPaymeType={setPaymeType}

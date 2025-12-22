@@ -5,11 +5,11 @@ import TableRow from "./TableRow";
 const ProductTable = ({
   items,
   totals,
-  packagesCount,
+  discount,
 }: {
   items: any[];
   totals: any[];
-  packagesCount: number;
+  discount: number;
 }) => {
   return (
     <div className="mb-6">
@@ -29,8 +29,6 @@ const ProductTable = ({
                   "Наименование",
                   "Кол-во",
                   "Ед.изм.",
-                  // "В упак.",
-                  "Упаковка",
                   "Цена",
                   "Скидка",
                   "Цена со скидкой",
@@ -48,27 +46,31 @@ const ProductTable = ({
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {items?.map((item, i) => (
-                <TableRow
-                  key={item?.id}
-                  item={item}
-                  index={i}
-                  totals={totals}
-                />
+                <TableRow key={item?.id} item={item} index={i} />
               ))}
             </tbody>
             <tfoot className="bg-blue-50">
               <tr className="font-semibold">
-                <td colSpan={2} className="px-4 py-3 text-right text-gray-700">
+                <td colSpan={1} className="px-4 py-3 text-right text-gray-700">
                   Итого:
                 </td>
                 <td className="px-4 py-3 text-center text-blue-700 font-bold">
-                  {totals?.[0]?.amount ?? packagesCount}
+                  {totals?.[0]?.amount ?? 0}
                 </td>
-                <td className="px-4 py-3"></td>
+                <td colSpan={2} className="px-4 py-3 text-right text-gray-700">
+                  Итого со скидкой:
+                </td>
                 <td className="px-4 py-3 text-center text-blue-700 font-bold">
-                  {packagesCount}
+                  {(totals?.[0]?.amount - discount) || 0}
                 </td>
-                <td colSpan={6}></td>
+                <td colSpan={1} className="px-4 py-3 text-right text-gray-700">
+                  Скидка:
+                </td>
+                <td className="px-4 py-3 text-center text-blue-700 font-bold">
+                  {discount ?? 0}
+                </td>
+                {/* <td className="px-4 py-3 text-center text-blue-700 font-bold"></td> */}
+                <td colSpan={2}></td>
               </tr>
             </tfoot>
           </table>

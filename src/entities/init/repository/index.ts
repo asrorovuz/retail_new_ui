@@ -56,9 +56,9 @@ export const useShiftOperationApi = (id: number | null, isOpen: boolean) => {
   });
 };
 
-export const useShiftApi = () => {
+export const useShiftApi = (isOpen: boolean) => {
   return useQuery({
-    queryKey: ["shift"],
+    queryKey: ["shift", isOpen],
     queryFn: getShiftApi,
     retry: false,          // ❗ MUHIM
     gcTime: 0,          // ❗ MUHIM

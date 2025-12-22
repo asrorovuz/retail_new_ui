@@ -101,6 +101,7 @@ const AddProductModal: FC<ProductModalProps> = ({
         <ProductForm
           type={type}
           isOpen={isOpen}
+          pageType={pageType}
           setIsOpen={setIsOpen}
           catalogLoading={isLoading}
           setType={setType}

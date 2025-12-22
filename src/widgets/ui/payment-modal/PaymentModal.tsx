@@ -106,6 +106,10 @@ const PaymentModal = ({
           <span>Оплаченная сумма:</span>
           <FormattedNumber value={totalPaymentAmount ?? 0} />
         </div>
+        <div className="flex justify-between py-4 border-b border-dashed">
+          <span>Долг:</span>
+          <FormattedNumber value={(totalAmount - (activeDraft?.discountAmount ?? 0)) - totalPaymentAmount || 0} />
+        </div>
         <div className="flex justify-between pt-4 text-xl font-semibold">
           <span>Сдача:</span>
           <FormattedNumber value={cashBackAmount ?? 0} />

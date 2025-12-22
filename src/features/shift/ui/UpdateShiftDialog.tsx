@@ -70,7 +70,39 @@ const UpdateShiftDialog = ({ isOpen, onClose }: PropsType) => {
   const { data: shiftOperations, isPending: isShiftOperationsPending } =
     useShiftOperationApi(activeShift?.id ?? null, isOpen);
   const { mutate: closeShiftMutate, isPending: isClosing } = useCloseShiftApi();
+
+  useEffect(() => {
+    if (isOpen && !activeShift) {
+      setActiveShift(null);
+      return;
+    }
+
+    if (isOpen && activeShift?.cashboxes_expected?.balances) {
+      const initialValues = activeShift.cashboxes_expected.balances.map(
+        (balance) => ({
+          type: balance.type,
+          amount: "0",
+          expected: balance.amount,
+          difference: balance.amount,
+        })
+      );
+      reset({ balances: initialValues });
+    }
+  }, [isOpen, activeShift, reset]);
+
+  useEffect(() => {
+    if (watchedBalances) {
+      watchedBalances.forEach((balance, index) => {
+        const actual = parseFloat(balance.amount) || 0;
+        const difference = balance.expected - actual;
+        setValue(`balances.${index}.difference`, difference);
+      });
+    }
+  }, [watchedBalances, setValue]);
+
+  console.log(shiftOperations, activeShift);
   
+
   const columns: ColumnDef<(typeof fields)[0]>[] = useMemo(
     () => [
       {
@@ -345,42 +377,13 @@ const UpdateShiftDialog = ({ isOpen, onClose }: PropsType) => {
 
   const tableData = useMemo(() => {
     return fields;
-  }, [fields]);
+  }, [fields, isOpen]);
 
   const table = useReactTable({
     data: tableData,
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
-
-  useEffect(() => {
-    if(isOpen && !activeShift) {
-      setActiveShift(null);
-      return
-    }
-    
-    if (isOpen && activeShift?.cashboxes_expected?.balances) {
-      const initialValues = activeShift.cashboxes_expected.balances.map(
-        (balance) => ({
-          type: balance.type,
-          amount: "0",
-          expected: balance.amount,
-          difference: balance.amount,
-        })
-      );
-      reset({ balances: initialValues });
-    }
-  }, [isOpen, activeShift, reset]);
-
-  useEffect(() => {
-    if (watchedBalances) {
-      watchedBalances.forEach((balance, index) => {
-        const actual = parseFloat(balance.amount) || 0;
-        const difference = balance.expected - actual;
-        setValue(`balances.${index}.difference`, difference);
-      });
-    }
-  }, [watchedBalances, setValue]);
 
   return (
     <Dialog

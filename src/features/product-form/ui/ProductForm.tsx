@@ -35,10 +35,12 @@ import { convertImageObjectsToBase64 } from "@/shared/lib/convertFilesToBase64";
 import { showErrorMessage, showSuccessMessage } from "@/shared/lib/showMessage";
 import { messages } from "@/app/constants/message.request";
 import { useSettingsStore } from "@/app/store/useSettingsStore";
+import { useDraftSaleStore } from "@/app/store/useSaleDraftStore";
 
 const ProductForm: FC<ProductFormType> = ({
   type,
   productId,
+  pageType,
   isOpen,
   catalogLoading,
   setIsOpen,
@@ -60,6 +62,8 @@ const ProductForm: FC<ProductFormType> = ({
   const [packageNames, setPackageNames] = useState<Package[] | []>();
 
   const { wareHouseId } = useSettingsStore((s) => s);
+  const { updateDraftSaleItem, draftSales } = useDraftSaleStore();
+  const activeDraftSale = draftSales?.find((s) => s.isActive);
 
   const { data: currencies } = useCurrancyApi();
   const { mutate: createProduct, isPending: createProductPending } =
@@ -140,7 +144,9 @@ const ProductForm: FC<ProductFormType> = ({
       ? String(values?.catalog?.value)
       : null;
     const catalog_name = values.catalog ? values?.catalog?.label : null;
-    const package_code = values?.package?.code ? String(values?.package?.code) : null;
+    const package_code = values?.package?.code
+      ? String(values?.package?.code)
+      : null;
     const package_name = values.package ? values?.package?.name_uz : null;
 
     const data = {
@@ -149,7 +155,8 @@ const ProductForm: FC<ProductFormType> = ({
         ? {
             purchase_price: {
               amount: Number(values?.purchase_price?.amount) ?? 0,
-              currency_code: Number(values?.purchase_price?.currency?.code) ?? 0,
+              currency_code:
+                Number(values?.purchase_price?.currency?.code) ?? 0,
             },
           }
         : {}),
@@ -160,7 +167,6 @@ const ProductForm: FC<ProductFormType> = ({
         sku: values?.sku,
         vat_rate: values?.vat_rate,
         barcodes: values?.barcodes || [],
-        count: +values?.count || 0,
         images,
         prices,
         category_id,
@@ -216,6 +222,30 @@ const ProductForm: FC<ProductFormType> = ({
           }
           if (res?.id) {
             remenderSubmit(res?.id);
+          }
+
+          if (pageType !== "products") {
+            const operationItem = activeDraftSale?.items?.find(
+              (p) => p.productId === res?.id
+            );
+            const packagePrice =
+              res?.prices?.find(
+                (p: any) => p?.product_price_type?.is_primary
+              ) || res?.prices?.[0];
+            const quantity = operationItem?.quantity ?? 0;
+
+            const newItem = {
+              productId: res?.id,
+              productName: res?.name,
+              productPackageName: res?.measurement_name || "",
+              priceTypeId: packagePrice?.product_price_type?.id,
+              priceAmount: packagePrice?.amount,
+              quantity: quantity + 1,
+              totalAmount: (quantity + 1) * (packagePrice?.amount ?? 0),
+              catalogCode: res?.catalog_code,
+              catalogName: res?.catalog_name,
+            };
+            updateDraftSaleItem(newItem);
           }
           onClose();
         },
@@ -330,17 +360,17 @@ const ProductForm: FC<ProductFormType> = ({
           </FormItem>
 
           {/* {type === "add" && ( */}
-            <FormItem label="Остаток">
-              <Input
-                type="number"
-                autoComplete="off"
-                value={remainder}
-                placeholder="Введите остаток"
-                replaceLeadingZero={true}
-                className="w-full"
-                onChange={(e) => setRemainder(+e.target.value)}
-              />
-            </FormItem>
+          <FormItem label="Остаток">
+            <Input
+              type="number"
+              autoComplete="off"
+              value={remainder}
+              placeholder="Введите остаток"
+              replaceLeadingZero={true}
+              className="w-full"
+              onChange={(e) => setRemainder(+e.target.value)}
+            />
+          </FormItem>
           {/* // )} */}
           <FormItem label="Оптовая цена" className="w-full p-0">
             <InputGroup>
@@ -465,31 +495,6 @@ const ProductForm: FC<ProductFormType> = ({
                     placeholder="Введите артикул"
                   />
                 </div>
-              </FormItem>
-            )}
-          />
-
-          <Controller
-            name="count"
-            control={control}
-            rules={{
-              required: "Кол-во в уп. обязательно для заполнения", // 🔥 majburiy xabar
-            }}
-            render={({ field, fieldState }) => (
-              <FormItem
-                asterisk
-                invalid={!!fieldState.error}
-                label="Кол-во в уп."
-              >
-                <Input
-                  {...field}
-                  type="number"
-                  autoComplete="off"
-                  disabled={type === "edit"}
-                  replaceLeadingZero={false}
-                  space={false}
-                  placeholder="Введите Кол-во в уп."
-                />
               </FormItem>
             )}
           />

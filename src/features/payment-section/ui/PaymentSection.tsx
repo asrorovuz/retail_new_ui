@@ -110,6 +110,7 @@ const PaymentSection = ({
           toDebtAmount={toDebtAmount}
           updateDraftDiscount={updateDraftDiscount}
           active={activeDraft?.discountAmount ?? 0}
+          clearDiscount={!!activeDraft?.items?.length}
         />
       ) : (
         <div className="h-10"></div>

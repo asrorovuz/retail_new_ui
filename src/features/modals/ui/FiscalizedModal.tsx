@@ -76,7 +76,7 @@ const FiscalizedModal = ({
         )}
       </div>
       <div className="flex justify-end gap-x-2">
-        <Button onClick={handleCancel}>Нет</Button>
+        <Button onClick={handleCancel}>Отменить</Button>
         <Button
           loading={fiscalPending}
           onClick={handleApproveFiscalization}

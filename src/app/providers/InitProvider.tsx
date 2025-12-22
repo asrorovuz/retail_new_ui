@@ -2,7 +2,6 @@ import { useEffect, type ReactNode } from "react";
 import { useSettingsStore } from "../store/useSettingsStore";
 import {
   useSettingsApi,
-  useShiftApi,
   useVersionApi,
   useWarehouseApi,
 } from "@/entities/init/repository";
@@ -16,7 +15,7 @@ import { useCurrencyStore } from "../store/useCurrencyStore";
 import { useVersionStore } from "../store/useVersionStore";
 
 export const InitProvider = ({ children }: { children: ReactNode }) => {
-  const { setSettings, setTableSettings, setWareHouseId, setActiveShift } =
+  const { setSettings, setTableSettings, setWareHouseId } =
     useSettingsStore();
   const { setNationalCurrency, setCurrencies } = useCurrencyStore();
   const setVersions = useVersionStore((store) => store.setVersions);
@@ -26,7 +25,7 @@ export const InitProvider = ({ children }: { children: ReactNode }) => {
   const { data: wareHouseData } = useWarehouseApi();
   const { data: currency } = useCurrancyApi();
   const { data: versions } = useVersionApi();
-  const { data, error } = useShiftApi();
+  
 
   // 📦 Ilova versiyalarini o‘rnatish
   useEffect(() => {
@@ -53,11 +52,11 @@ export const InitProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [settings, setSettings]);
 
-  useEffect(() => {
-    if(!!error) setActiveShift(null)
-    else if (data) setActiveShift(data);
-    else setActiveShift(null);
-  }, [data, error, setActiveShift]);
+  // useEffect(() => {
+  //   if(!!error) setActiveShift(null)
+  //   else if (data) setActiveShift(data);
+  //   else setActiveShift(null);
+  // }, [data, error, setActiveShift]);
 
   // 📋 Jadval ustunlari sozlamalari
   useEffect(() => {

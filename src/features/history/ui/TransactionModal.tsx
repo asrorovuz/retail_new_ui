@@ -7,10 +7,7 @@ import TotalsBlock from "./TotalsBlock";
 import DeletedTable from "./DeletedTable";
 import { useCreatePrintApi } from "@/entities/init/repository";
 import { messages } from "@/app/constants/message.request";
-import {
-  showErrorMessage,
-  showSuccessMessage,
-} from "@/shared/lib/showMessage";
+import { showErrorMessage, showSuccessMessage } from "@/shared/lib/showMessage";
 import { useSettingsStore } from "@/app/store/useSettingsStore";
 import { PrinterModal } from "@/widgets";
 import { useState } from "react";
@@ -41,7 +38,7 @@ const TransactionModal = ({ data, payKey, type, viewModal }: any) => {
     };
   };
 
-  const { quantity: packagesCount } = calculateTotals(data?.items ?? [], true);
+  // const { quantity: packagesCount } = calculateTotals(data?.items ?? [], true);
   const { quantity: deletedTotals } = calculateTotals(data?.items ?? [], false);
 
   const { mutateAsync: overheadTrigger, isPending: isOverheadMutating } =
@@ -75,15 +72,6 @@ const TransactionModal = ({ data, payKey, type, viewModal }: any) => {
   };
 
   const handlePrintDefault = async () => {
-    // if (
-    //   !fetchPrintersLoading &&
-    //   printers &&
-    //   printers.length > 0 &&
-    // ) {
-    //   showErrorLocalMessage("Принтер не найден");
-    //   return;
-    // }
-
     try {
       const res = await overheadTrigger(); // Blob qaytadi
 
@@ -217,7 +205,7 @@ const TransactionModal = ({ data, payKey, type, viewModal }: any) => {
       <ProductTable
         items={data?.items?.filter((i: any) => !i?.is_deleted) ?? []}
         totals={data?.totals}
-        packagesCount={packagesCount}
+        discount={data?.exact_discounts?.[0] ?? 0}
       />
       <TotalsBlock data={data} payKey={payKey} />
       {deletedTotals > 0 && (

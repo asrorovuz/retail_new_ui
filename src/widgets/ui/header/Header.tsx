@@ -1,6 +1,7 @@
 import { useAuthContext } from "@/app/providers/AuthProvider";
 import { useSettingsStore } from "@/app/store/useSettingsStore";
 import { useVersionStore } from "@/app/store/useVersionStore";
+import { useShiftApi } from "@/entities/init/repository";
 import { CreateShiftDialog, UpdateShiftDialog } from "@/features/shift";
 import UpdateVersion from "@/features/update";
 import { Button, Dropdown } from "@/shared/ui/kit";
@@ -8,7 +9,7 @@ import Alert from "@/shared/ui/kit-pro/alert/Alert";
 import Menu from "@/shared/ui/kit/Menu/Menu";
 import MenuItem from "@/shared/ui/kit/Menu/MenuItem";
 import { LogoutSvg } from "@/shared/ui/svg/LogoutSvg";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { FiRefreshCcw } from "react-icons/fi";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -18,9 +19,10 @@ const Header = () => {
   const [showAlert, setShowAlert] = useState(false);
   const [shiftAddModal, setShiftAddModal] = useState(false);
   const [shiftUpdateModal, setShiftUpdateModal] = useState(false);
+  const { data, error } = useShiftApi(shiftAddModal || shiftUpdateModal);
   const navigate = useNavigate();
 
-  const { activeShift } = useSettingsStore();
+  const { activeShift, setActiveShift } = useSettingsStore();
   const version = useVersionStore((store) => store.versions);
 
   const activeKey = location.pathname.replace("/", "") || "sales";
@@ -29,6 +31,12 @@ const Header = () => {
   const handleSelect = (eventKey: string) => {
     navigate(eventKey);
   };
+
+  useEffect(() => {
+    if (!!error) setActiveShift(null);
+    else if (data) setActiveShift(data);
+    else setActiveShift(null);
+  }, [data, error, setActiveShift]);
 
   return (
     <header className="bg-white rounded-2xl p-2 flex justify-between items-center">

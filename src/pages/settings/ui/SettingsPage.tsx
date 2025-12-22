@@ -34,7 +34,7 @@ const SettingsPage = () => {
   function mapFormToPayload(data: any) {
     return {
       printer_name: data.printer_name?.value ?? null,
-      receipt_size: data.receipt_size?.value ?? null,
+      receipt_size: data.receipt_size?.value ?? "80",
       fiscalization_enabled: data.fiscalization_enabled,
       auto_print_receipt: data.auto_print_receipt,
       enable_create_unknown_product: data.enable_create_unknown_product,

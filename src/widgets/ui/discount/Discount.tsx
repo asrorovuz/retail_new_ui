@@ -1,14 +1,16 @@
 import classNames from "@/shared/lib/classNames";
 import { getDynamicDiscounts } from "@/shared/lib/dynamicDiscount";
 import FormattedNumber from "@/shared/ui/kit-pro/numeric-format/NumericFormat";
+import { useEffect } from "react";
 
 type PropsType = {
   toDebtAmount: number;
   active: number;
   updateDraftDiscount: (val: number) => void;
+  clearDiscount: boolean;
 };
 
-const Discount = ({ toDebtAmount, active, updateDraftDiscount }: PropsType) => {
+const Discount = ({ toDebtAmount, active, updateDraftDiscount, clearDiscount }: PropsType) => {
   const onUpdateDiscount = (val: number) => {
     if (active === val) {
       updateDraftDiscount(0);
@@ -16,6 +18,12 @@ const Discount = ({ toDebtAmount, active, updateDraftDiscount }: PropsType) => {
     }
     updateDraftDiscount(val);
   };
+
+  useEffect(() => {
+    if(!clearDiscount){
+      updateDraftDiscount(0)
+    }
+  }, [clearDiscount])
 
   return (
     <ul className="flex items-center gap-x-2 h-10">

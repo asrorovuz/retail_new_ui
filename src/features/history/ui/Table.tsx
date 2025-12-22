@@ -99,9 +99,9 @@ const TableHistory = ({
         ? data?.payment?.cash_box_states || []
         : data?.payout?.cash_box_states || [];
 
-    const paymentAmounts = PaymentTypes.map((paymentType) => {
-      const founded = cashBoxStates.find(
-        (state: any) => state.type === paymentType.type
+    const paymentAmounts = PaymentTypes?.map((paymentType) => {
+      const founded = cashBoxStates?.find(
+        (state: any) => state?.type === paymentType?.type
       );
 
       return {
@@ -115,7 +115,7 @@ const TableHistory = ({
       items: items,
       isActive: true,
       discountAmount: data?.exact_discounts?.[0]?.amount,
-      payment: {
+      [payKey]: {
         amounts: paymentAmounts,
       },
     };
@@ -188,7 +188,7 @@ const TableHistory = ({
           return (
             <span
               className="cursor-pointer font-bold hover:text-primary"
-              //   onClick={() => navigate(`/${operationType}/${row.id}`)}
+              onClick={() => onSubmit(row.original)}
             >
               #{number}
             </span>
@@ -217,7 +217,7 @@ const TableHistory = ({
         enableSorting: false,
         enableHiding: false,
         meta: {
-          cellClassName: "text-end min-w-[175px]",
+          cellClassName: "text-end",
         },
         header: () => {
           return "Итого";
@@ -228,7 +228,7 @@ const TableHistory = ({
             <div>
               {totals ? (
                 totals?.map((item: any, index: number) => (
-                  <p key={index} className={"heading-text font-bold"}>
+                  <p key={index} className={"heading-text font-bold text-nowrap flex gap-x-1"}>
                     <FormattedNumber value={item?.amount} />
                     <CurrencyName currency={item.currency} />
                   </p>
@@ -263,7 +263,7 @@ const TableHistory = ({
                       payment
                         .calculateToPay(cash_box_states)
                         ?.map((item: any, index: number) => (
-                          <p key={index} className={"heading-text font-bold"}>
+                          <p key={index} className={"heading-text font-bold text-nowrap flex gap-x-1"}>
                             <FormattedNumber value={item?.amount} />
                             <CurrencyName currency={item.currency} />
                           </p>
@@ -294,7 +294,7 @@ const TableHistory = ({
                       payment
                         .calculateToPay(debts)
                         ?.map((item: any, index: number) => (
-                          <p key={index} className={"heading-text font-bold"}>
+                          <p key={index} className={"heading-text font-bold text-nowrap flex gap-x-1"}>
                             <FormattedNumber value={item?.amount} />
                             <CurrencyName currency={item.currency} />
                           </p>
@@ -416,7 +416,7 @@ const TableHistory = ({
                   <TbEye />
                 </span>
               </Tooltip>
-              <Tooltip wrapperClass="flex" title="View">
+              <Tooltip wrapperClass="flex" title="Edit">
                 <span
                   className={`cursor-pointer p-2`}
                   onClick={() => onSubmit(row.original)}

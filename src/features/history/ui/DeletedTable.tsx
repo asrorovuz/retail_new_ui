@@ -50,7 +50,6 @@ const DeletedTable = ({
                   isDeleted
                   index={i}
                   item={item}
-                  totals={[]}
                 />
               ))}
             </tbody>

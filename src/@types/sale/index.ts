@@ -183,7 +183,7 @@ export type DraftSaleItemSchema = {
   id?: number;
   productId: number;
   productName: string;
-  productPackageName: string;
+  productPackageName: any;
   priceAmount: number;
   priceTypeId: number;
   quantity: number;
@@ -204,7 +204,7 @@ export type DraftSalePaymentAmountSchema = {
 export interface SaleStoreActions {
   addDraftSale: (payload: DraftSaleSchema) => void;
   activateDraftSale: (index: number) => void;
-  updateDraftSaleItem: (payload: DraftSaleItemSchema) => void;
+  updateDraftSaleItem: (payload: DraftSaleItemSchema | any) => void;
   resetActiveDraftSale: () => void;
   deleteDraftSale: (draftSaleIndex: number) => void;
   deleteDraftSaleItem: (draftSaleItemIndex: number) => void;

@@ -150,6 +150,7 @@ const Register = () => {
               <Button
                 type="submit"
                 variant="solid"
+                loading={globalLoginPending || registerLoading}
                 className="bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-xl"
               >
                 Далее

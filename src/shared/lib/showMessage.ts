@@ -179,7 +179,7 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
     if (error.shift_disabled) {
       return toast.error(
         lang === "ru"
-          ? "Открытие смены запрещено"
+          ? "Доступ ограничен. Смотрите «Настройки»."
           : "Shift ochishga ruxsat yo‘q",
         {
           position: "bottom-left",

@@ -80,7 +80,7 @@ export const useCashExpenseApi = (params: any, enabled: boolean) => {
 
 export const useCashExpenseCountApi = (params: any, enabled: boolean) => {
   return useQuery({
-    queryKey: ["cash-expense-count"],
+    queryKey: ["cash-expense-count", params, enabled],
     queryFn: () => getCashExpenseCount(params),
     enabled,
   });

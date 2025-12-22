@@ -33,7 +33,7 @@ export const pathServices = {
     getAllCashbox: "/api/cash-box/get",
     getCashboxByIdCashIn: "/api/cash-box/cash-in/",
     getCashboxByIdCashOut: "/api/cash-box/cash-out/",
-    getCashboxByIdExpense: "/api/cash-box/cash-expense/",
+    getCashboxByIdExpense: "/api/cash-box/expense/",
     getCashboxOperationsCategoy: `/api/cash-box/operation-category/get`,
     getCashIn: "/api/cash-box/cash-ins/get",
     getCashOut: "/api/cash-box/cash-outs/get",
@@ -94,6 +94,7 @@ export const pathServices = {
     register: "/api/sale/register",
     getFiscaldevice: "/api/fiscal-device/get",
     getPaymentPath: "/api/payment-provider/get",
+    updateSellPath: "/api/sale/update/",
 
     // CREATE
     createFiscalized: "/api/fiscalization/sale/register",
@@ -102,11 +103,13 @@ export const pathServices = {
   refund: {
     getCheck: "/api/sale/get-by-receipt",
     register: "/api/refund/register",
+    updateRefundPath: "/api/refund/update/",
   },
 
   purchase: {
     // GET
     register: "/api/purchase/register",
+    updatePurchasePath: "/api/purchase/update/",
   },
 
   versions: {

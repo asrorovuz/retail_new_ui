@@ -4,10 +4,7 @@ import {
   PaymentProviderTypeClick,
   PaymentProviderTypePayme,
 } from "@/app/constants/payme-providers";
-import {
-  useCreateFiscalizedApi,
-  usePaymentProviderApi,
-} from "@/entities/sale/repository";
+import { useCreateFiscalizedApi } from "@/entities/sale/repository";
 import classNames from "@/shared/lib/classNames";
 import eventBus from "@/shared/lib/eventBus";
 import { Button, Dialog } from "@/shared/ui/kit";
@@ -25,6 +22,7 @@ type PropsPaymeQrType = {
   activeDraftPaymeTypes: number[];
   setPaymeType: (val: number[]) => void;
   selectedPaymentType: number;
+  paymentData: any;
   handleCancelFiscalization: () => void;
   handleCancelPayment: () => void;
 };
@@ -35,6 +33,7 @@ const PaymeWhithQR = ({
   selectFiscalized,
   activeDraftPaymeTypes,
   setPaymeType,
+  paymentData,
   handleCancelFiscalization,
   handleCancelPayment,
 }: PropsPaymeQrType) => {
@@ -42,7 +41,6 @@ const PaymeWhithQR = ({
   const [selectedPayment, setSelectedPayment] =
     useState<PaymeProviderType | null>(null);
 
-  const { data: paymentData = [] } = usePaymentProviderApi();
   const { mutate: createFiscalized, isPending: fiscalPending } =
     useCreateFiscalizedApi();
 
@@ -80,10 +78,10 @@ const PaymeWhithQR = ({
           messages.uz.SUCCESS_MESSAGE,
           messages.ru.SUCCESS_MESSAGE
         );
-        handleCancelFiscalization();
         setQrCode("");
         setSelectedPayment(null);
         setPaymeType([]);
+        handleCancelFiscalization();
       },
       onError(error) {
         showErrorMessage(error);
@@ -99,36 +97,21 @@ const PaymeWhithQR = ({
 
     handleApprovePayment();
     setPaymeType([]);
-    // try {
-
-    // } catch (err) {
-    //   showErrorMessage(err);
-    //   close();
-    // }
   };
 
-  // useEffect(() => {
-  //   if (payment) {
-  //     const select = payment?.find(
-  //       (item) => item?.type === selectedPaymentType
-  //     );
-  //     setSelectedPayment(select ?? null);
-  //   }
-  // }, [selectedPaymentType]);
-
   useEffect(() => {
-    const listener = (code: string) => {
-      setQrCode(code);
-    };
-    eventBus.on("BARCODE_SCANNED", listener);
+    if (isOpen) {
+      const listener = (code: string) => {
+        setQrCode(code);
+      };
+      eventBus.on("BARCODE_SCANNED", listener);
 
-    return () => eventBus.remove("BARCODE_SCANNED", listener);
+      return () => eventBus.remove("BARCODE_SCANNED", listener);
+    }
   }, []);
 
   useEffect(() => {
     if (!activeDraftPaymeTypes?.length || !payment?.length) return;
-
-    // 5 yoki 6 dan birinchi mosini topish
 
     const activeSelectType = activeDraftPaymeTypes.find(
       (item) => item === 5 || item === 6
@@ -137,14 +120,14 @@ const PaymeWhithQR = ({
     // payment ichidan mos type topish
     if (activeSelectType === 5) {
       const findItem = payment.find(
-        (el) => el?.type === PaymentProviderTypeClick
+        (el: any) => el?.type === PaymentProviderTypeClick
       );
       setSelectedPayment(findItem ?? null);
     }
 
     if (activeSelectType === 6) {
       const findItem = payment.find(
-        (el) => el?.type === PaymentProviderTypePayme
+        (el: any) => el?.type === PaymentProviderTypePayme
       );
       setSelectedPayment(findItem ?? null);
     }
@@ -174,7 +157,7 @@ const PaymeWhithQR = ({
           )}
         </div>
         <div>
-          {payment?.length && (
+          {payment?.length ? (
             <div className={"flex items-center gap-x-2"}>
               {payment?.map((item: any, index: number) => {
                 const isSelected = selectedPayment?.id === item?.id;
@@ -208,6 +191,8 @@ const PaymeWhithQR = ({
                 );
               })}
             </div>
+          ) : (
+            ""
           )}
         </div>
       </div>
