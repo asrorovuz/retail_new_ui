@@ -129,22 +129,6 @@ const OrderActions = ({
     );
   }, [(type === "sale" ? activeDraft?.payment : activeDraft?.payout)?.amounts]);
 
-  // const toDebtAmount = useMemo<number>(() => {
-  //   const debtAmount = netPrice - totalPaymentAmount;
-  //   return debtAmount > 0 ? debtAmount : 0;
-  // }, [netPrice, totalPaymentAmount]);
-
-  // const totalMoumentPrice = useMemo(() => {
-  //   const sum =
-  //     activeDraft?.items?.reduce(
-  //       (sum, current) =>
-  //         sum + Number(current?.priceAmount * current?.quantity || 0),
-  //       0
-  //     ) || 0;
-
-  //   return sum - (activeDraft?.discountAmount || 0);
-  // }, [activeDraft, toDebtAmount]);
-
   const handleCancelPrint = () => {
     setPrintSelect(false);
     if (settings?.fiscalization_enabled && type === "sale")

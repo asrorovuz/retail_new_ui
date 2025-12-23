@@ -92,6 +92,7 @@ export interface ProductDefaultValues {
   package_name: string | null;
   images: any[];
   category: any;
+  is_legal: boolean;
   isActive?: boolean;
   sku: string | null;
   code: string | null;

@@ -17,6 +17,7 @@ import PaymentSection from "@/features/payment-section";
 import SaleAndRefunTable from "@/features/sale-refund-table";
 import SearchProduct from "@/features/search-product";
 import SearchProductTable from "@/features/search-product-table";
+import ViewMark from "@/features/viewMark";
 import eventBus from "@/shared/lib/eventBus";
 import { handleBarcodeScanned } from "@/shared/lib/handleScannedBarcode";
 import { handleScannedProduct } from "@/shared/lib/handleScannedProduct";
@@ -30,6 +31,8 @@ const RefundPage = () => {
   const [refundCheckData, setRefundCheckData] = useState<any>();
   const [checkCode, setCheckDode] = useState("");
   const [barcode, setBarcode] = useState<string | null>(null);
+  const [barcodeMark, setBarcodeMark] = useState("");
+  const [mark, setMark] = useState<number | null>(null);
   const [isOpenAddProduct, setIsOpenAddProduct] = useState(false);
   const [search, setSearch] = useState("");
   const [value, setValue] = useState<string>("0");
@@ -88,6 +91,9 @@ const RefundPage = () => {
     (store) => store.completeActiveDraftRefund
   );
   const { settings } = useSettingsStore((s) => s);
+  const deleteDraftRefundMark = useDraftRefundStore(
+    (store) => store.deleteDraftRefundMark
+  );
 
   const activeDraft: DraftRefundSchema =
     draftRefunds?.find((s) => s.isActive) ?? draftRefunds[0];
@@ -157,6 +163,7 @@ const RefundPage = () => {
         } else {
           const val: string = handleBarcodeScanned(code);
           if (val) {
+            setBarcodeMark(code);
             setBarcode(val);
           }
         }
@@ -169,7 +176,7 @@ const RefundPage = () => {
   useEffect(() => {
     if (isSuccess && !isFetching) {
       if (findBarcodeData) {
-        handleScannedProduct(findBarcodeData, "refund");
+        handleScannedProduct(findBarcodeData, "refund", barcodeMark);
         setBarcode(null);
       }
     }
@@ -204,6 +211,7 @@ const RefundPage = () => {
         />
         <SaleAndRefunTable
           type="refund"
+          setMark={setMark}
           draft={draftRefunds}
           activeDraft={activeDraft}
           expandedRow={expandedRow}
@@ -289,6 +297,15 @@ const RefundPage = () => {
           setIsOpen={setIsOpenAddProduct}
           productPriceType={productPriceType!}
         />
+
+        {mark ? (
+          <ViewMark
+            item={mark}
+            onClose={() => setMark(null)}
+            activeDraft={activeDraft}
+            deleteDraftMark={deleteDraftRefundMark}
+          />
+        ) : null}
       </div>
     </div>
   );

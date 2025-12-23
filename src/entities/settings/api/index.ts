@@ -75,6 +75,14 @@ export const updateSettingsShift = async (payload: any) => {
   });
 };
 
+export const updateFiscalizationWhite = (data: any) => {
+  return apiRequest({
+    url: "/api/settings/organization/fiscalization-item/update",
+    method: "POST",
+    data,
+  });
+};
+
 // CREATE
 export const postCashRegisterArca = async (payload: any) => {
   return apiRequest({

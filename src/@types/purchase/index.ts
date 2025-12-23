@@ -44,7 +44,7 @@ export interface PurchaseStoreActions {
   //   updateDraftPurchasePaymentAmounts: (
   //     paymentAmounts: DraftPurchasePayoutAmountSchema[]
   //   ) => void;
-  //   //   addDraftPurchaseItem: (payload: DraftPurchaseItemSchema) => void;
+  addDraftPurchaseItem: (payload: DraftPurchaseItemSchema) => void;
   //   //   incrementDraftPurchaseItemQuantity: (draftPurchaseItemIndex: number) => void;
   //   //   decrementDraftPurchaseItemQuantity: (draftPurchaseItemIndex: number) => void;
   updateDraftPurchaseItemQuantity: (
@@ -63,7 +63,7 @@ export interface PurchaseStoreActions {
   updateDraftPurchasePayout: (
     payout: DraftPurchasePayoutAmountSchema[]
   ) => void;
-  //   deleteDraftPurchaseMark: (item: { productId: number; index: number }) => void;
+  deleteDraftPurchaseMark: (item: { productId: number; index: number }) => void;
 }
 
 export interface PurchaseStoreInitialState {
@@ -77,17 +77,17 @@ type PurchasePaymentModel = {
 };
 
 export type RegisterPurchaseModel = {
-    number?: string
-    date?: string
-    is_approved: boolean
-    contractor_id?: number
-    employee_id?: number
-    cash_box_id?: number | null
-    payout?: PurchasePaymentModel
-    exact_discount: Money[]
-    percent_discount?: number
-    items: PurchaseItemModel[]
-}
+  number?: string;
+  date?: string;
+  is_approved: boolean;
+  contractor_id?: number;
+  employee_id?: number;
+  cash_box_id?: number | null;
+  payout?: PurchasePaymentModel;
+  exact_discount: Money[];
+  percent_discount?: number;
+  items: PurchaseItemModel[];
+};
 
 type Money = {
   amount: number;

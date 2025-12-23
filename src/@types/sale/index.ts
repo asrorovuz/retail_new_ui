@@ -222,15 +222,13 @@ export interface SaleStoreActions {
   ) => void;
   updateDraftSaleDiscount: (discountAmount: number) => void;
   updateDraftSalePayment: (payment: DraftSalePaymentAmountSchema[]) => void;
-  completeActiveDraftSale: () => void
+  completeActiveDraftSale: () => void;
 
   // addDraftSalePaymentAmount: (payload: DraftSalePaymentAmountSchema) => void
   // updateDraftSalePaymentAmounts: (payload: DraftSalePaymentAmountSchema[]) => void
 
-  // addDraftSaleItem: (payload: DraftSaleItemSchema) => void
-  // incrementDraftSaleItemQuantity: (draftSaleItemIndex: number) => void
-  // decrementDraftSaleItemQuantity: (draftSaleItemIndex: number) => void
-  // deleteDraftSaleMark: (item: { productId: number, index: number }) => void
+  addDraftSaleItem: (payload: DraftSaleItemSchema) => void;
+  deleteDraftSaleMark: (item: { productId: number; index: number }) => void;
 }
 
 export interface SaleStoreInitialState {
@@ -241,13 +239,15 @@ export type PaymeProviderType = {
   id: number;
   type: number;
   is_enabled: boolean;
-  info: {
-    service_id: number;
-    merchant_id: number;
-    merchant_user_id: number;
-    secret_key: string;
-  } | {
-    cash_box_id: string;
-    cash_box_name: string;
-  }
-}
+  info:
+    | {
+        service_id: number;
+        merchant_id: number;
+        merchant_user_id: number;
+        secret_key: string;
+      }
+    | {
+        cash_box_id: string;
+        cash_box_name: string;
+      };
+};

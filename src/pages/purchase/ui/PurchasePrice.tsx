@@ -15,6 +15,7 @@ import PaymentSection from "@/features/payment-section";
 import SaleAndRefunTable from "@/features/sale-refund-table";
 import SearchProduct from "@/features/search-product";
 import SearchProductTable from "@/features/search-product-table";
+import ViewMark from "@/features/viewMark";
 import eventBus from "@/shared/lib/eventBus";
 import { handleBarcodeScanned } from "@/shared/lib/handleScannedBarcode";
 import { handleScannedProduct } from "@/shared/lib/handleScannedProduct";
@@ -26,9 +27,11 @@ const PurchasePrice = () => {
   const [expandedRow, setExpandedRow] = useState<string | null>(null);
   const [expendedId, setExpandedId] = useState<number | null>(null);
   const [barcode, setBarcode] = useState<string | null>(null);
+  const [barcodeMark, setBarcodeMark] = useState("");
   const [isOpenAddProduct, setIsOpenAddProduct] = useState(false);
   const [value, setValue] = useState<string>("0");
   const [payModal, setPayModal] = useState(false);
+  const [mark, setMark] = useState<number | null>(null);
   const [activeOnlyType, setActiveOnlyType] = useState({
     isOpen: false,
     ind: -1,
@@ -65,6 +68,9 @@ const PurchasePrice = () => {
   const completeActiveDraftPurchase = useDraftPurchaseStore(
     (store) => store.completeActiveDraftPurchase
   );
+  const deleteDraftPurchaseMark = useDraftPurchaseStore(
+    (store) => store.deleteDraftPurchaseMark
+  );
 
   const { data, isPending } = useAllProductApi(50, 1, debouncedSearch || "");
   const {
@@ -83,6 +89,7 @@ const PurchasePrice = () => {
       const onScan = eventBus.on("BARCODE_SCANNED", (code) => {
         const val: string = handleBarcodeScanned(code);
         if (val) {
+          setBarcodeMark(code);
           setBarcode(val);
         }
       });
@@ -100,7 +107,7 @@ const PurchasePrice = () => {
   useEffect(() => {
     if (isSuccess && !isFetching && !payModal) {
       if (findBarcodeData) {
-        handleScannedProduct(findBarcodeData, "purchase");
+        handleScannedProduct(findBarcodeData, "purchase", barcodeMark);
         setBarcode(null); // qayta so‘rov yubormaslik uchun tozalaymiz
       }
     }
@@ -130,6 +137,7 @@ const PurchasePrice = () => {
         <SaleAndRefunTable
           type="purchase"
           draft={draftPurchases}
+          setMark={setMark}
           activeDraft={activeDraft}
           expandedRow={expandedRow}
           setExpandedRow={setExpandedRow}
@@ -207,6 +215,15 @@ const PurchasePrice = () => {
           setIsOpen={setIsOpenAddProduct}
           productPriceType={productPriceType!}
         />
+
+        {mark ? (
+          <ViewMark
+            item={mark}
+            onClose={() => setMark(null)}
+            activeDraft={activeDraft}
+            deleteDraftMark={deleteDraftPurchaseMark}
+          />
+        ) : null}
       </div>
     </div>
   );

@@ -23,6 +23,7 @@ import type { DraftPurchaseSchema } from "@/@types/purchase";
 
 type PropsType = {
   type: "sale" | "refund" | "purchase";
+  setMark: any
   draft: DraftSaleSchema[] | DraftRefundSchema[] | DraftPurchaseSchema[];
   activeDraft: DraftSaleSchema | DraftRefundSchema | DraftPurchaseSchema;
   expandedRow: string | null;
@@ -37,6 +38,7 @@ type PropsType = {
 
 const SaleAndRefunTable = ({
   type,
+  setMark,
   activeDraft,
   expendedId,
   setExpandedId,
@@ -60,8 +62,6 @@ const SaleAndRefunTable = ({
       setExpandedRow(null);
     }
   };
-
-  console.log(activeDraft, "ac");
 
   const decrease = () => {
     const newVal = (currentItem?.quantity || 0) - 1;
@@ -109,10 +109,10 @@ const SaleAndRefunTable = ({
       setExpandedRow(itemId!);
     }
   }, [expendedId]);
-
+  
   const table = useReactTable({
     data: activeDraft?.items ?? [],
-    columns: columns(),
+    columns: columns(setMark),
     getRowCanExpand: () => true,
     getCoreRowModel: getCoreRowModel(),
     getExpandedRowModel: getExpandedRowModel(),

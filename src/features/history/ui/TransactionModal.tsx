@@ -27,6 +27,8 @@ const TransactionModal = ({ data, payKey, type, viewModal }: any) => {
     size: "80",
   });
 
+  console.log(data, "data");
+  
   const { addDraftSale, draftSales, activateDraftSale } = useDraftSaleStore();
   const { addDraftRefund, draftRefunds, activateDraftRefund } =
     useDraftRefundStore();
@@ -133,7 +135,7 @@ const TransactionModal = ({ data, payKey, type, viewModal }: any) => {
     );
   };
 
-  const onSubmit = (data: any) => {
+  const onSubmit = () => {
     const items = data?.items?.map((item: any) => {
       return {
         id: item?.id,
@@ -177,6 +179,8 @@ const TransactionModal = ({ data, payKey, type, viewModal }: any) => {
       },
     };
 
+    console.log(payload, "payload 555");
+    
     if (type === "sale") {
       if (!draftSales?.some((item) => item.id === data?.id)) {
         addDraftSale(payload);

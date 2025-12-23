@@ -9,6 +9,7 @@ import {
   Input,
   InputGroup,
   Select,
+  Switcher,
 } from "@/shared/ui/kit";
 import { Controller, useForm } from "react-hook-form";
 import type {
@@ -52,7 +53,8 @@ const ProductForm: FC<ProductFormType> = ({
   catalogData,
   setDefaultValues,
 }) => {
-  const { handleSubmit, control, getValues, setValue, reset, watch } = useForm();
+  const { handleSubmit, control, getValues, setValue, reset, watch } =
+    useForm();
   const inputWrapperRef = useRef<HTMLDivElement>(null);
   const isCatalogApplied = useRef(false);
   const [remainder, setRemainder] = useState<number>(defaultValue?.state || 0);
@@ -72,6 +74,7 @@ const ProductForm: FC<ProductFormType> = ({
   const { mutate: alertOnUpdate } = useUpdateAlertOn();
   const { mutate: createRegister } = useCreateregister();
   const { mutate: updatepurchasePrice } = useUpdatePurchasedPriceApi();
+  console.log(defaultValue?.is_legal, "isLegal");
 
   const onClose = () => {
     setBarcode(null);
@@ -80,6 +83,7 @@ const ProductForm: FC<ProductFormType> = ({
     setIsShow(false);
     setIsOpen(false);
     setDefaultValues(null);
+    setPackageNames([]);
     reset();
     if (setProductId) {
       setProductId(null);
@@ -169,6 +173,7 @@ const ProductForm: FC<ProductFormType> = ({
         barcodes: values?.barcodes || [],
         images,
         prices,
+        is_legal: values?.is_legal,
         category_id,
         category_name,
         catalog_code,
@@ -565,6 +570,16 @@ const ProductForm: FC<ProductFormType> = ({
               setValue={setValue}
               control={control}
               getValues={getValues}
+            />
+          </FormItem>
+
+          <FormItem label="Белых товаров">
+            <Controller
+              name="is_legal"
+              control={control}
+              render={({ field }) => (
+                <Switcher checked={field.value} onChange={field.onChange} />
+              )}
             />
           </FormItem>
 

@@ -101,9 +101,7 @@ export const useDraftPurchaseStore = create<
         const activePurchase = state.draftPurchases?.find((s) => s.isActive);
         if (activePurchase) {
           const draftPurchaseItem = activePurchase.items.find((i) => {
-            return (
-              i.productId === draftItem.productId
-            );
+            return i.productId === draftItem.productId;
           });
 
           if (draftPurchaseItem) {
@@ -113,9 +111,7 @@ export const useDraftPurchaseStore = create<
             if (draftItem.quantity <= 0) {
               const draftPurchaseItemIndex = activePurchase.items.findIndex(
                 (i) => {
-                  return (
-                    i.productId === draftItem.productId
-                  );
+                  return i.productId === draftItem.productId;
                 }
               );
               if (draftPurchaseItemIndex >= 0) {
@@ -211,6 +207,58 @@ export const useDraftPurchaseStore = create<
                 activePurchase.payout.amounts.forEach((a) => (a.amount = 0));
               }
             }
+          }
+        }
+      }),
+    deleteDraftPurchaseMark: (item) =>
+      set((state) => {
+        const activePurchase = state.draftPurchases.find((s) => s.isActive);
+        if (activePurchase) {
+          activePurchase.items
+            .find((i) => i.productId === item?.productId)
+            ?.marks?.splice(item.index, 1);
+        }
+      }),
+    addDraftPurchaseItem: (draftItem) =>
+      set((state) => {
+        const activePurchase = state.draftPurchases.find((s) => s.isActive);
+        const [mark] = draftItem.marks ?? [];
+
+        if (activePurchase) {
+          const existPurchaseItem = activePurchase.items.find((i) => {
+            return i.productId === draftItem.productId;
+          });
+
+          if (existPurchaseItem) {
+            existPurchaseItem.quantity += 1;
+            existPurchaseItem.totalAmount =
+              existPurchaseItem.quantity * existPurchaseItem.priceAmount;
+            if (mark) {
+              existPurchaseItem.marks ??= [];
+
+              const isExist = existPurchaseItem.marks.some(
+                (existing) => existing === mark
+              );
+
+              if (!isExist) {
+                existPurchaseItem.marks.push(mark);
+              }
+            }
+          } else {
+            const newPurchaseItem: DraftPurchaseItemSchema = {
+              id: draftItem.productId,
+              productId: draftItem.productId,
+              productName: draftItem.productName,
+              productPackageName: draftItem.productPackageName,
+              priceAmount: draftItem.priceAmount,
+              priceTypeId: draftItem.priceTypeId,
+              quantity: draftItem.quantity,
+              totalAmount: draftItem.totalAmount,
+              catalogName: draftItem.catalogName,
+              catalogCode: draftItem.catalogCode,
+              ...(mark ? { marks: [mark] } : {}),
+            };
+            activePurchase.items.unshift(newPurchaseItem);
           }
         }
       }),

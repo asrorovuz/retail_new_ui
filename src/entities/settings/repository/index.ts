@@ -12,6 +12,7 @@ import {
   updateCashRegisterEPos,
   updateCashRegisterHippoPos,
   updateCashRegisterSimurg,
+  updateFiscalizationWhite,
   updatePaymentClick,
   updatePaymentPayme,
   updateSettings,
@@ -111,6 +112,17 @@ export const useUpdateSettingsShift = () => {
       queryClient.invalidateQueries({ queryKey: ["last-shift"] });
       queryClient.invalidateQueries({ queryKey: ["shift"] });
     },
+  });
+};
+
+export const useUpdateFiscalizationWhite = () => {
+  // const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: any) => updateFiscalizationWhite(payload),
+    // onSuccess: () => {
+    //   queryClient.invalidateQueries({ queryKey: ["init-settings"] });
+    // },
   });
 };
 

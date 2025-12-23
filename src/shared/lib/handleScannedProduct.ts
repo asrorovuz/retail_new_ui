@@ -5,13 +5,12 @@ import { useDraftPurchaseStore } from "@/app/store/usePurchaseDraftStore";
 
 export const handleScannedProduct = (
   product: any,
-  type: "sale" | "refund" | "purchase"
+  type: "sale" | "refund" | "purchase",
+  barcodeMark?: string
 ) => {
-  const { updateDraftSaleItem, draftSales } = useDraftSaleStore.getState();
-  const { updateDraftRefundItem, draftRefunds } =
-    useDraftRefundStore.getState();
-  const { updateDraftPurchaseItem, draftPurchases } =
-    useDraftPurchaseStore.getState();
+  const { draftSales, addDraftSaleItem } = useDraftSaleStore.getState();
+  const { draftRefunds, addDraftRefundItem } = useDraftRefundStore.getState();
+  const { draftPurchases, addDraftPurchaseItem } = useDraftPurchaseStore.getState();
 
   const activeDraftSale = draftSales.find((s) => s.isActive);
   const activeDraftRefund = draftRefunds.find((s) => s.isActive);
@@ -23,13 +22,13 @@ export const handleScannedProduct = (
       : type === "refund"
       ? activeDraftRefund
       : activeDraftPurchase;
-  const update =
-    type === "sale"
-      ? updateDraftSaleItem
-      : type === "refund"
-      ? updateDraftRefundItem
-      : updateDraftPurchaseItem;
 
+  const addDraftItem =
+    type === "sale"
+      ? addDraftSaleItem
+      : type === "refund"
+      ? addDraftRefundItem
+      : addDraftPurchaseItem;
   if (!active) return;
 
   const operationItem = active.items.find((p) => p.productId === product?.id);
@@ -53,9 +52,10 @@ export const handleScannedProduct = (
     totalAmount: (quantity + 1) * packagePrice?.amount,
     catalogCode: product?.catalog_code,
     catalogName: product?.catalog_name,
+    ...(barcodeMark && barcodeMark.length > 14 ? { marks: [barcodeMark] } : {}),
   };
 
-  update(newItem);
+  addDraftItem(newItem);
 };
 
 const onBuildPrice = (item: any) => {
