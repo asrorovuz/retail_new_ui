@@ -1,8 +1,7 @@
 import { messages } from "@/app/constants/message.request";
 import { useUpdateFiscalizationWhite } from "@/entities/settings/repository";
 import {
-  CatalogPackageSelector,
-  CatalogSelector,
+  CatalogPackageSelector
 } from "@/features/catalog-selector";
 import type { Package } from "@/features/modals/model";
 import classNames from "@/shared/lib/classNames";
@@ -17,6 +16,7 @@ import { Controller, useForm, type FieldError } from "react-hook-form";
 import { CiCirclePlus } from "react-icons/ci";
 import ProductSelectionTable from "./ProductSelectionTable";
 import { useSettingsStore } from "@/app/store/useSettingsStore";
+import CatalogSelectorFiscal from "@/features/catalog-selector/ui/CatalogSelectorFiscal";
 
 const FiscalizationSettings = () => {
   const [selectionDialogShow, setSelectionDialogShow] = useState(false);
@@ -200,19 +200,19 @@ const FiscalizationSettings = () => {
               <Controller
                 name={`fiscalization_default_items.catalog`}
                 control={control}
-                render={({ field }) => (
-                  <CatalogSelector
-                    {...field}
-                    fieldName={`catalog`}
-                    isOpen={true}
-                    placeholder={"Введите ИКПУ-код"}
-                    value={field.value}
-                    setValue={setValue}
-                    getValues={getValues}
-                    onChange={(opt) => field.onChange(opt.value)}
-                    setPackageNames={setPackageNames}
-                  />
-                )}
+                render={({ field }) => {
+                  return (
+                    <CatalogSelectorFiscal
+                      {...field}
+                      placeholder={"Введите ИКПУ-код"}
+                      value={field.value}
+                      setValue={setValue}
+                      getValues={getValues}
+                      onChange={(opt) => field.onChange(opt.value)}
+                      setPackageNames={setPackageNames}
+                    />
+                  );
+                }}
               />
             </div>
 

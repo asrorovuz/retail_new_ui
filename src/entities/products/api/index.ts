@@ -87,6 +87,14 @@ export const getCatalogSearchApi = async (query: string): Promise<any> => {
   });
 };
 
+export const getCatalogSearchFiscalApi = async (query: string): Promise<any> => {
+  return await apiRequest<any>({
+    url: pathServices.products.catalogSearch,
+    method: "GET",
+    params: { query },
+  });
+};
+
 export const getProductByIdApi = async (productId: number | null): Promise<Product> => {
   return await apiRequest<Product>({
     url: `${pathServices.products.getByIdPath}${productId}`,

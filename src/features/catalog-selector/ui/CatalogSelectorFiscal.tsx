@@ -1,15 +1,13 @@
 import { useState, useMemo, useEffect } from "react";
-import { useCatalogSearchApi } from "@/entities/products/repository";
+import { useCatalogSearchFiscalApi } from "@/entities/products/repository";
 import { Select } from "@/shared/ui/kit";
 import type { CommonProps } from "@/shared/ui/kit/@types/common";
 import { useDebounce } from "@/shared/lib/useDebounce";
 import type { Package } from "@/features/modals/model";
 
-interface CatalogSelectorProps extends CommonProps {
+interface CatalogSelectorFiscalProps extends CommonProps {
   placeholder?: string;
   onChange: (option: any) => void;
-  invalid?: boolean;
-  isOpen: boolean;
   setValue: any;
   getValues: any;
   value: any;
@@ -17,16 +15,15 @@ interface CatalogSelectorProps extends CommonProps {
   setPackageNames: (item: Package[] | []) => void;
 }
 
-const CatalogSelector = ({
+const CatalogSelectorFiscal = ({
   placeholder,
   onChange,
-  isOpen,
   setValue,
   getValues,
   value,
   setPackageNames,
   ...props
-}: CatalogSelectorProps) => {
+}: CatalogSelectorFiscalProps) => {
   const [inputValue, setInputValue] = useState(value);
   const [selected, setSelected] = useState<any>(null);
   const [cachedOptions, setCachedOptions] = useState<any[]>([]);
@@ -34,9 +31,8 @@ const CatalogSelector = ({
   // 🔹 Debounced query
   const debouncedQuery = useDebounce(inputValue, 500);
 
-  const { data, isLoading } = useCatalogSearchApi(
-    debouncedQuery, // 🔹 bo‘sh string yubormaymiz
-    isOpen
+  const { data, isLoading } = useCatalogSearchFiscalApi(
+    debouncedQuery ?? value
   );
 
   // 🔹 Data o‘zgarganda optionlarni tayyorlash
@@ -47,7 +43,7 @@ const CatalogSelector = ({
       value: item.class_code,
       data: item,
     }));
-    setCachedOptions(newOptions); // 🔹 yangi natijani cachega yozamiz
+    setCachedOptions(newOptions); 
     return newOptions;
   }, [data]);
 
@@ -68,7 +64,7 @@ const CatalogSelector = ({
   useEffect(() => {
     if (!value) return;
 
-    const found = options?.find((opt) => opt.value === value);
+    const found = options?.find((opt) => opt?.value === value);
     if (found) {
       setSelected(found);
       setPackageNames(found?.data?.package_names || []);
@@ -104,4 +100,4 @@ const CatalogSelector = ({
   );
 };
 
-export default CatalogSelector;
+export default CatalogSelectorFiscal;
