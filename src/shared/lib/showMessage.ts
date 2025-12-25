@@ -104,6 +104,30 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
       );
     }
 
+    if (error.bot_exists) {
+      return toast.error(
+        lang === "ru"
+          ? "Есть такой токен"
+          : "Bunday token mavjud.",
+        {
+          position: "bottom-left",
+          autoClose: 3000,
+        }
+      );
+    }
+
+    if (error.is_not_bot) {
+      return toast.error(
+        lang === "ru"
+          ? "Бота с таким токеном не найдено"
+          : "Bunday tokenga bog'langan bot mavjud emas.",
+        {
+          position: "bottom-left",
+          autoClose: 3000,
+        }
+      );
+    }
+
     if (error.login_or_password_incorrect) {
       return toast.error(
         lang === "ru"

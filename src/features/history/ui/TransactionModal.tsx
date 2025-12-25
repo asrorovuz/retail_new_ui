@@ -178,8 +178,6 @@ const TransactionModal = ({ data, payKey, type, viewModal }: any) => {
         amounts: paymentAmounts,
       },
     };
-
-    console.log(payload, "payload 555");
     
     if (type === "sale") {
       if (!draftSales?.some((item) => item.id === data?.id)) {

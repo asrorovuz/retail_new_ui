@@ -5,7 +5,7 @@ export const pathServices = {
     globalLogin: "/public/auth/global-login",
     register: "/public/auth/register",
   },
-  
+
   init: {
     printPath: "/api/print/",
     lastShiftPath: "/api/shift/last-active/get?cash_box_id=",
@@ -23,6 +23,13 @@ export const pathServices = {
     // UPDATE
     settingsUpdata: "/api/settings/organization/update",
     settingsShiftUpdat: "/api/settings/organization/shift/update",
+
+    // TELEGRAM BOT
+    getAllBot: "/api/bot/get",
+    getAllConfig: "/api/bot/config/get",
+    addBot: "/api/bot/register",
+    sendContacts: "/api/bot/config/update",
+    deleteBot: `/api/bot/delete/`,
   },
 
   warhouse: {
@@ -46,12 +53,12 @@ export const pathServices = {
     createCashOut: "/api/cash-box/cash-out/create",
     createCashExpense: "/api/cash-box/expense/create",
 
-    // UPDATE 
+    // UPDATE
     updateCashIn: "/api/cash-box/cash-in/update/",
     updateCashOut: "/api/cash-box/cash-out/update/",
     updateCashExpense: "/api/cash-box/expense/update/",
 
-    // DELETE 
+    // DELETE
     deleteCashIn: "/api/cash-box/cash-in/delete/",
     deleteCashOut: "/api/cash-box/cash-out/delete/",
     deleteCashExpense: "/api/cash-box/expense/delete/",
@@ -157,9 +164,9 @@ export const pathServices = {
     getPurchasePath: "/api/purchase/get",
     getPurchaseIdPath: "/api/purchase/",
 
-    // DELETE 
+    // DELETE
     deleteSalePath: "/api/sale/delete/",
     deleteRefundPath: "/api/refund/delete/",
-    deletePurchasePath: "/api/purchase/delete/"
-  }
+    deletePurchasePath: "/api/purchase/delete/",
+  },
 };

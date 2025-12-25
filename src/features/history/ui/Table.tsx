@@ -224,12 +224,17 @@ const TableHistory = ({
         },
         cell: ({ row }) => {
           const totals = row?.original?.totals;
-          
+
           return (
             <div>
               {totals ? (
                 totals?.map((item: any, index: number) => (
-                  <p key={index} className={"heading-text font-bold text-nowrap flex gap-x-1"}>
+                  <p
+                    key={index}
+                    className={
+                      "heading-text font-bold text-nowrap flex gap-x-1"
+                    }
+                  >
                     <FormattedNumber value={item?.amount} />
                     <CurrencyName currency={item?.currency} />
                   </p>
@@ -258,13 +263,20 @@ const TableHistory = ({
                 const { [payKey as string]: pay } = row?.original as any;
 
                 const { cash_box_states } = pay || {};
+                console.log(pay, "cash states");
+                
                 return (
                   <div>
                     {cash_box_states ? (
                       payment
                         ?.calculateToPay(cash_box_states)
                         ?.map((item: any, index: number) => (
-                          <p key={index} className={"heading-text font-bold text-nowrap flex gap-x-1"}>
+                          <p
+                            key={index}
+                            className={
+                              "heading-text font-bold text-nowrap flex gap-x-1"
+                            }
+                          >
                             <FormattedNumber value={item?.amount} />
                             <CurrencyName currency={item.currency} />
                           </p>
@@ -295,7 +307,12 @@ const TableHistory = ({
                       payment
                         .calculateToPay(debts)
                         ?.map((item: any, index: number) => (
-                          <p key={index} className={"heading-text font-bold text-nowrap flex gap-x-1"}>
+                          <p
+                            key={index}
+                            className={
+                              "heading-text font-bold text-nowrap flex gap-x-1"
+                            }
+                          >
                             <FormattedNumber value={item?.amount} />
                             <CurrencyName currency={item.currency} />
                           </p>

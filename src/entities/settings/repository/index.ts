@@ -1,13 +1,18 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
+  addContactsApi,
   deleteFiscalizedDevice,
   deletePaymentProvider,
+  deleteTelegramBot,
+  getAllBot,
+  getAllConfigBot,
   postCashRegisterArca,
   postCashRegisterEPos,
   postCashRegisterHippoPos,
   postCashRegisterSimurg,
   postClick,
   postPayme,
+  sendContactsApi,
   updateCashRegisterArca,
   updateCashRegisterEPos,
   updateCashRegisterHippoPos,
@@ -212,6 +217,55 @@ export const useDeletePaymentProvider = () => {
     mutationFn: (id: number) => deletePaymentProvider(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["payment-provider"] });
+    },
+  });
+};
+
+
+// TELEGRAM BOT 
+export const useAllBotApi = () => {
+  return useQuery({
+    queryKey: ["all-bot"],
+    queryFn: getAllBot,
+  });
+};
+
+export const useAllBotConfigApi = () => {
+  return useQuery({
+    queryKey: ["all-bot-config"],
+    queryFn: getAllConfigBot,
+  });
+};
+
+export const useSendContacts = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: any) => sendContactsApi(payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["all-bot-config"] });
+    },
+  });
+};
+
+export const useAddContacts = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: any) => addContactsApi(payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["all-bot"] });
+    },
+  });
+};
+
+export const useDeleteTelegramBot = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: number) => deleteTelegramBot(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["all-bot"] });
     },
   });
 };

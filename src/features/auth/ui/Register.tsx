@@ -51,6 +51,8 @@ const Register = () => {
   };
 
   const onSubmit = (values: any) => {
+    console.log(values, "val1");
+    
     if (step === 1) {
       globalLogin(
         { username: values?.login, password: values?.pass },
@@ -65,7 +67,8 @@ const Register = () => {
         }
       );
     }
-
+    console.log(response, "val2");
+    
     if (step === 2) {
       register(
         { ...values, token: response?.token },

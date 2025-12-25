@@ -142,3 +142,42 @@ export const deletePaymentProvider = async (id: number): Promise<any> => {
     method: "POST",
   });
 };
+
+
+// TELEGRAM BOT 
+export const getAllBot = async (): Promise<any> => {
+  return await apiRequest<any>({
+    url: pathServices.settings.getAllBot,
+    method: "GET",
+  });
+};
+
+export const getAllConfigBot = async (): Promise<any> => {
+  return await apiRequest<any>({
+    url: pathServices.settings.getAllConfig,
+    method: "GET",
+  });
+};
+
+export const sendContactsApi = async (payload: any) => {
+  return apiRequest({
+    method: "POST",
+    data: payload,
+    url: pathServices.settings.sendContacts,
+  });
+};
+
+export const addContactsApi = async (payload: any) => {
+  return apiRequest({
+    method: "POST",
+    data: payload,
+    url: pathServices.settings.addBot,
+  });
+};
+
+export const deleteTelegramBot = async (id: number): Promise<any> => {
+  return await apiRequest<any>({
+    url: `${pathServices.settings.deleteBot}${id}`,
+    method: "POST",
+  });
+};

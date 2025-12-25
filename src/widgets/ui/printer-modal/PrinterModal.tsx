@@ -31,8 +31,13 @@ const PrinterModal = ({
             sale_id: id ?? saleId,
             printer_name: printerName ?? "",
           }
-        : {
+        : type === "purchase"
+        ? {
             purchase_id: id ?? saleId,
+            printer_name: printerName ?? "",
+          }
+        : {
+            refund_id: id ?? saleId,
             printer_name: printerName ?? "",
           };
 

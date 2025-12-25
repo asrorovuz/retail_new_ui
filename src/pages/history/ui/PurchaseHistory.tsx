@@ -67,7 +67,7 @@ const PurchaseHistory = () => {
           setParams={setParams}
           setViewModal={setViewModal}
           pay={true}
-          payKey={"payment"}
+          payKey={"payout"}
           params={params}
           type="purchase"
         />

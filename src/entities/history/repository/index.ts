@@ -69,6 +69,7 @@ export const usePurchaseIdApi = (id: any) => {
   return useQuery({
     queryKey: ["history-purchase-id", id],
     queryFn: () => getPurchaseIdApi(id),
+    enabled: !!id,
   });
 };
 

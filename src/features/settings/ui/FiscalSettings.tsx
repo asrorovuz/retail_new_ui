@@ -23,7 +23,6 @@ const FiscalizationSettings = () => {
   const [packageNames, setPackageNames] = useState<Package[] | []>();
   const { settings } = useSettingsStore((s) => s);
   const { mutate: fiscalizedWhite, isPending } = useUpdateFiscalizationWhite();
-  console.log(settings);
 
   const { handleSubmit, setValue, getValues, watch, clearErrors, control } =
     useForm<any>({
@@ -38,42 +37,28 @@ const FiscalizationSettings = () => {
   const defaultProductSwitcher = watch("fiscalize_only_default_item");
 
   useEffect(() => {
-    // Agar settings dan default item mavjud bo'lsa
-    const defaultItem =
-      settings?.fiscalization_settings?.fiscalization_default_item;
-    if (defaultItem) {
-      setValue("fiscalize_only_default_item", true); // switch ON
-      setValue(
-        "fiscalization_default_items.product_name",
-        defaultItem.product_name || ""
-      );
-      setValue(
-        "fiscalization_default_items.catalog",
-        defaultItem.catalog_code || null
-      );
-      setValue(
-        "fiscalization_default_items.package",
-        defaultItem.package_code || null
-      );
-      setValue(
-        "fiscalization_default_items.nds_rate",
-        defaultItem.nds_rate ?? null
-      );
-    } else {
-      // Agar yo'q bo'lsa switch OFF va clear qilamiz
-      setValue("fiscalize_only_default_item", false);
-      setValue("fiscalization_default_items", null);
-    }
+    if (!settings?.fiscalization_settings) return;
 
-    // Switch boshqa fieldlar uchun
-    const legalOnly =
-      settings?.fiscalization_settings?.fiscalize_only_legal_items ?? false;
-    setValue("fiscalize_only_legal_items", legalOnly);
+    const item = settings.fiscalization_settings;
+    const defaultItem = item.fiscalization_default_item;
+
+    setValue("fiscalize_only_legal_items", !!item.fiscalize_only_legal_items);
+    setValue("fiscalize_only_default_item", !!item.fiscalize_only_default_item);
+
+    setValue("fiscalization_default_items", {
+      product_name: defaultItem?.product_name ?? null,
+      catalog: defaultItem?.catalog_code ?? null,
+      package: defaultItem?.package_code ?? null,
+      nds_rate: defaultItem?.nds_rate ?? null,
+    });
   }, [settings, setValue]);
 
   const onSubmit = () => {
-    if (defaultProductSwitcher) {
-      const item = getValues("fiscalization_default_items");
+    const data = getValues();
+
+    // 🔹 Validation faqat kerak bo‘lganda
+    if (data.fiscalize_only_default_item) {
+      const item = data.fiscalization_default_items;
 
       if (!item?.product_name) {
         showErrorLocalMessage("Название продукта обязательно");
@@ -91,24 +76,23 @@ const FiscalizationSettings = () => {
       }
     }
 
-    const data = getValues();
-
     const payload = {
       fiscalize_only_legal_items: data.fiscalize_only_legal_items,
-      fiscalization_default_item: defaultProductSwitcher
-        ? {
-            product_name: data.fiscalization_default_items.product_name,
-            nds_rate: data.fiscalization_default_items.nds_rate ?? 0,
-            catalog_code:
-              typeof data.fiscalization_default_items.catalog === "string"
-                ? data.fiscalization_default_items.catalog
-                : data.fiscalization_default_items.catalog.class_code,
-            package_code:
-              typeof data.fiscalization_default_items.package === "string"
-                ? data.fiscalization_default_items.package
-                : String(data.fiscalization_default_items.package.code),
-          }
-        : null,
+      fiscalize_only_default_item: data.fiscalize_only_default_item,
+
+      // ❗ MUHIM QISM
+      fiscalization_default_item: {
+        product_name: data.fiscalization_default_items.product_name,
+        nds_rate: data.fiscalization_default_items.nds_rate ?? 0,
+        catalog_code:
+          typeof data.fiscalization_default_items.catalog === "string"
+            ? data.fiscalization_default_items.catalog
+            : data.fiscalization_default_items.catalog.class_code,
+        package_code:
+          typeof data.fiscalization_default_items.package === "string"
+            ? data.fiscalization_default_items.package
+            : String(data.fiscalization_default_items.package.code),
+      },
     };
 
     fiscalizedWhite(payload, {
