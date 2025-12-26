@@ -11,7 +11,6 @@ const ProductTable = ({
   totals: any[];
   discount: any;
 }) => {
-  console.log(totals, discount);
   
   return (
     <div className="mb-6">

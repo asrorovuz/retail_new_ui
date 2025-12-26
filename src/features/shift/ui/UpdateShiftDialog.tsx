@@ -78,7 +78,7 @@ const UpdateShiftDialog = ({ isOpen, onClose }: PropsType) => {
     }
 
     if (isOpen && activeShift?.cashboxes_expected?.balances) {
-      const initialValues = activeShift.cashboxes_expected.balances.map(
+      const initialValues = activeShift?.cashboxes_expected?.balances?.map(
         (balance) => ({
           type: balance.type,
           amount: "0",
@@ -100,8 +100,6 @@ const UpdateShiftDialog = ({ isOpen, onClose }: PropsType) => {
     }
   }, [watchedBalances, setValue]);
 
-  console.log(shiftOperations, activeShift);
-  
 
   const columns: ColumnDef<(typeof fields)[0]>[] = useMemo(
     () => [

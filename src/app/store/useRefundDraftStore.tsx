@@ -200,7 +200,6 @@ export const useDraftRefundStore = create<
             existRefundItem.quantity += 1;
             existRefundItem.totalAmount =
               existRefundItem.quantity * existRefundItem.priceAmount;
-              console.log(existRefundItem.quantity, existRefundItem.priceAmount, "jjj");
               
             if (mark) {
               existRefundItem.marks ??= [];

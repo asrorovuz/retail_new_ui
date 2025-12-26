@@ -26,8 +26,6 @@ const TransactionModal = ({ data, payKey, type, viewModal }: any) => {
     isOpen: false,
     size: "80",
   });
-
-  console.log(data, "data");
   
   const { addDraftSale, draftSales, activateDraftSale } = useDraftSaleStore();
   const { addDraftRefund, draftRefunds, activateDraftRefund } =

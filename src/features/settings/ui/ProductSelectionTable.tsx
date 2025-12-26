@@ -46,7 +46,6 @@ const ProductSelectionTable = ({
   );
   const { data: count, isLoading: fetchCountLoading } =
     useAllProductCountApi(debouncevalue);
-  console.log(page, pageLimit);
 
   const columns = useMemo<ColumnDef<Product>[]>(
     () => [

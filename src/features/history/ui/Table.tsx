@@ -263,7 +263,6 @@ const TableHistory = ({
                 const { [payKey as string]: pay } = row?.original as any;
 
                 const { cash_box_states } = pay || {};
-                console.log(pay, "cash states");
                 
                 return (
                   <div>

@@ -137,8 +137,6 @@ const PaymeWhithQR = ({
     }
   }, [isOpen]);
 
-  console.log(qrCode, "55");
-
   return (
     <Dialog
       onClose={onCancel}

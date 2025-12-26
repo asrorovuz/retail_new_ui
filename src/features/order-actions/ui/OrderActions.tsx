@@ -402,7 +402,6 @@ const OrderActions = ({
       setSelectFiscalized(filterDataFiscal[0]);
     }
   }, [filterDataFiscal]);
-  console.log(!!paymentData, payModal, "paymentData");
   
 
   return (

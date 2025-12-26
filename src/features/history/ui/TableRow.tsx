@@ -16,8 +16,6 @@ const TableRow = ({
 }) => {
   const productPackage = item?.warehouse_operation_from?.product;
 
-  console.log(item, "tor");
-
   return (
     <tr
       className={classNames(

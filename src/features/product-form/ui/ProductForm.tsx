@@ -74,7 +74,6 @@ const ProductForm: FC<ProductFormType> = ({
   const { mutate: alertOnUpdate } = useUpdateAlertOn();
   const { mutate: createRegister } = useCreateregister();
   const { mutate: updatepurchasePrice } = useUpdatePurchasedPriceApi();
-  console.log(defaultValue?.is_legal, "isLegal");
 
   const onClose = () => {
     setBarcode(null);

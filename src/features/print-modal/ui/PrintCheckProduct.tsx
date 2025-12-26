@@ -38,7 +38,7 @@ const PrintCheckProduct = ({ item, isOpen, onClosePrintModal }: PropsType) => {
     },
   ];
 
-  const [barcode, setBarcode] = useState("12345670");
+  const [barcode, setBarcode] = useState("");
   const [barcodeType, setBarcodeType] = useState<{ value: string } | null>(
     null
   );
@@ -65,7 +65,7 @@ const PrintCheckProduct = ({ item, isOpen, onClosePrintModal }: PropsType) => {
   const [itemSkuFontSize, setItemSkuFontSize] = useState(25);
 
   const onClose = () => {
-    setBarcode("12345670");
+    setBarcode("");
     onClosePrintModal();
   };
 
