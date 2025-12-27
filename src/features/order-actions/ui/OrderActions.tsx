@@ -301,7 +301,7 @@ const OrderActions = ({
                 data?.sale?.id || data?.purchase?.id || data?.refund?.id
               );
               if (settings?.auto_print_receipt && settings?.printer_name) {
-                onPrint(data?.sale?.id);
+                onPrint(data?.sale?.id || data?.purchase?.id || data?.refund?.id);
               } else if (
                 !settings?.auto_print_receipt &&
                 settings?.printer_name
@@ -331,7 +331,7 @@ const OrderActions = ({
           if (data?.sale?.id || data?.purchase?.id || data?.refund?.id) {
             setSaleId(data?.sale?.id || data?.purchase?.id || data?.refund?.id);
             if (settings?.auto_print_receipt && settings?.printer_name) {
-              onPrint(data?.sale?.id);
+              onPrint(data?.sale?.id || data?.purchase?.id || data?.refund?.id);
             } else if (
               !settings?.auto_print_receipt &&
               settings?.printer_name
@@ -369,13 +369,26 @@ const OrderActions = ({
   };
 
   const onPrint = (id?: number) => {
+    const payload =
+      type === "sale"
+        ? {
+            sale_id: id ?? saleId,
+            printer_name: settings?.printer_name ?? "",
+          }
+        : type === "purchase"
+        ? {
+            purchase_id: id ?? saleId,
+            printer_name: settings?.printer_name ?? "",
+          }
+        : {
+            refund_id: id ?? saleId,
+            printer_name: settings?.printer_name ?? "",
+          };
+          
     printCheck(
       {
         path: `${type}-receipt-${settings?.receipt_size || 80}`,
-        payload: {
-          sale_id: id ?? saleId,
-          printer_name: settings?.printer_name ?? "",
-        },
+        payload
       },
       {
         onSuccess() {

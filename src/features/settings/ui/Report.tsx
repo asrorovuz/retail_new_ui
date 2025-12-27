@@ -148,6 +148,11 @@ const Report = ({ item, telegramBotConfig }: any) => {
                     type={showToken ? "text" : "password"}
                     placeholder={"Токен бота Telegram"}
                     className="pr-10"
+                    onPaste={(e) => {
+                      e.preventDefault();
+                      const pastedText = e.clipboardData.getData("text");
+                      field.onChange(pastedText);
+                    }}
                   />
                   <button
                     type="button"

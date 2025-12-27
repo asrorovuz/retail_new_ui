@@ -23,7 +23,7 @@ import type { DraftPurchaseSchema } from "@/@types/purchase";
 
 type PropsType = {
   type: "sale" | "refund" | "purchase";
-  setMark: any
+  setMark: any;
   draft: DraftSaleSchema[] | DraftRefundSchema[] | DraftPurchaseSchema[];
   activeDraft: DraftSaleSchema | DraftRefundSchema | DraftPurchaseSchema;
   expandedRow: string | null;
@@ -109,7 +109,7 @@ const SaleAndRefunTable = ({
       setExpandedRow(itemId!);
     }
   }, [expendedId]);
-  
+
   const table = useReactTable({
     data: activeDraft?.items ?? [],
     columns: columns(setMark),
@@ -342,32 +342,34 @@ const SaleAndRefunTable = ({
               )}
 
               <div className="flex items-center gap-x-2 w-[154px] xl:w-auto">
-                {(() => {
-                  const showDeleteDialog = !(
-                    isEditing?.type !== "quantity" && currentItem?.quantity > 1
-                  );
+                {isEditing?.type !== "quantity" &&
+                  (() => {
+                    const showDeleteDialog = !(
+                      isEditing?.type !== "quantity" &&
+                      currentItem?.quantity > 1
+                    );
 
-                  const minusButton = (
-                    <Button
-                      variant="solid"
-                      className="w-12 h-12 p-3 flex items-center justify-center !bg-white hover:bg-gray-100 rounded-lg active:!bg-gray-200 text-gray-800"
-                      onClick={decrease}
-                    >
-                      -
-                    </Button>
-                  );
+                    const minusButton = (
+                      <Button
+                        variant="solid"
+                        className="w-12 h-12 p-3 flex items-center justify-center !bg-white hover:bg-gray-100 rounded-lg active:!bg-gray-200 text-gray-800"
+                        onClick={decrease}
+                      >
+                        -
+                      </Button>
+                    );
 
-                  return showDeleteDialog ? (
-                    <CommonDeleteDialog
-                      description={`Удалить товар "${currentItem?.productName}"? Действие нельзя будет отменить.`}
-                      onDelete={onDeleteDraftItem}
-                    >
-                      {minusButton}
-                    </CommonDeleteDialog>
-                  ) : (
-                    minusButton
-                  );
-                })()}
+                    return showDeleteDialog ? (
+                      <CommonDeleteDialog
+                        description={`Удалить товар "${currentItem?.productName}"? Действие нельзя будет отменить.`}
+                        onDelete={onDeleteDraftItem}
+                      >
+                        {minusButton}
+                      </CommonDeleteDialog>
+                    ) : (
+                      minusButton
+                    );
+                  })()}
 
                 {isEditing?.isOpen && isEditing?.type === "quantity" ? (
                   <Input

@@ -118,10 +118,11 @@ const ProductTable = ({
       }),
       columnHelper.display({
         id: "totalReminder",
-        header: "ОБЩАЯ ОСТАТОК",
+        header: "ОСТАТОК",
         cell: (info) => {
           const total = info.row.original.warehouse_items?.[0]?.state;
-          return total !== undefined ? total.toLocaleString() : "0";
+          
+          return `${total !== undefined ? total.toLocaleString() : "0"} ${showMeasurmentName(info.row.original.measurement_code)}`;
         },
         size: 80,
         meta: {
@@ -130,17 +131,17 @@ const ProductTable = ({
             "#fff",
         },
       }),
-      columnHelper.display({
-        id: "package",
-        header: "ЕД. ИЗМ.",
-        cell: (info) =>
-          showMeasurmentName(info.row.original.measurement_code) || "-",
-        size: 100,
-        meta: {
-          color:
-            tableSettings?.find((i) => i.key === "package")?.color || "#fff",
-        },
-      }),
+      // columnHelper.display({
+      //   id: "package",
+      //   header: "ЕД. ИЗМ.",
+      //   cell: (info) =>
+      //     showMeasurmentName(info.row.original.measurement_code) || "-",
+      //   size: 100,
+      //   meta: {
+      //     color:
+      //       tableSettings?.find((i) => i.key === "package")?.color || "#fff",
+      //   },
+      // }),
       columnHelper.display({
         id: "price",
         header: "ЦЕНА",

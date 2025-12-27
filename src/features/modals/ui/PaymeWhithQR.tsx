@@ -84,6 +84,7 @@ const PaymeWhithQR = ({
         handleCancelFiscalization();
       },
       onError(error) {
+        setQrCode("")
         showErrorMessage(error);
       },
     });
