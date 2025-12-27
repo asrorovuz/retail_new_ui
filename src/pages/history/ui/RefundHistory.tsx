@@ -35,7 +35,7 @@ const RefundHistory = () => {
   };
 
   return (
-    <div>
+    <>
       <Filter type="refund" isOpenFilter={isOpenFilter} setParams={setParams} />
       <div className="bg-white flex justify-between items-center w-full mb-5">
         <h2 className="text-lg font-semibold text-gray-800 ">Возвраты</h2>
@@ -55,19 +55,20 @@ const RefundHistory = () => {
           </Button>
         </div>
       </div>
-      <div>
-        <TableHistory
-          data={data ?? []}
-          count={count}
-          loading={isLoading}
-          setParams={setParams}
-          setViewModal={setViewModal}
-          pay={true}
-          payKey={"payout"}
-          params={params}
-          type="refund"
-        />
-      </div>
+
+      <TableHistory
+        data={data ?? []}
+        count={count}
+        loading={isLoading}
+        isOpenFilter={isOpenFilter}
+        setParams={setParams}
+        setViewModal={setViewModal}
+        pay={true}
+        payKey={"payout"}
+        params={params}
+        type="refund"
+      />
+
       <Dialog
         onClose={closeModal}
         title={`Возврат № ${dataId?.number}`}
@@ -86,7 +87,7 @@ const RefundHistory = () => {
           </div>
         )}
       </Dialog>
-    </div>
+    </>
   );
 };
 

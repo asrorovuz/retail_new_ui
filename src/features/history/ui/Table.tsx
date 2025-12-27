@@ -14,6 +14,7 @@ import Empty from "@/shared/ui/kit-pro/empty/Empty";
 import FormattedNumber from "@/shared/ui/kit-pro/numeric-format/NumericFormat";
 import TBody from "@/shared/ui/kit/Table/TBody";
 import Td from "@/shared/ui/kit/Table/Td";
+import TFoot from "@/shared/ui/kit/Table/TFoot";
 import Th from "@/shared/ui/kit/Table/Th";
 import THead from "@/shared/ui/kit/Table/THead";
 import Tr from "@/shared/ui/kit/Table/Tr";
@@ -32,6 +33,7 @@ const TableHistory = ({
   data,
   count,
   setParams,
+  isOpenFilter,
   setViewModal,
   params,
   loading,
@@ -43,6 +45,7 @@ const TableHistory = ({
   count: number;
   setParams: any;
   setViewModal: any;
+  isOpenFilter: boolean;
   params: any;
   loading: boolean;
   pay: boolean;
@@ -263,7 +266,7 @@ const TableHistory = ({
                 const { [payKey as string]: pay } = row?.original as any;
 
                 const { cash_box_states } = pay || {};
-                
+
                 return (
                   <div>
                     {cash_box_states ? (
@@ -456,6 +459,56 @@ const TableHistory = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, params]);
 
+  const summary = useMemo(() => {
+    let totalsAmount = 0;
+    let payAmount = 0;
+    let debtAmount = 0;
+
+    let currency: any = null;
+
+    data?.forEach((row) => {
+      // 🔹 Итого
+      row?.totals?.forEach((t: any) => {
+        totalsAmount += Number(t.amount || 0);
+
+        // 🔹 currency ni faqat bir marta olish
+        if (!currency && t.currency) {
+          currency = t.currency;
+        }
+      });
+
+      // 🔹 Оплата
+      const payData = row?.[payKey]?.cash_box_states;
+      if (payData) {
+        payment.calculateToPay(payData)?.forEach((p: any) => {
+          payAmount += Number(p.amount || 0);
+
+          // 🔹 currency ni faqat bir marta olish
+          if (!currency && p.currency) {
+            currency = p.currency;
+          }
+        });
+      }
+
+      // 🔹 Долг
+      row?.debts &&
+        payment.calculateToPay(row.debts)?.forEach((d: any) => {
+          debtAmount += Number(d.amount || 0);
+
+          if (!currency && d.currency) {
+            currency = d.currency;
+          }
+        });
+    });
+
+    return {
+      totalsAmount,
+      payAmount,
+      debtAmount,
+      currency
+    };
+  }, [data, payKey]);
+
   const table = useReactTable({
     data,
     columns,
@@ -477,11 +530,17 @@ const TableHistory = ({
     },
   });
 
+  let customHeiht = isOpenFilter
+    ? "h-[calc(100%-300px)]"
+    : "h-[calc(100%-60px)]";
+
   return (
-    <div>
-      <div className="flex-1 mb-3 border border-gray-200 rounded-3xl overflow-y-auto">
-        {data && data.length > 0 && !loading ? (
-          <Table className="w-full table-fixed flex-1">
+    <div className={`${customHeiht} flex flex-col`}>
+      <div
+        className={`flex-1 mb-3 border border-gray-200 rounded-3xl overflow-y-auto`}
+      >
+        {data && data?.length > 0 && !loading ? (
+          <Table className="w-full table-fixed">
             <THead className="bg-white sticky top-0 z-10">
               {table.getHeaderGroups().map((headerGroup) => (
                 <Tr key={headerGroup.id}>
@@ -531,6 +590,72 @@ const TableHistory = ({
                 </Tr>
               ))}
             </TBody>
+            <TFoot className="sticky bottom-0 bg-white border-t">
+              <Tr className="font-bold bg-gray-50">
+                {/* № */}
+                <Td>
+                  <div className="px-4">Итого</div>
+                </Td>
+
+                {/* Номер */}
+                <Td />
+
+                {/* Контрагент (agar pay bo‘lsa) */}
+                {pay && <Td />}
+
+                {/* 🔹 ИТОГО */}
+                <Td>
+                  <div className="px-4 text-end">
+                    <p className="flex justify-end text-nowrap gap-1">
+                      <FormattedNumber value={summary?.totalsAmount} />
+                      <CurrencyName currency={summary?.currency} />
+                    </p>
+                  </div>
+                </Td>
+
+                {pay && (
+                  <>
+                    {/* 🔹 ОПЛАТА */}
+                    <Td>
+                      <div className="px-4 text-end">
+                        <p className="flex justify-end text-nowrap gap-1">
+                          <FormattedNumber value={summary?.payAmount} />
+                          <CurrencyName currency={summary?.currency} />
+                        </p>
+                      </div>
+                    </Td>
+
+                    {/* 🔹 ДОЛГ */}
+                    <Td>
+                      <div className="px-4 text-end">
+                        <p className="flex justify-end text-nowrap gap-1">
+                          <FormattedNumber value={summary?.debtAmount} />
+                          <CurrencyName currency={summary?.currency} />
+                        </p>
+                      </div>
+                    </Td>
+
+                    {/* Касса */}
+                    <Td />
+                  </>
+                )}
+
+                {/* Employee */}
+                <Td />
+
+                {/* Status */}
+                <Td />
+
+                {/* Note */}
+                <Td />
+
+                {/* Date */}
+                <Td />
+
+                {/* Action */}
+                <Td />
+              </Tr>
+            </TFoot>
           </Table>
         ) : (
           <Empty size={150} textSize="32px" />

@@ -35,7 +35,7 @@ const PurchaseHistory = () => {
   };
 
   return (
-    <div>
+    <>
       <Filter
         type="purchase"
         isOpenFilter={isOpenFilter}
@@ -59,19 +59,20 @@ const PurchaseHistory = () => {
           </Button>
         </div>
       </div>
-      <div>
-        <TableHistory
-          data={data ?? []}
-          count={count}
-          loading={isLoading}
-          setParams={setParams}
-          setViewModal={setViewModal}
-          pay={true}
-          payKey={"payout"}
-          params={params}
-          type="purchase"
-        />
-      </div>
+
+      <TableHistory
+        data={data ?? []}
+        count={count}
+        loading={isLoading}
+        setParams={setParams}
+        isOpenFilter={isOpenFilter}
+        setViewModal={setViewModal}
+        pay={true}
+        payKey={"payout"}
+        params={params}
+        type="purchase"
+      />
+
       <Dialog
         onClose={closeModal}
         title={`Приход № ${dataId?.number}`}
@@ -90,7 +91,7 @@ const PurchaseHistory = () => {
           </div>
         )}
       </Dialog>
-    </div>
+    </>
   );
 };
 export default PurchaseHistory;

@@ -2,7 +2,7 @@ import { Outlet } from "react-router-dom";
 
 const History = () => {
   return (
-    <div className="overflow-x-auto bg-white rounded-3xl p-6 h-[calc(100vh-100px)]">
+    <div className="bg-white rounded-3xl p-6 h-[calc(100vh-100px)]">
       <Outlet />
     </div>
   );

@@ -33,7 +33,7 @@ const SaleHistory = () => {
   };
 
   return (
-    <div>
+    <>
       <Filter type="sale" isOpenFilter={isOpenFilter} setParams={setParams} />
       <div className="bg-white flex justify-between items-center w-full mb-5">
         <h2 className="text-lg font-semibold text-gray-800 ">Продажи</h2>
@@ -57,6 +57,7 @@ const SaleHistory = () => {
         data={data ?? []}
         count={count}
         loading={isLoading}
+        isOpenFilter={isOpenFilter}
         setParams={setParams}
         pay={true}
         setViewModal={setViewModal}
@@ -77,7 +78,7 @@ const SaleHistory = () => {
           </div>
         )}
       </Dialog>
-    </div>
+    </>
   );
 };
 
