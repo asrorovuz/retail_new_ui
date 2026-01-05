@@ -3,19 +3,25 @@ import { Button, FormItem, Input, Select } from "@/shared/ui/kit";
 import { useRef, useState } from "react";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 
-const Step2 = ({ item }: {item: any[]}) => {
-  const { control } = useFormContext();
+const Step2 = ({ item }: { item: any[] }) => {
+  const { control, watch } = useFormContext();
+  const password = watch("password");
+
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const timeoutRef = useRef<number | null>(null);
 
-  const togglePasswordVisibility = () => {
-    setShowPassword((prev) => !prev);
+  const togglePasswordVisibility = (
+    setter: React.Dispatch<React.SetStateAction<boolean>>
+  ) => {
+    setter((prev) => !prev);
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    timeoutRef.current = window.setTimeout(() => setShowPassword(false), 3000);
+    timeoutRef.current = window.setTimeout(() => setter(false), 3000);
   };
 
   return (
     <>
+      {/* Organization */}
       <Controller
         name="organization_id"
         control={control}
@@ -27,54 +33,47 @@ const Step2 = ({ item }: {item: any[]}) => {
           >
             <Select
               {...field}
-              options={item|| []}
+              options={item || []}
               getOptionLabel={(option) => option?.name}
               value={item?.find((i) => i?.id === field?.value) || null}
               placeholder="Введите название организации."
-              onChange={(selectedOption) => field?.onChange(selectedOption?.id)}
+              onChange={(opt) => field.onChange(opt?.id)}
             />
           </FormItem>
         )}
       />
 
+      {/* FIO */}
       <Controller
         name="name"
         render={({ field, fieldState }) => (
           <FormItem
-            label={"Ф.И.О"}
-            invalid={Boolean(fieldState?.error)}
+            label="Ф.И.О"
+            invalid={!!fieldState?.error}
             errorMessage={fieldState?.error?.message}
-            asterisk={true}
+            asterisk
           >
-            <Input
-              type="text"
-              autoComplete="off"
-              placeholder={"Введите свое имя."}
-              {...field}
-            />
+            <Input {...field} placeholder="Введите свое имя." />
           </FormItem>
         )}
       />
 
+      {/* Username */}
       <Controller
         name="username"
         render={({ field, fieldState }) => (
           <FormItem
-            label={"Имя пользователя"}
-            invalid={Boolean(fieldState?.error)}
+            label="Имя пользователя"
+            invalid={!!fieldState?.error}
             errorMessage={fieldState?.error?.message}
-            asterisk={true}
+            asterisk
           >
-            <Input
-              type="text"
-              autoComplete="off"
-              placeholder={"Введите имя пользователя"}
-              {...field}
-            />
+            <Input {...field} placeholder="Введите имя пользователя" />
           </FormItem>
         )}
       />
 
+      {/* Password */}
       <Controller
         name="password"
         control={control}
@@ -82,9 +81,6 @@ const Step2 = ({ item }: {item: any[]}) => {
         render={({ field, fieldState }) => (
           <FormItem
             label="Пароль"
-            labelClass="text-gray-700 text-base font-medium"
-            className="mb-6"
-            errorClassName="text-red-500"
             invalid={!!fieldState.error}
             errorMessage={fieldState.error?.message}
           >
@@ -96,11 +92,47 @@ const Step2 = ({ item }: {item: any[]}) => {
               />
               <Button
                 type="button"
-                icon={
-                  showPassword ? <FiEyeOff size={20} /> : <FiEye size={20} />
+                icon={showPassword ? <FiEyeOff /> : <FiEye />}
+                onClick={() =>
+                  togglePasswordVisibility(setShowPassword)
                 }
-                onClick={togglePasswordVisibility}
-                className="absolute right-0 top-1/2 -translate-y-1/2 bg-transparent cursor-pointer text-gray-700"
+                className="absolute right-0 top-1/2 -translate-y-1/2 bg-transparent"
+              />
+            </div>
+          </FormItem>
+        )}
+      />
+
+      {/* Confirm Password */}
+      <Controller
+        name="confirm_password"
+        control={control}
+        rules={{
+          required: "Подтвердите пароль",
+          validate: (value) =>
+            value === password || "Пароли не совпадают",
+        }}
+        render={({ field, fieldState }) => (
+          <FormItem
+            label="Подтвердите пароль"
+            invalid={!!fieldState.error}
+            errorMessage={fieldState.error?.message}
+          >
+            <div className="relative">
+              <Input
+                {...field}
+                type={showConfirmPassword ? "text" : "password"}
+                placeholder="Повторите пароль"
+              />
+              <Button
+                type="button"
+                icon={
+                  showConfirmPassword ? <FiEyeOff /> : <FiEye />
+                }
+                onClick={() =>
+                  togglePasswordVisibility(setShowConfirmPassword)
+                }
+                className="absolute right-0 top-1/2 -translate-y-1/2 bg-transparent"
               />
             </div>
           </FormItem>

@@ -20,11 +20,11 @@ import printJS from "print-js";
 
 type PropsType = {
   item: Product | null;
-  type: "print" | "edit" | "add";
+  isOpen: boolean;
   onClosePrintModal: () => void;
 };
 
-const PrintCheckProduct = ({ item, type, onClosePrintModal }: PropsType) => {
+const PrintCheckProduct = ({ item, isOpen, onClosePrintModal }: PropsType) => {
   const { t } = useTranslation();
 
   const viewTypes = [
@@ -38,7 +38,7 @@ const PrintCheckProduct = ({ item, type, onClosePrintModal }: PropsType) => {
     },
   ];
 
-  const [barcode, setBarcode] = useState("12345670");
+  const [barcode, setBarcode] = useState("");
   const [barcodeType, setBarcodeType] = useState<{ value: string } | null>(
     null
   );
@@ -65,7 +65,7 @@ const PrintCheckProduct = ({ item, type, onClosePrintModal }: PropsType) => {
   const [itemSkuFontSize, setItemSkuFontSize] = useState(25);
 
   const onClose = () => {
-    setBarcode("12345670");
+    setBarcode("");
     onClosePrintModal();
   };
 
@@ -232,7 +232,7 @@ const PrintCheckProduct = ({ item, type, onClosePrintModal }: PropsType) => {
       onClose={onClose}
       height={"90vh"}
       width={"90vw"}
-      isOpen={type === "print" && !!item?.id}
+      isOpen={isOpen && !!item?.id}
     >
       <div className="h-[64vh] overflow-y-auto mb-5">
         <div className="flex justify-between gap-x-12">

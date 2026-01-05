@@ -16,15 +16,14 @@ import classNames from "@/shared/lib/classNames";
 type RefundItem = {
   id: number;
   warehouse_operation_from?: {
-    product_package?: {
-      product?: { name?: string };
-    };
+    product?: { name?: string };
   };
   price_amount: number;
   quantity: number;
 };
 
 type RefundCheckModalProps = {
+  loading: boolean;
   isOpen: boolean;
   setRefundCheckModal: (state: { isOpen: boolean; ids: number[] }) => void;
   items: RefundItem[];
@@ -32,13 +31,14 @@ type RefundCheckModalProps = {
 };
 
 const RefundCheckModal = ({
+  loading,
   isOpen,
   setRefundCheckModal,
   items,
   handleRefundCheckInputItem,
 }: RefundCheckModalProps) => {
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
-  
+
   // Modal ochilganda barcha itemlar avtomatik tanlanadi
   useEffect(() => {
     if (isOpen && items?.length) {
@@ -85,8 +85,7 @@ const RefundCheckModal = ({
         accessorKey: "productName",
         header: "Наименование",
         cell: ({ row }) =>
-          row.original.warehouse_operation_from?.product_package?.product
-            ?.name ?? "-",
+          row.original.warehouse_operation_from?.product?.name ?? "-",
       },
       {
         accessorKey: "price_amount",
@@ -129,57 +128,68 @@ const RefundCheckModal = ({
       onClose={() => setRefundCheckModal({ isOpen: false, ids: [] })}
     >
       <div className="overflow-auto h-[56vh] border border-gray-200 rounded-2xl mb-6">
-        <Table className="w-full border-collapse">
-          <THead className="sticky top-0">
-            {table.getHeaderGroups().map((headerGroup) => (
-              <Tr key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <Th
-                    key={header.id}
-                    className="p-2 text-left border-b border-gray-200"
-                    style={{ width: header.getSize() }}
-                  >
-                    {flexRender(
-                      header.column.columnDef.header,
-                      header.getContext()
-                    )}
-                  </Th>
+        {loading ? (
+          <div className="flex items-center justify-center h-full">
+            Загрузка данных...
+          </div>
+        ) : (
+          <>
+            <Table className="w-full border-collapse">
+              <THead className="sticky top-0">
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <Tr key={headerGroup.id}>
+                    {headerGroup.headers.map((header) => (
+                      <Th
+                        key={header.id}
+                        className="p-2 text-left border-b border-gray-200"
+                        style={{ width: header.getSize() }}
+                      >
+                        {flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                      </Th>
+                    ))}
+                  </Tr>
                 ))}
-              </Tr>
-            ))}
-          </THead>
-          <TBody>
-            {table.getRowModel().rows.length > 0 ? (
-              table.getRowModel().rows.map((row, index) => (
-                <Tr
-                  key={row.id}
-                  className="border-b hover:bg-gray-50 transition-colors"
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <Td
-                      key={cell.id}
-                      className={classNames("p-2", index % 2 && "bg-gray-50")}
+              </THead>
+              <TBody>
+                {table.getRowModel().rows.length > 0 ? (
+                  table.getRowModel().rows.map((row, index) => (
+                    <Tr
+                      key={row.id}
+                      className="border-b hover:bg-gray-100 transition-colors"
                     >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
+                      {row.getVisibleCells().map((cell) => (
+                        <Td
+                          key={cell.id}
+                          className={classNames(
+                            "p-2",
+                            index % 2 && "bg-gray-100"
+                          )}
+                        >
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                        </Td>
+                      ))}
+                    </Tr>
+                  ))
+                ) : (
+                  <Tr>
+                    <Td
+                      colSpan={columns.length}
+                      className="text-center py-4 h-[49.6vh]"
+                    >
+                      Нет данных для возврата
                     </Td>
-                  ))}
-                </Tr>
-              ))
-            ) : (
-              <Tr>
-                <Td
-                  colSpan={columns.length}
-                  className="text-center py-4 h-[49.6vh]"
-                >
-                  Нет данных для возврата
-                </Td>
-              </Tr>
-            )}
-          </TBody>
-        </Table>
+                  </Tr>
+                )}
+              </TBody>
+            </Table>
+          </>
+        )}
       </div>
 
       {/* Footer */}

@@ -4,7 +4,7 @@ import { showErrorMessage, showSuccessMessage } from "@/shared/lib/showMessage";
 import { Button, Dialog, Select } from "@/shared/ui/kit";
 import { useState } from "react";
 type PrinterTypeProps = {
-  type: "sale" | "refund";
+  type: "sale" | "refund" | "purchase";
   size: string | number;
   saleId: number | null;
   isOpen: boolean;
@@ -25,13 +25,26 @@ const PrinterModal = ({
   const { mutate: printCheck, isPending: printerPending } = useCreatePrintApi();
 
   const onPrint = (id?: number) => {
+    const payload =
+      type === "sale"
+        ? {
+            sale_id: id ?? saleId,
+            printer_name: printerName ?? "",
+          }
+        : type === "purchase"
+        ? {
+            purchase_id: id ?? saleId,
+            printer_name: printerName ?? "",
+          }
+        : {
+            refund_id: id ?? saleId,
+            printer_name: printerName ?? "",
+          };
+
     printCheck(
       {
         path: `${type}-receipt-${size || 80}`,
-        payload: {
-          sale_id: id ?? saleId,
-          printer_name: printerName ?? "",
-        },
+        payload,
       },
       {
         onSuccess() {

@@ -8,3 +8,23 @@ export const RegisterPage = lazy(() => import("@/pages/login/ui/RegisterPage"));
 export const PavouriteProductPage = lazy(
   () => import("@/pages/favoutite-product")
 );
+export const SettingsPage = lazy(() => import("@/pages/settings"));
+export const FiscalizedPage = lazy(() => import("@/pages/fiscalized"));
+export const PaymePoviderPage = lazy(() => import("@/pages/payment-providers"));
+export const PurchasePricePage = lazy(() => import("@/pages/purchase"));
+export const CashboxPage = lazy(() => import("@/pages/cashbox"));
+export const CashboxOperations = lazy(
+  () => import("@/pages/cashbox-operations")
+);
+
+// history transaction
+export const HistoryPage = lazy(() => import("@/pages/history/ui/History"));
+export const HistorySalePage = lazy(
+  () => import("@/pages/history/ui/SaleHistory")
+);
+export const HistoryRefundPage = lazy(
+  () => import("@/pages/history/ui/RefundHistory")
+);
+export const HistoryPurchasePage = lazy(
+  () => import("@/pages/history/ui/PurchaseHistory")
+);

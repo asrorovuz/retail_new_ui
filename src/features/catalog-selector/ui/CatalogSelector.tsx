@@ -38,7 +38,7 @@ const CatalogSelector = ({
     debouncedQuery, // 🔹 bo‘sh string yubormaymiz
     isOpen
   );
-  
+
   // 🔹 Data o‘zgarganda optionlarni tayyorlash
   const options = useMemo(() => {
     if (!data || !Array.isArray(data)) return cachedOptions;
@@ -54,7 +54,7 @@ const CatalogSelector = ({
   // 🔹 Tanlovni o‘zgartirish
   const handleChange = (option: any) => {
     setSelected(option);
-    setValue("catalog", option)
+    setValue("catalog", option);
     setPackageNames(option?.data?.package_names || []);
     onChange(option ? option : null);
   };
@@ -67,8 +67,8 @@ const CatalogSelector = ({
   // 🔹 default value update qilish (edit holatda)
   useEffect(() => {
     if (!value) return;
- 
-    const found = options.find((opt) => opt.value === value);
+
+    const found = options?.find((opt) => opt.value === value);
     if (found) {
       setSelected(found);
       setPackageNames(found?.data?.package_names || []);
@@ -85,8 +85,12 @@ const CatalogSelector = ({
       inputValue={inputValue}
       onInputChange={handleInputChange}
       onChange={handleChange}
-      getOptionLabel={(option: any) => option.label}
-      getOptionValue={(option: any) => option.value}
+      getOptionLabel={(option: any) =>
+        option?.label ? String(option.label) : ""
+      }
+      getOptionValue={(option: any) =>
+        option?.value ? String(option.value) : ""
+      }
       isClearable
       menuPortalTarget={document.body}
       menuPosition="fixed"

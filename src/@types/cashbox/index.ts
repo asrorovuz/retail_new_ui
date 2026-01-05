@@ -25,3 +25,20 @@ export type CashboxType = {
   name: string;
   amounts: AmountType[];
 };
+
+export const paymentTypes: Record<number | string, string> = {
+  1: "Наличные",
+  cash: "Наличные",
+  2: "Uzcard",
+  uzcard: "Uzcard",
+  3: "Humo",
+  humo: "Humo",
+  4: "Перечисление",
+  bankTransfer: "Перечисление",
+  5: "Click",
+  click: "Click",
+  6: "Payme",
+  payme: "Payme",
+  7: "Visa",
+  visa: "Visa",
+};

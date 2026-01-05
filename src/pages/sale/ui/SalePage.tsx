@@ -21,15 +21,18 @@ import { AddProductModal } from "@/features/modals";
 import { showErrorLocalMessage } from "@/shared/lib/showMessage";
 import { useSettingsStore } from "@/app/store/useSettingsStore";
 import OrderActions from "@/features/order-actions";
+import ViewMark from "@/features/viewMark";
 
 const SalePage = () => {
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebounce(search, 500);
   const [barcode, setBarcode] = useState<string | null>(null);
+  const [barcodeMark, setBarcodeMark] = useState("");
   const [isOpenAddProduct, setIsOpenAddProduct] = useState(false);
   const [expandedRow, setExpandedRow] = useState<string | null>(null);
   const [expendedId, setExpandedId] = useState<number | null>(null);
   const [value, setValue] = useState<string>("0");
+  const [mark, setMark] = useState<number | null>(null);
   const [payModal, setPayModal] = useState(false);
   const [activeOnlyType, setActiveOnlyType] = useState({
     isOpen: false,
@@ -74,6 +77,9 @@ const SalePage = () => {
   const completeActiveDraftSale = useDraftSaleStore(
     (store) => store.completeActiveDraftSale
   );
+  const deleteDraftSaleMark = useDraftSaleStore(
+    (store) => store.deleteDraftSaleMark
+  );
 
   const activeDraft: DraftSaleSchema =
     draftSales?.find((s) => s.isActive) ?? draftSales[0];
@@ -83,6 +89,7 @@ const SalePage = () => {
       const onScan = eventBus.on("BARCODE_SCANNED", (code) => {
         const val: string = handleBarcodeScanned(code);
         if (val) {
+          setBarcodeMark(code);
           setBarcode(val);
         }
       });
@@ -100,7 +107,7 @@ const SalePage = () => {
   useEffect(() => {
     if (isSuccess && !isFetching && !payModal) {
       if (findBarcodeData) {
-        handleScannedProduct(findBarcodeData, "sale");
+        handleScannedProduct(findBarcodeData, "sale", barcodeMark);
         setBarcode(null); // qayta so‘rov yubormaslik uchun tozalaymiz
       }
     }
@@ -120,7 +127,7 @@ const SalePage = () => {
 
   return (
     <div className="flex justify-between gap-x-2 h-[calc(100vh-90px)]">
-      <div className="bg-white p-3 rounded-2xl w-[685px] xl:w-3/5">
+      <div className="bg-white p-3 rounded-2xl w-[623px] shrink-0 xl:w-3/5">
         <Cashbox
           type={"sale"}
           drafts={draftSales}
@@ -129,6 +136,7 @@ const SalePage = () => {
         />
         <SaleAndRefunTable
           type="sale"
+          setMark={setMark}
           draft={draftSales}
           activeDraft={activeDraft}
           expandedRow={expandedRow}
@@ -147,7 +155,7 @@ const SalePage = () => {
         />
       </div>
 
-      <div className="bg-white p-3 rounded-2xl xl:w-2/5">
+      <div className="bg-white p-3 rounded-2xl flex-1 xl:w-2/5">
         <div className="rounded-2xl mb-2">
           <SearchProduct search={search} setSearch={setSearch} />
         </div>
@@ -201,13 +209,21 @@ const SalePage = () => {
 
         <AddProductModal
           type={"add"}
-          setType={() => {}}
           setBarcode={setBarcode}
           barcode={barcode}
           isOpen={isOpenAddProduct}
           setIsOpen={setIsOpenAddProduct}
           productPriceType={productPriceType!}
         />
+
+        {mark ? (
+          <ViewMark
+            item={mark}
+            onClose={() => setMark(null)}
+            activeDraft={activeDraft}
+            deleteDraftMark={deleteDraftSaleMark}
+          />
+        ) : null}
       </div>
     </div>
   );

@@ -29,6 +29,7 @@ type Propstype = {
 };
 
 const FavouriteCard = ({ name, prices, img, onItemChange }: Propstype) => {
+  
   const price = prices?.find(
     (el) => el?.product_price_type?.name === "Розничный"
   );

@@ -17,6 +17,7 @@ import PaymentSection from "@/features/payment-section";
 import SaleAndRefunTable from "@/features/sale-refund-table";
 import SearchProduct from "@/features/search-product";
 import SearchProductTable from "@/features/search-product-table";
+import ViewMark from "@/features/viewMark";
 import eventBus from "@/shared/lib/eventBus";
 import { handleBarcodeScanned } from "@/shared/lib/handleScannedBarcode";
 import { handleScannedProduct } from "@/shared/lib/handleScannedProduct";
@@ -30,6 +31,8 @@ const RefundPage = () => {
   const [refundCheckData, setRefundCheckData] = useState<any>();
   const [checkCode, setCheckDode] = useState("");
   const [barcode, setBarcode] = useState<string | null>(null);
+  const [barcodeMark, setBarcodeMark] = useState("");
+  const [mark, setMark] = useState<number | null>(null);
   const [isOpenAddProduct, setIsOpenAddProduct] = useState(false);
   const [search, setSearch] = useState("");
   const [value, setValue] = useState<string>("0");
@@ -57,7 +60,9 @@ const RefundPage = () => {
     isError,
     isFetching,
   } = useFindBarcode(barcode);
-  const { data: checkData } = useCheckRefundApi(checkCode);
+
+  const { data: checkData, isPending: isCheckPending } =
+    useCheckRefundApi(checkCode);
 
   const { draftRefunds, addDraftRefund, activateDraftRefund } =
     useDraftRefundStore((store) => store);
@@ -86,6 +91,9 @@ const RefundPage = () => {
     (store) => store.completeActiveDraftRefund
   );
   const { settings } = useSettingsStore((s) => s);
+  const deleteDraftRefundMark = useDraftRefundStore(
+    (store) => store.deleteDraftRefundMark
+  );
 
   const activeDraft: DraftRefundSchema =
     draftRefunds?.find((s) => s.isActive) ?? draftRefunds[0];
@@ -110,8 +118,6 @@ const RefundPage = () => {
     refundCheckData.items
       .filter((item: any) => selectedIds.includes(item.id))
       .forEach((item: any) => {
-        console.log(item, "item: 7");
-        
         const product = item.warehouse_operation_from?.product;
         // const productPackage = item.warehouse_operation_from?.product_package;
         if (!product) return;
@@ -157,6 +163,7 @@ const RefundPage = () => {
         } else {
           const val: string = handleBarcodeScanned(code);
           if (val) {
+            setBarcodeMark(code);
             setBarcode(val);
           }
         }
@@ -169,8 +176,8 @@ const RefundPage = () => {
   useEffect(() => {
     if (isSuccess && !isFetching) {
       if (findBarcodeData) {
-        handleScannedProduct(findBarcodeData, "refund");
-        setBarcode(null); // qayta so‘rov yubormaslik uchun tozalaymiz
+        handleScannedProduct(findBarcodeData, "refund", barcodeMark);
+        setBarcode(null);
       }
     }
   }, [isSuccess, findBarcodeData, isFetching]);
@@ -204,6 +211,7 @@ const RefundPage = () => {
         />
         <SaleAndRefunTable
           type="refund"
+          setMark={setMark}
           draft={draftRefunds}
           activeDraft={activeDraft}
           expandedRow={expandedRow}
@@ -274,7 +282,8 @@ const RefundPage = () => {
         )}
 
         <RefundCheckModal
-          isOpen={refundCheckModal.isOpen}
+          loading={isCheckPending}
+          isOpen={refundCheckModal?.isOpen}
           setRefundCheckModal={setRefundCheckModal}
           handleRefundCheckInputItem={handleRefundCheckInputItem}
           items={refundCheckData?.items || []}
@@ -282,13 +291,21 @@ const RefundPage = () => {
 
         <AddProductModal
           type={"add"}
-          setType={() => {}}
           setBarcode={setBarcode}
           barcode={barcode}
           isOpen={isOpenAddProduct}
           setIsOpen={setIsOpenAddProduct}
           productPriceType={productPriceType!}
         />
+
+        {mark ? (
+          <ViewMark
+            item={mark}
+            onClose={() => setMark(null)}
+            activeDraft={activeDraft}
+            deleteDraftMark={deleteDraftRefundMark}
+          />
+        ) : null}
       </div>
     </div>
   );

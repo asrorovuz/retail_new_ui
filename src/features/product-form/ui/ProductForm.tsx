@@ -9,6 +9,7 @@ import {
   Input,
   InputGroup,
   Select,
+  Switcher,
 } from "@/shared/ui/kit";
 import { Controller, useForm } from "react-hook-form";
 import type {
@@ -28,37 +29,42 @@ import {
   CatalogPackageSelector,
   CatalogSelector,
 } from "@/features/catalog-selector";
-import type { Product, VatRateSelectorOption } from "@/@types/products";
+import type { VatRateSelectorOption } from "@/@types/products";
 import ImageForm from "@/features/image-form";
 import BarcodeForm from "@/features/barcode-form/ui/BarcodeForm";
 import { convertImageObjectsToBase64 } from "@/shared/lib/convertFilesToBase64";
 import { showErrorMessage, showSuccessMessage } from "@/shared/lib/showMessage";
 import { messages } from "@/app/constants/message.request";
 import { useSettingsStore } from "@/app/store/useSettingsStore";
+import { useDraftSaleStore } from "@/app/store/useSaleDraftStore";
+import { useUpdatePurchasedPriceApi } from "@/entities/purchase/repository";
 
 const ProductForm: FC<ProductFormType> = ({
   type,
   productId,
+  pageType,
   isOpen,
+  catalogLoading,
   setIsOpen,
-  setType,
   defaultValue,
   setBarcode,
   barcode,
   setProductId,
+  catalogData,
+  setDefaultValues,
 }) => {
-  const { handleSubmit, control, getValues, setValue, reset, watch } = useForm<
-    Product | ProductDefaultValues
-  >({
-    defaultValues: defaultValue,
-  });
+  const { handleSubmit, control, getValues, setValue, reset, watch } =
+    useForm();
   const inputWrapperRef = useRef<HTMLDivElement>(null);
+  const isCatalogApplied = useRef(false);
   const [remainder, setRemainder] = useState<number>(defaultValue?.state || 0);
   const [alertOn, setAlertOn] = useState<string | number>(0);
   const [isShow, setIsShow] = useState(true);
   const [packageNames, setPackageNames] = useState<Package[] | []>();
 
   const { wareHouseId } = useSettingsStore((s) => s);
+  const { updateDraftSaleItem, draftSales } = useDraftSaleStore();
+  const activeDraftSale = draftSales?.find((s) => s.isActive);
 
   const { data: currencies } = useCurrancyApi();
   const { mutate: createProduct, isPending: createProductPending } =
@@ -67,15 +73,17 @@ const ProductForm: FC<ProductFormType> = ({
     useUpdateProduct();
   const { mutate: alertOnUpdate } = useUpdateAlertOn();
   const { mutate: createRegister } = useCreateregister();
+  const { mutate: updatepurchasePrice } = useUpdatePurchasedPriceApi();
 
   const onClose = () => {
     setBarcode(null);
     setAlertOn(0);
     setRemainder(0);
-    reset(defaultValue || {});
     setIsShow(false);
     setIsOpen(false);
-    setType("add");
+    setDefaultValues(null);
+    setPackageNames([]);
+    reset();
     if (setProductId) {
       setProductId(null);
     }
@@ -131,13 +139,17 @@ const ProductForm: FC<ProductFormType> = ({
       amount: p?.amount ? +p?.amount : 0,
       currency_code: p?.currency?.code ?? "",
     }));
+
+    // product qo'shishda catalog nomlarida xatolik bor
     const category_id = values?.category?.id ?? null;
     const category_name = values?.category?.name ?? null;
-    const catalog_code = values.catalog
-      ? values.catalog.value.toString()
+    const catalog_code = values.catalog?.value
+      ? String(values?.catalog?.value)
       : null;
-    const catalog_name = values.catalog ? values.catalog.label : null;
-    const package_code = values.package ? values.package.code.toString() : null;
+    const catalog_name = values.catalog ? values?.catalog?.label : null;
+    const package_code = values?.package?.code
+      ? String(values?.package?.code)
+      : null;
     const package_name = values.package ? values?.package?.name_uz : null;
 
     const data = {
@@ -145,8 +157,9 @@ const ProductForm: FC<ProductFormType> = ({
       ...(type !== "edit"
         ? {
             purchase_price: {
-              amount: values?.purchase_price?.amount ?? 0,
-              currency_code: values?.purchase_price?.currency?.code ?? "",
+              amount: Number(values?.purchase_price?.amount) ?? 0,
+              currency_code:
+                Number(values?.purchase_price?.currency?.code) ?? 0,
             },
           }
         : {}),
@@ -157,9 +170,9 @@ const ProductForm: FC<ProductFormType> = ({
         sku: values?.sku,
         vat_rate: values?.vat_rate,
         barcodes: values?.barcodes || [],
-        count: +values?.count || 0,
         images,
         prices,
+        is_legal: values?.is_legal,
         category_id,
         category_name,
         catalog_code,
@@ -168,7 +181,7 @@ const ProductForm: FC<ProductFormType> = ({
         package_name,
       },
     };
-    
+
     if (type === "edit" && productId) {
       updateProduct(
         { productId, data },
@@ -178,6 +191,18 @@ const ProductForm: FC<ProductFormType> = ({
               messages.uz.SUCCESS_MESSAGE,
               messages.ru.SUCCESS_MESSAGE
             );
+
+            if (values?.purchase_price) {
+              const payload = {
+                amount: Number(values?.purchase_price?.amount) ?? 0,
+                currency_code:
+                  Number(values?.purchase_price?.currency?.code) ?? 0,
+                warehouse_id: wareHouseId,
+                product_id: res?.id,
+              };
+
+              updatepurchasePrice(payload);
+            }
 
             if (alertOn && wareHouseId) {
               alertOnUpdate({
@@ -214,6 +239,30 @@ const ProductForm: FC<ProductFormType> = ({
           if (res?.id) {
             remenderSubmit(res?.id);
           }
+
+          if (pageType !== "products") {
+            const operationItem = activeDraftSale?.items?.find(
+              (p) => p.productId === res?.id
+            );
+            const packagePrice =
+              res?.prices?.find(
+                (p: any) => p?.product_price_type?.is_primary
+              ) || res?.prices?.[0];
+            const quantity = operationItem?.quantity ?? 0;
+
+            const newItem = {
+              productId: res?.id,
+              productName: res?.name,
+              productPackageName: res?.measurement_name || "",
+              priceTypeId: packagePrice?.product_price_type?.id,
+              priceAmount: packagePrice?.amount,
+              quantity: quantity + 1,
+              totalAmount: (quantity + 1) * (packagePrice?.amount ?? 0),
+              catalogCode: res?.catalog_code,
+              catalogName: res?.catalog_name,
+            };
+            updateDraftSaleItem(newItem);
+          }
           onClose();
         },
         onError(error) {
@@ -228,28 +277,56 @@ const ProductForm: FC<ProductFormType> = ({
     if (purchase_price?.alert_on) {
       setAlertOn(purchase_price?.alert_on);
     }
-  }, [defaultValue?.warehouse_items]);
+  }, [defaultValue?.warehouse_items, isOpen]);
 
   useEffect(() => {
-
     const catalog = getValues(`catalog_code`);
-    const packages = getValues(`package`);
+    const packages = getValues(`package_code`);
     const vat_rate = getValues(`vat_rate`);
     const shouldShow = !!catalog || !!packages || !!vat_rate;
     setIsShow(shouldShow);
-  }, [watch(`catalog_code`), watch(`package`), watch(`vat_rate`), isOpen]);
+  }, [watch(`catalog_code`), watch(`package_code`), watch(`vat_rate`), isOpen]);
 
   useEffect(() => {
     setRemainder(defaultValue?.state || 0);
-  }, [defaultValue?.state]);
+  }, [defaultValue?.state, isOpen]);
 
   useEffect(() => {
-    if (isOpen && defaultValue) {
-      reset(defaultValue);
-    }
-  }, [isOpen, defaultValue, reset]);
+    if (!catalogData?.length) return;
 
-  
+    // agar user allaqachon yozib bo‘lgan bo‘lsa – tegmaymiz
+    if (isCatalogApplied.current) return;
+
+    setValue("name", catalogData[0]?.name ?? "");
+    setValue("catalog_code", catalogData[0]?.class_code ?? null);
+    setValue("catalog_name", catalogData[0]?.class_name ?? null);
+    setValue("catalog", {
+      label: catalogData[0]?.class_name,
+      value: catalogData[0]?.class_code,
+      data: catalogData[0],
+    });
+
+    isCatalogApplied.current = true;
+  }, [catalogData]);
+
+  useEffect(() => {
+    if (!barcode) return;
+
+    const currentBarcodes = getValues("barcodes") || [];
+
+    if (!currentBarcodes.includes(barcode)) {
+      setValue("barcodes", [...currentBarcodes, barcode], {
+        shouldDirty: true,
+      });
+    }
+  }, [barcode]);
+
+  useEffect(() => {
+    if (isOpen) {
+      reset(defaultValue); // modal ochilganda reset qilish
+    }
+  }, [defaultValue, reset]);
+
   return (
     <Dialog
       width={630}
@@ -276,6 +353,7 @@ const ProductForm: FC<ProductFormType> = ({
                   {...field}
                   type="text"
                   autoComplete="off"
+                  disabled={catalogLoading}
                   autoFocus={!!fieldState?.error}
                   invalid={!!fieldState?.error}
                   placeholder="Введите название товара"
@@ -284,32 +362,6 @@ const ProductForm: FC<ProductFormType> = ({
               </FormItem>
             )}
           />
-
-          {type === "add" && (
-            <FormItem label="Остаток">
-              <Input
-                type="number"
-                autoComplete="off"
-                value={remainder}
-                placeholder="Введите остаток"
-                replaceLeadingZero={true}
-                className="w-full"
-                onChange={(e) => setRemainder(+e.target.value)}
-              />
-            </FormItem>
-          )}
-
-          <FormItem label="Мин. остаток для оповещения">
-            <Input
-              type="number"
-              autoComplete="off"
-              value={alertOn}
-              placeholder="Введите остаток"
-              replaceLeadingZero={true}
-              className="w-full"
-              onChange={(e) => setAlertOn(+e.target.value)}
-            />
-          </FormItem>
 
           <FormItem asterisk label="Розничный цена" className="w-full p-0">
             <InputGroup>
@@ -353,6 +405,19 @@ const ProductForm: FC<ProductFormType> = ({
             </InputGroup>
           </FormItem>
 
+          {/* {type === "add" && ( */}
+          <FormItem label="Остаток">
+            <Input
+              type="number"
+              autoComplete="off"
+              value={remainder}
+              placeholder="Введите остаток"
+              replaceLeadingZero={true}
+              className="w-full"
+              onChange={(e) => setRemainder(+e.target.value)}
+            />
+          </FormItem>
+          {/* // )} */}
           <FormItem label="Оптовая цена" className="w-full p-0">
             <InputGroup>
               <Controller
@@ -371,6 +436,55 @@ const ProductForm: FC<ProductFormType> = ({
               />
               <Controller
                 name="prices.1.currency"
+                control={control}
+                render={({ field, fieldState }) => (
+                  <Select
+                    {...field}
+                    isDisabled={true}
+                    invalid={!!fieldState?.error}
+                    hideDropdownIndicator={true}
+                    options={(currencies || [])?.filter((i) => i.is_active)}
+                    getOptionLabel={(option) => option?.name}
+                    getOptionValue={(option) => String(option?.code)}
+                    className="w-[90px]"
+                    placeholder="Валюта"
+                  />
+                )}
+              />
+            </InputGroup>
+          </FormItem>
+
+          <FormItem label="Мин. остаток для оповещения">
+            <Input
+              type="number"
+              autoComplete="off"
+              value={alertOn}
+              placeholder="Введите остаток"
+              replaceLeadingZero={true}
+              className="w-full"
+              onChange={(e) => setAlertOn(+e.target.value)}
+            />
+          </FormItem>
+
+          <FormItem label="Закупочная цена" className="w-full p-0">
+            <InputGroup>
+              <Controller
+                name="purchase_price.amount"
+                control={control}
+                render={({ field }) => (
+                  <Input
+                    {...field}
+                    type="number"
+                    // disabled={type === "edit"}
+                    autoComplete="off"
+                    placeholder="Сумма"
+                    replaceLeadingZero={true}
+                    className="w-full"
+                  />
+                )}
+              />
+              <Controller
+                name="purchase_price.currency"
                 control={control}
                 render={({ field, fieldState }) => (
                   <Select
@@ -432,31 +546,6 @@ const ProductForm: FC<ProductFormType> = ({
           />
 
           <Controller
-            name="count"
-            control={control}
-            rules={{
-              required: "Кол-во в уп. обязательно для заполнения", // 🔥 majburiy xabar
-            }}
-            render={({ field, fieldState }) => (
-              <FormItem
-                asterisk
-                invalid={!!fieldState.error}
-                label="Кол-во в уп."
-              >
-                <Input
-                  {...field}
-                  type="number"
-                  autoComplete="off"
-                  disabled={type === "edit"}
-                  replaceLeadingZero={false}
-                  space={false}
-                  placeholder="Введите Кол-во в уп."
-                />
-              </FormItem>
-            )}
-          />
-
-          <Controller
             name="code"
             control={control}
             render={({ field }) => (
@@ -473,13 +562,23 @@ const ProductForm: FC<ProductFormType> = ({
             )}
           />
 
-          <FormItem className="col-span-2" label="Штрих-коды">
+          <FormItem label="Штрих-коды">
             <BarcodeForm
               fieldName={"barcodes"}
               barcode={barcode}
               setValue={setValue}
               control={control}
               getValues={getValues}
+            />
+          </FormItem>
+
+          <FormItem label="Белых товаров">
+            <Controller
+              name="is_legal"
+              control={control}
+              render={({ field }) => (
+                <Switcher checked={field.value} onChange={field.onChange} />
+              )}
             />
           </FormItem>
 
@@ -507,7 +606,7 @@ const ProductForm: FC<ProductFormType> = ({
                         value={field.value}
                         setValue={setValue}
                         getValues={getValues}
-                        onChange={field.onChange}
+                        onChange={(opt) => field.onChange(opt.value)}
                         setPackageNames={setPackageNames}
                       />
                     </FormItem>

@@ -41,9 +41,9 @@ export const useVersionApi = () => {
   });
 };
 
-export const useCashboxApi = () => {
+export const useCashboxApi = (isOpen?: boolean) => {
   return useQuery({
-    queryKey: ["cashbox"],
+    queryKey: ["cashbox", isOpen],
     queryFn: getCashboxApi,
   });
 };
@@ -56,10 +56,13 @@ export const useShiftOperationApi = (id: number | null, isOpen: boolean) => {
   });
 };
 
-export const useShiftApi = (isOpen?: boolean) => {
+export const useShiftApi = (isOpen: boolean) => {
   return useQuery({
     queryKey: ["shift", isOpen],
-    queryFn: getShiftApi
+    queryFn: getShiftApi,
+    retry: false,          // ❗ MUHIM
+    gcTime: 0,          // ❗ MUHIM
+    staleTime: 0,
   });
 };
 
@@ -70,10 +73,20 @@ export const useCloseShiftApi = () => {
     mutationFn: (payload: any) => closeShiftApi(payload),
     onSuccess() {
       queryClient.invalidateQueries({ queryKey: ["shift"] });
-      queryClient.invalidateQueries({ queryKey: ["last-shift"] });
     },
   });
-}
+};
+
+export const useCreateShiftApi = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: number | null) => createShiftApi(id),
+    onSuccess() {
+      queryClient.invalidateQueries({ queryKey: ["shift"] });
+    },
+  });
+};
 
 export const useCreatePrintApi = () => {
   return useMutation({
@@ -87,8 +100,14 @@ export const useCreatePrintApi = () => {
   });
 };
 
-export const useCreateShiftApi = () => {
+export const useCreatePdfPrintApi = () => {
   return useMutation({
-    mutationFn: (id: number | null) => createShiftApi(id),
+    mutationFn: ({
+      path,
+      payload,
+    }: {
+      path: string;
+      payload: PrinterPostType;
+    }) => createPrintApi(path, payload),
   });
 };

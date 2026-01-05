@@ -5,9 +5,10 @@ import type { DraftSaleSchema } from "@/@types/sale";
 import type { DraftRefundSchema } from "@/@types/refund";
 import { PaymentTypes } from "@/app/constants/payment.types";
 import classNames from "@/shared/lib/classNames";
+import type { DraftPurchaseSchema } from "@/@types/purchase";
 
 type TabsType = {
-  type: "sale" | "refund";
+  type: "sale" | "refund" | "purchase";
   drafts: DraftSaleSchema[] | DraftRefundSchema[];
   addNewDraft: (payload: DraftSaleSchema) => void;
   activateDraft: (index: number) => void;
@@ -27,12 +28,15 @@ export default function Tabs({
   let scrollLeft = 0;
 
   const addDrafts = () => {
-    const newDraftSale: DraftSaleSchema | DraftRefundSchema = {
+    const newDraftSale:
+      | DraftSaleSchema
+      | DraftRefundSchema
+      | DraftPurchaseSchema = {
       items: [],
       isActive: true,
       discountAmount: 0,
       [type === "sale" ? "payment" : "payout"]: {
-        amounts: PaymentTypes.map((paymentType) => ({
+        amounts: PaymentTypes?.map((paymentType) => ({
           amount: 0,
           paymentType: paymentType?.type,
         })),
@@ -96,15 +100,19 @@ export default function Tabs({
             }}
             variant="plain"
             onClick={() => activateDraft(index)}
-            className={
-              classNames(
-                "px-3 xl:px-5 !text-xs !xl:text-sm font-medium rounded-lg transition-colors bg-transparent",
-                draft?.isActive && type === "sale" && "!text-primary bg-white",
-                draft?.isActive && type === "refund" && "!text-red-500 bg-white"
-              )
-            }
+            className={classNames(
+              "px-3 xl:px-5 !text-xs !xl:text-sm font-medium rounded-lg transition-colors bg-transparent",
+              draft?.isActive && type === "sale" && "!text-primary bg-white",
+              draft?.isActive && type === "refund" && "!text-red-500 bg-white",
+              draft?.isActive && type === "purchase" && "!text-green-600 bg-white"
+            )}
           >
-            {type === "sale" ? "Продажа" : "Возврат"} {index > 9 ? index + 1 : "0" + (index + 1)}
+            {type === "sale"
+              ? "Продажа"
+              : type === "refund"
+              ? "Возврат"
+              : "Приход"}{" "}
+            {index > 9 ? index + 1 : "0" + (index + 1)}
           </Button>
         ))}
       </div>
@@ -117,7 +125,8 @@ export default function Tabs({
         icon={<FaPlus className="text-sm" />}
         className="bg-white !text-xs xl:text-sm font-medium rounded-lg"
       >
-        Добавить {type === "sale" ? "продажа" : "возврат"}
+        Добавить{" "}
+        {type === "sale" ? "продажа" : type === "refund" ? "возврат" : "приход"}
       </Button>
     </div>
   );

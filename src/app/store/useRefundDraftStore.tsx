@@ -93,8 +93,9 @@ export const useDraftRefundStore = create<
         if (activeRefund) {
           const draftRefundItem = activeRefund.items.find((i) => {
             return (
-              i.productId === draftItem.productId &&
-              i.productPackageId === draftItem.productPackageId
+              i.productId === draftItem.productId
+              // &&
+              // i.productPackageId === draftItem.productPackageId
             );
           });
 
@@ -105,8 +106,9 @@ export const useDraftRefundStore = create<
             if (draftItem.quantity <= 0) {
               const draftRefundItemIndex = activeRefund.items.findIndex((i) => {
                 return (
-                  i.productId === draftItem.productId &&
-                  i.productPackageId === draftItem.productPackageId
+                  i.productId === draftItem.productId
+                  // &&
+                  // i.productPackageId === draftItem.productPackageId
                 );
               });
               if (draftRefundItemIndex >= 0) {
@@ -168,20 +170,6 @@ export const useDraftRefundStore = create<
           }
         }
       }),
-    // resetActiveDraftRefund: () => set((state) => {
-    //     const activeRefund = state.draftRefunds.find(s => s.isActive)
-    //     if (activeRefund) {
-    //         activeRefund.items = []
-    //         activeRefund.discountAmount = 0
-    //         if (activeRefund.payout) {
-    //             activeRefund.payout.amounts.forEach(a => a.amount = 0)
-    //         }
-    //     }
-    // }),
-
-    // addDraftRefundPaymentAmount: (payload: DraftRefundPayoutAmountSchema) => set((state) => {
-
-    // }),
     updateDraftRefundPaymentAmounts: (
       paymentAmounts: DraftRefundPayoutAmountSchema[]
     ) =>
@@ -198,45 +186,48 @@ export const useDraftRefundStore = create<
         }
         activeRefund.payout = { amounts: newPaymentAmounts };
       }),
-    // addDraftRefundItem: (draftItem) => set((state) => {
-    //     const activeRefund = state.draftRefunds.find(s => s.isActive)
-    //     const [mark] = draftItem.marks ?? []
+    addDraftRefundItem: (draftItem) =>
+      set((state) => {
+        const activeRefund = state.draftRefunds.find((s) => s.isActive);
+        const [mark] = draftItem.marks ?? [];
 
-    //     if (activeRefund) {
-    //         const existRefundItem = activeRefund.items.find(i => {
-    //             return i.productId === draftItem.productId && i.productPackageId === draftItem.productPackageId
-    //         })
+        if (activeRefund) {
+          const existRefundItem = activeRefund.items.find((i) => {
+            return i.productId === draftItem.productId;
+          });
 
-    //         if (existRefundItem) {
-    //             existRefundItem.quantity += draftItem.quantity
-    //             existRefundItem.totalAmount += existRefundItem.totalAmount
-    //             if (mark) {
-    //                 existRefundItem.marks ??= []
+          if (existRefundItem) {
+            existRefundItem.quantity += 1;
+            existRefundItem.totalAmount =
+              existRefundItem.quantity * existRefundItem.priceAmount;
+              
+            if (mark) {
+              existRefundItem.marks ??= [];
 
-    //                 const isExist = existRefundItem.marks.some(existing => existing === mark)
+              const isExist = existRefundItem.marks.some(
+                (existing) => existing === mark
+              );
 
-    //                 if (!isExist) {
-    //                     existRefundItem.marks.push(mark)
-    //                 }
-    //             }
-    //         } else {
-    //             const newRefundItem: DraftRefundItemSchema = {
-    //                 id: draftItem.productId,
-    //                 productId: draftItem.productId,
-    //                 productName: draftItem.productName,
-    //                 productPackageId: draftItem.productPackageId,
-    //                 productPackageName: draftItem.productPackageName,
-    //                 priceAmount: draftItem.priceAmount,
-    //                 priceTypeId: draftItem.priceTypeId,
-    //                 quantity: draftItem.quantity,
-    //                 totalAmount: draftItem.totalAmount,
-    //                 ...(mark ? { marks: [mark] } : {}),
-    //             }
-    //             activeRefund.items.unshift(newRefundItem)
-    //         }
-    //     }
-
-    // }),
+              if (!isExist) {
+                existRefundItem.marks.push(mark);
+              }
+            }
+          } else {
+            const newRefundItem: DraftRefundItemSchema = {
+              id: draftItem.productId,
+              productId: draftItem.productId,
+              productName: draftItem.productName,
+              productPackageName: draftItem.productPackageName,
+              priceAmount: draftItem.priceAmount,
+              priceTypeId: draftItem.priceTypeId,
+              quantity: draftItem.quantity,
+              totalAmount: draftItem.totalAmount,
+              ...(mark ? { marks: [mark] } : {}),
+            };
+            activeRefund.items.unshift(newRefundItem);
+          }
+        }
+      }),
 
     deleteDraftRefundItem: (draftRefundItemIndex) =>
       set((state) => {
@@ -245,24 +236,6 @@ export const useDraftRefundStore = create<
           activeRefund.items.splice(draftRefundItemIndex, 1);
         }
       }),
-    // incrementDraftRefundItemQuantity: (draftRefundItemIndex) => set((state) => {
-    //     const activeRefund = state.draftRefunds.find(s => s.isActive)
-    //     if (activeRefund) {
-    //         const item = activeRefund.items[draftRefundItemIndex]
-    //         const count = item.quantity + 1
-    //         item.quantity = count
-    //         item.totalAmount = item.priceAmount * count
-    //     }
-    // }),
-    // decrementDraftRefundItemQuantity: (draftRefundItemIndex) => set((state) => {
-    //     const activeRefund = state.draftRefunds.find((sale) => sale.isActive)
-    //     if (activeRefund && activeRefund.items[draftRefundItemIndex].quantity > 1) {
-    //         const item = activeRefund.items[draftRefundItemIndex]
-    //         const count = item.quantity - 1
-    //         item.quantity = count
-    //         item.totalAmount = item.priceAmount * count
-    //     }
-    // }),
     updateDraftRefundItemQuantity: (draftRefundItemIndex, quantity) =>
       set((state) => {
         const activeRefund = state.draftRefunds.find((s) => s.isActive);
@@ -291,11 +264,14 @@ export const useDraftRefundStore = create<
           activeRefund.payout = { amounts: payout };
         }
       }),
-    // deleteDraftRefundMark: (item) => set(state => {
-    //     const activeRefund = state.draftRefunds.find(s => s.isActive)
-    //     if (activeRefund) {
-    //         activeRefund.items.find(i => i.productId === item.productId)?.marks?.splice(item.index, 1)
-    //     }
-    // })
+    deleteDraftRefundMark: (item) =>
+      set((state) => {
+        const activeRefund = state.draftRefunds.find((s) => s.isActive);
+        if (activeRefund) {
+          activeRefund.items
+            .find((i) => i.productId === item.productId)
+            ?.marks?.splice(item.index, 1);
+        }
+      }),
   }))
 );

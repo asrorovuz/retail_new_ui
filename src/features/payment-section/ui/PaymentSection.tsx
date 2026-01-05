@@ -7,7 +7,7 @@ import { Calculator, Discount, PriceForm } from "@/widgets";
 import { useEffect, useMemo } from "react";
 
 type PaymentSectionPropsType = {
-  type: "sale" | "refund";
+  type: "sale" | "refund" | "purchase";
   activeDraft: DraftSaleSchema & DraftRefundSchema;
   activeSelectPaymetype: number;
   value: string;
@@ -49,17 +49,6 @@ const PaymentSection = ({
   }, [activeDraft, type]);
 
   const toDebtAmount = netPrice;
-
-  // const totalMoumentPrice = useMemo(() => {
-  //   const sum =
-  //     activeDraft?.items?.reduce(
-  //       (sum, current) =>
-  //         sum + Number(current?.priceAmount * current?.quantity || 0),
-  //       0
-  //     ) || 0;
-
-  //   return sum - (activeDraft?.discountAmount || 0);
-  // }, [activeDraft, toDebtAmount]);
 
   const onPaymentChanged = (paymentType: number, amount: number) => {
     if (paymentType === 0) {
@@ -107,7 +96,7 @@ const PaymentSection = ({
   ]);
 
   return (
-    <div className="rounded-2xl bg-gray-50 p-2 flex flex-col gap-y-2 mb-2">
+    <div className="rounded-2xl bg-gray-100 p-2 flex flex-col gap-y-2 mb-2">
       <PriceForm
         type={type}
         value={value}
@@ -121,6 +110,7 @@ const PaymentSection = ({
           toDebtAmount={toDebtAmount}
           updateDraftDiscount={updateDraftDiscount}
           active={activeDraft?.discountAmount ?? 0}
+          clearDiscount={!!activeDraft?.items?.length}
         />
       ) : (
         <div className="h-10"></div>

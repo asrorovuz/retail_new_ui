@@ -1,3 +1,4 @@
+import type { DraftPurchasePayoutAmountSchema } from "@/@types/purchase";
 import type {
   DraftRefundPayoutAmountSchema,
   DraftRefundSchema,
@@ -22,7 +23,7 @@ type ActiveOnlyType = {
 };
 
 type PropsType = {
-  type: "sale" | "refund";
+  type: "sale" | "refund" | "purchase";
   activeDraft: DraftSaleSchema & DraftRefundSchema;
   activeSelectPaymetype: number;
   updateDraftPayment: (
@@ -62,8 +63,12 @@ const PaymeTypeCards = ({
       updatedAmounts = (
         type === "sale" ? activeDraft?.payment : activeDraft?.payout
       )?.amounts.map(
-        (p: DraftSalePaymentAmountSchema | DraftRefundPayoutAmountSchema) =>
-          p.paymentType === 1 ? { paymentType: 1, amount } : p
+        (
+          p:
+            | DraftSalePaymentAmountSchema
+            | DraftRefundPayoutAmountSchema
+            | DraftPurchasePayoutAmountSchema
+        ) => (p.paymentType === 1 ? { paymentType: 1, amount } : p)
       );
     } else {
       // yo‘q bo‘lsa — yangi qo‘shamiz
@@ -86,7 +91,7 @@ const PaymeTypeCards = ({
   return (
     <>
       {!activeOnlyType?.isOpen && (
-        <div className="grid grid-cols-3 grid-rows-2 gap-1 p-2 bg-gray-50 rounded-2xl mb-2">
+        <div className="grid grid-cols-3 grid-rows-2 gap-1 p-2 bg-gray-100 rounded-2xl mb-2">
           {count >= 5 && (
             <Button
               onClick={() => setCount((prev) => prev - 5)}
@@ -144,7 +149,7 @@ const PaymeTypeCards = ({
         </div>
       )}
       {activeOnlyType?.isOpen && (
-        <div className="grid grid-cols-3 grid-rows-2 gap-1 p-1 bg-gray-50 rounded-2xl mb-2">
+        <div className="grid grid-cols-3 grid-rows-2 gap-1 p-1 bg-gray-100 rounded-2xl mb-2">
           <Button
             onClick={() =>
               setActiveOnlyType({ ...activeOnlyType, isOpen: false })

@@ -3,6 +3,7 @@ import {
   createCategoryApi,
   createFavouriteProductApi,
   createProductApi,
+  createProductWithExcel,
   createRegisterApi,
   deleteFavoritProductApi,
   deleteProductApi,
@@ -10,6 +11,7 @@ import {
   getAllProductApi,
   getAllProductCountApi,
   getCatalogSearchApi,
+  getCatalogSearchFiscalApi,
   getCategoryApi,
   getCurrencyApi,
   getPriceTypeApi,
@@ -93,6 +95,14 @@ export const useCatalogSearchApi = (query: string, isOpen: boolean) => {
     enabled: !!query && !!isOpen,
     // gcTime: 0,
     // staleTime: 0
+  });
+};
+
+export const useCatalogSearchFiscalApi = (query: string) => {
+  return useQuery({
+    queryKey: ["catalog-fiscal", query],
+    queryFn: () => getCatalogSearchFiscalApi(query),
+    enabled: !!query,
   });
 };
 
@@ -200,6 +210,12 @@ export const useCreateProduct = () => {
     },
   });
 };
+
+export const useCreateProductWithExcel = () => {
+  return useMutation({
+    mutationFn: (data: any) => createProductWithExcel(data)
+  })
+}
 
 // DELETE
 export const useDeleteProduct = () => {

@@ -8,6 +8,7 @@ export type SettingsType = {
   scale: number;
   receipt_size: "80" | "58";
   fiscalization_enabled: boolean;
+  fiscalization_settings: any;
   auto_print_receipt: boolean;
   enable_create_unknown_product: boolean;
   shift: {

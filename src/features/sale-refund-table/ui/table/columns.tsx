@@ -1,6 +1,8 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import FormattedNumber from "@/shared/ui/kit-pro/numeric-format/NumericFormat";
 import { truncateText } from "@/shared/lib/truncateText";
+import { Button } from "@/shared/ui/kit";
+import { BsQrCodeScan } from "react-icons/bs";
 
 // 🔹 Jadvaldagi qatorlar uchun type
 export interface ProductRow {
@@ -11,11 +13,13 @@ export interface ProductRow {
 }
 
 // 🔹 Ustunlarni qaytaruvchi funksiya
-export const columns = (): ColumnDef<any>[] => {
+export const columns = (setMark: (id: string) => void): ColumnDef<any>[] => {
   return [
     {
       header: () => (
-        <div className="text-xs xl:text-sm font-medium text-gray-600">НОМЕНКЛАТУРА</div>
+        <div className="text-xs xl:text-sm font-medium text-gray-600">
+          НОМЕНКЛАТУРА
+        </div>
       ),
       accessorKey: "productName",
       cell: ({ row }) => {
@@ -35,27 +39,56 @@ export const columns = (): ColumnDef<any>[] => {
       meta: {
         bodyCellClassName: "text-right min-w-full max-w-full",
       },
-      cell: ({ row }) => <FormattedNumber value={row.original.priceAmount} scale={2}/>,
+      cell: ({ row }) => {
+        return (
+          <FormattedNumber value={row.original.priceAmount ?? 0} scale={2} />
+        );
+      },
     },
     {
       header: () => (
-        <div className="text-xs xl:text-sm font-medium text-gray-600">КОЛ-ВО</div>
+        <div className="text-xs xl:text-sm font-medium text-gray-600">
+          КОЛ-ВО
+        </div>
       ),
       accessorKey: "quantity",
       meta: {
         bodyCellClassName: "text-right min-w-full max-w-full",
       },
-      cell: ({ row }) => <FormattedNumber value={row.original.quantity} scale={2}/>,
+      cell: ({ row }) => (
+        <FormattedNumber value={row.original.quantity} scale={2} />
+      ),
     },
     {
       header: () => (
-        <div className="text-xs xl:text-sm font-medium text-gray-600">СУММА</div>
+        <div className="text-xs xl:text-sm font-medium text-gray-600">
+          СУММА
+        </div>
       ),
       accessorKey: "totalAmount",
       meta: {
         bodyCellClassName: "text-right min-w-full max-w-full",
       },
-      cell: ({ row }) => <FormattedNumber value={row.original.totalAmount} scale={2}/>,
+      cell: ({ row }) => (
+        <FormattedNumber value={row.original.totalAmount ?? 0} scale={2} />
+      ),
+    },
+    {
+      header: () => "",
+      accessorKey: "expander",
+      meta: {
+        bodyCellClassName: "text-right min-w-full max-w-full",
+      },
+      cell: ({ row }) =>
+        row.original.marks?.length ? (
+          <Button
+            variant="solid"
+            size="xs"
+            className="bg-blue-700 hover:bg-blue-700 hover:opacity-85 text-white"
+            onClick={() => setMark(row.original.productId)}
+            icon={<BsQrCodeScan size={23} />}
+          />
+        ) : null,
     },
   ];
 };

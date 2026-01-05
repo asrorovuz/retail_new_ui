@@ -32,3 +32,12 @@ export const createFiscalizedApi = async (payload: any) => {
     data: payload,
   });
 };
+
+// Update 
+export const updateSellApi = async (id: number | null, payload: any) => {
+  return await apiRequest({
+    url: pathServices.sale.updateSellPath+id,
+    method: "POST",
+    data: payload,
+  });
+};
