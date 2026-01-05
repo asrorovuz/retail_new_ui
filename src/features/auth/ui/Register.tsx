@@ -17,7 +17,9 @@ type OutletContextType = {
 const Register = () => {
   const navigate = useNavigate();
   const [isError, setIsError] = useState<boolean>(false);
-  const { refetch } = useOutletContext<OutletContextType>() || { refetch: () => {} };
+  const { refetch } = useOutletContext<OutletContextType>() || {
+    refetch: () => {},
+  };
   const { mutate: globalLogin, isPending: globalLoginPending } =
     useGlobalLogin();
   const { mutate: register, isPending: registerLoading } = useRegister();
@@ -81,7 +83,7 @@ const Register = () => {
     }
 
     if (step === 3) {
-      refetch()
+      refetch();
       navigate("/login");
     }
   };
@@ -138,7 +140,9 @@ const Register = () => {
             </Button>
 
             <Button
-              onClick={() => navigate("/login")}
+              onClick={() => {
+                refetch(), navigate("/login");
+              }}
               type="button"
               variant="solid"
               className="bg-transparent hover:bg-transparent text-gray-700 font-medium rounded-xl"
@@ -150,6 +154,7 @@ const Register = () => {
               <Button
                 type="submit"
                 variant="solid"
+                loading={globalLoginPending || registerLoading}
                 className="bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-xl"
               >
                 Далее

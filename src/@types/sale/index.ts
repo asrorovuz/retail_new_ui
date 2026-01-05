@@ -183,8 +183,7 @@ export type DraftSaleItemSchema = {
   id?: number;
   productId: number;
   productName: string;
-  // productPackageId: number;
-  productPackageName: string;
+  productPackageName: any;
   priceAmount: number;
   priceTypeId: number;
   quantity: number;
@@ -205,7 +204,7 @@ export type DraftSalePaymentAmountSchema = {
 export interface SaleStoreActions {
   addDraftSale: (payload: DraftSaleSchema) => void;
   activateDraftSale: (index: number) => void;
-  updateDraftSaleItem: (payload: DraftSaleItemSchema) => void;
+  updateDraftSaleItem: (payload: DraftSaleItemSchema | any) => void;
   resetActiveDraftSale: () => void;
   deleteDraftSale: (draftSaleIndex: number) => void;
   deleteDraftSaleItem: (draftSaleItemIndex: number) => void;
@@ -223,15 +222,13 @@ export interface SaleStoreActions {
   ) => void;
   updateDraftSaleDiscount: (discountAmount: number) => void;
   updateDraftSalePayment: (payment: DraftSalePaymentAmountSchema[]) => void;
-  completeActiveDraftSale: () => void
+  completeActiveDraftSale: () => void;
 
   // addDraftSalePaymentAmount: (payload: DraftSalePaymentAmountSchema) => void
   // updateDraftSalePaymentAmounts: (payload: DraftSalePaymentAmountSchema[]) => void
 
-  // addDraftSaleItem: (payload: DraftSaleItemSchema) => void
-  // incrementDraftSaleItemQuantity: (draftSaleItemIndex: number) => void
-  // decrementDraftSaleItemQuantity: (draftSaleItemIndex: number) => void
-  // deleteDraftSaleMark: (item: { productId: number, index: number }) => void
+  addDraftSaleItem: (payload: DraftSaleItemSchema) => void;
+  deleteDraftSaleMark: (item: { productId: number; index: number }) => void;
 }
 
 export interface SaleStoreInitialState {
@@ -242,13 +239,15 @@ export type PaymeProviderType = {
   id: number;
   type: number;
   is_enabled: boolean;
-  info: {
-    service_id: number;
-    merchant_id: number;
-    merchant_user_id: number;
-    secret_key: string;
-  } | {
-    cash_box_id: string;
-    cash_box_name: string;
-  }
-}
+  info:
+    | {
+        service_id: number;
+        merchant_id: number;
+        merchant_user_id: number;
+        secret_key: string;
+      }
+    | {
+        cash_box_id: string;
+        cash_box_name: string;
+      };
+};

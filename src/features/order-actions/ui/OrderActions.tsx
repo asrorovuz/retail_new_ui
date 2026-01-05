@@ -7,7 +7,7 @@ import type {
   RegisterSaleModel,
   SaleItemModel,
 } from "@/@types/sale";
-import type { DraftRefundSchema } from "@/@types/refund";
+import type { DraftRefundSchema, RegisterRefundModel } from "@/@types/refund";
 import classNames from "@/shared/lib/classNames";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
@@ -24,7 +24,9 @@ import { useCashboxApi, useCreatePrintApi } from "@/entities/init/repository";
 import {
   useCreateFiscalizedApi,
   useFescalDeviceApi,
+  usePaymentProviderApi,
   useRegisterSellApi,
+  useUpdateSellApi,
 } from "@/entities/sale/repository";
 import { showErrorMessage, showSuccessMessage } from "@/shared/lib/showMessage";
 import { messages } from "@/app/constants/message.request";
@@ -35,10 +37,18 @@ import {
   FiscalizedProviderTypeHippoPos,
 } from "@/app/constants/fiscalized.constants";
 import PaymeWhithQR from "@/features/modals/ui/PaymeWhithQR";
-import { useRegisterRefundApi } from "@/entities/refund/repository";
+import {
+  useRegisterRefundApi,
+  useUpdateRefundApi,
+} from "@/entities/refund/repository";
+import {
+  useRegisterPurchaseApi,
+  useUpdatePurchasedApi,
+} from "@/entities/purchase/repository";
+import type { RegisterPurchaseModel } from "@/@types/purchase";
 
 type OrderActionType = {
-  type: "sale" | "refund";
+  type: "sale" | "refund" | "purchase";
   draft: DraftSaleSchema[] & DraftRefundSchema[];
   activeDraft: DraftSaleSchema & DraftRefundSchema;
   activeSelectPaymetype: number;
@@ -76,13 +86,19 @@ const OrderActions = ({
   const warehouseId = useSettingsStore((s) => s.wareHouseId);
 
   const { data: cashboxData } = useCashboxApi();
+  const { data: paymentData = [] } = usePaymentProviderApi();
   const { mutate: registerSaleMutate } = useRegisterSellApi();
   const { mutate: registerRefundMutate } = useRegisterRefundApi();
+  const { mutate: registerPurchaseMutate } = useRegisterPurchaseApi();
   const { mutate: createFiscalized, isPending: fiscalPending } =
     useCreateFiscalizedApi();
   const { data: fiscalData = [] } = useFescalDeviceApi(fiscalizedModal);
   const filterDataFiscal = fiscalData?.filter((elem: any) => elem?.is_enabled);
   const { mutate: printCheck } = useCreatePrintApi();
+
+  const { mutate: updatePurchase } = useUpdatePurchasedApi();
+  const { mutate: updateRefund } = useUpdateRefundApi();
+  const { mutate: updateSale } = useUpdateSellApi();
 
   const onDeleteActivedraft = () => {
     const findIndex = draft?.findIndex((item) => item?.isActive);
@@ -113,31 +129,17 @@ const OrderActions = ({
     );
   }, [(type === "sale" ? activeDraft?.payment : activeDraft?.payout)?.amounts]);
 
-  const toDebtAmount = useMemo<number>(() => {
-    const debtAmount = netPrice - totalPaymentAmount;
-    return debtAmount > 0 ? debtAmount : 0;
-  }, [netPrice, totalPaymentAmount]);
-
-  const totalMoumentPrice = useMemo(() => {
-    const sum =
-      activeDraft?.items?.reduce(
-        (sum, current) =>
-          sum + Number(current?.priceAmount * current?.quantity || 0),
-        0
-      ) || 0;
-
-    return sum - (activeDraft?.discountAmount || 0);
-  }, [activeDraft, toDebtAmount]);
-
   const handleCancelPrint = () => {
     setPrintSelect(false);
-    if (settings?.fiscalization_enabled) setFiscalizedModal(true);
+    if (settings?.fiscalization_enabled && type === "sale")
+      setFiscalizedModal(true);
     else setSaleId(null);
   };
 
   const handleCancelFiscalization = () => {
     setSaleId(null);
     setFiscalizedModal(false);
+    setPayModal(false);
     setSelectFiscalized(null);
   };
 
@@ -154,11 +156,13 @@ const OrderActions = ({
         fiscal_device_id: selectFiscalized?.id,
         payment_card_type: selectFiscalized.type,
       };
+      const activePaymentData = paymentData?.filter((elem) => elem?.is_enabled);
       if (
         [FiscalizedProviderTypeEPos, FiscalizedProviderTypeHippoPos].includes(
           selectFiscalized?.type
         ) &&
-        (paymeType.includes(5) || paymeType.includes(6))
+        (paymeType.includes(5) || paymeType.includes(6)) &&
+        activePaymentData?.length > 0
       ) {
         setPayModal(true);
         setFiscalizedModal(false);
@@ -193,7 +197,9 @@ const OrderActions = ({
     callback: (success: boolean) => void
   ) {
     // init payload
-    const payload: RegisterSaleModel = {
+    const payload: RegisterSaleModel &
+      RegisterRefundModel &
+      RegisterPurchaseModel = {
       is_approved: true,
       exact_discount: [],
       items: [],
@@ -239,25 +245,31 @@ const OrderActions = ({
       }
       // set payment
       if (paymentAmounts) {
-        payload.payment = {
+        const paymentKey = type === "sale" ? "payment" : "payout";
+
+        // Boshlang'ich obyekt yaratamiz
+        payload[paymentKey] = {
           debt_states: [],
           cash_box_states: [],
         };
 
         for (let i = 0; i < paymentAmounts.length; i++) {
           const saleAndRefundPayment = paymentAmounts[i];
+
           if (saleAndRefundPayment?.amount > 0) {
-            // append debt state
-            payload?.payment?.debt_states.push({
-              amount: saleAndRefundPayment?.amount,
+            const paymentObject = payload[paymentKey];
+
+            // Debt
+            paymentObject.debt_states.push({
+              amount: saleAndRefundPayment.amount,
               currency_code: nationalCurrency?.code,
             });
 
-            // append cash-box state
-            payload?.payment?.cash_box_states.push({
-              amount: saleAndRefundPayment?.amount,
+            // Cash-box
+            paymentObject.cash_box_states.push({
+              amount: saleAndRefundPayment.amount,
               currency_code: nationalCurrency?.code,
-              type: saleAndRefundPayment?.paymentType,
+              type: saleAndRefundPayment.paymentType,
             });
           }
         }
@@ -265,56 +277,89 @@ const OrderActions = ({
     }
 
     const registerMutate =
-      type === "sale" ? registerSaleMutate : registerRefundMutate;
+      type === "sale"
+        ? registerSaleMutate
+        : type === "refund"
+        ? registerRefundMutate
+        : registerPurchaseMutate;
+
+    const updateRegister =
+      type === "sale"
+        ? updateSale
+        : type === "refund"
+        ? updateRefund
+        : updatePurchase;
 
     // register sale
-    registerMutate(payload, {
-      onSuccess: (data: any) => {
-        if (data?.sale?.id) {
-          setSaleId(data?.sale?.id);
+    if (activeDraft?.id) {
+      updateRegister(
+        { id: activeDraft?.id, payload },
+        {
+          onSuccess: (data: any) => {
+            if (data?.sale?.id || data?.purchase?.id || data?.refund?.id) {
+              setSaleId(
+                data?.sale?.id || data?.purchase?.id || data?.refund?.id
+              );
+              if (settings?.auto_print_receipt && settings?.printer_name) {
+                onPrint(data?.sale?.id || data?.purchase?.id || data?.refund?.id);
+              } else if (
+                !settings?.auto_print_receipt &&
+                settings?.printer_name
+              ) {
+                setPrintSelect(true);
+              } else {
+                handleCancelPrint();
+              }
+            }
 
-          if (settings?.auto_print_receipt && settings?.printer_name) {
-            onPrint(data?.sale?.id);
-          } else if (!settings?.auto_print_receipt && settings?.printer_name) {
-            setPrintSelect(true);
-          }else{
-            handleCancelPrint()
-          }
+            callback(true);
+            complateActiveDraft();
+            showSuccessMessage(
+              messages.uz.SUCCESS_MESSAGE,
+              messages.ru.SUCCESS_MESSAGE
+            );
+          },
+          onError: (error) => {
+            showErrorMessage(error);
+            callback(true);
+          },
         }
+      );
+    } else {
+      registerMutate(payload, {
+        onSuccess: (data: any) => {
+          if (data?.sale?.id || data?.purchase?.id || data?.refund?.id) {
+            setSaleId(data?.sale?.id || data?.purchase?.id || data?.refund?.id);
+            if (settings?.auto_print_receipt && settings?.printer_name) {
+              onPrint(data?.sale?.id || data?.purchase?.id || data?.refund?.id);
+            } else if (
+              !settings?.auto_print_receipt &&
+              settings?.printer_name
+            ) {
+              setPrintSelect(true);
+            } else {
+              handleCancelPrint();
+            }
+          }
 
-        callback(true);
-        complateActiveDraft();
-        showSuccessMessage(
-          messages.uz.SUCCESS_MESSAGE,
-          messages.ru.SUCCESS_MESSAGE
-        );
-      },
-      onError: (error) => {
-        showErrorMessage(error);
-        callback(true);
-      },
-    });
+          callback(true);
+          complateActiveDraft();
+          showSuccessMessage(
+            messages.uz.SUCCESS_MESSAGE,
+            messages.ru.SUCCESS_MESSAGE
+          );
+        },
+        onError: (error) => {
+          showErrorMessage(error);
+          callback(true);
+        },
+      });
+    }
   }
 
   const calcPricePayment = () => {
-    const amounts =
-      (type === "sale" ? activeDraft?.payment : activeDraft?.payout)?.amounts ||
-      [];
-
-    const total = amounts.reduce(
-      (sum, current) => sum + Number(current?.amount || 0),
-      0
-    );
-
-    const debt = netPrice - total;
-
     if (!activeShift && settings?.shift?.shift_enabled) {
       toast.error("Смена не открыта.");
-      return;
-    }
-
-    if (debt >= 1 && totalMoumentPrice) {
-      toast.error("Продажа в долг невозможна.");
       return;
     }
 
@@ -323,20 +368,27 @@ const OrderActions = ({
     }
   };
 
-  // const activeDraftPaymeTypes = (
-  //   type === "sale" ? activeDraft?.payment : activeDraft?.payout
-  // )?.amounts
-  //   ?.filter((item) => item?.amount > 0)
-  //   ?.map((item) => item?.paymentType) ?? [];
-
   const onPrint = (id?: number) => {
+    const payload =
+      type === "sale"
+        ? {
+            sale_id: id ?? saleId,
+            printer_name: settings?.printer_name ?? "",
+          }
+        : type === "purchase"
+        ? {
+            purchase_id: id ?? saleId,
+            printer_name: settings?.printer_name ?? "",
+          }
+        : {
+            refund_id: id ?? saleId,
+            printer_name: settings?.printer_name ?? "",
+          };
+          
     printCheck(
       {
         path: `${type}-receipt-${settings?.receipt_size || 80}`,
-        payload: {
-          sale_id: id ?? saleId,
-          printer_name: settings?.printer_name ?? "",
-        },
+        payload
       },
       {
         onSuccess() {
@@ -348,6 +400,7 @@ const OrderActions = ({
         },
         onError(error) {
           showErrorMessage(error);
+          handleCancelPrint();
         },
       }
     );
@@ -362,9 +415,10 @@ const OrderActions = ({
       setSelectFiscalized(filterDataFiscal[0]);
     }
   }, [filterDataFiscal]);
+  
 
   return (
-    <div className="p-2 bg-gray-50 rounded-2xl flex gap-x-2">
+    <div className="p-2 bg-gray-100 rounded-2xl flex gap-x-2">
       <CommonDeleteDialog
         description="Удалить корзину? Действие нельзя будет отменить"
         onDelete={onDeleteActivedraft}
@@ -380,7 +434,7 @@ const OrderActions = ({
       </CommonDeleteDialog>
       <Button
         variant="plain"
-        disabled={type === "refund"}
+        disabled={type === "refund" || type === "purchase"}
         size="sm"
         onClick={() => setDiscountModal(true)}
         icon={<MdOutlineDiscount />}
@@ -435,8 +489,9 @@ const OrderActions = ({
       />
 
       <PaymeWhithQR
-        isOpen={payModal}
+        isOpen={payModal && paymentData?.length > 0}
         saleId={saleId}
+        paymentData={paymentData}
         selectFiscalized={selectFiscalized}
         activeDraftPaymeTypes={paymeType}
         setPaymeType={setPaymeType}

@@ -1,7 +1,6 @@
 import { useSettingsStore } from "@/app/store/useSettingsStore";
 import {
   useCloseShiftApi,
-  useShiftApi,
   useShiftOperationApi,
 } from "@/entities/init/repository";
 import { Button, Dialog, Input, Table } from "@/shared/ui/kit";
@@ -67,11 +66,40 @@ const UpdateShiftDialog = ({ isOpen, onClose }: PropsType) => {
 
   const watchedBalances = watch("balances");
 
-  const { activeShift: shift, setActiveShift } = useSettingsStore();
+  const { activeShift, setActiveShift } = useSettingsStore();
   const { data: shiftOperations, isPending: isShiftOperationsPending } =
-    useShiftOperationApi(shift?.id ?? null, isOpen);
-  const { data: activeShift, isPending } = useShiftApi(isOpen);
+    useShiftOperationApi(activeShift?.id ?? null, isOpen);
   const { mutate: closeShiftMutate, isPending: isClosing } = useCloseShiftApi();
+
+  useEffect(() => {
+    if (isOpen && !activeShift) {
+      setActiveShift(null);
+      return;
+    }
+
+    if (isOpen && activeShift?.cashboxes_expected?.balances) {
+      const initialValues = activeShift?.cashboxes_expected?.balances?.map(
+        (balance) => ({
+          type: balance.type,
+          amount: "0",
+          expected: balance.amount,
+          difference: balance.amount,
+        })
+      );
+      reset({ balances: initialValues });
+    }
+  }, [isOpen, activeShift, reset]);
+
+  useEffect(() => {
+    if (watchedBalances) {
+      watchedBalances.forEach((balance, index) => {
+        const actual = parseFloat(balance.amount) || 0;
+        const difference = balance.expected - actual;
+        setValue(`balances.${index}.difference`, difference);
+      });
+    }
+  }, [watchedBalances, setValue]);
+
 
   const columns: ColumnDef<(typeof fields)[0]>[] = useMemo(
     () => [
@@ -335,8 +363,8 @@ const UpdateShiftDialog = ({ isOpen, onClose }: PropsType) => {
             messages.uz.SUCCESS_CLOSE_SHIFT,
             messages.ru.SUCCESS_CLOSE_SHIFT
           );
-          onClose();
           setActiveShift(null);
+          onClose();
         },
         onError: (error) => {
           showErrorMessage(error);
@@ -347,37 +375,13 @@ const UpdateShiftDialog = ({ isOpen, onClose }: PropsType) => {
 
   const tableData = useMemo(() => {
     return fields;
-  }, [fields]);
+  }, [fields, isOpen]);
 
   const table = useReactTable({
     data: tableData,
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
-
-  useEffect(() => {
-    if (isOpen && activeShift?.cashboxes_expected?.balances) {
-      const initialValues = activeShift.cashboxes_expected.balances.map(
-        (balance) => ({
-          type: balance.type,
-          amount: "0",
-          expected: balance.amount,
-          difference: balance.amount,
-        })
-      );
-      reset({ balances: initialValues });
-    }
-  }, [isOpen, activeShift, reset]);
-
-  useEffect(() => {
-    if (watchedBalances) {
-      watchedBalances.forEach((balance, index) => {
-        const actual = parseFloat(balance.amount) || 0;
-        const difference = balance.expected - actual;
-        setValue(`balances.${index}.difference`, difference);
-      });
-    }
-  }, [watchedBalances, setValue]);
 
   return (
     <Dialog
@@ -388,7 +392,7 @@ const UpdateShiftDialog = ({ isOpen, onClose }: PropsType) => {
     >
       <div className="h-[75vh]">
         <div className="overflow-hidden">
-          {isPending && isShiftOperationsPending && (
+          {isShiftOperationsPending && (
             <div className="flex items-center justify-center py-16">
               <Loading />
             </div>
@@ -544,7 +548,7 @@ const UpdateShiftDialog = ({ isOpen, onClose }: PropsType) => {
                       </Tr>
                     ) : (
                       table.getRowModel().rows.map((row) => (
-                        <Tr key={row.id} className="hover:bg-gray-50">
+                        <Tr key={row.id} className="hover:bg-gray-100">
                           {row.getVisibleCells().map((cell) => (
                             <Td key={cell.id} className="py-2 px-4">
                               {flexRender(

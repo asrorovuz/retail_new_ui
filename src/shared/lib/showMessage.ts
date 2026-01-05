@@ -36,28 +36,6 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
     err || { message: "Unknown error" };
   const statusCode = err?.code || err?.status_code;
 
-  // 🔹 err.data yoki err.data.message bo‘lishi mumkin
-  // if (typeof err === "object" && err !== null) {
-  //   const maybeErr = err as Record<string, any>;
-  //   if (maybeErr.data) {
-  //     error = maybeErr.data.message || maybeErr.data;
-  //   }
-  // }
-
-  // 1️⃣ - server (runtime) xatoliklar
-  // if (error instanceof Error) {
-  //   return toast.error(
-  //     lang === "ru"
-  //       ? `Ошибка: ${error.message}`
-  //       : `Xatolik: ${error.message}`
-  //   );
-  // }
-
-  // if(status_code >= 500){
-
-  //   return
-  // }
-
   if (typeof error === "string" && statusCode === 404) {
     return toast.error(
       lang === "ru" ? "Такая страница не найдена" : "Bunday sahifa mavjud emas",
@@ -126,6 +104,30 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
       );
     }
 
+    if (error.bot_exists) {
+      return toast.error(
+        lang === "ru"
+          ? "Есть такой токен"
+          : "Bunday token mavjud.",
+        {
+          position: "bottom-left",
+          autoClose: 3000,
+        }
+      );
+    }
+
+    if (error.is_not_bot) {
+      return toast.error(
+        lang === "ru"
+          ? "Бота с таким токеном не найдено"
+          : "Bunday tokenga bog'langan bot mavjud emas.",
+        {
+          position: "bottom-left",
+          autoClose: 3000,
+        }
+      );
+    }
+
     if (error.login_or_password_incorrect) {
       return toast.error(
         lang === "ru"
@@ -186,10 +188,22 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
       );
     }
 
+    if (error.sale_item_catalog_not_found) {
+      return toast.error(
+        lang === "ru"
+          ? "Единица измерения не найдена"
+          : "Bunday o‘lchov birligi (package) topilmadi",
+        {
+          position: "bottom-left",
+          autoClose: 3000,
+        }
+      );
+    }
+
     if (error.shift_disabled) {
       return toast.error(
         lang === "ru"
-          ? "Открытие смены запрещено"
+          ? "Доступ ограничен. Смотрите «Настройки»."
           : "Shift ochishga ruxsat yo‘q",
         {
           position: "bottom-left",
@@ -203,6 +217,18 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
         lang === "ru"
           ? `Ошибка: ${error.message}`
           : `Xatolik: ${error.message}`,
+        {
+          position: "bottom-left",
+          autoClose: 3000,
+        }
+      );
+    }
+
+    if (error.error) {
+      return toast.error(
+        lang === "ru"
+          ? `Ошибка: ${error.error}`
+          : `Xatolik: ${error.error}`,
         {
           position: "bottom-left",
           autoClose: 3000,

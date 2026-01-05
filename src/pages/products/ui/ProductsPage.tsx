@@ -15,8 +15,8 @@ import { useEffect, useState } from "react";
 const ProductsPage = () => {
   const [search, setSearch] = useState("");
   const [barcode, setBarcode] = useState<string | null>(null);
-  const [isOpen, setIsOpen] = useState(false);
-  const [modalType, setModalType] = useState<"add" | "edit" | "print">("add");
+  const [isAddOpen, setIsAddOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
 
   const { data: productPriceType } = usePriceTypeApi();
   const {
@@ -29,7 +29,6 @@ const ProductsPage = () => {
   const { settings } = useSettingsStore((s) => s);
 
   useEffect(() => {
-
     const onScan = eventBus.on("BARCODE_SCANNED", (code) => {
       const val: string = handleBarcodeScanned(code);
       setBarcode(val);
@@ -41,16 +40,16 @@ const ProductsPage = () => {
   }, []);
 
   useEffect(() => {
-    if (isSuccess && !isFetching && !isOpen && findBarcodeData) {
+    if (isSuccess && !isFetching && !isAddOpen && findBarcodeData) {
       setSearch(String(barcode));
       setBarcode(null); // qayta so‘rov yubormaslik uchun tozalaymiz
     }
   }, [isSuccess, findBarcodeData, isFetching]);
 
   useEffect(() => {
-    if (isError && !isOpen) {
+    if (isError && !isAddOpen) {
       if (settings?.enable_create_unknown_product) {
-        setIsOpen(true);
+        setIsAddOpen(true);
       } else {
         showErrorLocalMessage("Товар не найден");
         setBarcode(null);
@@ -62,24 +61,23 @@ const ProductsPage = () => {
     <div className="bg-white rounded-3xl p-6 h-[calc(100vh-100px)]">
       <div className="mb-3 flex items-center gap-x-4">
         <SearchProduct setSearch={setSearch} search={search} />
-        <UploadExcelFile/>
+        <UploadExcelFile />
         <AddProductModal
-          type={modalType}
+          type={"add"}
           pageType={"products"}
-          setType={setModalType}
           setBarcode={setBarcode}
           barcode={barcode}
-          isOpen={isOpen}
-          setIsOpen={setIsOpen}
+          isOpen={isAddOpen}
+          setIsOpen={setIsAddOpen}
           productPriceType={productPriceType!}
         />
       </div>
       <ProductTable
         search={search}
-        type={modalType}
-        setType={setModalType}
         setBarcode={setBarcode}
         barcode={barcode}
+        setIsOpen={setIsEditOpen}
+        isOpen={isEditOpen}
         productPriceType={productPriceType!}
       />
     </div>

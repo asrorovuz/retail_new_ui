@@ -4,6 +4,7 @@ import {
   useAllFavoritProductApi,
   useAllProductApi,
 } from "@/entities/products/repository";
+import { showMeasurmentName } from "@/shared/lib/showMeausermentName";
 import { showErrorMessage, showSuccessMessage } from "@/shared/lib/showMessage";
 import { Button, Dialog, Input, Select } from "@/shared/ui/kit";
 import { useMemo, useState } from "react";
@@ -13,12 +14,10 @@ const LikedProducts = () => {
   const [isSearch, setIsSearch] = useState("");
   const [product, setProduct] = useState<{
     product_id: number | null;
-    product_package_id: number | null;
   }>({
     product_id: null,
-    product_package_id: null,
   });
-  const [packageName, setPackageName] = useState<null | string>(null);
+  const [packageName, setPackageName] = useState<number | null>(null);
 
   const { data, isPending } = useAllProductApi(60, 1, isSearch);
   const { data: favoriteData } = useAllFavoritProductApi();
@@ -40,8 +39,7 @@ const LikedProducts = () => {
 
   const handleClose = () => {
     setProduct({
-      product_id: null,
-      product_package_id: null,
+      product_id: null
     });
     setOpenModal(false);
     setIsSearch("");
@@ -49,10 +47,10 @@ const LikedProducts = () => {
   };
 
   const onChangeValue = (item: any) => {
-    const packName = item?.product_packages?.[0]?.measurement_name;
+    
+    const packName = item?.measurement_code;
     setProduct({
       product_id: item?.id,
-      product_package_id: item?.product_packages?.[0]?.id,
     });
     setPackageName(packName);
   };
@@ -99,13 +97,13 @@ const LikedProducts = () => {
           <div>
             <Input
               disabled={true}
-              value={packageName}
+              value={showMeasurmentName(packageName || 0)}
               placeholder="Единица измерения (автоматически)"
             />
           </div>
         </div>
         <div className="flex justify-end gap-x-2">
-          <Button onClick={handleClose} variant="plain">
+          <Button onClick={handleClose}>
             Отменить
           </Button>
           <Button

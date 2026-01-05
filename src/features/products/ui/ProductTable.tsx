@@ -10,7 +10,7 @@ import {
   useAllProductCountApi,
   useDeleteProduct,
 } from "@/entities/products/repository";
-import { Button, Dropdown, Pagination, Table } from "@/shared/ui/kit";
+import { Dropdown, Pagination, Table } from "@/shared/ui/kit";
 import THead from "@/shared/ui/kit/Table/THead";
 import Tr from "@/shared/ui/kit/Table/Tr";
 import Th from "@/shared/ui/kit/Table/Th";
@@ -34,18 +34,20 @@ import { useSettingsStore } from "@/app/store/useSettingsStore";
 import PrintCheckProduct from "@/features/print-modal";
 import { useDebounce } from "@/shared/lib/useDebounce";
 import classNames from "@/shared/lib/classNames";
+import { showMeasurmentName } from "@/shared/lib/showMeausermentName";
 
 const ProductTable = ({
   search,
-  type,
-  setType,
   setBarcode,
   barcode,
+  setIsOpen,
+  isOpen,
   productPriceType,
 }: { search: string } & ProductTableProps) => {
   const debouncedSearch = useDebounce(search, 500);
   const [confirmProductId, setConfirmProductId] = useState<number | null>(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [isopenPrint, setIsOpenPrint] = useState(false);
   const [item, setItem] = useState<Product | null>(null);
   const { tableSettings } = useSettingsStore((s) => s);
 
@@ -91,8 +93,8 @@ const ProductTable = ({
   };
 
   const onClosePrintModal = () => {
-    setType("add");
     setConfirmProductId(null);
+    setIsOpenPrint(false)
   };
 
   // 🧱 Ustunlar
@@ -116,10 +118,11 @@ const ProductTable = ({
       }),
       columnHelper.display({
         id: "totalReminder",
-        header: "ОБЩАЯ ОСТАТОК",
+        header: "ОСТАТОК",
         cell: (info) => {
           const total = info.row.original.warehouse_items?.[0]?.state;
-          return total !== undefined ? total.toLocaleString() : "0";
+          
+          return `${total !== undefined ? total.toLocaleString() : "0"} ${showMeasurmentName(info.row.original.measurement_code)}`;
         },
         size: 80,
         meta: {
@@ -128,27 +131,17 @@ const ProductTable = ({
             "#fff",
         },
       }),
-      columnHelper.display({
-        id: "packInCount",
-        header: "КОЛ-ВО В УП.",
-        cell: (info) => info.row.original.count || "-",
-        size: 100,
-        meta: {
-          color:
-            tableSettings?.find((i) => i.key === "packInCount")?.color ||
-            "#fff",
-        },
-      }),
-      columnHelper.display({
-        id: "package",
-        header: "ЕД. ИЗМ.",
-        cell: (info) => info.row.original.measurement_name || "-",
-        size: 100,
-        meta: {
-          color:
-            tableSettings?.find((i) => i.key === "package")?.color || "#fff",
-        },
-      }),
+      // columnHelper.display({
+      //   id: "package",
+      //   header: "ЕД. ИЗМ.",
+      //   cell: (info) =>
+      //     showMeasurmentName(info.row.original.measurement_code) || "-",
+      //   size: 100,
+      //   meta: {
+      //     color:
+      //       tableSettings?.find((i) => i.key === "package")?.color || "#fff",
+      //   },
+      // }),
       columnHelper.display({
         id: "price",
         header: "ЦЕНА",
@@ -159,6 +152,21 @@ const ProductTable = ({
         size: 140,
         meta: {
           color: tableSettings?.find((i) => i.key === "price")?.color || "#fff",
+        },
+      }),
+      columnHelper.display({
+        id: "purchesPrice",
+        header: "Приходная цена",
+        cell: (info) => {
+          const price =
+            info.row.original.warehouse_items?.[0]?.purchase_price_amount;
+          return price ? `${price.toLocaleString()} сум` : "-";
+        },
+        size: 140,
+        meta: {
+          color:
+            tableSettings?.find((i) => i.key === "purchesPrice")?.color ||
+            "#fff",
         },
       }),
       columnHelper.display({
@@ -196,43 +204,42 @@ const ProductTable = ({
               toggleClassName="text-2xl text-gray-600 flex justify-center"
               renderTitle={<HiOutlineDotsHorizontal />}
             >
-              <DropdownItem className="h-auto!">
-                <div
-                  onClick={() => {
-                    setItem(info?.row?.original);
-                    setConfirmProductId(productId);
-                    setType("print");
-                  }}
-                  className="flex items-center gap-2 text-gray-700 hover:bg-gray-50 py-3 px-5 rounded-xl"
-                >
+              <DropdownItem
+                onClick={() => {
+                  setItem(info?.row?.original);
+                  setConfirmProductId(productId);
+                  setIsOpenPrint(true)
+                }}
+                className="h-auto!"
+              >
+                <div className="w-full flex items-center gap-2 text-gray-700 py-3 px-5 rounded-xl">
                   <ShtrixCod />
                   Печать штрих код товара
                 </div>
               </DropdownItem>
-              <DropdownItem className="h-auto!">
-                <div
-                  onClick={() => {
-                    setConfirmProductId(productId);
-                    setType("edit");
-                  }}
-                  className="flex items-center gap-2 text-orange-500 hover:bg-gray-50 py-3 px-5 rounded-xl"
-                >
+              <DropdownItem
+                onClick={() => {
+                  setConfirmProductId(productId);
+                  setIsOpen(true);
+                }}
+                className="h-auto!"
+              >
+                <div className="w-full flex items-center gap-2 text-orange-500 py-3 px-5 rounded-xl">
                   <FaRegEdit />
                   Редактировать
                 </div>
               </DropdownItem>
-              <DropdownItem className="h-auto!">
-                <Button
-                  variant="plain"
-                  onClick={() => {
-                    setConfirmProductId(productId);
-                    setDeleteModalOpen(true);
-                  }}
-                  className="w-full bg-transparent flex items-center gap-2 text-red-500 hover:bg-gray-50 active:bg-gray-100 py-3 px-5 rounded-xl"
-                >
+              <DropdownItem
+                onClick={() => {
+                  setConfirmProductId(productId);
+                  setDeleteModalOpen(true);
+                }}
+                className="h-auto!"
+              >
+                <div className="w-full flex items-center gap-2 text-red-500 py-3 px-5 rounded-xl">
                   <IoTrashOutline />
                   Удалить
-                </Button>
+                </div>
               </DropdownItem>
             </Dropdown>
           );
@@ -293,7 +300,7 @@ const ProductTable = ({
                 <Tr
                   key={row.id}
                   className={`${
-                    index % 2 ? "bg-white" : "bg-gray-50"
+                    index % 2 ? "bg-white" : "bg-gray-100"
                   } hover:bg-gray-100 transition`}
                 >
                   {row.getVisibleCells().map((cell) => (
@@ -362,15 +369,16 @@ const ProductTable = ({
         productId={confirmProductId}
         setProductId={setConfirmProductId}
         barcode={barcode}
-        type={type}
-        setType={setType}
+        type={"edit"}
         setBarcode={setBarcode}
+        setIsOpen={setIsOpen}
+        isOpen={isOpen}
         productPriceType={productPriceType}
       />
 
       <PrintCheckProduct
         item={item}
-        type={type}
+        isOpen={isopenPrint}
         onClosePrintModal={onClosePrintModal}
       />
     </div>

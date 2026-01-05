@@ -1,6 +1,6 @@
 import { Select } from "@/shared/ui/kit";
 import type { CommonProps } from "@/shared/ui/kit/@types/common";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 interface CatalogPackageSelectorProps extends CommonProps {
   placeholder?: string;
@@ -21,37 +21,51 @@ const CatalogPackageSelector = ({
   const [selected, setSelected] = useState(value || null);
 
   const handleChange = (option: any) => {
-    setValue("package", option)
+    setValue("package", option);
     setSelected(option);
     onChange(option);
   };
 
+  const selectOption = useMemo(() => {
+    if (!options || !Array.isArray(options)) return [];
+    return options.map((item: any) => ({
+      label: item.name_uz,
+      value: item.code,
+      ...item,
+    }));
+  }, [value, options]);
+
   // 🔹 Default yoki value bo‘lganda tanlovni yangilash
   useEffect(() => {
-    if (value) {
-      // Agar value obyekt bo‘lsa yoki faqat code bo‘lsa
+    if (value !== null && value !== undefined) {
       const found =
         typeof value === "object"
           ? value
-          : options.find((opt) => opt.code === +value);
-      if (found) setSelected(found);
-    } else if (options.length > 0) {
-      // Agar value yo‘q bo‘lsa, birinchi elementni tanlash
-      setSelected(options[0]);
-      onChange(options[0]); // formaga avtomatik yuborish
+          : selectOption?.find((opt) => opt.value === value);
+
+      if (found) {
+        setSelected(found);
+        return;
+      }
     }
-  }, [value, options]);
+  }, []);
+
+  useEffect(() => {
+    if (selectOption?.length > 0) {
+      handleChange(selectOption[0]);
+    }
+  }, [options]);
 
   return (
     <Select
       {...props}
       placeholder={placeholder}
       isSearchable={false}
-      options={options}
+      options={selectOption}
       value={selected}
       onChange={handleChange}
-      getOptionLabel={(option: any) => option.name_uz}
-      getOptionValue={(option: any) => option.code}
+      getOptionLabel={(option: any) => option.label}
+      getOptionValue={(option: any) => option.value}
       isClearable
       menuPortalTarget={document.body}
       menuPosition="fixed"

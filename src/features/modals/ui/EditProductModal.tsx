@@ -10,9 +10,8 @@ import {
   CurrencyCodeUZSText,
   CurrencyRateUZS,
 } from "@/app/constants/paymentType";
-import {
-  useProductByIdApi,
-} from "@/entities/products/repository";
+import { useProductByIdApi } from "@/entities/products/repository";
+import { showMeasurmentName } from "@/shared/lib/showMeausermentName";
 
 type EXtraPropsType = {
   productId: number | null;
@@ -20,16 +19,15 @@ type EXtraPropsType = {
 };
 
 const EditProductModal: FC<ProductTableProps & EXtraPropsType> = ({
-  type,
   setBarcode,
   barcode,
-  setType,
   productPriceType,
+  setIsOpen,
+  isOpen,
   productId,
   setProductId,
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
-
+  const safeProductPriceType = productPriceType ?? [];
   // 🔹 DEFAULT VALUES STATE ORNATAMIZ
   const [defaultValues, setDefaultValues] =
     useState<ProductDefaultValues | null>(null);
@@ -40,7 +38,7 @@ const EditProductModal: FC<ProductTableProps & EXtraPropsType> = ({
   useEffect(() => {
     if (!product) return;
 
-    const prices = productPriceType?.map((i: ProductPriceType, inx: number) => {
+    const prices = safeProductPriceType?.map((i: ProductPriceType, inx: number) => {
       return {
         amount: inx ? 0 : null,
         price_type: i,
@@ -54,7 +52,6 @@ const EditProductModal: FC<ProductTableProps & EXtraPropsType> = ({
 
     const computed: ProductDefaultValues = {
       ...product,
-
       purchase_price:
         product?.warehouse_items?.[0]?.purchase_price_amount &&
         product?.warehouse_items?.[0]?.purchase_price_currency
@@ -90,13 +87,17 @@ const EditProductModal: FC<ProductTableProps & EXtraPropsType> = ({
             package_names: [], // Bu CatalogSelector ichida to'ldiriladi
           }
         : null,
+      package: {
+        value: product?.package_code || null,
+        label: product?.package_name || "",
+      },
       package_code: product?.package_code || null,
       package_name: product?.package_name || null,
       catalog_code: product?.catalog_code || null,
       catalog_name: product?.catalog_name || null,
       sku: product?.sku || null,
       code: product?.code || null,
-      measurement_name: product?.measurement_name || "Штук",
+      measurement_name: showMeasurmentName(product?.measurement_code) || "шт",
       prices: product?.prices?.length
         ? prices.map((i) => {
             const price = product?.prices?.find(
@@ -118,24 +119,17 @@ const EditProductModal: FC<ProductTableProps & EXtraPropsType> = ({
     setDefaultValues(computed);
   }, [product, productPriceType, isOpen]);
 
-  // 🔥 MODAL OCHILGANDA BARCODE SET QILAMIZ
-  useEffect(() => {
-    if (productId && type === "edit") {
-      setIsOpen(true);
-    }
-  }, [productId]);
-
-  if (!defaultValues) return null; // loading holat
+  if (!defaultValues && !isOpen) return null; // loading holat
 
   return (
     <ProductForm
-      type={type}
+      type={"edit"}
       productId={productId}
+      setDefaultValues={setDefaultValues}
       isOpen={isOpen}
       setIsOpen={setIsOpen}
-      setType={setType}
       setProductId={setProductId}
-      defaultValue={defaultValues}
+      defaultValue={defaultValues!}
       barcode={barcode}
       setBarcode={setBarcode}
     />

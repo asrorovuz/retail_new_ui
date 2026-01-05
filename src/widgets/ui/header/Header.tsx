@@ -1,42 +1,29 @@
-import type { Shift } from "@/@types/shift/schema";
 import { useAuthContext } from "@/app/providers/AuthProvider";
 import { useSettingsStore } from "@/app/store/useSettingsStore";
 import { useVersionStore } from "@/app/store/useVersionStore";
 import { useShiftApi } from "@/entities/init/repository";
 import { CreateShiftDialog, UpdateShiftDialog } from "@/features/shift";
 import UpdateVersion from "@/features/update";
-import { Button } from "@/shared/ui/kit";
+import { Button, Dropdown } from "@/shared/ui/kit";
 import Alert from "@/shared/ui/kit-pro/alert/Alert";
 import Menu from "@/shared/ui/kit/Menu/Menu";
 import MenuItem from "@/shared/ui/kit/Menu/MenuItem";
 import { LogoutSvg } from "@/shared/ui/svg/LogoutSvg";
 import { useEffect, useState } from "react";
+import { BsThreeDotsVertical } from "react-icons/bs";
 import { FiRefreshCcw } from "react-icons/fi";
 import { useLocation, useNavigate } from "react-router-dom";
-
-interface ShiftError extends Error {
-  active_shift_not_found?: boolean;
-  response?: {
-    data?: {
-      active_shift_not_found?: boolean;
-    };
-  };
-}
 
 const Header = () => {
   const location = useLocation();
   const [showAlert, setShowAlert] = useState(false);
   const [shiftAddModal, setShiftAddModal] = useState(false);
   const [shiftUpdateModal, setShiftUpdateModal] = useState(false);
+  const { data, error } = useShiftApi(shiftAddModal || shiftUpdateModal);
   const navigate = useNavigate();
 
   const { activeShift, setActiveShift } = useSettingsStore();
   const version = useVersionStore((store) => store.versions);
-
-  const { data: shift, error } = useShiftApi() as {
-    data: Shift | null;
-    error: ShiftError | null;
-  };
 
   const activeKey = location.pathname.replace("/", "") || "sales";
   const { logout } = useAuthContext();
@@ -46,18 +33,13 @@ const Header = () => {
   };
 
   useEffect(() => {
-    if (shift) {
-      setActiveShift(shift);
-    } else if (
-      error?.active_shift_not_found ||
-      error?.response?.data?.active_shift_not_found
-    ) {
-      setActiveShift(null);
-    }
-  }, [shift, error]);
+    if (!!error) setActiveShift(null);
+    else if (data) setActiveShift(data);
+    else setActiveShift(null);
+  }, [data, error, setActiveShift]);
 
   return (
-    <header className="bg-white rounded-3xl p-2 flex justify-between items-center">
+    <header className="bg-white rounded-2xl p-2 flex justify-between items-center">
       <Menu
         className="menu-horizontal"
         onSelect={handleSelect}
@@ -85,6 +67,17 @@ const Header = () => {
             <span>Возврат</span>
           </div>
         </MenuItem>
+        <MenuItem eventKey="purchase">
+          <div
+            className={`px-4 py-2 rounded-md cursor-pointer text-[14px] xl:text-[16px] transition-colors duration-200 ${
+              activeKey === "purchase"
+                ? "text-green-500"
+                : "hover:bg-gray-100 text-gray-700"
+            }`}
+          >
+            <span>Приход</span>
+          </div>
+        </MenuItem>
         <MenuItem eventKey="products">
           <div
             className={`px-4 py-2 rounded-md cursor-pointer text-[14px] xl:text-[16px] transition-colors duration-200 ${
@@ -107,6 +100,100 @@ const Header = () => {
             <span>Фаворит товар</span>
           </div>
         </MenuItem>
+        <Dropdown renderTitle={<BsThreeDotsVertical color="#333" size={20} />}>
+          <Dropdown.Item>
+            <MenuItem eventKey="history/sales">
+              <div
+                className={`px-4 py-2 rounded-md cursor-pointer text-[14px] xl:text-[16px] transition-colors duration-200 ${
+                  activeKey === "history/sales"
+                    ? "text-blue-500"
+                    : "hover:bg-gray-100 text-gray-700"
+                }`}
+              >
+                <span>Продажа</span>
+              </div>
+            </MenuItem>
+          </Dropdown.Item>
+          <Dropdown.Item>
+            <MenuItem eventKey="history/refund">
+              <div
+                className={`px-4 py-2 rounded-md cursor-pointer text-[14px] xl:text-[16px] transition-colors duration-200 ${
+                  activeKey === "history/refund"
+                    ? "text-red-500"
+                    : "hover:bg-gray-100 text-gray-700"
+                }`}
+              >
+                <span>Возврат</span>
+              </div>
+            </MenuItem>
+          </Dropdown.Item>
+          <Dropdown.Item>
+            <MenuItem eventKey="history/purchase">
+              <div
+                className={`px-4 py-2 rounded-md cursor-pointer text-[14px] xl:text-[16px] transition-colors duration-200 ${
+                  activeKey === "history/purchase"
+                    ? "text-green-500"
+                    : "hover:bg-gray-100 text-gray-700"
+                }`}
+              >
+                <span>Приход</span>
+              </div>
+            </MenuItem>
+          </Dropdown.Item>
+
+          <Dropdown.Item>
+            <MenuItem eventKey="settings">
+              <div
+                className={`px-4 py-2 rounded-md cursor-pointer text-[14px] xl:text-[16px] transition-colors duration-200 ${
+                  activeKey === "settings"
+                    ? "text-blue-500"
+                    : "hover:bg-gray-100 text-gray-700"
+                }`}
+              >
+                <span>Настройки</span>
+              </div>
+            </MenuItem>
+          </Dropdown.Item>
+          <Dropdown.Item>
+            <MenuItem eventKey="cashbox">
+              <div
+                className={`px-4 py-2 rounded-md cursor-pointer text-[14px] xl:text-[16px] transition-colors duration-200 ${
+                  activeKey === "cashbox"
+                    ? "text-blue-500"
+                    : "hover:bg-gray-100 text-gray-700"
+                }`}
+              >
+                <span>Касса</span>
+              </div>
+            </MenuItem>
+          </Dropdown.Item>
+          <Dropdown.Item>
+            <MenuItem eventKey="fiscalized">
+              <div
+                className={`px-4 py-2 rounded-md cursor-pointer text-[14px] xl:text-[16px] transition-colors duration-200 ${
+                  activeKey === "fiscalized"
+                    ? "text-blue-500"
+                    : "hover:bg-gray-100 text-gray-700"
+                }`}
+              >
+                <span>Фискализации</span>
+              </div>
+            </MenuItem>
+          </Dropdown.Item>
+          <Dropdown.Item>
+            <MenuItem eventKey="payment-provider">
+              <div
+                className={`px-4 py-2 rounded-md cursor-pointer text-[14px] xl:text-[16px] transition-colors duration-200 ${
+                  activeKey === "payment-provider"
+                    ? "text-blue-500"
+                    : "hover:bg-gray-100 text-gray-700"
+                }`}
+              >
+                <span>Платёжные системы</span>
+              </div>
+            </MenuItem>
+          </Dropdown.Item>
+        </Dropdown>
       </Menu>
 
       <div className="flex items-center gap-x-2">
@@ -114,13 +201,9 @@ const Header = () => {
         <UpdateVersion />
         <div className="relative">
           <Button
-            onClick={() => {
-              if (activeShift) {
-                setShiftUpdateModal(true);
-              } else {
-                setShiftAddModal(true);
-              }
-            }}
+            onClick={() =>
+              activeShift ? setShiftUpdateModal(true) : setShiftAddModal(true)
+            }
             className="!text-[14px] !xl:text-base !font-medium !xl:font-semibold"
             variant="solid"
             icon={<FiRefreshCcw />}

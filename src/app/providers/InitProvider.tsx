@@ -1,6 +1,10 @@
 import { useEffect, type ReactNode } from "react";
 import { useSettingsStore } from "../store/useSettingsStore";
-import { useSettingsApi, useVersionApi, useWarehouseApi } from "@/entities/init/repository";
+import {
+  useSettingsApi,
+  useVersionApi,
+  useWarehouseApi,
+} from "@/entities/init/repository";
 import { transformProductColumns } from "@/shared/lib/transformation-table";
 import i18n from "../config/i18n";
 import {
@@ -11,9 +15,10 @@ import { useCurrencyStore } from "../store/useCurrencyStore";
 import { useVersionStore } from "../store/useVersionStore";
 
 export const InitProvider = ({ children }: { children: ReactNode }) => {
-  const { setSettings, setTableSettings, setWareHouseId } = useSettingsStore();
+  const { setSettings, setTableSettings, setWareHouseId } =
+    useSettingsStore();
   const { setNationalCurrency, setCurrencies } = useCurrencyStore();
-  const setVersions = useVersionStore((store) => store.setVersions)
+  const setVersions = useVersionStore((store) => store.setVersions);
 
   const { data: settings } = useSettingsApi();
   const { data: settingsTable } = useProductTableSettingsApi();
@@ -21,6 +26,7 @@ export const InitProvider = ({ children }: { children: ReactNode }) => {
   const { data: currency } = useCurrancyApi();
   const { data: versions } = useVersionApi();
   
+
   // 📦 Ilova versiyalarini o‘rnatish
   useEffect(() => {
     if (versions) {
@@ -45,6 +51,12 @@ export const InitProvider = ({ children }: { children: ReactNode }) => {
       }
     }
   }, [settings, setSettings]);
+
+  // useEffect(() => {
+  //   if(!!error) setActiveShift(null)
+  //   else if (data) setActiveShift(data);
+  //   else setActiveShift(null);
+  // }, [data, error, setActiveShift]);
 
   // 📋 Jadval ustunlari sozlamalari
   useEffect(() => {

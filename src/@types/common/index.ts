@@ -26,10 +26,19 @@ export type PaymentAmount = {
   paymentType: number;
 };
 
-export type PrinterPostType = {
-  sale_id: number | null;
-  printer_name: string;
-};
+export type PrinterPostType =
+  | {
+      sale_id: number | null;
+      printer_name: string;
+    }
+  | {
+      purchase_id: number | null;
+      printer_name: string;
+    }
+  | {
+      refund_id: number | null;
+      printer_name: string;
+    };
 
 export type PaymentType = {
   cash_box_states: {

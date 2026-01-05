@@ -30,7 +30,7 @@ const BarcodeForm = ({
   const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
 
   const addBarcode = () => {
-    append(new Date().getTime().toString().slice(0, 13));
+    append(new Date().getTime().toString().slice(5, 13));
   };
 
   const deleteBarcode = (index: number) => {
@@ -62,7 +62,7 @@ const BarcodeForm = ({
   }, [barcode]);
 
   return (
-    <div className="w-1/2">
+    <div>
       {fields?.map((field, index) => (
         <InputGroup className={"mb-3"} key={field.id}>
           <Controller

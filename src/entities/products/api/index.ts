@@ -23,7 +23,7 @@ export const getAllProductApi = async (
   index?: number,
   search?: string
 ): Promise<Product[]> => {
-  const skip = index && size ? (index - 1) * size : undefined;
+  const skip = index && size ? (index - 1) * size : 0;
 
   return await apiRequest<Product[]>({
     url: pathServices.products.getAllProductsPath,
@@ -80,6 +80,14 @@ export const getCategoryApi = async (): Promise<CategoryResponse[]> => {
 };
 
 export const getCatalogSearchApi = async (query: string): Promise<any> => {
+  return await apiRequest<any>({
+    url: pathServices.products.catalogSearch,
+    method: "GET",
+    params: { query },
+  });
+};
+
+export const getCatalogSearchFiscalApi = async (query: string): Promise<any> => {
   return await apiRequest<any>({
     url: pathServices.products.catalogSearch,
     method: "GET",

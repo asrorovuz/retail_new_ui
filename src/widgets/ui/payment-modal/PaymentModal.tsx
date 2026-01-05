@@ -11,7 +11,7 @@ import SuccessSvg from "@/shared/ui/svg/SuccessSvg";
 import { useState } from "react";
 
 type PaymentModalType = {
-  type: "sale" | "refund";
+  type: "sale" | "refund" | "purchase";
   cashBackAmount: number;
   totalPaymentAmount: number;
   isOpen: boolean;
@@ -47,7 +47,7 @@ const PaymentModal = ({
       (type === "sale"
         ? activeDraft?.payment
         : activeDraft?.payout
-      )?.amounts.map((item: DraftSalePaymentAmountSchema) => {
+      )?.amounts?.map((item: DraftSalePaymentAmountSchema) => {
         if (!subtracted && item?.amount > cashBackAmount) {
           subtracted = true;
           return { ...item, amount: item?.amount - cashBackAmount };
@@ -63,7 +63,7 @@ const PaymentModal = ({
             if (!settings?.fiscalization_enabled) {
               setIsOpenPayment(false);
             }
-          } else if (type === "refund") {
+          } else if (type === "refund" || type === "purchase") {
             setIsOpenPayment(false);
           } else {
             return;
@@ -86,7 +86,7 @@ const PaymentModal = ({
           Оплачено успешно
         </p>
       </div>
-      <div className="bg-gray-50 rounded-2xl p-4 text-gray-900 mb-4">
+      <div className="bg-gray-100 rounded-2xl p-4 text-gray-900 mb-4">
         <div className="flex justify-between py-4 border-b border-dashed">
           <span>Общая сумма:</span>
           <FormattedNumber value={totalAmount ?? 0} />
@@ -105,6 +105,10 @@ const PaymentModal = ({
         <div className="flex justify-between py-4 border-b border-dashed">
           <span>Оплаченная сумма:</span>
           <FormattedNumber value={totalPaymentAmount ?? 0} />
+        </div>
+        <div className="flex justify-between py-4 border-b border-dashed">
+          <span>Долг:</span>
+          <FormattedNumber value={(totalAmount - (activeDraft?.discountAmount ?? 0)) - totalPaymentAmount || 0} />
         </div>
         <div className="flex justify-between pt-4 text-xl font-semibold">
           <span>Сдача:</span>

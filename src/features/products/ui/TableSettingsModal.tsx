@@ -96,59 +96,65 @@ const TableSettingsModal = () => {
         width={490}
       >
         <div className="flex flex-col gap-y-3 mb-5">
-          {tableSettings?.map((i) => (
-            <React.Fragment key={i.key}>
-              <div className="flex items-center justify-between">
-                <span className="font-semibold text-xl">
-                  {t(`tableSettings.${i.key}`)}
-                </span>
-                <div className="flex items-center justify-end">
-                  <Switcher
-                    checked={
-                      tempHiddenColumns.find((j) => j.key === i.key)?.visible ??
-                      false
-                    }
-                    onChange={() => changeVisibleColumns(i.key)}
-                  />
-                  <Select
-                    className={classNames(
-                      `w-[200px] ml-2`,
-                      colors?.find(
-                        (j) =>
-                          j.name ===
-                          tempHiddenColumns?.find((l) => l.key === i.key)?.color
-                      )
-                    )}
-                    options={colors}
-                    isSearchable={false}
-                    isClearable
-                    onChange={(option) =>
-                      changeColor(i.key, option?.name || "")
-                    }
-                    value={
-                      colors?.find(
-                        (j) =>
-                          j.name ===
-                          tempHiddenColumns?.find((l) => l.key === i.key)?.color
-                      ) || null
-                    }
-                    hideDropdownIndicator={true}
-                    getOptionLabel={(option) => t(`colors.${option?.name}`)}
-                    getOptionValue={(option) => option?.name}
-                    placeholder={t("color")}
-                    menuPortalTarget={document.body}
-                    menuPosition="fixed"
-                    styles={{
-                      menuPortal: (base) => ({
-                        ...base,
-                        zIndex: 9999,
-                      }),
-                    }}
-                  />
+          {tableSettings?.map((i) =>
+            i?.key !== "package" ? (
+              <React.Fragment key={i.key}>
+                <div className="flex items-center justify-between">
+                  <span className="font-semibold text-xl">
+                    {t(`tableSettings.${i.key}`)}
+                  </span>
+                  <div className="flex items-center justify-end">
+                    <Switcher
+                      checked={
+                        tempHiddenColumns.find((j) => j.key === i.key)
+                          ?.visible ?? false
+                      }
+                      onChange={() => changeVisibleColumns(i.key)}
+                    />
+                    <Select
+                      className={classNames(
+                        `w-[200px] ml-2`,
+                        colors?.find(
+                          (j) =>
+                            j.name ===
+                            tempHiddenColumns?.find((l) => l.key === i.key)
+                              ?.color
+                        )
+                      )}
+                      options={colors}
+                      isSearchable={false}
+                      isClearable
+                      onChange={(option) =>
+                        changeColor(i.key, option?.name || "")
+                      }
+                      value={
+                        colors?.find(
+                          (j) =>
+                            j.name ===
+                            tempHiddenColumns?.find((l) => l.key === i.key)
+                              ?.color
+                        ) || null
+                      }
+                      hideDropdownIndicator={true}
+                      getOptionLabel={(option) => t(`colors.${option?.name}`)}
+                      getOptionValue={(option) => option?.name}
+                      placeholder={t("color")}
+                      menuPortalTarget={document.body}
+                      menuPosition="fixed"
+                      styles={{
+                        menuPortal: (base) => ({
+                          ...base,
+                          zIndex: 9999,
+                        }),
+                      }}
+                    />
+                  </div>
                 </div>
-              </div>
-            </React.Fragment>
-          ))}
+              </React.Fragment>
+            ) : (
+              ""
+            )
+          )}
         </div>
 
         {/* 🔹 Pastki tugmalar */}

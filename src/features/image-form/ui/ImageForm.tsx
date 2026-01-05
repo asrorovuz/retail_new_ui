@@ -111,7 +111,7 @@ const ImageForm = ({ fieldName, control, imgId = null }: ImageFormProps) => {
   const beforeUpload = (file: FileList | null) => {
     let valid: boolean | string = true;
     const allowedFileType = ["image/jpeg", "image/png", "image/avif"];
-    const maxFileSize = 500000; // 500 KB
+    const maxFileSize = 5 * 1024 * 1024; // 5 MB
 
     if (file) {
       for (const f of file) {

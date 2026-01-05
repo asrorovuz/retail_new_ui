@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { createFiscalizedApi, fiscalDeviceApi, paymentProviderApi, registerSaleApi } from "../api";
+import { createFiscalizedApi, fiscalDeviceApi, paymentProviderApi, registerSaleApi, updateSellApi } from "../api";
 import type { RegisterSaleModel } from "@/@types/sale";
 
 export const useRegisterSellApi = () => {
@@ -8,11 +8,11 @@ export const useRegisterSellApi = () => {
   });
 };
 
-export const useFescalDeviceApi = (fiscalizedModal: boolean) => {
+export const useFescalDeviceApi = (fiscalizedModal?: boolean) => {
   return useQuery({
     queryKey: ["fiscalized"],
     queryFn: fiscalDeviceApi,
-    enabled: fiscalizedModal,
+    enabled: !!fiscalizedModal,
   });
 };
 
@@ -26,5 +26,11 @@ export const usePaymentProviderApi = () => {
 export const useCreateFiscalizedApi = () => {
   return useMutation({
     mutationFn: (data: any) => createFiscalizedApi(data),
+  });
+};
+
+export const useUpdateSellApi = () => {
+  return useMutation({
+    mutationFn: ({id, payload}: any) => updateSellApi(id, payload),
   });
 };

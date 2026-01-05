@@ -15,11 +15,11 @@ const initialState: SettingsStoreInitialState = {
     { key: "packInCount", visible: true, color: "" },
     { key: "package", visible: true, color: "" },
     { key: "price", visible: true, color: "" },
-    // { key: "purchesPrice", visible: true, color: "" },
+    { key: "purchesPrice", visible: true, color: "" },
     { key: "sku", visible: true, color: "" },
     { key: "code", visible: true, color: "" },
   ],
-  wareHouseId: null
+  wareHouseId: null,
 };
 
 export const useSettingsStore = create<SettingsStoreInitialState & SettingsStoreActions>(

@@ -44,7 +44,7 @@ export interface RefundStoreActions {
   updateDraftRefundPaymentAmounts: (
     paymentAmounts: DraftRefundPayoutAmountSchema[]
   ) => void;
-  //   addDraftRefundItem: (payload: DraftRefundItemSchema) => void;
+  addDraftRefundItem: (payload: DraftRefundItemSchema) => void;
   //   incrementDraftRefundItemQuantity: (draftRefundItemIndex: number) => void;
   //   decrementDraftRefundItemQuantity: (draftRefundItemIndex: number) => void;
   updateDraftRefundItemQuantity: (
@@ -60,7 +60,7 @@ export interface RefundStoreActions {
     totalPrice: number
   ) => void;
   updateDraftRefundPayout: (payout: DraftRefundPayoutAmountSchema[]) => void;
-  //   deleteDraftRefundMark: (item: { productId: number; index: number }) => void;
+  deleteDraftRefundMark: (item: { productId: number; index: number }) => void;
 }
 
 export interface RefundStoreInitialState {
@@ -74,17 +74,17 @@ type RefundPaymentModel = {
 };
 
 export type RegisterRefundModel = {
-    number?: string
-    date?: string
-    is_approved: boolean
-    contractor_id?: number
-    employee_id?: number
-    cash_box_id?: number | null
-    payout?: RefundPaymentModel
-    exact_discount: Money[]
-    percent_discount?: number
-    items: RefundItemModel[]
-}
+  number?: string;
+  date?: string;
+  is_approved: boolean;
+  contractor_id?: number;
+  employee_id?: number;
+  cash_box_id?: number | null;
+  payout?: RefundPaymentModel;
+  exact_discount: Money[];
+  percent_discount?: number;
+  items: RefundItemModel[];
+};
 
 type Money = {
   amount: number;
@@ -109,4 +109,3 @@ type RefundItemDiscount = {
   value: number;
   type: number;
 };
-

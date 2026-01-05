@@ -94,11 +94,7 @@ export const useDraftSaleStore = create<
         const activeSale = state.draftSales?.find((s) => s.isActive);
         if (activeSale) {
           const draftSaleItem = activeSale.items.find((i) => {
-            return (
-              i.productId === draftItem.productId 
-              // &&
-              // i.productPackageId === draftItem.productPackageId
-            );
+            return i.productId === draftItem.productId;
           });
 
           if (draftSaleItem) {
@@ -107,11 +103,7 @@ export const useDraftSaleStore = create<
 
             if (draftItem.quantity <= 0) {
               const draftSaleItemIndex = activeSale.items.findIndex((i) => {
-                return (
-                  i.productId === draftItem.productId 
-                  // &&
-                  // i.productPackageId === draftItem.productPackageId
-                );
+                return i.productId === draftItem.productId;
               });
               if (draftSaleItemIndex >= 0) {
                 activeSale.items.splice(draftSaleItemIndex, 1);
@@ -224,88 +216,57 @@ export const useDraftSaleStore = create<
           }
         }
       }),
+    deleteDraftSaleMark: (item) =>
+      set((state) => {
+        const activeSale = state.draftSales.find((s) => s.isActive);
+        if (activeSale) {
+          activeSale.items
+            .find((i) => i.productId === item?.productId)
+            ?.marks?.splice(item.index, 1);
+        }
+      }),
+    addDraftSaleItem: (draftItem) =>
+      set((state) => {
+        const activeSale = state.draftSales.find((s) => s.isActive);
+        const [mark] = draftItem.marks ?? [];
 
-    // addDraftSalePaymentAmount: (payload: DraftSalePaymentAmountSchema) => set((state) => {
+        if (activeSale) {
+          const existSaleItem = activeSale.items.find((i) => {
+            return i.productId === draftItem.productId;
+          });
 
-    // }),
-    // updateDraftSalePaymentAmounts: (paymentAmounts: DraftSalePaymentAmountSchema[]) => set((state) => {
-    //     const activeSale = state.draftSales.find(s => s.isActive)
-    //     if (!activeSale) return
+          if (existSaleItem) {
+            existSaleItem.quantity += 1;
+            existSaleItem.totalAmount =
+              existSaleItem.quantity * existSaleItem.priceAmount;
+            if (mark) {
+              existSaleItem.marks ??= [];
 
-    //     const newPaymentAmounts: DraftSalePaymentAmountSchema[] = []
-    //     for (let i = 0; i < paymentAmounts.length; i++) {
-    //         newPaymentAmounts.push({
-    //             amount: paymentAmounts[i].amount,
-    //             paymentType: paymentAmounts[i].paymentType
-    //         })
-    //     }
-    //     activeSale.payment = { amounts: newPaymentAmounts }
-    // }),
+              const isExist = existSaleItem.marks.some(
+                (existing) => existing === mark
+              );
 
-    // addDraftSaleItem: (draftItem) => set((state) => {
-    //     const activeSale = state.draftSales.find(s => s.isActive)
-    //     const [mark] = draftItem.marks ?? []
-
-    //     if (activeSale) {
-    //         const existSaleItem = activeSale.items.find(i => {
-    //             return i.productId === draftItem.productId && i.productPackageId === draftItem.productPackageId
-    //         })
-
-    //         if (existSaleItem) {
-    //             existSaleItem.quantity += draftItem.quantity
-    //             existSaleItem.totalAmount += draftItem.totalAmount
-    //             if (mark) {
-    //                 existSaleItem.marks ??= []
-
-    //                 const isExist = existSaleItem.marks.some(existing => existing === mark)
-
-    //                 if (!isExist) {
-    //                     existSaleItem.marks.push(mark)
-    //                 }
-    //             }
-    //         } else {
-    //             const newSaleItem: DraftSaleItemSchema = {
-    //                 id: draftItem.productId,
-    //                 productId: draftItem.productId,
-    //                 productName: draftItem.productName,
-    //                 productPackageId: draftItem.productPackageId,
-    //                 productPackageName: draftItem.productPackageName,
-    //                 priceAmount: draftItem.priceAmount,
-    //                 priceTypeId: draftItem.priceTypeId,
-    //                 quantity: draftItem.quantity,
-    //                 totalAmount: draftItem.totalAmount,
-    //                 catalogName: draftItem.catalogName,
-    //                 catalogCode: draftItem.catalogCode,
-    //                 ...(mark ? { marks: [mark] } : {}),
-    //             }
-    //             activeSale.items.unshift(newSaleItem)
-    //         }
-    //     }
-
-    // }),
-
-    // incrementDraftSaleItemQuantity: (index) => set((state) => {
-    //     const active = state.draftSales.find(s => s.isActive)
-    //     if (!active) return
-    //     const item = active.items[index]
-    //     item.quantity++
-    //     item.totalAmount = item.priceAmount * item.quantity
-    // }),
-    // decrementDraftSaleItemQuantity: (index) => set((state) => {
-    //     const active = state.draftSales.find(s => s.isActive)
-    //     if (!active) return
-    //     const item = active.items[index]
-    //     if (item.quantity > 1) {
-    //         item.quantity--
-    //         item.totalAmount = item.priceAmount * item.quantity
-    //     }
-    // }),
-
-    // deleteDraftSaleMark: (item) => set(state => {
-    //     const activeSale = state.draftSales.find(s => s.isActive)
-    //     if (activeSale) {
-    //         activeSale.items.find(i => i.productId === item.productId)?.marks?.splice(item.index, 1)
-    //     }
-    // })
+              if (!isExist) {
+                existSaleItem.marks.push(mark);
+              }
+            }
+          } else {
+            const newSaleItem: DraftSaleItemSchema = {
+              id: draftItem.productId,
+              productId: draftItem.productId,
+              productName: draftItem.productName,
+              productPackageName: draftItem.productPackageName,
+              priceAmount: draftItem.priceAmount,
+              priceTypeId: draftItem.priceTypeId,
+              quantity: draftItem.quantity,
+              totalAmount: draftItem.totalAmount,
+              catalogName: draftItem.catalogName,
+              catalogCode: draftItem.catalogCode,
+              ...(mark ? { marks: [mark] } : {}),
+            };
+            activeSale.items.unshift(newSaleItem);
+          }
+        }
+      }),
   }))
 );
