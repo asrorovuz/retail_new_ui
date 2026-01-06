@@ -106,9 +106,7 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
 
     if (error.bot_exists) {
       return toast.error(
-        lang === "ru"
-          ? "Есть такой токен"
-          : "Bunday token mavjud.",
+        lang === "ru" ? "Есть такой токен" : "Bunday token mavjud.",
         {
           position: "bottom-left",
           autoClose: 3000,
@@ -212,6 +210,20 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
       );
     }
 
+    if (error?.error_timeout || error?.message === "Network Error") {
+      const message =
+        lang === "ru"
+          ? "Ошибка соединения."
+          : "Tarmoq bilan bog‘lanishda xatolik.";
+
+      toast.error(message, {
+        position: "bottom-left",
+        autoClose: 3000,
+      });
+
+      return;
+    }
+
     if (error.message) {
       return toast.error(
         lang === "ru"
@@ -226,9 +238,7 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
 
     if (error.error) {
       return toast.error(
-        lang === "ru"
-          ? `Ошибка: ${error.error}`
-          : `Xatolik: ${error.error}`,
+        lang === "ru" ? `Ошибка: ${error.error}` : `Xatolik: ${error.error}`,
         {
           position: "bottom-left",
           autoClose: 3000,

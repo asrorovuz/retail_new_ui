@@ -58,11 +58,17 @@ const Register = () => {
         { username: values?.login, password: values?.pass },
         {
           onSuccess(res) {
+            if(!res?.token) {
+              onErrors({error_timeout: true});
+              return;
+            }
             setResponse(res);
             nextStep();
+            console.log("step1 success", res);
           },
           onError(err) {
             onErrors(err);
+            console.log("step1 error", err);
           },
         }
       );
@@ -72,11 +78,13 @@ const Register = () => {
       register(
         { ...values, token: response?.token },
         {
-          onSuccess() {
+          onSuccess(res) {
             nextStep();
+            console.log("step2 success", res);
           },
           onError(err) {
             onErrors(err);
+            console.log("step2 error", err);
           },
         }
       );
