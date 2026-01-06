@@ -29,7 +29,7 @@ export const getAllProductApi = async (
     url: pathServices.products.getAllProductsPath,
     method: "GET",
     params: {
-      limit: size,
+      limit: size ?? 20,
       skip,
       query: search,
     },

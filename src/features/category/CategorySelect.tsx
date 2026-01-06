@@ -11,6 +11,7 @@ type CategorySelectProps = {
   label: string;
   control: any;
   placeholder: string;
+  width?: string;
   onChange?: (option: { id: number; name: string } | null) => void;
 };
 
@@ -19,6 +20,7 @@ const CategorySelect = ({
   label,
   control,
   placeholder,
+  width,
   onChange = () => {},
 }: CategorySelectProps) => {
   const [modals, setModals] = useState<any[]>([]);
@@ -80,7 +82,7 @@ const CategorySelect = ({
           <FormItem className="w-full" label={label}>
             <Select
               {...field}
-              className="w-full"
+              className={width ? width : "w-full"}
               isClearable
               hideSelectedOptions
               options={categoryOptions}

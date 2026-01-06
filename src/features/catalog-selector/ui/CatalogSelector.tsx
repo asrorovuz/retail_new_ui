@@ -13,7 +13,10 @@ interface CatalogSelectorProps extends CommonProps {
   setValue: any;
   getValues: any;
   value: any;
+  width?: string;
   fieldName?: string;
+  multiplay?: boolean;
+  index?: number;
   setPackageNames: (item: Package[] | []) => void;
 }
 
@@ -24,6 +27,9 @@ const CatalogSelector = ({
   setValue,
   getValues,
   value,
+  width,
+  multiplay = false,
+  index,
   setPackageNames,
   ...props
 }: CatalogSelectorProps) => {
@@ -54,7 +60,7 @@ const CatalogSelector = ({
   // 🔹 Tanlovni o‘zgartirish
   const handleChange = (option: any) => {
     setSelected(option);
-    setValue("catalog", option);
+    multiplay ? setValue(`products.${index}.catalog`, option) : setValue("catalog", option);
     setPackageNames(option?.data?.package_names || []);
     onChange(option ? option : null);
   };
@@ -91,6 +97,7 @@ const CatalogSelector = ({
       getOptionValue={(option: any) =>
         option?.value ? String(option.value) : ""
       }
+      className={width}
       isClearable
       menuPortalTarget={document.body}
       menuPosition="fixed"

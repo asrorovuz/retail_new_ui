@@ -58,6 +58,10 @@ const Register = () => {
         { username: values?.login, password: values?.pass },
         {
           onSuccess(res) {
+            if (!res?.token) {
+              onErrors({ error_timeout: true });
+              return;
+            }
             setResponse(res);
             nextStep();
           },
@@ -72,7 +76,11 @@ const Register = () => {
       register(
         { ...values, token: response?.token },
         {
-          onSuccess() {
+          onSuccess(res) {
+            if (!res?.token) {
+              onErrors({ error_timeout: true });
+              return;
+            }
             nextStep();
           },
           onError(err) {
