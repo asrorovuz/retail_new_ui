@@ -92,10 +92,10 @@ const TableSettingsModal = () => {
         closable={true}
         onClose={onClose}
         onRequestClose={onClose}
-        bodyOpenClassName="overflow-hidden"
         width={490}
+        height={"90vh"}
       >
-        <div className="flex flex-col gap-y-3 mb-5">
+        <div className="flex flex-col gap-y-3 mb-5 max-h-[calc(90vh-180px)] overflow-y-auto">
           {tableSettings?.map((i) =>
             i?.key !== "package" ? (
               <React.Fragment key={i.key}>

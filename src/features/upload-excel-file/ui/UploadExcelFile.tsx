@@ -72,7 +72,6 @@ const optionSelect = [
   { label: "Единица измерения (soliq.uz)", value: "taxMeasurement" },
   { label: "Льгота", value: "taxBenefit" },
   { label: "НДС", value: "taxRate" },
-  { label: "ID системы", value: "id" },
   { label: "Название упаковки", value: "packageMeasurementName" },
   { label: "Количество в упаковке", value: "packageMeasurementQuantity" },
 ];
@@ -98,10 +97,8 @@ const UploadExcelFile = () => {
   const { data: productData } = useAllProductApi();
   const { data: currencies } = useCurrancyApi();
   const { data: categoryData } = useCategoryApi();
-  const {
-    mutate: createWithExcel,
-    isPending: loadingExcel
-  } = useCreateProductWithExcel();
+  const { mutate: createWithExcel, isPending: loadingExcel } =
+    useCreateProductWithExcel();
   const { mutate: createRegister } = useCreateregister();
   const { mutateAsync: createProduct } = useCreateProduct();
   const { mutateAsync: updateProduct } = useUpdateProduct();
@@ -113,7 +110,7 @@ const UploadExcelFile = () => {
   const [selectedSelect, setSelectedSelect] = useState<Record<number, string>>(
     {}
   );
-  const [loadData, setLoadData] = useState(false)
+  const [loadData, setLoadData] = useState(false);
   const [faildData, setFaildData] = useState<
     Array<{ index: number; row: (string | number | null)[] }>
   >([]);
@@ -159,7 +156,7 @@ const UploadExcelFile = () => {
   }, []);
 
   const onClose = useCallback(() => {
-    setLoadData(true)
+    setLoadData(true);
     setIsOpen(false);
     clearFile();
   }, [clearFile]);
@@ -179,7 +176,7 @@ const UploadExcelFile = () => {
         { content: base64Files[0].content },
         {
           onSuccess(response) {
-            setLoadData(!!response?.length)
+            setLoadData(!!response?.length);
             setData(response);
             showSuccessMessage(
               messages.uz.SUCCESS_MESSAGE,
@@ -273,6 +270,7 @@ const UploadExcelFile = () => {
       let category: any = categoryData?.find(
         (p: any) => p?.name === elem?.category_name
       );
+      console.log(elem?.barcode, elem?.name);
 
       return {
         id: initialState?.edit ? product?.id : undefined,
@@ -288,7 +286,9 @@ const UploadExcelFile = () => {
         sku: elem?.sku || null,
         code: elem?.code || null,
 
-        barcodes: elem?.barcode ? [String(elem?.barcode)] : generateBarcode(),
+        barcodes: elem?.barcode
+          ? String(elem.barcode).trim().split(/\s+/)
+          : generateBarcode(),
         category_name: category?.name,
         category_id: category?.id,
         catalog_code: elem?.taxCatalogCode || null,

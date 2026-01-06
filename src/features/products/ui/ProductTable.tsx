@@ -94,7 +94,7 @@ const ProductTable = ({
 
   const onClosePrintModal = () => {
     setConfirmProductId(null);
-    setIsOpenPrint(false)
+    setIsOpenPrint(false);
   };
 
   // 🧱 Ustunlar
@@ -121,13 +121,32 @@ const ProductTable = ({
         header: "ОСТАТОК",
         cell: (info) => {
           const total = info.row.original.warehouse_items?.[0]?.state;
-          
-          return `${total !== undefined ? total.toLocaleString() : "0"} ${showMeasurmentName(info.row.original.measurement_code)}`;
+
+          return `${
+            total !== undefined ? total.toLocaleString() : "0"
+          } ${showMeasurmentName(info.row.original.measurement_code)}`;
         },
         size: 80,
         meta: {
           color:
             tableSettings?.find((i) => i.key === "totalRemainder")?.color ||
+            "#fff",
+        },
+      }),
+      columnHelper.display({
+        id: "totalReminderMin",
+        header: "МИН. ОСТАТОК",
+        cell: (info) => {
+          const total = info.row.original.warehouse_items?.[0]?.alert_on;
+
+          return `${total ? total?.toLocaleString() : "0"} ${showMeasurmentName(
+            info.row.original.measurement_code
+          )}`;
+        },
+        size: 80,
+        meta: {
+          color:
+            tableSettings?.find((i) => i.key === "totalRemainderMin")?.color ||
             "#fff",
         },
       }),
@@ -170,6 +189,45 @@ const ProductTable = ({
         },
       }),
       columnHelper.display({
+        id: "bulkPrice",
+        header: "ОПТОВАЯ ЦЕНА",
+        cell: (info) => {
+          const price = info.row.original.prices?.[1]?.amount;
+          return price ? `${price.toLocaleString()} сум` : "-";
+        },
+        size: 140,
+        meta: {
+          color:
+            tableSettings?.find((i) => i.key === "bulkPrice")?.color || "#fff",
+        },
+      }),
+      columnHelper.display({
+        id: "category",
+        header: "КАТЕГОРИЯ",
+        cell: (info) => info.row.original.category?.name || "-",
+        size: 100,
+        meta: {
+          color:
+            tableSettings?.find((i) => i.key === "category")?.color || "#fff",
+        },
+      }),
+      columnHelper.display({
+        id: "barcode",
+        header: "ШТРИХ-КОД",
+        cell: (info) => {
+          const barcodes = info.row.original.barcodes;
+
+          if (!Array.isArray(barcodes) || !barcodes.length) return "-";
+
+          return barcodes.map((b) => b.value).join(", ");
+        },
+        size: 100,
+        meta: {
+          color:
+            tableSettings?.find((i) => i.key === "barcode")?.color || "#fff",
+        },
+      }),
+      columnHelper.display({
         id: "sku",
         header: "АРТИКУЛ",
         cell: (info) => info.row.original.sku || "-",
@@ -185,6 +243,17 @@ const ProductTable = ({
         size: 100,
         meta: {
           color: tableSettings?.find((i) => i.key === "code")?.color || "#fff",
+        },
+      }),
+      columnHelper.display({
+        id: "catalogCode",
+        header: "ИКПУ-код",
+        cell: (info) => info.row.original.catalog_name || "-",
+        size: 100,
+        meta: {
+          color:
+            tableSettings?.find((i) => i.key === "catalogCode")?.color ||
+            "#fff",
         },
       }),
 
@@ -208,7 +277,7 @@ const ProductTable = ({
                 onClick={() => {
                   setItem(info?.row?.original);
                   setConfirmProductId(productId);
-                  setIsOpenPrint(true)
+                  setIsOpenPrint(true);
                 }}
                 className="h-auto!"
               >
@@ -248,6 +317,8 @@ const ProductTable = ({
     ],
     [pagination, tableSettings]
   );
+
+  console.log(data, "data");
 
   const table = useReactTable({
     data: (data as unknown as Product[]) || [],
