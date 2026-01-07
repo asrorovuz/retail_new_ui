@@ -25,7 +25,7 @@ const CategorySelect = ({
 }: CategorySelectProps) => {
   const [modals, setModals] = useState<any[]>([]);
   const { data: allCategory, refetch } = useCategoryApi();
-  
+
   const categoryOptions = useMemo(
     () =>
       allCategory?.map((item) => ({
@@ -101,6 +101,14 @@ const CategorySelect = ({
                 onChange?.(transformed);
               }}
               placeholder={placeholder}
+              menuPortalTarget={document.body}
+              menuPosition="fixed"
+              styles={{
+                menuPortal: (base) => ({
+                  ...base,
+                  zIndex: 9999,
+                }),
+              }}
             />
 
             {modals?.map((m) => (
@@ -122,7 +130,9 @@ const CategorySelect = ({
                 onAddSubCategory={(args) =>
                   handleShowAdd({ ...args, type: "edit" })
                 }
-                setEndSelectCategory={(val) => {field.onChange(val)}}
+                setEndSelectCategory={(val) => {
+                  field.onChange(val);
+                }}
                 allCategory={allCategory ?? []}
               />
             ))}
@@ -143,9 +153,7 @@ const CategorySelect = ({
             chainDepth: 1,
           })
         }
-      >
-        
-      </Button>
+      ></Button>
     </div>
   );
 };

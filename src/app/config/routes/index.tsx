@@ -26,70 +26,61 @@ import { PrivateRoute, PublicRoute } from "./PrivateRoute";
 
 export const AppRouter = () => (
   <HashRouter>
-    <Routes>
-      {/* Public routes */}
-      <Route element={<PublicRoute />}>
-        <Route
-          element={
-            <Suspense
-              fallback={
-                <div className="flex items-center justify-center w-screen h-screen">
-                  <Loading />
-                </div>
-              }
-            >
-              <AuthLayout />
-            </Suspense>
-          }
-        >
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<Register />} />
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center w-screen h-screen">
+          <Loading />
+        </div>
+      }
+    >
+      <Routes>
+        {/* Public routes */}
+        <Route element={<PublicRoute />}>
+          <Route element={<AuthLayout />}>
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<Register />} />
+          </Route>
         </Route>
-      </Route>
 
-      {/* Private routes */}
-      <Route element={<PrivateRoute />}>
-        <Route
-          element={
-            <Suspense
-              fallback={
-                <div className="flex items-center justify-center w-screen h-screen">
-                  <Loading />
-                </div>
-              }
-            >
+        {/* Private routes */}
+        <Route element={<PrivateRoute />}>
+          <Route
+            element={
               <InitProvider>
                 <AppLayout />
               </InitProvider>
-            </Suspense>
-          }
-        >
-          <Route path="/sales" element={<SalePage />} />
-          <Route path="/refund" element={<RefundPage />} />
-          <Route path="/purchase" element={<PurchasePricePage />} />
-          <Route path="/products" element={<ProductsPage />} />
-          <Route
-            path="/favoutite-products"
-            element={<PavouriteProductPage />}
-          />
-          <Route path="/settings" element={<SettingsPage />} />
-          <Route path="/fiscalized" element={<FiscalizedPage />} />
-          <Route path="/payment-provider" element={<PaymePoviderPage />} />
-          <Route path="/cashbox" element={<CashboxPage />} />
-          <Route
-            path="/cashbox/cash-operation"
-            element={<CashboxOperations />}
-          />
-          <Route path="/history" element={<HistoryPage />}>
-            <Route path="/history/sales" element={<HistorySalePage />} />
-            <Route path="/history/refund" element={<HistoryRefundPage />} />
-            <Route path="/history/purchase" element={<HistoryPurchasePage />} />
+            }
+          >
+            <Route path="/sales" element={<SalePage />} />
+            <Route path="/refund" element={<RefundPage />} />
+            <Route path="/purchase" element={<PurchasePricePage />} />
+            <Route path="/products" element={<ProductsPage />} />
+            <Route
+              path="/favoutite-products"
+              element={<PavouriteProductPage />}
+            />
+            <Route path="/settings" element={<SettingsPage />} />
+            <Route path="/fiscalized" element={<FiscalizedPage />} />
+            <Route path="/payment-provider" element={<PaymePoviderPage />} />
+            <Route path="/cashbox" element={<CashboxPage />} />
+            <Route
+              path="/cashbox/cash-operation"
+              element={<CashboxOperations />}
+            />
+            <Route path="/history" element={<HistoryPage />}>
+              <Route path="/history/sales" element={<HistorySalePage />} />
+              <Route path="/history/refund" element={<HistoryRefundPage />} />
+              <Route
+                path="/history/purchase"
+                element={<HistoryPurchasePage />}
+              />
+            </Route>
           </Route>
         </Route>
-      </Route>
 
-      {/* Default / fallback */}
-      <Route path="*" element={<Navigate to="/register" replace />} />
-    </Routes>
+        {/* Default / fallback */}
+        <Route path="*" element={<Navigate to="/register" replace />} />
+      </Routes>
+    </Suspense>
   </HashRouter>
 );
