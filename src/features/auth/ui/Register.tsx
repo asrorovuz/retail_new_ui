@@ -76,11 +76,7 @@ const Register = () => {
       register(
         { ...values, token: response?.token },
         {
-          onSuccess(res) {
-            if (!res?.token) {
-              onErrors({ error_timeout: true });
-              return;
-            }
+          onSuccess() {
             nextStep();
           },
           onError(err) {
