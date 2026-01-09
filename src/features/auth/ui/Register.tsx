@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import Step1Phone from "./Step1";
 import Step2Info from "./Step2";
@@ -16,6 +16,8 @@ type OutletContextType = {
 
 const Register = () => {
   const navigate = useNavigate();
+  const timeoutRef = useRef<any | null>(null);
+  
   const [isError, setIsError] = useState<boolean>(false);
   const { refetch } = useOutletContext<OutletContextType>() || {
     refetch: () => {},
@@ -54,10 +56,22 @@ const Register = () => {
 
   const onSubmit = (values: any) => {
     if (step === 1) {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+
+      timeoutRef.current = setTimeout(() => {
+        onErrors({ error_timeout: true });
+      }, 90_000); // 1.5 min
+
       globalLogin(
         { username: values?.login, password: values?.pass },
         {
           onSuccess(res) {
+            if (timeoutRef.current) {
+              clearTimeout(timeoutRef.current);
+              timeoutRef.current = null;
+            }
             if (!res?.token) {
               onErrors({ error_timeout: true });
               return;
@@ -66,6 +80,10 @@ const Register = () => {
             nextStep();
           },
           onError(err) {
+            if (timeoutRef.current) {
+              clearTimeout(timeoutRef.current);
+              timeoutRef.current = null;
+            }
             onErrors(err);
           },
         }

@@ -27,8 +27,9 @@ export const login = async (payload: LoginPayload): Promise<LoginResponse> => {
 
 // 🔹 Global login
 export const globalLogin = async (
-  payload: GlobalLogin
+  data: GlobalLogin & { signal?: AbortSignal }
 ): Promise<Organizationtype> => {
+  const { signal, ...payload } = data;
   return await apiRequest<Organizationtype>({
     url: pathServices.auth.globalLogin,
     method: "POST",
