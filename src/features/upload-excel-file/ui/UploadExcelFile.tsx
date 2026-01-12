@@ -279,8 +279,6 @@ const UploadExcelFile = () => {
         product?.purchase_price?.currency_code ||
         860; // fallback (UZS)
 
-      console.log(elem?.barcode, productData);
-
       return {
         id: initialState?.edit ? product?.id : undefined,
         name: elem?.name || "",
@@ -306,7 +304,7 @@ const UploadExcelFile = () => {
           initialState?.edit && !elem?.barcode
             ? product?.barcodes?.map((item: any) => item?.value) ?? []
             : elem?.barcode
-            ? String(elem.barcode).trim().split(/\s+/)
+            ? String(elem.barcode).trim().split(/[\s,:]+/).filter(Boolean)
             : generateBarcode(),
 
         category_name:
