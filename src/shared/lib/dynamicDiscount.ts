@@ -16,5 +16,5 @@ export function getDynamicDiscounts(amount: number, scale: number = 2): number[]
 
   return Array.from(discounts)
     .sort((a, b) => a - b)
-    .slice(0, 5);
+    .slice(0, 4);
 }

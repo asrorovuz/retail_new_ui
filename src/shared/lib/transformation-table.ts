@@ -1,5 +1,3 @@
-
-
 interface ProductColumnValue {
   visible: boolean;
 }
@@ -24,12 +22,17 @@ export const transformProductColumns = (
   const keyMap: Record<string, string> = {
     product_name: "name",
     total_warehouses_state: "totalRemainder",
-    package_quantity: "packInCount",
-    measurement_name: "package",
+    alert_on: "totalRemainderMin",
     purchase_price: "purchesPrice",
     primary_price: "price",
+    bulk_price: "bulkPrice",
+    category: "category",
+    barcodes: "barcode",
     sku: "sku",
     code: "code",
+    package_quantity: "packInCount",
+    measurement_name: "package",
+    catalog_code: "catalogCode",
   };
 
   return Object.entries(columns)
@@ -44,17 +47,32 @@ export const transformProductColumns = (
 export function convertArrayToBackendSettings(
   arr: { key: string; color: string | null; visible: boolean }[]
 ) {
+  // const keyMapping: Record<string, string> = {
+  //   name: "product_name",
+  //   totalRemainder: "total_warehouses_state",
+  //   packInCount: "package_quantity",
+  //   package: "measurement_name",
+  //   price: "primary_price",
+  //   purchesPrice: "purchase_price",
+  //   sku: "sku",
+  //   code: "code",
+  // };
   const keyMapping: Record<string, string> = {
     name: "product_name",
+    category: "category",
     totalRemainder: "total_warehouses_state",
-    packInCount: "package_quantity",
-    package: "measurement_name",
-    price: "primary_price",
+    totalRemainderMin: "alert_on",
     purchesPrice: "purchase_price",
+    price: "primary_price",
+    bulkPrice: "bulk_price",
+    barcode: "barcodes",
     sku: "sku",
     code: "code",
+    packInCount: "package_quantity",
+    package: "measurement_name",
+    catalogCode: "catalog_code",
   };
-  
+
   return arr.reduce((acc, item) => {
     const backendKey = keyMapping[item.key] || item.key;
     acc[backendKey] = {

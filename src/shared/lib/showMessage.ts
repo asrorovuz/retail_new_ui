@@ -23,7 +23,9 @@ export const showSuccessMessage = (msgUz: string, msgRu?: string) => {
 export const showErrorLocalMessage = (message: string) => {
   toast.error(message, {
     position: "bottom-left",
-    autoClose: 3000,
+    autoClose: false,
+    closeOnClick: true,
+    draggable: true,
   });
 };
 
@@ -41,7 +43,9 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
       lang === "ru" ? "Такая страница не найдена" : "Bunday sahifa mavjud emas",
       {
         position: "bottom-left",
-        autoClose: 3000,
+        autoClose: false,
+        closeOnClick: true,
+        draggable: true,
       }
     );
   }
@@ -55,7 +59,9 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
           : "Login yoki parol noto‘g‘ri",
         {
           position: "bottom-left",
-          autoClose: 3000,
+          autoClose: false,
+          closeOnClick: true,
+          draggable: true,
         }
       );
     }
@@ -65,7 +71,9 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
         lang === "ru" ? "Валюта не найдена" : "Valyuta topilmadi",
         {
           position: "bottom-left",
-          autoClose: 3000,
+          autoClose: false,
+          closeOnClick: true,
+          draggable: true,
         }
       );
     }
@@ -77,7 +85,9 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
           : "Bunday mahsulot nomi allaqachon mavjud",
         {
           position: "bottom-left",
-          autoClose: 3000,
+          autoClose: false,
+          closeOnClick: true,
+          draggable: true,
         }
       );
     }
@@ -87,7 +97,9 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
         lang === "ru" ? "Активная смена не найдена" : "Faol smena topilmadi",
         {
           position: "bottom-left",
-          autoClose: 3000,
+          autoClose: false,
+          closeOnClick: true,
+          draggable: true,
         }
       );
     }
@@ -99,19 +111,21 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
           : "Bu nomdagi mahsulot allaqachon mavjud",
         {
           position: "bottom-left",
-          autoClose: 3000,
+          autoClose: false,
+          closeOnClick: true,
+          draggable: true,
         }
       );
     }
 
     if (error.bot_exists) {
       return toast.error(
-        lang === "ru"
-          ? "Есть такой токен"
-          : "Bunday token mavjud.",
+        lang === "ru" ? "Есть такой токен" : "Bunday token mavjud.",
         {
           position: "bottom-left",
-          autoClose: 3000,
+          autoClose: false,
+          closeOnClick: true,
+          draggable: true,
         }
       );
     }
@@ -123,7 +137,9 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
           : "Bunday tokenga bog'langan bot mavjud emas.",
         {
           position: "bottom-left",
-          autoClose: 3000,
+          autoClose: false,
+          closeOnClick: true,
+          draggable: true,
         }
       );
     }
@@ -135,7 +151,9 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
           : "Login yoki parol noto‘g‘ri.",
         {
           position: "bottom-left",
-          autoClose: 3000,
+          autoClose: false,
+          closeOnClick: true,
+          draggable: true,
         }
       );
     }
@@ -147,7 +165,9 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
           : "",
         {
           position: "bottom-left",
-          autoClose: 3000,
+          autoClose: false,
+          closeOnClick: true,
+          draggable: true,
         }
       );
     }
@@ -159,7 +179,9 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
           : "Bu shtrix-kodli mahsulot allaqachon mavjud",
         {
           position: "bottom-left",
-          autoClose: 3000,
+          autoClose: false,
+          closeOnClick: true,
+          draggable: true,
         }
       );
     }
@@ -171,7 +193,9 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
           : "Bunday artikul allaqachon mavjud",
         {
           position: "bottom-left",
-          autoClose: 3000,
+          autoClose: false,
+          closeOnClick: true,
+          draggable: true,
         }
       );
     }
@@ -183,7 +207,9 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
           : "Bunday kod allaqachon mavjud",
         {
           position: "bottom-left",
-          autoClose: 3000,
+          autoClose: false,
+          closeOnClick: true,
+          draggable: true,
         }
       );
     }
@@ -195,7 +221,9 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
           : "Bunday o‘lchov birligi (package) topilmadi",
         {
           position: "bottom-left",
-          autoClose: 3000,
+          autoClose: false,
+          closeOnClick: true,
+          draggable: true,
         }
       );
     }
@@ -207,9 +235,27 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
           : "Shift ochishga ruxsat yo‘q",
         {
           position: "bottom-left",
-          autoClose: 3000,
+          autoClose: false,
+          closeOnClick: true,
+          draggable: true,
         }
       );
+    }
+
+    if (error?.error_timeout || error?.message === "Network Error") {
+      const message =
+        lang === "ru"
+          ? "Ошибка соединения."
+          : "Tarmoq bilan bog‘lanishda xatolik.";
+
+      toast.error(message, {
+        position: "bottom-left",
+        autoClose: false,
+        closeOnClick: true,
+        draggable: true,
+      });
+
+      return;
     }
 
     if (error.message) {
@@ -219,19 +265,21 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
           : `Xatolik: ${error.message}`,
         {
           position: "bottom-left",
-          autoClose: 3000,
+          autoClose: false,
+          closeOnClick: true,
+          draggable: true,
         }
       );
     }
 
     if (error.error) {
       return toast.error(
-        lang === "ru"
-          ? `Ошибка: ${error.error}`
-          : `Xatolik: ${error.error}`,
+        lang === "ru" ? `Ошибка: ${error.error}` : `Xatolik: ${error.error}`,
         {
           position: "bottom-left",
-          autoClose: 3000,
+          autoClose: false,
+          closeOnClick: true,
+          draggable: true,
         }
       );
     }
@@ -240,6 +288,8 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
   // 3️⃣ - noma’lum xatolik
   toast.error(lang === "ru" ? "Неизвестная ошибка" : "Noma’lum xatolik", {
     position: "bottom-left",
-    autoClose: 3000,
+    autoClose: false,
+    closeOnClick: true,
+    draggable: true,
   });
 };

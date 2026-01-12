@@ -40,6 +40,7 @@ import StatusBar from "@/widgets/ui/status-bar/StatusBar";
 import { exportToExcel } from "@/shared/lib/arrayToExcelConvert";
 import { handleError } from "@/shared/lib/handleErrorExcel";
 import Empty from "@/shared/ui/kit-pro/empty/Empty";
+import { showMeasurmentName } from "@/shared/lib/showMeausermentName";
 
 interface InitialState {
   rowsCount: number;
@@ -72,7 +73,6 @@ const optionSelect = [
   { label: "Единица измерения (soliq.uz)", value: "taxMeasurement" },
   { label: "Льгота", value: "taxBenefit" },
   { label: "НДС", value: "taxRate" },
-  { label: "ID системы", value: "id" },
   { label: "Название упаковки", value: "packageMeasurementName" },
   { label: "Количество в упаковке", value: "packageMeasurementQuantity" },
 ];
@@ -98,10 +98,8 @@ const UploadExcelFile = () => {
   const { data: productData } = useAllProductApi();
   const { data: currencies } = useCurrancyApi();
   const { data: categoryData } = useCategoryApi();
-  const {
-    mutate: createWithExcel,
-    isPending: loadingExcel
-  } = useCreateProductWithExcel();
+  const { mutate: createWithExcel, isPending: loadingExcel } =
+    useCreateProductWithExcel();
   const { mutate: createRegister } = useCreateregister();
   const { mutateAsync: createProduct } = useCreateProduct();
   const { mutateAsync: updateProduct } = useUpdateProduct();
@@ -113,7 +111,7 @@ const UploadExcelFile = () => {
   const [selectedSelect, setSelectedSelect] = useState<Record<number, string>>(
     {}
   );
-  const [loadData, setLoadData] = useState(false)
+  const [loadData, setLoadData] = useState(false);
   const [faildData, setFaildData] = useState<
     Array<{ index: number; row: (string | number | null)[] }>
   >([]);
@@ -159,7 +157,7 @@ const UploadExcelFile = () => {
   }, []);
 
   const onClose = useCallback(() => {
-    setLoadData(true)
+    setLoadData(true);
     setIsOpen(false);
     clearFile();
   }, [clearFile]);
@@ -179,7 +177,7 @@ const UploadExcelFile = () => {
         { content: base64Files[0].content },
         {
           onSuccess(response) {
-            setLoadData(!!response?.length)
+            setLoadData(!!response?.length);
             setData(response);
             showSuccessMessage(
               messages.uz.SUCCESS_MESSAGE,
@@ -256,9 +254,9 @@ const UploadExcelFile = () => {
     const sendData = data?.slice(initialState?.rowsCount);
     const sourceData = sendData && sendData.length > 0 ? sendData : data;
 
-    if (!sourceData || sourceData.length === 0) return;
+    if (!sourceData || sourceData?.length === 0) return;
 
-    const noSelectData = sourceData.map((item) => {
+    const noSelectData = sourceData?.map((item) => {
       const obj: Record<string, any> = {};
       Object.entries(selectedSelect).forEach(([colIndex, fieldName]) => {
         const value = item[Number(colIndex)];
@@ -274,42 +272,80 @@ const UploadExcelFile = () => {
         (p: any) => p?.name === elem?.category_name
       );
 
+      const baseProduct = initialState?.edit ? product : null;
+      const currencyCode =
+        Number(initialState?.currency) ||
+        product?.prices?.[0]?.currency?.code ||
+        product?.purchase_price?.currency_code ||
+        860; // fallback (UZS)
+
       return {
         id: initialState?.edit ? product?.id : undefined,
         name: elem?.name || "",
         purchase_price: {
-          amount: elem?.purchasePrice
-            ? Number(elem?.purchasePrice?.replace(",", ""))
-            : null,
-          currency_code: Number(initialState?.currency),
+          amount:
+            initialState?.edit && !elem?.purchasePrice
+              ? product?.purchase_price?.amount ?? null
+              : elem?.purchasePrice
+              ? Number(elem.purchasePrice.replace(",", ""))
+              : null,
+          currency_code: currencyCode,
         },
-        state: elem?.state || null,
-        measurement_name: elem?.packageMeasurementName || "шт",
-        sku: elem?.sku || null,
-        code: elem?.code || null,
 
-        barcodes: elem?.barcode ? [String(elem?.barcode)] : generateBarcode(),
-        category_name: category?.name,
-        category_id: category?.id,
-        catalog_code: elem?.taxCatalogCode || null,
-        catalog_name: elem?.taxCatalogName || null,
+        measurement_name:
+          initialState?.edit && !elem?.packageMeasurementName
+            ? showMeasurmentName(product?.measurement_code)
+            : elem?.packageMeasurementName || "шт",
+        sku: elem?.sku ?? baseProduct?.sku ?? null,
+        code: elem?.code ?? baseProduct?.code ?? null,
+        state: elem?.state ?? baseProduct?.warehouse_items?.[0]?.state ?? null,
+
+        barcodes:
+          initialState?.edit && !elem?.barcode
+            ? product?.barcodes?.map((item: any) => item?.value) ?? []
+            : elem?.barcode
+            ? String(elem.barcode).trim().split(/[\s,:]+/).filter(Boolean)
+            : generateBarcode(),
+
+        category_name:
+          initialState?.edit && !elem?.categoryName
+            ? product?.category_name
+            : elem?.categoryName,
+        category_id:
+          initialState?.edit && !elem?.categoryName
+            ? product?.category_id
+            : category?.id,
+        catalog_code:
+          initialState?.edit && !elem?.taxCatalogCode
+            ? product?.catalog_code
+            : elem?.taxCatalogCode || null,
+        catalog_name:
+          initialState?.edit && !elem?.taxCatalogName
+            ? product?.catalog_name
+            : elem?.taxCatalogName || null,
         count: elem?.packageMeasurementQuantity
           ? Number(elem?.packageMeasurementQuantity)
           : 1,
         prices: [
           {
-            amount: elem?.commonPrice
-              ? Number(elem?.commonPrice?.replace(",", ""))
-              : 0,
+            amount:
+              initialState?.edit && !elem?.commonPrice
+                ? product?.prices?.[0]?.amount ?? 0
+                : elem?.commonPrice
+                ? Number(elem.commonPrice.replace(",", ""))
+                : 0,
             price_type_id: 1,
-            currency_code: initialState?.currency,
+            currency_code: currencyCode,
           },
           {
-            amount: elem?.bulkPrice
-              ? Number(elem?.bulkPrice?.replace(",", ""))
-              : 0,
+            amount:
+              initialState?.edit && !elem?.bulkPrice
+                ? product?.prices?.[1]?.amount ?? 0
+                : elem?.bulkPrice
+                ? Number(elem.bulkPrice.replace(",", ""))
+                : 0,
             price_type_id: 2,
-            currency_code: initialState?.currency,
+            currency_code: currencyCode,
           },
         ],
       };

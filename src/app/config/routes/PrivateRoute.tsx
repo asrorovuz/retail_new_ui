@@ -7,7 +7,7 @@ export const PrivateRoute = () => {
   const { isAuthenticated, loading } = useAuthContext();
 
   if (loading) return <Loading />;
-  
+
   // ✅ TO'G'RI: Faqat authentication tekshirish
   if (!isAuthenticated) return <Navigate to="/login" replace />;
 
@@ -20,7 +20,7 @@ export const PublicRoute = () => {
     typeof window !== "undefined" && !!(window as any).astilectron;
 
   if (loading) return <Loading />;
-  
+
   // ✅ Agar authenticated bo'lsa va Astilectron bo'lsa -> /sales ga
   // ✅ Agar authenticated bo'lsa lekin browser bo'lsa -> /register da qolsin
   if (isAuthenticated && isAstilectron) {
@@ -37,8 +37,13 @@ export const RootRedirect = () => {
       typeof window !== "undefined" && !!(window as any).astilectron;
 
     // Loading holati
-    if (loading) return <Loading />;
-    
+    if (loading)
+      return (
+        <div className="flex items-center justify-center w-screen h-screen">
+          <Loading />
+        </div>
+      );
+
     // Browser muhitida - DOIM /register
     if (!isAstilectron) {
       return <Navigate to="/register" replace />;
@@ -46,10 +51,8 @@ export const RootRedirect = () => {
 
     // Astilectron muhitida
     return <Navigate to={isAuthenticated ? "/sales" : "/login"} replace />;
-    
   } catch (error) {
     // ✅ HAR QANDAY XATOLIKDA REGISTER KO'RSATISH
-    console.error("RootRedirect error:", error);
     return <Register />;
   }
 };

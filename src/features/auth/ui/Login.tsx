@@ -147,7 +147,7 @@ const Login = () => {
       </div>
       <div className="flex justify-between text-[16px] text-gray-700 font-normal">
         <a href="tel:+998712006363">+998 71 200 63 63</a>
-        <a target="_blank" href="https://t.me/HippoEDI">
+        <a target="_blank" href="https://t.me/hippo_uz" rel="noreferrer">
           Телеграм канал
         </a>
       </div>

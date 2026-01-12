@@ -7,6 +7,9 @@ interface CatalogPackageSelectorProps extends CommonProps {
   onChange: (option: any) => void;
   setValue: any;
   value?: any; // field.value
+  width?: string;
+  multiplay?: boolean;
+  index?: number;
   options?: any[]; // catalog.package_names
 }
 
@@ -15,13 +18,16 @@ const CatalogPackageSelector = ({
   onChange,
   value,
   setValue,
+  width,
+  multiplay = false,
+  index,
   options = [],
   ...props
 }: CatalogPackageSelectorProps) => {
   const [selected, setSelected] = useState(value || null);
 
   const handleChange = (option: any) => {
-    setValue("package", option);
+    multiplay ? setValue(`products.${index}.package`, option) : setValue("package", option);
     setSelected(option);
     onChange(option);
   };
@@ -53,6 +59,8 @@ const CatalogPackageSelector = ({
   useEffect(() => {
     if (selectOption?.length > 0) {
       handleChange(selectOption[0]);
+    }else{
+      handleChange(null);
     }
   }, [options]);
 
@@ -67,6 +75,7 @@ const CatalogPackageSelector = ({
       getOptionLabel={(option: any) => option.label}
       getOptionValue={(option: any) => option.value}
       isClearable
+      className={width}
       menuPortalTarget={document.body}
       menuPosition="fixed"
       styles={{

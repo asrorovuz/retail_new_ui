@@ -3,3 +3,4 @@ export { default as AddProductModal } from "./ui/AddProductModal";
 export { default as EditProductModal } from "./ui/EditProductModal";
 export { default as FiscalizedModal } from "./ui/FiscalizedModal";
 export { default as RefundCheckModal } from "./ui/RefundCheckModal";
+export { default as AddMoreProducts } from "./ui/AddMoreProducts";

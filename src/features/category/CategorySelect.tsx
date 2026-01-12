@@ -11,6 +11,7 @@ type CategorySelectProps = {
   label: string;
   control: any;
   placeholder: string;
+  width?: string;
   onChange?: (option: { id: number; name: string } | null) => void;
 };
 
@@ -19,11 +20,12 @@ const CategorySelect = ({
   label,
   control,
   placeholder,
+  width,
   onChange = () => {},
 }: CategorySelectProps) => {
   const [modals, setModals] = useState<any[]>([]);
   const { data: allCategory, refetch } = useCategoryApi();
-  
+
   const categoryOptions = useMemo(
     () =>
       allCategory?.map((item) => ({
@@ -80,7 +82,7 @@ const CategorySelect = ({
           <FormItem className="w-full" label={label}>
             <Select
               {...field}
-              className="w-full"
+              className={width ? width : "w-full"}
               isClearable
               hideSelectedOptions
               options={categoryOptions}
@@ -99,6 +101,14 @@ const CategorySelect = ({
                 onChange?.(transformed);
               }}
               placeholder={placeholder}
+              menuPortalTarget={document.body}
+              menuPosition="fixed"
+              styles={{
+                menuPortal: (base) => ({
+                  ...base,
+                  zIndex: 9999,
+                }),
+              }}
             />
 
             {modals?.map((m) => (
@@ -120,7 +130,9 @@ const CategorySelect = ({
                 onAddSubCategory={(args) =>
                   handleShowAdd({ ...args, type: "edit" })
                 }
-                setEndSelectCategory={(val) => {field.onChange(val)}}
+                setEndSelectCategory={(val) => {
+                  field.onChange(val);
+                }}
                 allCategory={allCategory ?? []}
               />
             ))}
@@ -141,9 +153,7 @@ const CategorySelect = ({
             chainDepth: 1,
           })
         }
-      >
-        
-      </Button>
+      ></Button>
     </div>
   );
 };

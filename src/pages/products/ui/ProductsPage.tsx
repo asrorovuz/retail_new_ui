@@ -3,6 +3,7 @@ import {
   useFindBarcode,
   usePriceTypeApi,
 } from "@/entities/products/repository";
+import { AddMoreProducts } from "@/features/modals";
 import AddProductModal from "@/features/modals/ui/AddProductModal";
 import ProductTable from "@/features/products";
 import SearchProduct from "@/features/search-product";
@@ -17,6 +18,7 @@ const ProductsPage = () => {
   const [barcode, setBarcode] = useState<string | null>(null);
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   const { data: productPriceType } = usePriceTypeApi();
   const {
@@ -40,15 +42,16 @@ const ProductsPage = () => {
   }, []);
 
   useEffect(() => {
-    if (isSuccess && !isFetching && !isAddOpen && findBarcodeData) {
+    if (isSuccess && !isFetching && !isAddOpen && !isOpen && findBarcodeData) {
       setSearch(String(barcode));
       setBarcode(null); // qayta so‘rov yubormaslik uchun tozalaymiz
     }
   }, [isSuccess, findBarcodeData, isFetching]);
 
   useEffect(() => {
-    if (isError && !isAddOpen) {
-      if (settings?.enable_create_unknown_product) {
+    if (isAddOpen) return;
+    if (isError) {
+      if (settings?.enable_create_unknown_product && !isOpen) {
         setIsAddOpen(true);
       } else {
         showErrorLocalMessage("Товар не найден");
@@ -70,6 +73,13 @@ const ProductsPage = () => {
           isOpen={isAddOpen}
           setIsOpen={setIsAddOpen}
           productPriceType={productPriceType!}
+        />
+        <AddMoreProducts
+          barcode={barcode}
+          setBarcode={setBarcode}
+          productPriceType={productPriceType}
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
         />
       </div>
       <ProductTable

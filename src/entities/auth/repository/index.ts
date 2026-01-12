@@ -16,7 +16,7 @@ export const useAuthStatus = () => {
 };
 
 export const useGlobalLogin = () => {
-  return useMutation<Organizationtype, Error, GlobalLogin>({
+  return useMutation<Organizationtype, Error, GlobalLogin & { signal?: AbortSignal }>({
     mutationFn: globalLogin,
   })
 }

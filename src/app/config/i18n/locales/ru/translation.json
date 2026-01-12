@@ -5,22 +5,38 @@
     "edit": "Редактировать",
     "cancel": "Отменить"
   },
+
   "tableSettings": {
     "name": "Название",
+    "category": "Категория",
+
     "totalRemainder": "Общий остаток",
+    "totalRemainderMin": "Минимальный остаток",
+
     "packInCount": "Кол-во в уп.",
     "package": "Ед. изм.",
+
+    "purchesPrice": "Приходная цена",
+    "price": "Цена",
+    "bulkPrice": "Оптовая цена",
+
+    "barcode": "Штрих-код",
     "sku": "Артикул",
     "code": "Код",
-    "purchesPrice": "Приходная цена",
-    "price": "Цена"
+
+    "catalogCode": "Код каталога"
   },
+
   "color": "Цвет",
+
   "colors": {
-    "!bg-green-100": "Зеленый",
+    "!bg-green-100": "Зелёный",
     "!bg-red-100": "Красный",
-    "!bg-yellow-100": "Желтый",
+    "!bg-yellow-100": "Жёлтый",
     "!bg-blue-100": "Синий",
-    "!bg-pink-100": "Розовый"
+    "!bg-pink-100": "Розовый",
+    "!bg-purple-100": "Фиолетовый",
+    "!bg-orange-100": "Оранжевый",
+    "!bg-gray-100": "Серый"
   }
 }
