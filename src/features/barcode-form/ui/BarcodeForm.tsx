@@ -1,4 +1,4 @@
-import { Button, Input, InputGroup } from "@/shared/ui/kit";
+import { Button, FormItem, Input, InputGroup } from "@/shared/ui/kit";
 import { useEffect, useState } from "react";
 import { Controller, useFieldArray } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -21,7 +21,7 @@ const BarcodeForm = ({
   control,
   getValues,
   setValue,
-  multiplay,
+  multiplay = false,
 }: BarcodeFormProps) => {
   const { t } = useTranslation();
   const { fields, append, remove } = useFieldArray({
@@ -39,22 +39,6 @@ const BarcodeForm = ({
     remove(index);
   };
 
-  // useEffect(() => {
-  //   if (barcode) {
-  //     if ((getValues(fieldName) as string[]).some((i) => i.length === 8))
-  //       remove(
-  //         (getValues(fieldName) as string[]).findIndex((i) => i.length === 8)
-  //       );
-
-  //     if ((getValues(fieldName) as string[]).some((i) => i === barcode)) {
-  //       remove(
-  //         (getValues(fieldName) as string[]).findIndex((i) => i === barcode)
-  //       );
-  //       append(barcode);
-  //     } else append(barcode);
-  //   }
-  // }, [barcode]);
-
   useEffect(() => {
     if (barcode && focusedIndex !== null) {
       const values = getValues(fieldName);
@@ -63,31 +47,55 @@ const BarcodeForm = ({
     }
   }, [barcode]);
 
-  return (
-    <div>
-      {fields?.map((fieldItem, index) => {
-        // 👉 agar multiplay true bo‘lsa — FAQAT input
-        if (multiplay) {
-          return (
-            <Controller
-              key={fieldItem.id}
-              name={`${fieldName}.${index}`}
-              control={control}
-              render={({ field }) => (
-                <Input
-                  {...field}
-                  type="text"
-                  autoComplete="off"
-                  className="!w-44"
-                  placeholder={t("Введите код")}
-                  onFocus={() => setFocusedIndex(index)}
+  return !!multiplay ? (
+    <div className="flex flex-col mb-7">
+      {/* <div> */}
+      <div className="form-label flex justify-between mb-1">
+        <span>Штрих-коды</span>
+        <div
+          onClick={addBarcode}
+          className="p-1 rounded-full border border-primary"
+        >
+          <FaPlus className="text-sm" />
+        </div>
+      </div>
+      <div className="flex flex-col gap-y-1">
+        {fields?.map((fieldItem, index) => {
+          if (multiplay) {
+            return (
+              <InputGroup key={fieldItem.id}>
+                <Controller
+                  key={fieldItem.id}
+                  name={`${fieldName}.${index}`}
+                  control={control}
+                  render={({ field }) => (
+                    <Input
+                      {...field}
+                      type="text"
+                      autoComplete="off"
+                      className="!w-44"
+                      placeholder={t("Введите код")}
+                      onFocus={() => setFocusedIndex(index)}
+                    />
+                  )}
                 />
-              )}
-            />
-          );
-        }
+                <Button
+                  type="button"
+                  variant="solid"
+                  className="bg-red-500 hover:bg-red-600 text-white"
+                  onClick={() => deleteBarcode(index)}
+                  icon={<FaTrash className="text-sm" />}
+                />
+              </InputGroup>
+            );
+          }
+        })}
+      </div>
+    </div>
+  ) : (
+    <FormItem label={"Штрих-коды"}>
+      {fields?.map((fieldItem, index) => {
 
-        // 👉 multiplay false bo‘lsa — Input + delete button
         return (
           <InputGroup className="mb-3" key={fieldItem.id}>
             <Controller
@@ -115,85 +123,19 @@ const BarcodeForm = ({
         );
       })}
 
-      {/* ➕ Add button — faqat multiplay FALSE bo‘lsa */}
-      {!multiplay && (
-        <div className="flex justify-center items-center">
-          <Button
-            type="button"
-            variant="solid"
-            size="sm"
-            className="bg-primary text-white"
-            onClick={addBarcode}
-            icon={<FaPlus className="text-sm" />}
-          >
-            {t("common.add")}
-          </Button>
-        </div>
-      )}
-    </div>
-
-    // <div>
-
-    //   {fields?.map((field, index) => (
-    //     <Controller
-    //         name={`${fieldName}.${index}`}
-    //         control={control}
-    //         render={({ field }) => (
-    //           <Input
-    //             type={"text"}
-    //             autoComplete={"off"}
-    //             multiple
-    //             placeholder={t("Введите код")}
-    //             onFocus={() => setFocusedIndex(index)}
-    //             {...field}
-    //           />
-    //         )}
-    //       />
-    //     // <InputGroup className={"mb-3"} key={field.id}>
-    //     //   <Controller
-    //     //     name={`${fieldName}.${index}`}
-    //     //     control={control}
-    //     //     render={({ field }) => (
-    //     //       <Input
-    //     //         type={"text"}
-    //     //         autoComplete={"off"}
-    //     //         multiple
-    //     //         placeholder={t("Введите код")}
-    //     //         onFocus={() => setFocusedIndex(index)}
-    //     //         {...field}
-    //     //       />
-    //     //     )}
-    //     //   />
-    //     //   {!multiplay ? (
-    //     //     <Button
-    //     //       type={"button"}
-    //     //       variant={"solid"}
-    //     //       className={"bg-red-500 hover:bg-red-600 text-white"}
-    //     //       onClick={() => deleteBarcode(index)}
-    //     //       icon={<FaTrash className={"text-sm"} />}
-    //     //     />
-    //     //   ) : (
-    //     //     ""
-    //     //   )}
-    //     // </InputGroup>
-    //   ))}
-    //   {!multiplay ? (
-    //     <div className={"flex justify-center items-center "}>
-    //       <Button
-    //         type={"button"}
-    //         variant={"solid"}
-    //         size={"sm"}
-    //         className={"bg-primary text-white"}
-    //         onClick={addBarcode}
-    //         icon={<FaPlus className={"text-sm"} />}
-    //       >
-    //         {t("common.add")}
-    //       </Button>
-    //     </div>
-    //   ) : (
-    //     ""
-    //   )}
-    // </div>
+      <div className="flex justify-center items-center">
+        <Button
+          type="button"
+          variant="solid"
+          size="sm"
+          className="bg-primary text-white"
+          onClick={addBarcode}
+          icon={<FaPlus className="text-sm" />}
+        >
+          {t("common.add")}
+        </Button>
+      </div>
+    </FormItem>
   );
 };
 

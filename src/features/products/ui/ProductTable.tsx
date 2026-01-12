@@ -219,7 +219,7 @@ const ProductTable = ({
 
           if (!Array.isArray(barcodes) || !barcodes.length) return "-";
 
-          return barcodes.map((b) => b.value).join(", ");
+          return barcodes[0]?.value || "-";
         },
         size: 100,
         meta: {

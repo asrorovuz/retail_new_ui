@@ -30,9 +30,10 @@ import {
 } from "@/features/catalog-selector";
 import type { Package, PriceType } from "@/features/modals/model";
 import { convertImageObjectsToBase64 } from "@/shared/lib/convertFilesToBase64";
-import { showSuccessMessage } from "@/shared/lib/showMessage";
+import { showErrorMessage, showSuccessMessage } from "@/shared/lib/showMessage";
 import { messages } from "@/app/constants/message.request";
 import { useSettingsStore } from "@/app/store/useSettingsStore";
+import Empty from "@/shared/ui/kit-pro/empty/Empty";
 
 interface Props {
   name: string; // e.g., "products"
@@ -72,8 +73,7 @@ const ProductFormMultiple: FC<Props> = ({
   });
 
   const { data: currencies } = useCurrancyApi();
-  const { mutate: createProduct } =
-    useCreateProduct();
+  const { mutate: createProduct } = useCreateProduct();
   const { mutate: alertOnUpdate } = useUpdateAlertOn();
   const { mutate: createRegister } = useCreateregister();
 
@@ -170,6 +170,7 @@ const ProductFormMultiple: FC<Props> = ({
             },
             onError(err) {
               console.log("Product error index:", index, err);
+              showErrorMessage(err);
               resolve(); // error bo‘lsa ham promise resolved qilamiz
             },
           });
@@ -193,27 +194,27 @@ const ProductFormMultiple: FC<Props> = ({
     setIsSubmitting(false);
   };
 
-    /* 🔥 BARCODE LOGIC */
-    useEffect(() => {
-      if (!barcode) return;
-  
-      const catalog = catalogData?.[0];
-  
-      const newProduct = createEmptyProduct(barcode);
+  /* 🔥 BARCODE LOGIC */
+  useEffect(() => {
+    if (!barcode) return;
 
-      if (catalog) {
-        newProduct.name = catalog.name ?? "";
-        newProduct.catalog_code = catalog?.class_code;
-        newProduct.catalog_name = catalog?.class_name;
-        newProduct.catalog = {
-          label: catalog?.class_name,
-          value: catalog?.class_code,
-          data: catalog,
-        };
-      }
-      append(newProduct);
-      setBarcode(null);
-    }, [barcode, catalogData, append]);
+    const catalog = catalogData?.[0];
+
+    const newProduct = createEmptyProduct(barcode);
+
+    if (catalog) {
+      newProduct.name = catalog.name ?? "";
+      newProduct.catalog_code = catalog?.class_code;
+      newProduct.catalog_name = catalog?.class_name;
+      newProduct.catalog = {
+        label: catalog?.class_name,
+        value: catalog?.class_code,
+        data: catalog,
+      };
+    }
+    append(newProduct);
+    setBarcode(null);
+  }, [barcode, catalogData, append]);
 
   return (
     <FormProvider {...methods}>
@@ -227,7 +228,7 @@ const ProductFormMultiple: FC<Props> = ({
             Добавить в список
           </Button>
         </div>
-        {fields?.map((field, index) => (
+        {fields?.length ? fields?.map((field, index) => (
           <div key={field.id} className="border p-4 rounded space-y-4">
             {/* Header with delete */}
             <div className="flex justify-between items-start">
@@ -480,16 +481,15 @@ const ProductFormMultiple: FC<Props> = ({
               />
 
               {/* Штрих-коды */}
-              <FormItem label="Штрих-коды">
-                <BarcodeForm
-                  fieldName={`${name}.${index}.barcodes`}
-                  barcode={barcode}
-                  control={methods.control}
-                  setValue={methods.setValue}
-                  getValues={methods.getValues}
-                  multiplay={true}
-                />
-              </FormItem>
+
+              <BarcodeForm
+                fieldName={`${name}.${index}.barcodes`}
+                barcode={barcode}
+                control={methods.control}
+                setValue={methods.setValue}
+                getValues={methods.getValues}
+                multiplay={true}
+              />
 
               {/* ИКПУ-код */}
               <Controller
@@ -597,16 +597,16 @@ const ProductFormMultiple: FC<Props> = ({
               </div>
             </div>
           </div>
-        ))}
+        )) : <div className="flex items-center justify-center py-5"><Empty size={120}/></div>}
 
         <div className="bg-white sticky bottom-0 flex justify-end pt-3">
-          <Button loading={isSubmitting} type="submit" variant="solid">
+          <Button disabled={fields?.length === 0} loading={isSubmitting} type="submit" variant="solid">
             Добавить
           </Button>
         </div>
       </Form>
     </FormProvider>
-  );
+  )
 };
 
 export default ProductFormMultiple;

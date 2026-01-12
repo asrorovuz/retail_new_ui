@@ -319,6 +319,7 @@ const ProductForm: FC<ProductFormType> = ({
         shouldDirty: true,
       });
     }
+    setBarcode(null);
   }, [barcode]);
 
   useEffect(() => {
@@ -562,15 +563,13 @@ const ProductForm: FC<ProductFormType> = ({
             )}
           />
 
-          <FormItem label="Штрих-коды">
-            <BarcodeForm
-              fieldName={"barcodes"}
-              barcode={barcode}
-              setValue={setValue}
-              control={control}
-              getValues={getValues}
-            />
-          </FormItem>
+          <BarcodeForm
+            fieldName={"barcodes"}
+            barcode={barcode}
+            setValue={setValue}
+            control={control}
+            getValues={getValues}
+          />
 
           <FormItem label="Белых товаров">
             <Controller

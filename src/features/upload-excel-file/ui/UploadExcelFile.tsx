@@ -40,6 +40,7 @@ import StatusBar from "@/widgets/ui/status-bar/StatusBar";
 import { exportToExcel } from "@/shared/lib/arrayToExcelConvert";
 import { handleError } from "@/shared/lib/handleErrorExcel";
 import Empty from "@/shared/ui/kit-pro/empty/Empty";
+import { showMeasurmentName } from "@/shared/lib/showMeausermentName";
 
 interface InitialState {
   rowsCount: number;
@@ -253,9 +254,9 @@ const UploadExcelFile = () => {
     const sendData = data?.slice(initialState?.rowsCount);
     const sourceData = sendData && sendData.length > 0 ? sendData : data;
 
-    if (!sourceData || sourceData.length === 0) return;
+    if (!sourceData || sourceData?.length === 0) return;
 
-    const noSelectData = sourceData.map((item) => {
+    const noSelectData = sourceData?.map((item) => {
       const obj: Record<string, any> = {};
       Object.entries(selectedSelect).forEach(([colIndex, fieldName]) => {
         const value = item[Number(colIndex)];
@@ -270,46 +271,83 @@ const UploadExcelFile = () => {
       let category: any = categoryData?.find(
         (p: any) => p?.name === elem?.category_name
       );
-      console.log(elem?.barcode, elem?.name);
+
+      const baseProduct = initialState?.edit ? product : null;
+      const currencyCode =
+        Number(initialState?.currency) ||
+        product?.prices?.[0]?.currency?.code ||
+        product?.purchase_price?.currency_code ||
+        860; // fallback (UZS)
+
+      console.log(elem?.barcode, productData);
 
       return {
         id: initialState?.edit ? product?.id : undefined,
         name: elem?.name || "",
         purchase_price: {
-          amount: elem?.purchasePrice
-            ? Number(elem?.purchasePrice?.replace(",", ""))
-            : null,
-          currency_code: Number(initialState?.currency),
+          amount:
+            initialState?.edit && !elem?.purchasePrice
+              ? product?.purchase_price?.amount ?? null
+              : elem?.purchasePrice
+              ? Number(elem.purchasePrice.replace(",", ""))
+              : null,
+          currency_code: currencyCode,
         },
-        state: elem?.state || null,
-        measurement_name: elem?.packageMeasurementName || "шт",
-        sku: elem?.sku || null,
-        code: elem?.code || null,
 
-        barcodes: elem?.barcode
-          ? String(elem.barcode).trim().split(/\s+/)
-          : generateBarcode(),
-        category_name: category?.name,
-        category_id: category?.id,
-        catalog_code: elem?.taxCatalogCode || null,
-        catalog_name: elem?.taxCatalogName || null,
+        measurement_name:
+          initialState?.edit && !elem?.packageMeasurementName
+            ? showMeasurmentName(product?.measurement_code)
+            : elem?.packageMeasurementName || "шт",
+        sku: elem?.sku ?? baseProduct?.sku ?? null,
+        code: elem?.code ?? baseProduct?.code ?? null,
+        state: elem?.state ?? baseProduct?.warehouse_items?.[0]?.state ?? null,
+
+        barcodes:
+          initialState?.edit && !elem?.barcode
+            ? product?.barcodes?.map((item: any) => item?.value) ?? []
+            : elem?.barcode
+            ? String(elem.barcode).trim().split(/\s+/)
+            : generateBarcode(),
+
+        category_name:
+          initialState?.edit && !elem?.categoryName
+            ? product?.category_name
+            : elem?.categoryName,
+        category_id:
+          initialState?.edit && !elem?.categoryName
+            ? product?.category_id
+            : category?.id,
+        catalog_code:
+          initialState?.edit && !elem?.taxCatalogCode
+            ? product?.catalog_code
+            : elem?.taxCatalogCode || null,
+        catalog_name:
+          initialState?.edit && !elem?.taxCatalogName
+            ? product?.catalog_name
+            : elem?.taxCatalogName || null,
         count: elem?.packageMeasurementQuantity
           ? Number(elem?.packageMeasurementQuantity)
           : 1,
         prices: [
           {
-            amount: elem?.commonPrice
-              ? Number(elem?.commonPrice?.replace(",", ""))
-              : 0,
+            amount:
+              initialState?.edit && !elem?.commonPrice
+                ? product?.prices?.[0]?.amount ?? 0
+                : elem?.commonPrice
+                ? Number(elem.commonPrice.replace(",", ""))
+                : 0,
             price_type_id: 1,
-            currency_code: initialState?.currency,
+            currency_code: currencyCode,
           },
           {
-            amount: elem?.bulkPrice
-              ? Number(elem?.bulkPrice?.replace(",", ""))
-              : 0,
+            amount:
+              initialState?.edit && !elem?.bulkPrice
+                ? product?.prices?.[1]?.amount ?? 0
+                : elem?.bulkPrice
+                ? Number(elem.bulkPrice.replace(",", ""))
+                : 0,
             price_type_id: 2,
-            currency_code: initialState?.currency,
+            currency_code: currencyCode,
           },
         ],
       };
