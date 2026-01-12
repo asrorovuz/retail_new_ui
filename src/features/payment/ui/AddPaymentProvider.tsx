@@ -81,7 +81,7 @@ export default function AddPaymentProvider() {
   let loading = paymeLoading || clickLoading;
   return (
     <Fragment>
-      <Button onClick={handleShow} size="sm" variant="solid">
+      <Button onClick={handleShow} size="md" variant="solid">
         + Добавить поставщика платежных услуг
       </Button>
       <Dialog

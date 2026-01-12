@@ -117,7 +117,7 @@ const Report = ({ item, telegramBotConfig }: any) => {
   return (
     <>
       <Card
-        className="mt-5 pb-5"
+        className="p-6 rounded-lg bg-white w-full select-none"
         header={{
           content: "Отчет",
           extra: (

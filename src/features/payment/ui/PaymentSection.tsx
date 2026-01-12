@@ -4,11 +4,11 @@ import { usePaymentProviderApi } from "@/entities/sale/repository";
 import { useDeletePaymentProvider } from "@/entities/settings/repository";
 import { AddPaymentProvider, EditPaymentProvider } from "@/features/payment";
 import { showErrorMessage, showSuccessMessage } from "@/shared/lib/showMessage";
-import { Button, Table, Tag } from "@/shared/ui/kit";
+import { Button, Card, Table, Tag } from "@/shared/ui/kit";
 import { CommonDeleteDialog } from "@/widgets";
 import { MdDelete } from "react-icons/md";
 
-const PaymentProviders = () => {
+const PaymentSection = () => {
   const { data } = usePaymentProviderApi();
   const { THead, TBody, Tr, Th, Td } = Table;
 
@@ -29,7 +29,11 @@ const PaymentProviders = () => {
   };
 
   return (
-    <div className="overflow-x-auto bg-white rounded-3xl p-6 h-[calc(100vh-100px)]">
+    <Card className="p-6 rounded-lg bg-white w-full select-none">
+      <h2 className="text-lg font-semibold text-gray-800 mb-6 border-b pb-4">
+        Платёжные системы
+      </h2>
+
       <div className="flex justify-end mb-3">
         <AddPaymentProvider />
       </div>
@@ -103,10 +107,10 @@ const PaymentProviders = () => {
           </TBody>
         </Table>
       ) : (
-        <div className="py-5 text-center text-xl">Данные не найдены</div>
+        <div className="py-5 text-center text-xl">Платёжные системы не найдены</div>
       )}
-    </div>
+    </Card>
   );
 };
 
-export default PaymentProviders;
+export default PaymentSection;

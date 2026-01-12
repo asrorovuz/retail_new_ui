@@ -20,7 +20,7 @@ import { Button, Switcher, Table, Tag } from "@/shared/ui/kit";
 import { CommonDeleteDialog } from "@/widgets";
 import { MdDelete } from "react-icons/md";
 
-const FiscalizedPage = () => {
+const FiscalizedSection = ({show, handleShow}: {show: boolean, handleShow: (val: boolean) => void}) => {
   const { data: getCashRegisterData } = useFescalDeviceApi(true);
   const { mutate: updateMutateArca } = useUpdateArca();
   const { mutate: updateMutateSimurg } = useUpdateSimurg();
@@ -152,9 +152,9 @@ const FiscalizedPage = () => {
   const { TBody, Tr, Td } = Table;
 
   return (
-    <div className="overflow-x-auto bg-white rounded-3xl p-6 h-[calc(100vh-100px)]">
+    <div className="overflow-x-auto bg-white max-h-[300px]">
       <div className="flex justify-end mb-3">
-        <AddFiscalDevice />
+        <AddFiscalDevice handleShow={handleShow} show={show} />
       </div>
       {/* Content */}
       {getCashRegisterData && getCashRegisterData?.length ? (
@@ -239,7 +239,7 @@ const FiscalizedPage = () => {
   );
 };
 
-export default FiscalizedPage;
+export default FiscalizedSection;
 
 const CashRegisterType = (item: any) => {
   if (item?.type === CashRegisterProviderTypeHippoPos) {
