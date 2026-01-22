@@ -54,7 +54,7 @@ const PaymentSection = () => {
               </Th>
               <Th className="text-left">
                 <span className="py-3"></span>
-              </Th>
+              </Th> 
             </Tr>
           </THead>
           <TBody>
