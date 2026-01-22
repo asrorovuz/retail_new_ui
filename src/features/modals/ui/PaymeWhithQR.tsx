@@ -102,7 +102,6 @@ const PaymeWhithQR = ({
 
   useEffect(() => {
     // if (!isOpen) return;
-880344916917876655
 
     const listener = (code: string) => {
       setQrCode(code);

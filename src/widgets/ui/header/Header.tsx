@@ -167,32 +167,6 @@ const Header = () => {
               </div>
             </MenuItem>
           </Dropdown.Item>
-          <Dropdown.Item>
-            <MenuItem eventKey="fiscalized">
-              <div
-                className={`px-4 py-2 rounded-md cursor-pointer text-[14px] xl:text-[16px] transition-colors duration-200 ${
-                  activeKey === "fiscalized"
-                    ? "text-blue-500"
-                    : "hover:bg-gray-100 text-gray-700"
-                }`}
-              >
-                <span>Фискализации</span>
-              </div>
-            </MenuItem>
-          </Dropdown.Item>
-          <Dropdown.Item>
-            <MenuItem eventKey="payment-provider">
-              <div
-                className={`px-4 py-2 rounded-md cursor-pointer text-[14px] xl:text-[16px] transition-colors duration-200 ${
-                  activeKey === "payment-provider"
-                    ? "text-blue-500"
-                    : "hover:bg-gray-100 text-gray-700"
-                }`}
-              >
-                <span>Платёжные системы</span>
-              </div>
-            </MenuItem>
-          </Dropdown.Item>
         </Dropdown>
       </Menu>
 

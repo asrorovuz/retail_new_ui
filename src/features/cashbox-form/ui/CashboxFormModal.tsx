@@ -30,6 +30,7 @@ import {
   Input,
   Select,
 } from "@/shared/ui/kit";
+import MagnetSvg from "@/shared/ui/svg/MagnetSvg";
 import dayjs from "dayjs";
 import { useEffect } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
@@ -72,7 +73,7 @@ const CashboxFormModal = ({
     isPending: isUpdateCashExpensePending,
   } = useUpdateCashExpense();
 
-  const { control, handleSubmit, reset } = useForm();
+  const { control, handleSubmit, reset, setValue, getValues } = useForm();
   const { fields, append, remove } = useFieldArray({
     name: "amounts",
     control,
@@ -101,6 +102,31 @@ const CashboxFormModal = ({
       ? updateCashOutMutate
       : updateCashExpenseMutate;
 
+  const onMagintButton = (index: number) => {
+    console.log(cashbox);
+    
+    if (type === 2 || type === 3) {
+      // 1️⃣ Tanlangan kassa
+      const selectedCashbox = getValues("cashbox");
+      if (!selectedCashbox) return;
+
+      // 2️⃣ Tanlangan payment type
+      const selectedType =
+        getValues(`amounts.${index}.type`)?.id ??
+        getValues(`amounts.${index}.type`);
+
+      // 3️⃣ Cashbox ichidan mos amountni topish
+      const matchedAmount = selectedCashbox.amounts?.find(
+        (a: any) => a.money_type === selectedType
+      );
+
+      if (!matchedAmount) return;
+
+      // 4️⃣ Inputga yozish
+      setValue(`amounts.${index}.amount`, matchedAmount.amount);
+    }
+  };
+
   const onSubmit = (data: any) => {
     const payload = {
       date: data.date ? dayjs(data.date).format("YYYY-MM-DD HH:mm:ss") : null,
@@ -115,7 +141,6 @@ const CashboxFormModal = ({
     };
 
     if (modalType === "edit") {
-
       updateMutateFunction(
         { id: cashboxDataById?.id, payload },
         {
@@ -175,7 +200,7 @@ const CashboxFormModal = ({
     if (modalType === "edit") {
       if (!cashboxDataById) return; // ⛔ data kelmaguncha kut
 
-      const selectedCashbox = cashbox.find(
+      const selectedCashbox = cashbox?.find(
         (cb) => cb.id === cashboxDataById.cash_box?.id
       );
 
@@ -339,12 +364,18 @@ const CashboxFormModal = ({
                                 borderTopRightRadius: 0,
                                 borderBottomRightRadius: 0,
                               }),
+                              menuPortal: (base) => ({
+                                ...base,
+                                zIndex: 9999,
+                              })
                             }}
                             getOptionLabel={(option) =>
                               paymentTypes[option?.id] ||
                               paymentTypes[option?.text]
                             }
                             getOptionValue={(option) => String(option.id)}
+                            menuPortalTarget={document.body}
+                            menuPosition="fixed"
                           />
                         </FormItem>
                       );
@@ -385,7 +416,7 @@ const CashboxFormModal = ({
                         <FormItem>
                           <Select
                             {...field}
-                            className={"w-[175px]"}
+                            className={type === 2 || type === 3 ? "w-[125px]" : "w-[175px]"}
                             isDisabled={filterCurrencies?.length! <= 1}
                             size={"sm"}
                             value={filterCurrencies?.find(
@@ -409,6 +440,14 @@ const CashboxFormModal = ({
                       );
                     }}
                   />
+                  {type === 2 || type === 3 ? <Button
+                    variant="default"
+                    className="ml-2 p-0 mb-7"
+                    type="button"
+                    size="sm"
+                    icon={<MagnetSvg />}
+                    onClick={() => onMagintButton(index)}
+                  /> : ""}
                 </div>
                 <div className="flex gap-2 ml-2">
                   {fields.length > 1 && (

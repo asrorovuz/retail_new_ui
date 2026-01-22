@@ -228,7 +228,7 @@ const SaleAndRefunTable = ({
                 </div>
               </div>
 
-              {type === "sale" ? (
+              {type === "sale" && activeDraft?.discountAmount ? (
                 <div className="flex justify-end gap-x-2 items-center px-2 py-2.5">
                   <div className="text-base font-medium text-gray-500">
                     Со скидкой:{" "}
@@ -254,7 +254,7 @@ const SaleAndRefunTable = ({
                 ""
               )}
 
-              {type === "sale" ? (
+              {type === "sale" && activeDraft?.discountAmount ? (
                 <div className="flex justify-end gap-x-2 items-center px-2 py-2.5">
                   <div className="text-base font-medium text-gray-500">
                     Скидка:{" "}

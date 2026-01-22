@@ -12,8 +12,6 @@ import {
   ProductsPage,
   PavouriteProductPage,
   SettingsPage,
-  FiscalizedPage,
-  PaymePoviderPage,
   PurchasePricePage,
   CashboxPage,
   CashboxOperations,
@@ -60,8 +58,6 @@ export const AppRouter = () => (
               element={<PavouriteProductPage />}
             />
             <Route path="/settings" element={<SettingsPage />} />
-            <Route path="/fiscalized" element={<FiscalizedPage />} />
-            <Route path="/payment-provider" element={<PaymePoviderPage />} />
             <Route path="/cashbox" element={<CashboxPage />} />
             <Route
               path="/cashbox/cash-operation"

@@ -1,8 +1,6 @@
 import { messages } from "@/app/constants/message.request";
 import { useUpdateFiscalizationWhite } from "@/entities/settings/repository";
-import {
-  CatalogPackageSelector
-} from "@/features/catalog-selector";
+import { CatalogPackageSelector } from "@/features/catalog-selector";
 import type { Package } from "@/features/modals/model";
 import classNames from "@/shared/lib/classNames";
 import {
@@ -17,10 +15,12 @@ import { CiCirclePlus } from "react-icons/ci";
 import ProductSelectionTable from "./ProductSelectionTable";
 import { useSettingsStore } from "@/app/store/useSettingsStore";
 import CatalogSelectorFiscal from "@/features/catalog-selector/ui/CatalogSelectorFiscal";
+import { FiscalizedSection } from "@/features/fiscalized";
 
 const FiscalizationSettings = () => {
   const [selectionDialogShow, setSelectionDialogShow] = useState(false);
   const [packageNames, setPackageNames] = useState<Package[] | []>();
+  const [show, setShow] = useState(false);
   const { settings } = useSettingsStore((s) => s);
   const { mutate: fiscalizedWhite, isPending } = useUpdateFiscalizationWhite();
 
@@ -123,7 +123,7 @@ const FiscalizationSettings = () => {
 
   return (
     <>
-      <Card className="p-6 shadow-md rounded-lg bg-white w-full select-none">
+      <Card className="p-6 rounded-lg bg-white w-full select-none">
         <h2 className="text-lg font-semibold text-gray-800 mb-6 border-b pb-4">
           Настройки фискализации
         </h2>
@@ -287,9 +287,12 @@ const FiscalizationSettings = () => {
             </div>
           </div>
 
-          <div className="pt-4 flex justify-end border-t mt-6">
+          <div className="pt-4 flex gap-2 justify-end border-t my-6">
             <Button type="submit" variant="solid" loading={isPending}>
               Сохранить
+            </Button>
+            <Button type="button" onClick={() => setShow(true)} size="md" variant="solid">
+              + Добавить кассовый аппарат
             </Button>
           </div>
 
@@ -307,6 +310,7 @@ const FiscalizationSettings = () => {
             />
           </Dialog>
         </form>
+        <FiscalizedSection show={show} handleShow={setShow} />
       </Card>
     </>
   );

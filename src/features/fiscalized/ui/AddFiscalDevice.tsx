@@ -1,5 +1,4 @@
 import { FormProvider, useForm } from "react-hook-form";
-import { useState } from "react";
 import { Fragment } from "react/jsx-runtime";
 import { Button, Dialog, Form } from "@/shared/ui/kit";
 import {
@@ -18,8 +17,13 @@ import { showErrorMessage, showSuccessMessage } from "@/shared/lib/showMessage";
 import { messages } from "@/app/constants/message.request";
 import CashRegisterForm from "./FiscalizedForm";
 
-const AddFiscalDevice = () => {
-  const [show, setShow] = useState(false);
+const AddFiscalDevice = ({
+  handleShow,
+  show,
+}: {
+  handleShow: (val: boolean) => void;
+  show: boolean;
+}) => {
   const methods = useForm({
     defaultValues: {
       hippopos: {
@@ -37,10 +41,6 @@ const AddFiscalDevice = () => {
   const { mutate: mutateHippoPos, isPending: hippoposLoading } =
     useCreateHippoPos();
 
-  const handleShow = () => {
-    setShow(true);
-  };
-
   const successFunc = () => {
     showSuccessMessage(
       messages.uz.SUCCESS_MESSAGE,
@@ -50,7 +50,7 @@ const AddFiscalDevice = () => {
   };
 
   const handleClose = () => {
-    setShow(false);
+    handleShow(false);
     methods.reset();
   };
 
@@ -141,9 +141,6 @@ const AddFiscalDevice = () => {
 
   return (
     <Fragment>
-      <Button onClick={handleShow} size="sm" variant="solid">
-        + Добавить кассовый аппарат
-      </Button>
       <Dialog
         title={"Добавление кассового аппарата"}
         className="w-full max-w-2xl"
