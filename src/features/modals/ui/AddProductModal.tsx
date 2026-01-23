@@ -48,6 +48,7 @@ const AddProductModal: FC<ProductModalProps> = ({
       catalog_name: null,
       package_code: null,
       package_name: null,
+      package_measurements: [],
       purchase_price: {
         amount: null,
         currency: {
@@ -75,7 +76,7 @@ const AddProductModal: FC<ProductModalProps> = ({
   return (
     <div>
       {pageType === "products" && (
-        <Button onClick={openModal} variant="solid">
+        <Button size="sm" onClick={openModal} variant="solid">
           Добавить
         </Button>
       )}

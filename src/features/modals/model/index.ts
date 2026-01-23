@@ -71,6 +71,11 @@ export interface CatalogItem {
   use_count: boolean;
 }
 
+type MeasurementPackage = {
+  name: string;
+  quantity: number;
+};
+
 // 🏷️ Asosiy mahsulot tipi
 export interface ProductDefaultValues {
   id?: number | null;
@@ -85,6 +90,7 @@ export interface ProductDefaultValues {
     };
   };
   warehouse_items?: WarehouseItem[];
+  package_measurements?: MeasurementPackage[] | [];
   vat_rate?: number | null;
   barcodes: any[];
   catalog_code?: string | null;

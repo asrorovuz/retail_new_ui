@@ -85,7 +85,7 @@ const AddMoreProducts = ({
 
   return (
     <>
-      <Button onClick={() => setIsOpen(true)} variant="solid">
+      <Button size="sm" onClick={() => setIsOpen(true)} variant="solid">
         Добавить товары
       </Button>
 

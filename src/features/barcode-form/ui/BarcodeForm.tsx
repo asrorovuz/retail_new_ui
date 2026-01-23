@@ -1,5 +1,5 @@
 import { Button, FormItem, Input, InputGroup } from "@/shared/ui/kit";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Controller, useFieldArray } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { FaTrash } from "react-icons/fa";
@@ -24,6 +24,7 @@ const BarcodeForm = ({
   multiplay = false,
 }: BarcodeFormProps) => {
   const { t } = useTranslation();
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const { fields, append, remove } = useFieldArray({
     name: fieldName,
     control,
@@ -32,12 +33,28 @@ const BarcodeForm = ({
   const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
 
   const addBarcode = () => {
+    const newIndex = fields.length;
+
     append(new Date().getTime().toString().slice(5, 13));
+    setFocusedIndex(newIndex);
+    // const input = inputRefs.current[newIndex];
+    // if (input) {
+    //   input.focus();
+    // }
   };
 
   const deleteBarcode = (index: number) => {
     remove(index);
   };
+
+  useEffect(() => {
+    if (focusedIndex === null) return;
+
+    const input = inputRefs.current[focusedIndex];
+    if (input) {
+      input.focus();
+    }
+  }, [fields.length]);
 
   useEffect(() => {
     if (barcode && focusedIndex !== null) {
@@ -71,6 +88,10 @@ const BarcodeForm = ({
                   render={({ field }) => (
                     <Input
                       {...field}
+                      ref={(el) => {
+                        inputRefs.current[index] =
+                          el as HTMLInputElement | null;
+                      }}
                       type="text"
                       autoComplete="off"
                       className="!w-44"
@@ -95,7 +116,6 @@ const BarcodeForm = ({
   ) : (
     <FormItem label={"Штрих-коды"}>
       {fields?.map((fieldItem, index) => {
-
         return (
           <InputGroup className="mb-3" key={fieldItem.id}>
             <Controller

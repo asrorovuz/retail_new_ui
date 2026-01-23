@@ -13,6 +13,7 @@ const SearchProduct = ({
     <Input
       className="w-full text-sm font-medium !bg-transparent border-none outline-none ring-0 !focus:ring-0 !focus:border-none !focus:outline-none"
       type="text"
+      size="sm"
       suffix={
         search ? (
           <div onClick={() => setSearch("")}>
