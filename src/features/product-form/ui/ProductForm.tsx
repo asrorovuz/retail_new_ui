@@ -46,10 +46,6 @@ type MeasurementPackage = {
   amount: number;
 };
 
-// const optionMeauserment = useMemo(() => {
-//   return []
-// }, [])
-
 const ProductForm: FC<ProductFormType> = ({
   type,
   productId,
@@ -90,6 +86,17 @@ const ProductForm: FC<ProductFormType> = ({
   const { mutate: alertOnUpdate } = useUpdateAlertOn();
   const { mutate: createRegister } = useCreateregister();
   const { mutate: updatepurchasePrice } = useUpdatePurchasedPriceApi();
+
+  const optionMeasurement = useMemo(
+    () => [
+      { label: "шт", value: "шт" },
+      { label: "л", value: "л" },
+      { label: "м", value: "м" },
+      { label: "кв м", value: "кв м" },
+      { label: "кг", value: "кг" },
+    ],
+    [],
+  );
 
   const onClose = () => {
     setBarcode(null);
@@ -148,7 +155,7 @@ const ProductForm: FC<ProductFormType> = ({
   const addPackage = () => {
     setMeasurmentPackages((prev) => [
       ...prev,
-      { id: Date.now(), name: "", amount: 0 },
+      { id: Date.now(), name: "", amount: 1 },
     ]);
   };
 
@@ -223,7 +230,7 @@ const ProductForm: FC<ProductFormType> = ({
         catalog_name,
         package_code,
         package_name,
-        package_measurements
+        package_measurements,
       },
     };
 
@@ -318,19 +325,21 @@ const ProductForm: FC<ProductFormType> = ({
   };
 
   useEffect(() => {
-  if (!defaultValue?.package_measurements) return;
+    if (!defaultValue?.package_measurements) return;
 
-  // edit holatda backenddan kelgan ma'lumotni UI state ga set qilamiz
-  const packagesFromBackend = defaultValue.package_measurements.map((p: any) => ({
-    id: Date.now() + Math.random(), // unique id
-    name: p.name || "",
-    amount: p.quantity || 0,
-  }));
+    // edit holatda backenddan kelgan ma'lumotni UI state ga set qilamiz
+    const packagesFromBackend = defaultValue.package_measurements.map(
+      (p: any) => ({
+        id: Date.now() + Math.random(), // unique id
+        name: p.name || "",
+        amount: p.quantity || 0,
+      }),
+    );
 
-  if (packagesFromBackend.length) {
-    setMeasurmentPackages(packagesFromBackend);
-  }
-}, [defaultValue?.package_measurements, isOpen]);
+    if (packagesFromBackend.length) {
+      setMeasurmentPackages(packagesFromBackend);
+    }
+  }, [defaultValue?.package_measurements, isOpen]);
 
   useEffect(() => {
     const [purchase_price] = defaultValue?.warehouse_items || [];
@@ -584,12 +593,14 @@ const ProductForm: FC<ProductFormType> = ({
             control={control}
             render={({ field, fieldState }) => (
               <FormItem label="Название упаковка" invalid={!!fieldState?.error}>
-                <Input
+                <Select
                   {...field}
-                  type="text"
-                  autoComplete="off"
+                  options={optionMeasurement}
                   placeholder="Введите название упаковка"
                   className="w-full"
+                  hideDropdownIndicator={true}
+                  getOptionLabel={(option) => option?.label}
+                  getOptionValue={(option) => String(option?.value)}
                 />
               </FormItem>
             )}
