@@ -43,7 +43,7 @@ const AddProductModal: FC<ProductModalProps> = ({
 
     setDefaultValues({
       name: "",
-      barcodes: [barcode || Date.now().toString().slice(5, 13)],
+      barcodes: [],
       catalog_code: null,
       catalog_name: null,
       package_code: null,

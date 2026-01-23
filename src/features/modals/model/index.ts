@@ -24,6 +24,7 @@ export type ProductModalProps = {
 export type ProductTableProps = {
   type?: "add" | "edit" | "print";
   barcode: string | null;
+  isLegal?: "all" | "white" | "black";
   setBarcode: (val: string | null) => void;
   setIsOpen: (val: boolean) => void;
   isOpen: boolean;

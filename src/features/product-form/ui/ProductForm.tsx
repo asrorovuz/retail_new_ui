@@ -105,7 +105,7 @@ const ProductForm: FC<ProductFormType> = ({
       { label: "0", value: 0 },
       { label: "12", value: 12 },
     ],
-    []
+    [],
   );
 
   const remenderSubmit = async (id: number | null) => {
@@ -132,7 +132,7 @@ const ProductForm: FC<ProductFormType> = ({
   const onSubmit: any = async (values: ProductDefaultValues) => {
     const images = await convertImageObjectsToBase64(
       values?.images || [],
-      values?.images?.[0]?.img || ""
+      values?.images?.[0]?.img || "",
     );
     const prices = (values?.prices || [])?.map((p: PriceType) => ({
       price_type_id: p?.price_type?.id ?? null,
@@ -189,7 +189,7 @@ const ProductForm: FC<ProductFormType> = ({
           onSuccess(res) {
             showSuccessMessage(
               messages.uz.SUCCESS_MESSAGE,
-              messages.ru.SUCCESS_MESSAGE
+              messages.ru.SUCCESS_MESSAGE,
             );
 
             if (values?.purchase_price) {
@@ -219,14 +219,14 @@ const ProductForm: FC<ProductFormType> = ({
           onError(error) {
             showErrorMessage(error);
           },
-        }
+        },
       );
     } else {
       createProduct(data, {
         onSuccess(res) {
           showSuccessMessage(
             messages.uz.SUCCESS_MESSAGE,
-            messages.ru.SUCCESS_MESSAGE
+            messages.ru.SUCCESS_MESSAGE,
           );
 
           if (alertOn && wareHouseId) {
@@ -242,11 +242,11 @@ const ProductForm: FC<ProductFormType> = ({
 
           if (pageType !== "products") {
             const operationItem = activeDraftSale?.items?.find(
-              (p) => p.productId === res?.id
+              (p) => p.productId === res?.id,
             );
             const packagePrice =
               res?.prices?.find(
-                (p: any) => p?.product_price_type?.is_primary
+                (p: any) => p?.product_price_type?.is_primary,
               ) || res?.prices?.[0];
             const quantity = operationItem?.quantity ?? 0;
 
@@ -335,7 +335,14 @@ const ProductForm: FC<ProductFormType> = ({
       onClose={onClose}
       isOpen={isOpen && (type === "add" || type === "edit")}
     >
-      <Form onSubmit={handleSubmit(onSubmit)}>
+      <Form
+        onSubmit={handleSubmit(onSubmit)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+          }
+        }}
+      >
         <div className="grid grid-cols-2 gap-x-4 max-h-[60vh] overflow-y-auto">
           <Controller
             name="name"
@@ -535,10 +542,8 @@ const ProductForm: FC<ProductFormType> = ({
                 <div className="relative">
                   <Input
                     {...field}
-                    type="number"
+                    type="text"
                     autoComplete="off"
-                    replaceLeadingZero={false}
-                    space={false}
                     placeholder="Введите артикул"
                   />
                 </div>
@@ -553,10 +558,8 @@ const ProductForm: FC<ProductFormType> = ({
               <FormItem label="Код">
                 <Input
                   {...field}
-                  type="number"
+                  type="text"
                   autoComplete="off"
-                  replaceLeadingZero={false}
-                  space={false}
                   placeholder="Введите код"
                 />
               </FormItem>

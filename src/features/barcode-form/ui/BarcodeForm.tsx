@@ -50,7 +50,7 @@ const BarcodeForm = ({
   return !!multiplay ? (
     <div className="flex flex-col mb-7">
       {/* <div> */}
-      <div className="form-label flex justify-between mb-1">
+      <div className="form-label flex justify-between mb-1 min-w-44">
         <span>Штрих-коды</span>
         <div
           onClick={addBarcode}

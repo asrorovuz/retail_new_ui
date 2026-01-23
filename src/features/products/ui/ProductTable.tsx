@@ -39,6 +39,7 @@ import { showMeasurmentName } from "@/shared/lib/showMeausermentName";
 const ProductTable = ({
   search,
   setBarcode,
+  isLegal,
   barcode,
   setIsOpen,
   isOpen,
@@ -60,9 +61,10 @@ const ProductTable = ({
   const { data, isPending } = useAllProductApi(
     pagination.pageSize,
     pagination.pageIndex,
-    debouncedSearch || ""
+    debouncedSearch || "",
+    isLegal
   );
-  const { data: countData } = useAllProductCountApi(debouncedSearch || "");
+  const { data: countData } = useAllProductCountApi(debouncedSearch || "", isLegal);
   const { mutate: deleteProduct, isPending: productDeleteLoading } =
     useDeleteProduct();
 

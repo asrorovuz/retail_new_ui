@@ -21,9 +21,11 @@ import type { TableColumnSetting } from "@/@types/settings";
 export const getAllProductApi = async (
   size?: number,
   index?: number,
-  search?: string
+  search?: string,
+  isLegal?: string
 ): Promise<Product[]> => {
   const skip = index && size ? (index - 1) * size : 0;
+  const is_legal = isLegal === "white" ? true : isLegal === "black" ? false : null
 
   return await apiRequest<Product[]>({
     url: pathServices.products.getAllProductsPath,
@@ -32,6 +34,7 @@ export const getAllProductApi = async (
       limit: size ?? 20,
       skip,
       query: search,
+      is_legal
     },
   });
 };
@@ -43,11 +46,13 @@ export const getAllFavoritProductApi = async (): Promise<FavouriteProductType[]>
   });
 };
 
-export const getAllProductCountApi = async (search?: string): Promise<number> => {
+export const getAllProductCountApi = async (search?: string, isLegal?: string): Promise<number> => {
+  const is_legal = isLegal === "white" ? true : isLegal === "black" ? false : null
+
   return await apiRequest<number>({
     url: pathServices.products.getAllProductsCountPath,
     method: "GET",
-    params: { query: search },
+    params: { query: search, is_legal },
   });
 };
 

@@ -46,7 +46,7 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
         autoClose: false,
         closeOnClick: true,
         draggable: true,
-      }
+      },
     );
   }
 
@@ -62,7 +62,7 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
           autoClose: false,
           closeOnClick: true,
           draggable: true,
-        }
+        },
       );
     }
 
@@ -74,7 +74,7 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
           autoClose: false,
           closeOnClick: true,
           draggable: true,
-        }
+        },
       );
     }
 
@@ -88,7 +88,7 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
           autoClose: false,
           closeOnClick: true,
           draggable: true,
-        }
+        },
       );
     }
 
@@ -100,7 +100,7 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
           autoClose: false,
           closeOnClick: true,
           draggable: true,
-        }
+        },
       );
     }
 
@@ -114,7 +114,7 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
           autoClose: false,
           closeOnClick: true,
           draggable: true,
-        }
+        },
       );
     }
 
@@ -126,7 +126,7 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
           autoClose: false,
           closeOnClick: true,
           draggable: true,
-        }
+        },
       );
     }
 
@@ -140,7 +140,7 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
           autoClose: false,
           closeOnClick: true,
           draggable: true,
-        }
+        },
       );
     }
 
@@ -154,7 +154,7 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
           autoClose: false,
           closeOnClick: true,
           draggable: true,
-        }
+        },
       );
     }
 
@@ -168,7 +168,7 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
           autoClose: false,
           closeOnClick: true,
           draggable: true,
-        }
+        },
       );
     }
 
@@ -182,7 +182,23 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
           autoClose: false,
           closeOnClick: true,
           draggable: true,
-        }
+        },
+      );
+    }
+
+    if (error.barcode_duplicated) {
+      return toast.error(
+        lang === "ru"
+          ? "Товар с таким штрих-кодом уже существует"
+          : lang === "en"
+            ? "A product with this barcode already exists"
+            : "Bu shtrix-kodli mahsulot allaqachon mavjud",
+        {
+          position: "bottom-left",
+          autoClose: false,
+          closeOnClick: true,
+          draggable: true,
+        },
       );
     }
 
@@ -196,7 +212,7 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
           autoClose: false,
           closeOnClick: true,
           draggable: true,
-        }
+        },
       );
     }
 
@@ -210,7 +226,7 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
           autoClose: false,
           closeOnClick: true,
           draggable: true,
-        }
+        },
       );
     }
 
@@ -224,7 +240,7 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
           autoClose: false,
           closeOnClick: true,
           draggable: true,
-        }
+        },
       );
     }
 
@@ -238,7 +254,7 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
           autoClose: false,
           closeOnClick: true,
           draggable: true,
-        }
+        },
       );
     }
 
@@ -268,7 +284,7 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
           autoClose: false,
           closeOnClick: true,
           draggable: true,
-        }
+        },
       );
     }
 
@@ -280,7 +296,7 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
           autoClose: false,
           closeOnClick: true,
           draggable: true,
-        }
+        },
       );
     }
   }
