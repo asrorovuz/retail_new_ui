@@ -35,11 +35,12 @@ import type { FavouriteProduct } from "@/features/modals/model";
 export const useAllProductApi = (
   pageSize?: number,
   pageIndex?: number,
-  search?: string
+  search?: string,
+  isLegal?: "all" | "white" | "black"
 ) => {
   return useQuery({
-    queryKey: ["all-products", pageSize, pageIndex, search],
-    queryFn: () => getAllProductApi(pageSize, pageIndex, search),
+    queryKey: ["all-products", pageSize, pageIndex, search, isLegal],
+    queryFn: () => getAllProductApi(pageSize, pageIndex, search, isLegal),
   });
 };
 
@@ -50,10 +51,10 @@ export const useAllFavoritProductApi = () => {
   });
 };
 
-export const useAllProductCountApi = (search?: string) => {
+export const useAllProductCountApi = (search?: string, isLegal?: string) => {
   return useQuery({
-    queryKey: ["all-products-count", search],
-    queryFn: () => getAllProductCountApi(search),
+    queryKey: ["all-products-count", search, isLegal],
+    queryFn: () => getAllProductCountApi(search, isLegal),
   });
 };
 
