@@ -114,6 +114,7 @@ const EditProductModal: FC<ProductTableProps & EXtraPropsType> = ({
           })
         : prices,
       count: product?.count || 1,
+      package_measurements: product?.package_measurements || [] 
     };
 
     setDefaultValues(computed);

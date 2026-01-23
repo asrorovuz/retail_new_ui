@@ -59,6 +59,7 @@ export interface Product {
   created_at: string;
   updated_at: string;
   deleted_at: string | null;
+  package_measurements?: MeasurementPackage[] | [];
   is_deleted: boolean;
   name: string;
   vat_rate: number | null;
@@ -101,6 +102,11 @@ export interface FavouriteProductType {
   shift: boolean;
   product: Product;
 }
+
+type MeasurementPackage = {
+  name: string;
+  quantity: number;
+};
 
 export type ProductColumnVisibility = {
   article: { visible: boolean; color?: string };

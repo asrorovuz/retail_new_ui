@@ -476,7 +476,7 @@ const UploadExcelFile = () => {
 
   return (
     <div>
-      <Button onClick={onOpenModal} variant="solid">
+      <Button size="sm" onClick={onOpenModal} variant="solid">
         Загрузить Excel
       </Button>
 

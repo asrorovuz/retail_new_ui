@@ -29,7 +29,7 @@ const AddMoreProducts = ({
   /* 🔹 default product */
   const createEmptyProduct = (barcode?: string): ProductDefaultValues => ({
     name: "",
-    barcodes: [barcode || Date.now().toString().slice(5, 13)],
+    barcodes: [barcode],
     catalog_code: null,
     catalog_name: null,
     package_code: null,
@@ -85,7 +85,7 @@ const AddMoreProducts = ({
 
   return (
     <>
-      <Button onClick={() => setIsOpen(true)} variant="solid">
+      <Button size="sm" onClick={() => setIsOpen(true)} variant="solid">
         Добавить товары
       </Button>
 

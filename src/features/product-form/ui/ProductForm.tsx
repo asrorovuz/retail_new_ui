@@ -38,6 +38,13 @@ import { messages } from "@/app/constants/message.request";
 import { useSettingsStore } from "@/app/store/useSettingsStore";
 import { useDraftSaleStore } from "@/app/store/useSaleDraftStore";
 import { useUpdatePurchasedPriceApi } from "@/entities/purchase/repository";
+import { FiDelete } from "react-icons/fi";
+
+type MeasurementPackage = {
+  id: number;
+  name: string;
+  amount: number;
+};
 
 const ProductForm: FC<ProductFormType> = ({
   type,
@@ -61,6 +68,11 @@ const ProductForm: FC<ProductFormType> = ({
   const [alertOn, setAlertOn] = useState<string | number>(0);
   const [isShow, setIsShow] = useState(true);
   const [packageNames, setPackageNames] = useState<Package[] | []>();
+  const [measurmentsPackages, setMeasurmentPackages] = useState<
+    MeasurementPackage[]
+  >([
+    { id: Date.now(), name: "", amount: 0 }, // default bitta
+  ]);
 
   const { wareHouseId } = useSettingsStore((s) => s);
   const { updateDraftSaleItem, draftSales } = useDraftSaleStore();
@@ -74,6 +86,17 @@ const ProductForm: FC<ProductFormType> = ({
   const { mutate: alertOnUpdate } = useUpdateAlertOn();
   const { mutate: createRegister } = useCreateregister();
   const { mutate: updatepurchasePrice } = useUpdatePurchasedPriceApi();
+
+  const optionMeasurement = useMemo(
+    () => [
+      { label: "шт", value: "шт" },
+      { label: "л", value: "л" },
+      { label: "м", value: "м" },
+      { label: "кв м", value: "кв м" },
+      { label: "кг", value: "кг" },
+    ],
+    [],
+  );
 
   const onClose = () => {
     setBarcode(null);
@@ -105,7 +128,7 @@ const ProductForm: FC<ProductFormType> = ({
       { label: "0", value: 0 },
       { label: "12", value: 12 },
     ],
-    []
+    [],
   );
 
   const remenderSubmit = async (id: number | null) => {
@@ -129,10 +152,38 @@ const ProductForm: FC<ProductFormType> = ({
     }
   };
 
+  const addPackage = () => {
+    setMeasurmentPackages((prev) => [
+      ...prev,
+      { id: Date.now(), name: "", amount: 1 },
+    ]);
+  };
+
+  const removePackage = (id: number) => {
+    setMeasurmentPackages((prev) => prev.filter((p) => p.id !== id));
+  };
+
+  const updatePackage = (
+    id: number,
+    field: "name" | "amount",
+    value: string | number,
+  ) => {
+    setMeasurmentPackages((prev) =>
+      prev.map((p) => (p.id === id ? { ...p, [field]: value } : p)),
+    );
+  };
+
   const onSubmit: any = async (values: ProductDefaultValues) => {
+    const package_measurements = measurmentsPackages
+      ?.filter((p) => p.name.trim() && p.amount > 0) // bo‘shlarini yubormaymiz
+      ?.map((p) => ({
+        name: p.name,
+        quantity: p.amount,
+      }));
+
     const images = await convertImageObjectsToBase64(
       values?.images || [],
-      values?.images?.[0]?.img || ""
+      values?.images?.[0]?.img || "",
     );
     const prices = (values?.prices || [])?.map((p: PriceType) => ({
       price_type_id: p?.price_type?.id ?? null,
@@ -179,6 +230,7 @@ const ProductForm: FC<ProductFormType> = ({
         catalog_name,
         package_code,
         package_name,
+        package_measurements,
       },
     };
 
@@ -189,7 +241,7 @@ const ProductForm: FC<ProductFormType> = ({
           onSuccess(res) {
             showSuccessMessage(
               messages.uz.SUCCESS_MESSAGE,
-              messages.ru.SUCCESS_MESSAGE
+              messages.ru.SUCCESS_MESSAGE,
             );
 
             if (values?.purchase_price) {
@@ -219,14 +271,14 @@ const ProductForm: FC<ProductFormType> = ({
           onError(error) {
             showErrorMessage(error);
           },
-        }
+        },
       );
     } else {
       createProduct(data, {
         onSuccess(res) {
           showSuccessMessage(
             messages.uz.SUCCESS_MESSAGE,
-            messages.ru.SUCCESS_MESSAGE
+            messages.ru.SUCCESS_MESSAGE,
           );
 
           if (alertOn && wareHouseId) {
@@ -242,11 +294,11 @@ const ProductForm: FC<ProductFormType> = ({
 
           if (pageType !== "products") {
             const operationItem = activeDraftSale?.items?.find(
-              (p) => p.productId === res?.id
+              (p) => p.productId === res?.id,
             );
             const packagePrice =
               res?.prices?.find(
-                (p: any) => p?.product_price_type?.is_primary
+                (p: any) => p?.product_price_type?.is_primary,
               ) || res?.prices?.[0];
             const quantity = operationItem?.quantity ?? 0;
 
@@ -271,6 +323,23 @@ const ProductForm: FC<ProductFormType> = ({
       });
     }
   };
+
+  useEffect(() => {
+    if (!defaultValue?.package_measurements) return;
+
+    // edit holatda backenddan kelgan ma'lumotni UI state ga set qilamiz
+    const packagesFromBackend = defaultValue.package_measurements.map(
+      (p: any) => ({
+        id: Date.now() + Math.random(), // unique id
+        name: p.name || "",
+        amount: p.quantity || 0,
+      }),
+    );
+
+    if (packagesFromBackend.length) {
+      setMeasurmentPackages(packagesFromBackend);
+    }
+  }, [defaultValue?.package_measurements, isOpen]);
 
   useEffect(() => {
     const [purchase_price] = defaultValue?.warehouse_items || [];
@@ -330,12 +399,19 @@ const ProductForm: FC<ProductFormType> = ({
 
   return (
     <Dialog
-      width={630}
+      width={840}
       title={type === "add" ? "Добавить товар" : "Редактировать товар"}
       onClose={onClose}
       isOpen={isOpen && (type === "add" || type === "edit")}
     >
-      <Form onSubmit={handleSubmit(onSubmit)}>
+      <Form
+        onSubmit={handleSubmit(onSubmit)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+          }
+        }}
+      >
         <div className="grid grid-cols-2 gap-x-4 max-h-[60vh] overflow-y-auto">
           <Controller
             name="name"
@@ -511,17 +587,20 @@ const ProductForm: FC<ProductFormType> = ({
             placeholder={"Категория"}
           />
 
+          {/* <div> */}
           <Controller
             name="measurement_name"
             control={control}
             render={({ field, fieldState }) => (
               <FormItem label="Название упаковка" invalid={!!fieldState?.error}>
-                <Input
+                <Select
                   {...field}
-                  type="text"
-                  autoComplete="off"
+                  options={optionMeasurement}
                   placeholder="Введите название упаковка"
                   className="w-full"
+                  hideDropdownIndicator={true}
+                  getOptionLabel={(option) => option?.label}
+                  getOptionValue={(option) => String(option?.value)}
                 />
               </FormItem>
             )}
@@ -535,16 +614,63 @@ const ProductForm: FC<ProductFormType> = ({
                 <div className="relative">
                   <Input
                     {...field}
-                    type="number"
+                    type="text"
                     autoComplete="off"
-                    replaceLeadingZero={false}
-                    space={false}
                     placeholder="Введите артикул"
                   />
                 </div>
               </FormItem>
             )}
           />
+
+          <div className="my-2 space-y-2">
+            <div className="flex items-center justify-end">
+              <Button
+                variant="plain"
+                type="button"
+                className="bg-transparent border-transparent py-0 h-auto"
+                size="sm"
+                onClick={addPackage}
+              >
+                Добавить упаковку
+              </Button>
+            </div>
+            {measurmentsPackages?.map((item) => (
+              <div key={item.id} className="flex items-center gap-x-2">
+                <Input
+                  size="sm"
+                  placeholder="Название упаковки"
+                  value={item.name}
+                  onChange={(e) =>
+                    updatePackage(item.id, "name", e.target.value)
+                  }
+                />
+
+                <Input
+                  size="sm"
+                  type="number"
+                  placeholder="Количество в упаковке"
+                  value={item.amount}
+                  onChange={(e) =>
+                    updatePackage(item.id, "amount", +e.target.value)
+                  }
+                />
+
+                {measurmentsPackages?.length > 1 && (
+                  <Button
+                    size="sm"
+                    type="button"
+                    variant="solid"
+                    className="bg-red-500 hover:bg-red-400 active:bg-red-400"
+                    onClick={() => removePackage(item.id)}
+                  >
+                    <FiDelete />
+                  </Button>
+                )}
+              </div>
+            ))}
+          </div>
+          {/* </div> */}
 
           <Controller
             name="code"
@@ -553,10 +679,8 @@ const ProductForm: FC<ProductFormType> = ({
               <FormItem label="Код">
                 <Input
                   {...field}
-                  type="number"
+                  type="text"
                   autoComplete="off"
-                  replaceLeadingZero={false}
-                  space={false}
                   placeholder="Введите код"
                 />
               </FormItem>

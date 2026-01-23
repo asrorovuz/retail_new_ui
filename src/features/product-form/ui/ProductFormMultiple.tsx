@@ -115,7 +115,7 @@ const ProductFormMultiple: FC<Props> = ({
         // IMAGE LOGIKASI O'ZGARMADI
         const images = await convertImageObjectsToBase64(
           values?.images || [],
-          values?.images?.[0]?.img || ""
+          values?.images?.[0]?.img || "",
         );
 
         const prices = (values?.prices || []).map((p: PriceType) => ({
@@ -187,7 +187,7 @@ const ProductFormMultiple: FC<Props> = ({
     if (successfullyAdded.length > 0) {
       showSuccessMessage(
         messages.uz.SUCCESS_MESSAGE,
-        messages.ru.SUCCESS_MESSAGE
+        messages.ru.SUCCESS_MESSAGE,
       );
     }
 
@@ -218,7 +218,14 @@ const ProductFormMultiple: FC<Props> = ({
 
   return (
     <FormProvider {...methods}>
-      <Form onSubmit={methods.handleSubmit(onSubmit)}>
+      <Form
+        onSubmit={methods.handleSubmit(onSubmit)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+          }
+        }}
+      >
         <div className="bg-white flex justify-end pb-3 sticky top-0 z-30">
           <Button
             type="button"
@@ -228,385 +235,399 @@ const ProductFormMultiple: FC<Props> = ({
             Добавить в список
           </Button>
         </div>
-        {fields?.length ? fields?.map((field, index) => (
-          <div key={field.id} className="border p-4 rounded space-y-4">
-            {/* Header with delete */}
-            <div className="flex justify-between items-start">
-              <h4 className="font-semibold">Товар {index + 1}</h4>
-              {fields.length > 1 && onRemove && (
-                <Button
-                  type="button"
-                  variant="plain"
-                  className="bg-red-500 text-white hover:text-white hover:bg-red-400 active:bg-red-400 active:text-white"
-                  icon={<MdDelete />}
-                  onClick={() => {
-                    remove(index);
-                    onRemove(index);
-                  }}
-                />
-              )}
-            </div>
-
-            <div className="flex gap-x-2 items-center overflow-x-auto">
-              {/* Название */}
-              <Controller
-                name={`${name}.${index}.name` as any}
-                control={methods.control}
-                rules={{ required: true }}
-                render={({ field, fieldState }) => (
-                  <FormItem
-                    label="Название"
-                    asterisk
-                    invalid={!!fieldState.error}
-                    errorMessage={fieldState.error?.message}
-                  >
-                    <Input
-                      {...field}
-                      type="text"
-                      className="!w-52"
-                      autoComplete="off"
-                      invalid={!!fieldState.error}
-                      placeholder="Введите название товара"
-                    />
-                  </FormItem>
-                )}
-              />
-
-              {/* Розничная цена */}
-              <FormItem asterisk label="Розничная цена" className="w-full p-0">
-                <InputGroup>
-                  <Controller
-                    name={`${name}.${index}.prices.0.amount` as any}
-                    control={methods.control}
-                    rules={{
-                      required: "Розничная цена обязательна к заполнению",
-                      min: { value: 1, message: "Цена должна быть больше 0" },
+        {fields?.length ? (
+          fields?.map((field, index) => (
+            <div key={field.id} className="border p-4 rounded space-y-4">
+              {/* Header with delete */}
+              <div className="flex justify-between items-start">
+                <h4 className="font-semibold">Товар {index + 1}</h4>
+                {fields.length > 1 && onRemove && (
+                  <Button
+                    type="button"
+                    variant="plain"
+                    className="bg-red-500 text-white hover:text-white hover:bg-red-400 active:bg-red-400 active:text-white"
+                    icon={<MdDelete />}
+                    onClick={() => {
+                      remove(index);
+                      onRemove(index);
                     }}
-                    render={({ field, fieldState }) => (
+                  />
+                )}
+              </div>
+
+              <div className="flex gap-x-2 items-center overflow-x-auto">
+                {/* Название */}
+                <Controller
+                  name={`${name}.${index}.name` as any}
+                  control={methods.control}
+                  rules={{ required: true }}
+                  render={({ field, fieldState }) => (
+                    <FormItem
+                      label="Название"
+                      asterisk
+                      invalid={!!fieldState.error}
+                      errorMessage={fieldState.error?.message}
+                    >
                       <Input
                         {...field}
-                        type="number"
+                        type="text"
+                        className="!w-52"
                         autoComplete="off"
                         invalid={!!fieldState.error}
-                        placeholder="Сумма"
-                        replaceLeadingZero
-                        className="!w-44"
+                        placeholder="Введите название товара"
                       />
-                    )}
-                  />
-                  <Controller
-                    name={`${name}.${index}.prices.0.currency` as any}
-                    control={methods.control}
-                    render={({ field }) => (
-                      <Select
-                        {...field}
-                        isDisabled
-                        options={currencies?.filter((c) => c.is_active)}
-                        getOptionLabel={(opt) => opt.name}
-                        getOptionValue={(opt) => String(opt.code)}
-                        className="w-[90px]"
-                        placeholder="Валюта"
-                      />
-                    )}
-                  />
-                </InputGroup>
-              </FormItem>
-
-              {/* Оптовая цена */}
-              <FormItem label="Оптовая цена" className="w-full p-0">
-                <InputGroup>
-                  <Controller
-                    name={`${name}.${index}.prices.1.amount` as any}
-                    control={methods.control}
-                    render={({ field }) => (
-                      <Input
-                        {...field}
-                        type="number"
-                        autoComplete="off"
-                        placeholder="Сумма"
-                        replaceLeadingZero
-                        className="!w-44"
-                      />
-                    )}
-                  />
-                  <Controller
-                    name={`${name}.${index}.prices.1.currency` as any}
-                    control={methods.control}
-                    render={({ field }) => (
-                      <Select
-                        {...field}
-                        isDisabled
-                        options={currencies?.filter((c) => c.is_active)}
-                        getOptionLabel={(opt) => opt.name}
-                        getOptionValue={(opt) => String(opt.code)}
-                        className="w-[90px]"
-                        placeholder="Валюта"
-                      />
-                    )}
-                  />
-                </InputGroup>
-              </FormItem>
-
-              {/* Закупочная цена */}
-              <FormItem label="Закупочная цена" className="w-full p-0">
-                <InputGroup>
-                  <Controller
-                    name={`${name}.${index}.purchase_price.amount` as any}
-                    control={methods.control}
-                    render={({ field }) => (
-                      <Input
-                        {...field}
-                        type="number"
-                        autoComplete="off"
-                        placeholder="Сумма"
-                        replaceLeadingZero
-                        className="!w-44"
-                      />
-                    )}
-                  />
-                  <Controller
-                    name={`${name}.${index}.purchase_price.currency` as any}
-                    control={methods.control}
-                    render={({ field }) => (
-                      <Select
-                        {...field}
-                        isDisabled
-                        options={currencies?.filter((c) => c.is_active)}
-                        getOptionLabel={(opt) => opt.name}
-                        getOptionValue={(opt) => String(opt.code)}
-                        className="w-[90px]"
-                        placeholder="Валюта"
-                      />
-                    )}
-                  />
-                </InputGroup>
-              </FormItem>
-
-              {/* Остаток */}
-              <Controller
-                name={`${name}.${index}.remainder` as any}
-                control={methods.control}
-                render={({ field }) => (
-                  <FormItem label="Остаток">
-                    <Input
-                      {...field}
-                      type="number"
-                      autoComplete="off"
-                      placeholder="Введите остаток"
-                      replaceLeadingZero
-                      className="!w-44"
-                    />
-                  </FormItem>
-                )}
-              />
-
-              {/* Мин. остаток для оповещения */}
-              <Controller
-                name={`${name}.${index}.alertOn` as any}
-                control={methods.control}
-                render={({ field }) => (
-                  <FormItem label="Мин. остаток">
-                    <Input
-                      {...field}
-                      type="number"
-                      autoComplete="off"
-                      placeholder="Введите остаток"
-                      replaceLeadingZero
-                      className="!w-44"
-                    />
-                  </FormItem>
-                )}
-              />
-
-              {/* Категория */}
-              <CategorySelect
-                name={`${name}.${index}.category`}
-                control={methods.control}
-                label="Категория"
-                width="!w-44"
-                placeholder="Категория"
-              />
-
-              {/* Название упаковка */}
-              <Controller
-                name={`${name}.${index}.measurement_name` as any}
-                control={methods.control}
-                render={({ field }) => (
-                  <FormItem label="Название упаковка">
-                    <Input
-                      {...field}
-                      type="text"
-                      autoComplete="off"
-                      placeholder="Введите название упаковка"
-                      className="!w-44"
-                    />
-                  </FormItem>
-                )}
-              />
-
-              {/* Артикул */}
-              <Controller
-                name={`${name}.${index}.sku` as any}
-                control={methods.control}
-                render={({ field }) => (
-                  <FormItem label="Артикул">
-                    <Input
-                      {...field}
-                      type="number"
-                      autoComplete="off"
-                      replaceLeadingZero={false}
-                      placeholder="Введите артикул"
-                      className="!w-44"
-                    />
-                  </FormItem>
-                )}
-              />
-
-              {/* Код */}
-              <Controller
-                name={`${name}.${index}.code` as any}
-                control={methods.control}
-                render={({ field }) => (
-                  <FormItem label="Код">
-                    <Input
-                      {...field}
-                      type="number"
-                      autoComplete="off"
-                      replaceLeadingZero={false}
-                      placeholder="Введите код"
-                      className="!w-44"
-                    />
-                  </FormItem>
-                )}
-              />
-
-              {/* Штрих-коды */}
-
-              <BarcodeForm
-                fieldName={`${name}.${index}.barcodes`}
-                barcode={barcode}
-                control={methods.control}
-                setValue={methods.setValue}
-                getValues={methods.getValues}
-                multiplay={true}
-              />
-
-              {/* ИКПУ-код */}
-              <Controller
-                name={`${name}.${index}.catalog_code` as any}
-                control={methods.control}
-                render={({ field }) => (
-                  <FormItem label="ИКПУ-код">
-                    <CatalogSelector
-                      {...field}
-                      fieldName={`${name}.${index}.catalog`}
-                      isOpen={true}
-                      placeholder="Введите ИКПУ-код"
-                      value={field.value}
-                      setValue={methods.setValue}
-                      getValues={methods.getValues}
-                      onChange={(opt) => field.onChange(opt ? opt.value : null)}
-                      setPackageNames={(packages) => {
-                        setPackageNamesMap((prev) => ({
-                          ...prev,
-                          [index]: packages,
-                        }));
-                      }}
-                      width={"!w-52"}
-                      multiplay={true}
-                      index={index}
-                    />
-                  </FormItem>
-                )}
-              />
-
-              {/* Ед. изм. */}
-              <Controller
-                name={`${name}.${index}.package_code` as any}
-                control={methods.control}
-                render={({ field }) => (
-                  <FormItem label="Ед. изм.">
-                    <CatalogPackageSelector
-                      key={`${index}-${packageNamesMap[index]?.length || 0}`}
-                      {...field}
-                      options={packageNamesMap[index] || []}
-                      value={field.value}
-                      setValue={methods.setValue}
-                      placeholder="Введите Ед. изм."
-                      onChange={field.onChange}
-                      width={"!w-52"}
-                      multiplay={true}
-                      index={index}
-                    />
-                  </FormItem>
-                )}
-              />
-
-              {/* НДС */}
-              <Controller
-                name={`${name}.${index}.vat_rate` as any}
-                control={methods.control}
-                render={({ field }) => (
-                  <FormItem label="НДС">
-                    <Select
-                      options={options}
-                      isSearchable={false}
-                      className="!w-44"
-                      placeholder="Введите НДС"
-                      getOptionLabel={(opt) =>
-                        typeof opt.value === "number" ? opt.label : "БЕЗ НДС"
-                      }
-                      getOptionValue={(opt) => String(opt.value)}
-                      value={
-                        options.find((opt) => opt.value === field.value) ||
-                        options[0]
-                      }
-                      onChange={(opt) => field.onChange(opt?.value ?? null)}
-                      menuPortalTarget={document.body}
-                      menuPosition="fixed"
-                      styles={{
-                        menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-                      }}
-                    />
-                  </FormItem>
-                )}
-              />
-
-              {/* Белых товаров */}
-              <Controller
-                name={`${name}.${index}.is_legal` as any}
-                control={methods.control}
-                render={({ field }) => (
-                  <FormItem label="Белых товаров">
-                    <div className="!w-32">
-                      <Switcher
-                        checked={field.value}
-                        onChange={field.onChange}
-                      />
-                    </div>
-                  </FormItem>
-                )}
-              />
-
-              {/* Изображения */}
-              <div className="col-span-2 py-1">
-                <ImageForm
-                  fieldName={`${name}.${index}.images`}
-                  control={methods.control}
+                    </FormItem>
+                  )}
                 />
+
+                {/* Розничная цена */}
+                <FormItem
+                  asterisk
+                  label="Розничная цена"
+                  className="w-full p-0"
+                >
+                  <InputGroup>
+                    <Controller
+                      name={`${name}.${index}.prices.0.amount` as any}
+                      control={methods.control}
+                      rules={{
+                        required: "Розничная цена обязательна к заполнению",
+                        min: { value: 1, message: "Цена должна быть больше 0" },
+                      }}
+                      render={({ field, fieldState }) => (
+                        <Input
+                          {...field}
+                          type="number"
+                          autoComplete="off"
+                          invalid={!!fieldState.error}
+                          placeholder="Сумма"
+                          replaceLeadingZero
+                          className="!w-44"
+                        />
+                      )}
+                    />
+                    <Controller
+                      name={`${name}.${index}.prices.0.currency` as any}
+                      control={methods.control}
+                      render={({ field }) => (
+                        <Select
+                          {...field}
+                          isDisabled
+                          options={currencies?.filter((c) => c.is_active)}
+                          getOptionLabel={(opt) => opt.name}
+                          getOptionValue={(opt) => String(opt.code)}
+                          className="w-[90px]"
+                          placeholder="Валюта"
+                        />
+                      )}
+                    />
+                  </InputGroup>
+                </FormItem>
+
+                {/* Оптовая цена */}
+                <FormItem label="Оптовая цена" className="w-full p-0">
+                  <InputGroup>
+                    <Controller
+                      name={`${name}.${index}.prices.1.amount` as any}
+                      control={methods.control}
+                      render={({ field }) => (
+                        <Input
+                          {...field}
+                          type="number"
+                          autoComplete="off"
+                          placeholder="Сумма"
+                          replaceLeadingZero
+                          className="!w-44"
+                        />
+                      )}
+                    />
+                    <Controller
+                      name={`${name}.${index}.prices.1.currency` as any}
+                      control={methods.control}
+                      render={({ field }) => (
+                        <Select
+                          {...field}
+                          isDisabled
+                          options={currencies?.filter((c) => c.is_active)}
+                          getOptionLabel={(opt) => opt.name}
+                          getOptionValue={(opt) => String(opt.code)}
+                          className="w-[90px]"
+                          placeholder="Валюта"
+                        />
+                      )}
+                    />
+                  </InputGroup>
+                </FormItem>
+
+                {/* Закупочная цена */}
+                <FormItem label="Закупочная цена" className="w-full p-0">
+                  <InputGroup>
+                    <Controller
+                      name={`${name}.${index}.purchase_price.amount` as any}
+                      control={methods.control}
+                      render={({ field }) => (
+                        <Input
+                          {...field}
+                          type="number"
+                          autoComplete="off"
+                          placeholder="Сумма"
+                          replaceLeadingZero
+                          className="!w-44"
+                        />
+                      )}
+                    />
+                    <Controller
+                      name={`${name}.${index}.purchase_price.currency` as any}
+                      control={methods.control}
+                      render={({ field }) => (
+                        <Select
+                          {...field}
+                          isDisabled
+                          options={currencies?.filter((c) => c.is_active)}
+                          getOptionLabel={(opt) => opt.name}
+                          getOptionValue={(opt) => String(opt.code)}
+                          className="w-[90px]"
+                          placeholder="Валюта"
+                        />
+                      )}
+                    />
+                  </InputGroup>
+                </FormItem>
+
+                {/* Остаток */}
+                <Controller
+                  name={`${name}.${index}.remainder` as any}
+                  control={methods.control}
+                  render={({ field }) => (
+                    <FormItem label="Остаток">
+                      <Input
+                        {...field}
+                        type="number"
+                        autoComplete="off"
+                        placeholder="Введите остаток"
+                        replaceLeadingZero
+                        className="!w-44"
+                      />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Мин. остаток для оповещения */}
+                <Controller
+                  name={`${name}.${index}.alertOn` as any}
+                  control={methods.control}
+                  render={({ field }) => (
+                    <FormItem label="Мин. остаток">
+                      <Input
+                        {...field}
+                        type="number"
+                        autoComplete="off"
+                        placeholder="Введите остаток"
+                        replaceLeadingZero
+                        className="!w-44"
+                      />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Категория */}
+                <CategorySelect
+                  name={`${name}.${index}.category`}
+                  control={methods.control}
+                  label="Категория"
+                  width="!w-44"
+                  placeholder="Категория"
+                />
+
+                {/* Название упаковка */}
+                <Controller
+                  name={`${name}.${index}.measurement_name` as any}
+                  control={methods.control}
+                  render={({ field }) => (
+                    <FormItem label="Название упаковка">
+                      <Input
+                        {...field}
+                        type="text"
+                        autoComplete="off"
+                        placeholder="Введите название упаковка"
+                        className="!w-44"
+                      />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Артикул */}
+                <Controller
+                  name={`${name}.${index}.sku` as any}
+                  control={methods.control}
+                  render={({ field }) => (
+                    <FormItem label="Артикул">
+                      <Input
+                        {...field}
+                        type="text"
+                        autoComplete="off"
+                        placeholder="Введите артикул"
+                        className="!w-44"
+                      />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Код */}
+                <Controller
+                  name={`${name}.${index}.code` as any}
+                  control={methods.control}
+                  render={({ field }) => (
+                    <FormItem label="Код">
+                      <Input
+                        {...field}
+                        autoComplete="off"  
+                        placeholder="Введите код"
+                        className="!w-44"
+                      />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Штрих-коды */}
+
+                <BarcodeForm
+                  fieldName={`${name}.${index}.barcodes`}
+                  barcode={barcode}
+                  control={methods.control}
+                  setValue={methods.setValue}
+                  getValues={methods.getValues}
+                  multiplay={true}
+                />
+
+                {/* ИКПУ-код */}
+                <Controller
+                  name={`${name}.${index}.catalog_code` as any}
+                  control={methods.control}
+                  render={({ field }) => (
+                    <FormItem label="ИКПУ-код">
+                      <CatalogSelector
+                        {...field}
+                        fieldName={`${name}.${index}.catalog`}
+                        isOpen={true}
+                        placeholder="Введите ИКПУ-код"
+                        value={field.value}
+                        setValue={methods.setValue}
+                        getValues={methods.getValues}
+                        onChange={(opt) =>
+                          field.onChange(opt ? opt.value : null)
+                        }
+                        setPackageNames={(packages) => {
+                          setPackageNamesMap((prev) => ({
+                            ...prev,
+                            [index]: packages,
+                          }));
+                        }}
+                        width={"!w-52"}
+                        multiplay={true}
+                        index={index}
+                      />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Ед. изм. */}
+                <Controller
+                  name={`${name}.${index}.package_code` as any}
+                  control={methods.control}
+                  render={({ field }) => (
+                    <FormItem label="Ед. изм.">
+                      <CatalogPackageSelector
+                        key={`${index}-${packageNamesMap[index]?.length || 0}`}
+                        {...field}
+                        options={packageNamesMap[index] || []}
+                        value={field.value}
+                        setValue={methods.setValue}
+                        placeholder="Введите Ед. изм."
+                        onChange={field.onChange}
+                        width={"!w-52"}
+                        multiplay={true}
+                        index={index}
+                      />
+                    </FormItem>
+                  )}
+                />
+
+                {/* НДС */}
+                <Controller
+                  name={`${name}.${index}.vat_rate` as any}
+                  control={methods.control}
+                  render={({ field }) => (
+                    <FormItem label="НДС">
+                      <Select
+                        options={options}
+                        isSearchable={false}
+                        className="!w-44"
+                        placeholder="Введите НДС"
+                        getOptionLabel={(opt) =>
+                          typeof opt.value === "number" ? opt.label : "БЕЗ НДС"
+                        }
+                        getOptionValue={(opt) => String(opt.value)}
+                        value={
+                          options.find((opt) => opt.value === field.value) ||
+                          options[0]
+                        }
+                        onChange={(opt) => field.onChange(opt?.value ?? null)}
+                        menuPortalTarget={document.body}
+                        menuPosition="fixed"
+                        styles={{
+                          menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                        }}
+                      />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Белых товаров */}
+                <Controller
+                  name={`${name}.${index}.is_legal` as any}
+                  control={methods.control}
+                  render={({ field }) => (
+                    <FormItem label="Белых товаров">
+                      <div className="!w-32">
+                        <Switcher
+                          checked={field.value}
+                          onChange={field.onChange}
+                        />
+                      </div>
+                    </FormItem>
+                  )}
+                />
+
+                {/* Изображения */}
+                <div className="col-span-2 py-1">
+                  <ImageForm
+                    fieldName={`${name}.${index}.images`}
+                    control={methods.control}
+                  />
+                </div>
               </div>
             </div>
+          ))
+        ) : (
+          <div className="flex items-center justify-center py-5">
+            <Empty size={120} />
           </div>
-        )) : <div className="flex items-center justify-center py-5"><Empty size={120}/></div>}
+        )}
 
         <div className="bg-white sticky bottom-0 flex justify-end pt-3">
-          <Button disabled={fields?.length === 0} loading={isSubmitting} type="submit" variant="solid">
+          <Button
+            disabled={fields?.length === 0}
+            loading={isSubmitting}
+            type="submit"
+            variant="solid"
+          >
             Добавить
           </Button>
         </div>
       </Form>
     </FormProvider>
-  )
+  );
 };
 
 export default ProductFormMultiple;
