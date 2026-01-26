@@ -57,7 +57,7 @@ const ProductsPage = () => {
   }, [isSuccess, findBarcodeData, isFetching]);
 
   useEffect(() => {
-    if (isAddOpen) return;
+    if (isAddOpen || isOpen) return;
     if (isError) {
       if (settings?.enable_create_unknown_product && !isOpen) {
         setIsAddOpen(true);

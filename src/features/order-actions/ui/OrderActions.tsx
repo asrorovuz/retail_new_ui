@@ -45,7 +45,8 @@ import {
   useRegisterPurchaseApi,
   useUpdatePurchasedApi,
 } from "@/entities/purchase/repository";
-import type { RegisterPurchaseModel } from "@/@types/purchase";
+import type { DraftPurchaseSchema, RegisterPurchaseModel } from "@/@types/purchase";
+import { PaymentTypes } from "@/app/constants/payment.types";
 
 type OrderActionType = {
   type: "sale" | "refund" | "purchase";
@@ -53,6 +54,7 @@ type OrderActionType = {
   activeDraft: DraftSaleSchema & DraftRefundSchema;
   activeSelectPaymetype: number;
   payModal: boolean;
+  addNewDraft: any;
   setPayModal: (open: boolean) => void;
   deleteDraft: (ind: number) => void;
   updateDraftDiscount: (val: number) => void;
@@ -67,6 +69,7 @@ const OrderActions = ({
   activeSelectPaymetype,
   payModal,
   setPayModal,
+  addNewDraft,
   deleteDraft,
   updateDraftDiscount,
   setActivePaymentSelectType,
@@ -103,6 +106,25 @@ const OrderActions = ({
   const onDeleteActivedraft = () => {
     const findIndex = draft?.findIndex((item) => item?.isActive);
     deleteDraft(findIndex);
+  };
+
+  const addDrafts = () => {
+    const newDraftSale:
+      | DraftSaleSchema
+      | DraftRefundSchema
+      | DraftPurchaseSchema = {
+      items: [],
+      isActive: true,
+      discountAmount: 0,
+      [type === "sale" ? "payment" : "payout"]: {
+        amounts: PaymentTypes?.map((paymentType) => ({
+          amount: 0,
+          paymentType: paymentType?.type,
+        })),
+      },
+    };
+
+    addNewDraft(newDraftSale);
   };
 
   const netPrice = useMemo<number>(() => {
@@ -314,6 +336,7 @@ const OrderActions = ({
 
             callback(true);
             complateActiveDraft();
+            addDrafts();
             showSuccessMessage(
               messages.uz.SUCCESS_MESSAGE,
               messages.ru.SUCCESS_MESSAGE
@@ -344,6 +367,7 @@ const OrderActions = ({
 
           callback(true);
           complateActiveDraft();
+          addDrafts();
           showSuccessMessage(
             messages.uz.SUCCESS_MESSAGE,
             messages.ru.SUCCESS_MESSAGE

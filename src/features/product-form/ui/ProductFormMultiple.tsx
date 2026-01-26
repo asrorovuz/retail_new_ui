@@ -196,25 +196,34 @@ const ProductFormMultiple: FC<Props> = ({
 
   /* 🔥 BARCODE LOGIC */
   useEffect(() => {
+    if (typeof barcode !== "string") return;
     if (!barcode) return;
 
-    const catalog = catalogData?.[0];
+    // form array'dan olamiz
+    const currentProducts = methods.watch("products"); // react-hook-form watch
 
-    const newProduct = createEmptyProduct(barcode);
+    const isHasBarcode = currentProducts?.some((item: any) =>
+      item.barcodes?.some((b: any) => b.value === barcode),
+    );
 
-    if (catalog) {
-      newProduct.name = catalog.name ?? "";
-      newProduct.catalog_code = catalog?.class_code;
-      newProduct.catalog_name = catalog?.class_name;
-      newProduct.catalog = {
-        label: catalog?.class_name,
-        value: catalog?.class_code,
-        data: catalog,
-      };
+    if (!isHasBarcode) {
+      const catalog = catalogData?.[0];
+      const newProduct = createEmptyProduct(barcode);
+
+      if (catalog) {
+        newProduct.name = catalog.name ?? "";
+        newProduct.catalog_code = catalog?.class_code;
+        newProduct.catalog_name = catalog?.class_name;
+        newProduct.catalog = {
+          label: catalog?.class_name,
+          value: catalog?.class_code,
+          data: catalog,
+        };
+      }
+      append(newProduct);
+      setBarcode(null);
     }
-    append(newProduct);
-    setBarcode(null);
-  }, [barcode, catalogData, append]);
+  }, [barcode, catalogData]);
 
   return (
     <FormProvider {...methods}>
@@ -481,7 +490,7 @@ const ProductFormMultiple: FC<Props> = ({
                     <FormItem label="Код">
                       <Input
                         {...field}
-                        autoComplete="off"  
+                        autoComplete="off"
                         placeholder="Введите код"
                         className="!w-44"
                       />

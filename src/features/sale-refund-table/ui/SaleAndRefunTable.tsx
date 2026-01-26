@@ -76,7 +76,7 @@ const SaleAndRefunTable = ({
       updateDraftItemQuantity(Number(expandedRow), newVal);
       updateDraftItemTotalPrice(
         Number(expandedRow),
-        newVal * (currentItem?.priceAmount || 0)
+        newVal * (currentItem?.priceAmount || 0),
       );
     }
   };
@@ -87,7 +87,7 @@ const SaleAndRefunTable = ({
 
     updateDraftItemTotalPrice(
       Number(expandedRow),
-      newVal * (currentItem?.priceAmount || 0)
+      newVal * (currentItem?.priceAmount || 0),
     );
   };
 
@@ -95,7 +95,7 @@ const SaleAndRefunTable = ({
     return (
       activeDraft?.items?.reduce(
         (sum, current) => sum + (current?.totalAmount || 0),
-        0
+        0,
       ) ?? 0
     );
   }, [activeDraft]);
@@ -143,12 +143,12 @@ const SaleAndRefunTable = ({
                           width: header.column.getSize(),
                         }}
                         className={classNames(
-                          header.column.columnDef.meta?.headerClassName
+                          header.column.columnDef.meta?.headerClassName,
                         )}
                       >
                         {flexRender(
                           header.column.columnDef.header,
-                          header.getContext()
+                          header.getContext(),
                         )}
                       </Th>
                     );
@@ -173,9 +173,9 @@ const SaleAndRefunTable = ({
                           (type === "sale"
                             ? "text-primary"
                             : type === "refund"
-                            ? "text-red-500"
-                            : "text-green-600"),
-                        "cursor-pointer"
+                              ? "text-red-500"
+                              : "text-green-600"),
+                        "cursor-pointer",
                       )}
                     >
                       {row.getVisibleCells().map((cell) => (
@@ -184,12 +184,12 @@ const SaleAndRefunTable = ({
                           style={{ width: cell.column.getSize() }}
                           className={classNames(
                             cell.column.columnDef.meta?.bodyCellClassName,
-                            "px-3 py-2 text-sm"
+                            "px-3 py-2 text-sm",
                           )}
                         >
                           {flexRender(
                             cell.column.columnDef.cell,
-                            cell.getContext()
+                            cell.getContext(),
                           )}
                         </Td>
                       ))}
@@ -220,8 +220,8 @@ const SaleAndRefunTable = ({
                     type === "sale"
                       ? "text-primary"
                       : type === "refund"
-                      ? "text-red-500"
-                      : "text-green-600"
+                        ? "text-red-500"
+                        : "text-green-600",
                   )}
                 >
                   <FormattedNumber value={totalPrice} scale={2} /> сум{" "}
@@ -239,8 +239,8 @@ const SaleAndRefunTable = ({
                       type === "sale"
                         ? "text-primary"
                         : type === "refund"
-                        ? "text-red-500"
-                        : "text-green-600"
+                          ? "text-red-500"
+                          : "text-green-600",
                     )}
                   >
                     <FormattedNumber
@@ -265,8 +265,8 @@ const SaleAndRefunTable = ({
                       type === "sale"
                         ? "text-primary"
                         : type === "refund"
-                        ? "text-red-500"
-                        : "text-green-600"
+                          ? "text-red-500"
+                          : "text-green-600",
                     )}
                   >
                     <FormattedNumber
@@ -286,7 +286,7 @@ const SaleAndRefunTable = ({
                 expandedRow && activeDraft?.items?.length
                   ? "flex items-center justify-between"
                   : "hidden",
-                `px-2 py-2.5 bg-gray-100 border-t border-gray-200`
+                `px-2 py-2.5 bg-gray-100 border-t border-gray-200`,
               )}
             >
               <CommonDeleteDialog
@@ -308,14 +308,14 @@ const SaleAndRefunTable = ({
                   className="!w-[155px] xl:!w-[220px]"
                   value={currentItem?.priceAmount ?? 0}
                   onChange={(val) => {
-                    updateDraftItemPrice(
+                    (updateDraftItemPrice(
                       Number(expandedRow),
-                      Number(val?.target?.value)
+                      Number(val?.target?.value),
                     ),
                       updateDraftItemTotalPrice(
                         Number(expandedRow),
-                        Number(val?.target?.value) * currentItem?.quantity
-                      );
+                        Number(val?.target?.value) * currentItem?.quantity,
+                      ));
                   }}
                   onBlur={() => {
                     setIsEditing({ isOpen: false, type: "" });
@@ -379,14 +379,14 @@ const SaleAndRefunTable = ({
                     autoFocus={true}
                     value={currentItem?.quantity}
                     onChange={(val) => {
-                      updateDraftItemQuantity(
+                      (updateDraftItemQuantity(
                         Number(expandedRow),
-                        Number(val?.target?.value)
+                        Number(val?.target?.value),
                       ),
                         updateDraftItemTotalPrice(
                           Number(expandedRow),
-                          Number(val?.target?.value) * currentItem?.priceAmount
-                        );
+                          Number(val?.target?.value) * currentItem?.priceAmount,
+                        ));
                     }}
                     onBlur={() => {
                       setIsEditing({ isOpen: false, type: "" });
@@ -412,7 +412,7 @@ const SaleAndRefunTable = ({
                   <Button
                     variant="solid"
                     className={classNames(
-                      "w-12 h-12 p-3 flex items-center justify-center !bg-white hover:bg-gray-100 rounded-lg active:!bg-gray-200 text-gray-800"
+                      "w-12 h-12 p-3 flex items-center justify-center !bg-white hover:bg-gray-100 rounded-lg active:!bg-gray-200 text-gray-800",
                     )}
                     onClick={increase}
                   >
@@ -431,14 +431,14 @@ const SaleAndRefunTable = ({
                   onChange={(val) => {
                     const recalculatedQuantity =
                       Number(val?.target?.value) / currentItem?.priceAmount;
-                    updateDraftItemQuantity(
+                    (updateDraftItemQuantity(
                       Number(expandedRow),
-                      recalculatedQuantity
+                      recalculatedQuantity,
                     ),
                       updateDraftItemTotalPrice(
                         Number(expandedRow),
-                        Number(val?.target?.value)
-                      );
+                        Number(val?.target?.value),
+                      ));
                   }}
                   onBlur={() => {
                     setIsEditing({ isOpen: false, type: "" });

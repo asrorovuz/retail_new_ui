@@ -67,9 +67,8 @@ const EditProductModal: FC<ProductTableProps & EXtraPropsType> = ({
                 rate: CurrencyRateUZS,
               },
             },
-
       state: product?.warehouse_items?.[0]?.state || 0,
-      barcodes: product?.barcodes?.map((i) => i.value) || [],
+      barcodes: product?.barcodes?.map((i: any) => ({value: i?.value, count: i?.count})) || [],
       category: product?.category,
       images: product?.images?.length
         ? [

@@ -58,7 +58,7 @@ export interface Package {
 }
 
 export interface CatalogItem {
-  barcode: string;
+  barcode: { value: string; count: number };
   class_code: string;
   name: string;
   group_name: string;
@@ -92,7 +92,7 @@ export interface ProductDefaultValues {
   warehouse_items?: WarehouseItem[];
   package_measurements?: MeasurementPackage[] | [];
   vat_rate?: number | null;
-  barcodes: any[];
+  barcodes: { value: string; count: number }[];
   catalog_code?: string | null;
   catalog_name?: string | null;
   package_code: string | null;

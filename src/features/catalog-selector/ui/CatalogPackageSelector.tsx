@@ -27,7 +27,9 @@ const CatalogPackageSelector = ({
   const [selected, setSelected] = useState(value || null);
 
   const handleChange = (option: any) => {
-    multiplay ? setValue(`products.${index}.package`, option) : setValue("package", option);
+    multiplay
+      ? setValue(`products.${index}.package`, option)
+      : setValue("package", option);
     setSelected(option);
     onChange(option);
   };
@@ -57,12 +59,16 @@ const CatalogPackageSelector = ({
   }, []);
 
   useEffect(() => {
-    if (selectOption?.length > 0) {
-      handleChange(selectOption[0]);
-    }else{
-      handleChange(null);
+    // Agar hozirda tanlangan option bo'lmasa, default qilib birinchi option-ni tanlaymiz
+    if (!selected && selectOption.length > 0) {
+      const defaultOption = selectOption[0];
+      setSelected(defaultOption);
+      multiplay
+        ? setValue(`products.${index}.package`, defaultOption)
+        : setValue("package", defaultOption);
+      onChange(defaultOption);
     }
-  }, [options]);
+  }, [selectOption]);
 
   return (
     <Select

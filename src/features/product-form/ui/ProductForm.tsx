@@ -63,6 +63,7 @@ const ProductForm: FC<ProductFormType> = ({
   const { handleSubmit, control, getValues, setValue, reset, watch } =
     useForm();
   const inputWrapperRef = useRef<HTMLDivElement>(null);
+  const lastAddedBarcodeIndex = useRef<number | null>(null);
   const isCatalogApplied = useRef(false);
   const [remainder, setRemainder] = useState<number>(defaultValue?.state || 0);
   const [alertOn, setAlertOn] = useState<string | number>(0);
@@ -379,16 +380,27 @@ const ProductForm: FC<ProductFormType> = ({
   }, [catalogData]);
 
   useEffect(() => {
+    if (typeof barcode !== "string") return;
     if (!barcode) return;
 
-    const currentBarcodes = getValues("barcodes") || [];
+    const list = getValues("barcodes") || [];
 
-    if (!currentBarcodes.includes(barcode)) {
-      setValue("barcodes", [...currentBarcodes, barcode], {
+    const index = list?.findIndex((b: any) => b.value === barcode);
+
+    if (index !== -1) {
+      // ❗ countga TEGILMAYDI
+      lastAddedBarcodeIndex.current = index;
+    } else {
+      const newIndex = list.length;
+
+      setValue("barcodes", [...list, { value: barcode, count: 1 }], {
         shouldDirty: true,
       });
+
+      lastAddedBarcodeIndex.current = newIndex;
     }
-    setBarcode(null);
+
+    setBarcode(null); // loop bo‘lmasin
   }, [barcode]);
 
   useEffect(() => {
@@ -628,7 +640,7 @@ const ProductForm: FC<ProductFormType> = ({
               <Button
                 variant="plain"
                 type="button"
-                className="bg-transparent border-transparent py-0 h-auto"
+                className="bg-transparent border-transparent py-0 h-auto text-blue-500"
                 size="sm"
                 onClick={addPackage}
               >
@@ -638,7 +650,6 @@ const ProductForm: FC<ProductFormType> = ({
             {measurmentsPackages?.map((item) => (
               <div key={item.id} className="flex items-center gap-x-2">
                 <Input
-                  size="sm"
                   placeholder="Название упаковки"
                   value={item.name}
                   onChange={(e) =>
@@ -647,10 +658,10 @@ const ProductForm: FC<ProductFormType> = ({
                 />
 
                 <Input
-                  size="sm"
                   type="number"
                   placeholder="Количество в упаковке"
                   value={item.amount}
+                  className="!w-[100px]"
                   onChange={(e) =>
                     updatePackage(item.id, "amount", +e.target.value)
                   }
@@ -658,13 +669,12 @@ const ProductForm: FC<ProductFormType> = ({
 
                 {measurmentsPackages?.length > 1 && (
                   <Button
-                    size="sm"
                     type="button"
                     variant="solid"
-                    className="bg-red-500 hover:bg-red-400 active:bg-red-400"
+                    className="bg-red-500 hover:bg-red-400 active:bg-red-400 px-3"
                     onClick={() => removePackage(item.id)}
                   >
-                    <FiDelete />
+                    <FiDelete size={20} />
                   </Button>
                 )}
               </div>

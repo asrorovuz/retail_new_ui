@@ -22,7 +22,7 @@ const AddProductModal: FC<ProductModalProps> = ({
     useState<ProductDefaultValues | null>(null);
   const { data: catalogData, isLoading } = useCatalogSearchApi(
     barcode || "",
-    isOpen
+    isOpen,
   );
   const openModal = () => {
     setIsOpen(true);
@@ -43,7 +43,7 @@ const AddProductModal: FC<ProductModalProps> = ({
 
     setDefaultValues({
       name: "",
-      barcodes: [],
+      barcodes: [{ value: new Date().getTime().toString().slice(5, 13), count: 1 }],
       catalog_code: null,
       catalog_name: null,
       package_code: null,
@@ -71,7 +71,6 @@ const AddProductModal: FC<ProductModalProps> = ({
       is_default: true,
     });
   }, [isOpen]);
-
 
   return (
     <div>

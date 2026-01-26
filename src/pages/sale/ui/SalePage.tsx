@@ -185,6 +185,7 @@ const SalePage = () => {
               draft={draftSales}
               activeDraft={activeDraft}
               payModal={payModal}
+              addNewDraft={addDraftSale}
               setPayModal={setPayModal}
               deleteDraft={deleteDraftSale}
               updateDraftDiscount={updateDraftSaleDiscount}
