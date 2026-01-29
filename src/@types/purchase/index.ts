@@ -12,7 +12,7 @@ export type DraftPurchaseItemSchema = {
   productId: number;
   productName: string;
   // productPackageId: number;
-  productPackageName: string;
+  productPackageName: string | null;
   priceAmount: number;
   priceTypeId: number;
   quantity: number;

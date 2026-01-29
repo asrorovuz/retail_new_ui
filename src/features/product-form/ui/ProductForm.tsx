@@ -613,6 +613,12 @@ const ProductForm: FC<ProductFormType> = ({
                   hideDropdownIndicator={true}
                   getOptionLabel={(option) => option?.label}
                   getOptionValue={(option) => String(option?.value)}
+                  value={
+                    optionMeasurement.find(
+                      (opt) => opt.value === field.value,
+                    ) || null
+                  }
+                  onChange={(option) => field.onChange(option?.value)}
                 />
               </FormItem>
             )}

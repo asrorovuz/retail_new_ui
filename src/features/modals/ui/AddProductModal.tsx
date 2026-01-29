@@ -63,7 +63,7 @@ const AddProductModal: FC<ProductModalProps> = ({
       isActive: true,
       sku: null,
       code: null,
-      measurement_name: "Штук",
+      measurement_name: "шт",
       vat_rate: null,
       prices,
       count: 1,

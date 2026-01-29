@@ -282,8 +282,10 @@ import { useInputGroup } from "../InputGroup/context";
 import { CONTROL_SIZES } from "../utils/constants";
 import type { CommonProps, TypeAttributes } from "../@types/common";
 
+type NumberMode = "int" | "float";
 export interface InputProps
-  extends CommonProps,
+  extends
+    CommonProps,
     Omit<
       React.InputHTMLAttributes<HTMLInputElement | HTMLTextAreaElement>,
       "size" | "prefix" | "value" | "onChange"
@@ -294,6 +296,7 @@ export interface InputProps
   disabled?: boolean;
   invalid?: boolean;
   prefix?: string | ReactNode;
+  numberMode?: NumberMode;
   rows?: number;
   ref?: React.Ref<ElementType | HTMLInputElement | HTMLTextAreaElement>;
   size?: TypeAttributes.ControlSize;
@@ -321,6 +324,7 @@ const Input = (props: InputProps) => {
     type = "text",
     ref,
     rows,
+    numberMode,
     style,
     startSuffixClassName,
     endSuffixClassName,
@@ -335,13 +339,16 @@ const Input = (props: InputProps) => {
   } = props;
 
   const [displayValue, setDisplayValue] = useState<string>(
-    value ? String(value) : ""
+    value ? String(value) : "",
   );
 
   const inputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const onlyValidNumbers = (val: string) => val.replace(/[^0-9.]/g, "");
+  const onlyInt = (val: string) => val.replace(/[^0-9]/g, "");
+
+  const onlyFloat = (val: string) => val.replace(/[^0-9.]/g, "");
 
   const formatValue = (val: string) => {
     if (val.includes(".")) {
@@ -358,7 +365,7 @@ const Input = (props: InputProps) => {
       setDisplayValue(space ? formatValue(val) : onlyValidNumbers(val));
     } else if (value !== undefined && value !== null) {
       setDisplayValue(
-        space ? String(value) : String(value).replace(/\s+/g, "")
+        space ? String(value) : String(value).replace(/\s+/g, ""),
       );
     }
   }, [value, type, space]);
@@ -374,7 +381,7 @@ const Input = (props: InputProps) => {
   }, [autoFocus, textArea]);
 
   const handleChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     let val = e.target.value;
 
@@ -385,9 +392,20 @@ const Input = (props: InputProps) => {
         raw = raw.replace(/^0+/, "");
       }
 
-      const dotCount = (raw.match(/\./g) || []).length;
-      if (dotCount > 1) {
-        raw = raw.slice(0, raw.lastIndexOf("."));
+      // const dotCount = (raw.match(/\./g) || []).length;
+      // if (dotCount > 1) {
+      //   raw = raw.slice(0, raw.lastIndexOf("."));
+      // }
+      if (numberMode === "int") {
+        raw = onlyInt(val);
+      } else {
+        raw = onlyFloat(val);
+
+        // faqat bitta nuqta
+        const dotCount = (raw.match(/\./g) || []).length;
+        if (dotCount > 1) {
+          raw = raw.slice(0, raw.lastIndexOf("."));
+        }
       }
 
       const formatted = space ? formatValue(raw) : raw;
@@ -411,7 +429,7 @@ const Input = (props: InputProps) => {
   };
 
   const handleFocus = (
-    e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     e.target.select();
     onFocus?.(e as React.FocusEvent<HTMLInputElement>);
@@ -432,7 +450,7 @@ const Input = (props: InputProps) => {
 
   const inputWrapperClass = classNames(
     "input-wrapper",
-    prefix || suffix ? className : ""
+    prefix || suffix ? className : "",
   );
   const inputClass = classNames(
     inputDefaultClass,
@@ -441,7 +459,7 @@ const Input = (props: InputProps) => {
     !prefix && !suffix ? className : "",
     disabled && "input-disabled",
     isInputInvalid && "input-invalid",
-    textArea && "input-textarea"
+    textArea && "input-textarea",
   );
 
   const prefixNode = useRef<HTMLDivElement>(null);
@@ -533,8 +551,8 @@ const Input = (props: InputProps) => {
   return textArea
     ? renderTextArea
     : prefix || suffix
-    ? renderAffixInput
-    : renderInput;
+      ? renderAffixInput
+      : renderInput;
 };
 
 export default Input;

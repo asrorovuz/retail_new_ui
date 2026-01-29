@@ -13,13 +13,14 @@ import classNames from "@/shared/lib/classNames";
 import TBody from "@/shared/ui/kit/Table/TBody";
 import type { DraftSaleSchema } from "@/@types/sale";
 import Td from "@/shared/ui/kit/Table/Td";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import FormattedNumber from "@/shared/ui/kit-pro/numeric-format/NumericFormat";
 import { HiTrash } from "react-icons/hi";
 import Empty from "@/shared/ui/kit-pro/empty/Empty";
 import type { DraftRefundSchema } from "@/@types/refund";
 import { CommonDeleteDialog } from "@/widgets/ui/delete-dialog/CommonDeleteDialog";
 import type { DraftPurchaseSchema } from "@/@types/purchase";
+import { getActivePrice } from "@/shared/lib/getActivatePrice";
 
 type PropsType = {
   type: "sale" | "refund" | "purchase";
@@ -28,6 +29,8 @@ type PropsType = {
   activeDraft: DraftSaleSchema | DraftRefundSchema | DraftPurchaseSchema;
   expandedRow: string | null;
   expendedId: number | null;
+  setSelectedRows?: any;
+  selectedRows?: any;
   setExpandedRow: React.Dispatch<React.SetStateAction<string | null>>;
   setExpandedId: React.Dispatch<React.SetStateAction<number | null>>;
   deleteDraftItem: (val: number) => void;
@@ -44,11 +47,14 @@ const SaleAndRefunTable = ({
   setExpandedId,
   setExpandedRow,
   expandedRow,
+  selectedRows,
+  setSelectedRows,
   deleteDraftItem,
   updateDraftItemPrice,
   updateDraftItemTotalPrice,
   updateDraftItemQuantity,
 }: PropsType) => {
+  const quantityRef = useRef<HTMLInputElement | null>(null);
   const [isEditing, setIsEditing] = useState({
     isOpen: false,
     type: "price",
@@ -73,22 +79,18 @@ const SaleAndRefunTable = ({
     }
 
     if (newVal > 0) {
+      const price = getActivePrice(currentItem, type, selectedRows);
       updateDraftItemQuantity(Number(expandedRow), newVal);
-      updateDraftItemTotalPrice(
-        Number(expandedRow),
-        newVal * (currentItem?.priceAmount || 0),
-      );
+      updateDraftItemTotalPrice(Number(expandedRow), newVal * price);
     }
   };
 
   const increase = () => {
     const newVal = (currentItem?.quantity || 0) + 1;
     updateDraftItemQuantity(Number(expandedRow), newVal);
+    const price = getActivePrice(currentItem, type, selectedRows);
 
-    updateDraftItemTotalPrice(
-      Number(expandedRow),
-      newVal * (currentItem?.priceAmount || 0),
-    );
+    updateDraftItemTotalPrice(Number(expandedRow), newVal * price);
   };
 
   const totalPrice = useMemo(() => {
@@ -110,9 +112,29 @@ const SaleAndRefunTable = ({
     }
   }, [expendedId]);
 
+  useEffect(() => {
+    if (!expandedRow || !currentItem) return;
+
+    setIsEditing({ isOpen: true, type: "quantity" });
+
+    const id = requestAnimationFrame(() => {
+      quantityRef.current?.focus();
+      quantityRef.current?.select();
+    });
+
+    return () => cancelAnimationFrame(id);
+  }, [expandedRow, currentItem]);
+
   const table = useReactTable({
     data: activeDraft?.items ?? [],
-    columns: columns(setMark),
+    columns: columns(
+      setMark,
+      activeDraft,
+      type,
+      selectedRows,
+      setSelectedRows,
+      updateDraftItemTotalPrice,
+    ),
     getRowCanExpand: () => true,
     getCoreRowModel: getCoreRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
@@ -134,7 +156,7 @@ const SaleAndRefunTable = ({
             <THead className={"sticky top-0 bg-white"}>
               {table.getHeaderGroups().map((headerGroup) => (
                 <Tr key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => {
+                  {headerGroup.headers.map((header, ind) => {
                     return (
                       <Th
                         key={header.id}
@@ -144,6 +166,7 @@ const SaleAndRefunTable = ({
                         }}
                         className={classNames(
                           header.column.columnDef.meta?.headerClassName,
+                          ind ? "text-right" : "text-left",
                         )}
                       >
                         {flexRender(
@@ -308,14 +331,21 @@ const SaleAndRefunTable = ({
                   className="!w-[155px] xl:!w-[220px]"
                   value={currentItem?.priceAmount ?? 0}
                   onChange={(val) => {
-                    (updateDraftItemPrice(
+                    const newPrice = Number(val?.target?.value);
+                    const price = getActivePrice(
+                      {
+                        ...currentItem,
+                        priceAmount: newPrice,
+                      },
+                      type,
+                      selectedRows,
+                    );
+
+                    updateDraftItemPrice(Number(expandedRow), newPrice);
+                    updateDraftItemTotalPrice(
                       Number(expandedRow),
-                      Number(val?.target?.value),
-                    ),
-                      updateDraftItemTotalPrice(
-                        Number(expandedRow),
-                        Number(val?.target?.value) * currentItem?.quantity,
-                      ));
+                      price * currentItem.quantity,
+                    );
                   }}
                   onBlur={() => {
                     setIsEditing({ isOpen: false, type: "" });
@@ -373,20 +403,28 @@ const SaleAndRefunTable = ({
 
                 {isEditing?.isOpen && isEditing?.type === "quantity" ? (
                   <Input
+                    ref={quantityRef}
                     size="md"
                     type="number"
                     className="!w-[154px] xl:!w-[100px]"
                     autoFocus={true}
+                    numberMode={
+                      currentItem?.productPackageName === "шт" ? "int" : "float"
+                    }
                     value={currentItem?.quantity}
                     onChange={(val) => {
-                      (updateDraftItemQuantity(
+                      const qty = Number(val?.target?.value);
+                      const price = getActivePrice(
+                        currentItem,
+                        type,
+                        selectedRows,
+                      );
+
+                      updateDraftItemQuantity(Number(expandedRow), qty);
+                      updateDraftItemTotalPrice(
                         Number(expandedRow),
-                        Number(val?.target?.value),
-                      ),
-                        updateDraftItemTotalPrice(
-                          Number(expandedRow),
-                          Number(val?.target?.value) * currentItem?.priceAmount,
-                        ));
+                        qty * price,
+                      );
                     }}
                     onBlur={() => {
                       setIsEditing({ isOpen: false, type: "" });
@@ -404,7 +442,7 @@ const SaleAndRefunTable = ({
                     }
                     className="w-[80px] xl:w-[100px] h-12 text-[14px] xl:text-base font-medium text-gray-800 flex items-center justify-center bg-white rounded-lg"
                   >
-                    <FormattedNumber value={currentItem?.quantity} scale={2} />
+                    <FormattedNumber value={currentItem?.quantity} scale={3} />
                   </div>
                 )}
 
@@ -429,8 +467,13 @@ const SaleAndRefunTable = ({
                   className="!w-[155px] xl:!w-[220px]"
                   value={currentItem?.totalAmount}
                   onChange={(val) => {
+                    const price = getActivePrice(
+                      currentItem,
+                      type,
+                      selectedRows,
+                    );
                     const recalculatedQuantity =
-                      Number(val?.target?.value) / currentItem?.priceAmount;
+                      Number(val?.target?.value) / price;
                     (updateDraftItemQuantity(
                       Number(expandedRow),
                       recalculatedQuantity,

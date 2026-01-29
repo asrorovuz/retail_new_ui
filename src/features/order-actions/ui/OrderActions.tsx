@@ -1,6 +1,6 @@
 import { Button } from "@/shared/ui/kit";
-import { MdOutlineDiscount } from "react-icons/md";
-import { CiSquareMinus } from "react-icons/ci";
+// import { MdOutlineDiscount } from "react-icons/md";
+// import { CiSquareMinus } from "react-icons/ci";
 import type {
   DraftSalePaymentAmountSchema,
   DraftSaleSchema,
@@ -45,7 +45,10 @@ import {
   useRegisterPurchaseApi,
   useUpdatePurchasedApi,
 } from "@/entities/purchase/repository";
-import type { DraftPurchaseSchema, RegisterPurchaseModel } from "@/@types/purchase";
+import type {
+  DraftPurchaseSchema,
+  RegisterPurchaseModel,
+} from "@/@types/purchase";
 import { PaymentTypes } from "@/app/constants/payment.types";
 
 type OrderActionType = {
@@ -55,6 +58,7 @@ type OrderActionType = {
   activeSelectPaymetype: number;
   payModal: boolean;
   addNewDraft: any;
+  selectedRows?: any;
   setPayModal: (open: boolean) => void;
   deleteDraft: (ind: number) => void;
   updateDraftDiscount: (val: number) => void;
@@ -68,6 +72,7 @@ const OrderActions = ({
   activeDraft,
   activeSelectPaymetype,
   payModal,
+  selectedRows,
   setPayModal,
   addNewDraft,
   deleteDraft,
@@ -146,7 +151,7 @@ const OrderActions = ({
       )?.amounts.reduce(
         (acc: number, payment: DraftSalePaymentAmountSchema) =>
           acc + payment?.amount,
-        0
+        0,
       ) ?? 0
     );
   }, [(type === "sale" ? activeDraft?.payment : activeDraft?.payout)?.amounts]);
@@ -181,7 +186,7 @@ const OrderActions = ({
       const activePaymentData = paymentData?.filter((elem) => elem?.is_enabled);
       if (
         [FiscalizedProviderTypeEPos, FiscalizedProviderTypeHippoPos].includes(
-          selectFiscalized?.type
+          selectFiscalized?.type,
         ) &&
         (paymeType.includes(5) || paymeType.includes(6)) &&
         activePaymentData?.length > 0
@@ -193,7 +198,7 @@ const OrderActions = ({
           onSuccess() {
             showSuccessMessage(
               messages.uz.SUCCESS_MESSAGE,
-              messages.ru.SUCCESS_MESSAGE
+              messages.ru.SUCCESS_MESSAGE,
             );
             handleCancelFiscalization();
             setPaymeType([]);
@@ -216,7 +221,7 @@ const OrderActions = ({
 
   function onSubmitPaymentHandler(
     paymentAmounts: PaymentAmount[],
-    callback: (success: boolean) => void
+    callback: (success: boolean) => void,
   ) {
     // init payload
     const payload: RegisterSaleModel &
@@ -248,15 +253,23 @@ const OrderActions = ({
 
       // append sale and refund item
       const draftItems = activeDraft?.items ?? [];
-      for (let i = 0; i < draftItems.length; i++) {
+      for (let i = 0; i < draftItems?.length; i++) {
         const draftItem = draftItems[i];
+
+        const isActiveBulk =
+          type === "sale" && !!selectedRows?.[draftItem?.productId];
+
+        const priceAmount = isActiveBulk
+          ? (draftItem?.priceAmoutBulk ?? draftItem?.priceAmount)
+          : draftItem?.priceAmount;
+console.log(priceAmount, isActiveBulk, !!selectedRows?.[draftItem?.productId], activeDraft?.items);
 
         const saleAndRefunItem: SaleItemModel = {
           product_id: draftItem.productId,
           warehouse_id: warehouseId ?? null, // todo set default warehouse id
           quantity: draftItem.quantity,
           price: {
-            amount: draftItem.priceAmount,
+            amount: priceAmount,
             currency_code: nationalCurrency?.code, // todo set national currency id
           },
           price_type_id: draftItem.priceTypeId, // todo save price type id in store and set
@@ -302,15 +315,15 @@ const OrderActions = ({
       type === "sale"
         ? registerSaleMutate
         : type === "refund"
-        ? registerRefundMutate
-        : registerPurchaseMutate;
+          ? registerRefundMutate
+          : registerPurchaseMutate;
 
     const updateRegister =
       type === "sale"
         ? updateSale
         : type === "refund"
-        ? updateRefund
-        : updatePurchase;
+          ? updateRefund
+          : updatePurchase;
 
     // register sale
     if (activeDraft?.id) {
@@ -320,10 +333,12 @@ const OrderActions = ({
           onSuccess: (data: any) => {
             if (data?.sale?.id || data?.purchase?.id || data?.refund?.id) {
               setSaleId(
-                data?.sale?.id || data?.purchase?.id || data?.refund?.id
+                data?.sale?.id || data?.purchase?.id || data?.refund?.id,
               );
               if (settings?.auto_print_receipt && settings?.printer_name) {
-                onPrint(data?.sale?.id || data?.purchase?.id || data?.refund?.id);
+                onPrint(
+                  data?.sale?.id || data?.purchase?.id || data?.refund?.id,
+                );
               } else if (
                 !settings?.auto_print_receipt &&
                 settings?.printer_name
@@ -339,14 +354,14 @@ const OrderActions = ({
             addDrafts();
             showSuccessMessage(
               messages.uz.SUCCESS_MESSAGE,
-              messages.ru.SUCCESS_MESSAGE
+              messages.ru.SUCCESS_MESSAGE,
             );
           },
           onError: (error) => {
             showErrorMessage(error);
             callback(true);
           },
-        }
+        },
       );
     } else {
       registerMutate(payload, {
@@ -370,7 +385,7 @@ const OrderActions = ({
           addDrafts();
           showSuccessMessage(
             messages.uz.SUCCESS_MESSAGE,
-            messages.ru.SUCCESS_MESSAGE
+            messages.ru.SUCCESS_MESSAGE,
           );
         },
         onError: (error) => {
@@ -400,25 +415,25 @@ const OrderActions = ({
             printer_name: settings?.printer_name ?? "",
           }
         : type === "purchase"
-        ? {
-            purchase_id: id ?? saleId,
-            printer_name: settings?.printer_name ?? "",
-          }
-        : {
-            refund_id: id ?? saleId,
-            printer_name: settings?.printer_name ?? "",
-          };
-          
+          ? {
+              purchase_id: id ?? saleId,
+              printer_name: settings?.printer_name ?? "",
+            }
+          : {
+              refund_id: id ?? saleId,
+              printer_name: settings?.printer_name ?? "",
+            };
+
     printCheck(
       {
         path: `${type}-receipt-${settings?.receipt_size || 80}`,
-        payload
+        payload,
       },
       {
         onSuccess() {
           showSuccessMessage(
             messages.uz.SUCCESS_MESSAGE,
-            messages.ru.SUCCESS_MESSAGE
+            messages.ru.SUCCESS_MESSAGE,
           );
           handleCancelPrint();
         },
@@ -426,7 +441,7 @@ const OrderActions = ({
           showErrorMessage(error);
           handleCancelPrint();
         },
-      }
+      },
     );
   };
 
@@ -439,10 +454,9 @@ const OrderActions = ({
       setSelectFiscalized(filterDataFiscal[0]);
     }
   }, [filterDataFiscal]);
-  
 
   return (
-    <div className="p-2 bg-gray-100 rounded-2xl flex gap-x-2">
+    <div className="p-2 bg-gray-100 rounded-2xl flex gap-x-1">
       <CommonDeleteDialog
         description="Удалить корзину? Действие нельзя будет отменить"
         onDelete={onDeleteActivedraft}
@@ -450,8 +464,8 @@ const OrderActions = ({
         <Button
           variant="plain"
           size="sm"
-          icon={<CiSquareMinus />}
-          className="!text-red-400 bg-white w-full"
+          // icon={<CiSquareMinus size={16}/>}
+          className="!text-red-400 bg-white w-full text-xs"
         >
           Oчистка
         </Button>
@@ -461,15 +475,20 @@ const OrderActions = ({
         disabled={type === "refund" || type === "purchase"}
         size="sm"
         onClick={() => setDiscountModal(true)}
-        icon={<MdOutlineDiscount />}
+        // icon={<MdOutlineDiscount size={16}/>}
         className={classNames(
-          "bg-white w-full",
-          activeSelectPaymetype === 0 && "text-primary"
+          "bg-white w-full  text-xs",
+          activeSelectPaymetype === 0 && "text-primary",
         )}
       >
         Скидка
       </Button>
-      <Button size="sm" onClick={onSubmit} variant="solid" className="w-full">
+      <Button
+        size="sm"
+        onClick={onSubmit}
+        variant="solid"
+        className="w-full  text-xs"
+      >
         Оформить
       </Button>
 

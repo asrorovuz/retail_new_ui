@@ -12,8 +12,9 @@ export type DraftRefundItemSchema = {
   productId: number;
   productName: string;
   // productPackageId: number;
-  productPackageName: string;
+  productPackageName: string | null;
   priceAmount: number;
+  priceAmoutBulk?: number;
   priceTypeId: number;
   quantity: number;
   totalAmount: number;

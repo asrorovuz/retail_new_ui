@@ -176,7 +176,7 @@ const RefundPage = () => {
   useEffect(() => {
     if (isSuccess && !isFetching) {
       if (findBarcodeData) {
-        handleScannedProduct(findBarcodeData, "refund", barcodeMark);
+        handleScannedProduct(findBarcodeData, "refund", setExpandedId, barcodeMark );
         setBarcode(null);
       }
     }
@@ -202,7 +202,7 @@ const RefundPage = () => {
 
   return (
     <div className="flex justify-between gap-x-2 h-[calc(100vh-90px)]">
-      <div className="bg-white p-3 rounded-2xl w-3/5">
+      <div className="bg-white p-3 rounded-2xl w-full">
         <Cashbox
           type={"refund"}
           drafts={draftRefunds}
@@ -229,7 +229,7 @@ const RefundPage = () => {
           setExpandedId={setExpandedId}
         />
       </div>
-      <div className="bg-white p-3 rounded-2xl w-2/5">
+      <div className="bg-white p-3 rounded-2xl w-[320px]">
         <div className="rounded-2xl mb-2">
           <SearchProduct search={search} setSearch={setSearch} />
         </div>
@@ -259,6 +259,7 @@ const RefundPage = () => {
               draft={draftRefunds}
               activeDraft={activeDraft}
               payModal={payModal}
+              addNewDraft={addDraftRefund}
               setPayModal={setPayModal}
               deleteDraft={deleteDraftRefund}
               updateDraftDiscount={updateDraftRefundDiscount}

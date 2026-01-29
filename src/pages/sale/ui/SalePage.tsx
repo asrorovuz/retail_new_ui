@@ -33,6 +33,7 @@ const SalePage = () => {
   const [expendedId, setExpandedId] = useState<number | null>(null);
   const [value, setValue] = useState<string>("0");
   const [mark, setMark] = useState<number | null>(null);
+  const [selectedRows, setSelectedRows] = useState<Record<number, boolean>>({});
   const [payModal, setPayModal] = useState(false);
   const [activeOnlyType, setActiveOnlyType] = useState({
     isOpen: false,
@@ -107,7 +108,7 @@ const SalePage = () => {
   useEffect(() => {
     if (isSuccess && !isFetching && !payModal) {
       if (findBarcodeData) {
-        handleScannedProduct(findBarcodeData, "sale", barcodeMark);
+        handleScannedProduct(findBarcodeData, "sale", setExpandedId, selectedRows, barcodeMark);
         setBarcode(null); // qayta so‘rov yubormaslik uchun tozalaymiz
       }
     }
@@ -127,7 +128,7 @@ const SalePage = () => {
 
   return (
     <div className="flex justify-between gap-x-2 h-[calc(100vh-90px)]">
-      <div className="bg-white p-3 rounded-2xl w-[623px] shrink-0 xl:w-3/5">
+      <div className="bg-white p-3 rounded-2xl w-full">
         <Cashbox
           type={"sale"}
           drafts={draftSales}
@@ -141,6 +142,8 @@ const SalePage = () => {
           activeDraft={activeDraft}
           expandedRow={expandedRow}
           setExpandedRow={setExpandedRow}
+          selectedRows={selectedRows}
+          setSelectedRows={setSelectedRows}
           expendedId={expendedId}
           setExpandedId={setExpandedId}
           deleteDraftItem={deleteDraftSaleItem}
@@ -150,12 +153,13 @@ const SalePage = () => {
         />
         <FavouriteProduct
           type="sale"
+          selectedRows={selectedRows}
           setExpandedRow={setExpandedRow}
           setExpandedId={setExpandedId}
         />
       </div>
 
-      <div className="bg-white p-3 rounded-2xl flex-1 xl:w-2/5">
+      <div className="bg-white p-3 rounded-2xl w-[320px]">
         <div className="rounded-2xl mb-2">
           <SearchProduct search={search} setSearch={setSearch} />
         </div>
@@ -185,6 +189,7 @@ const SalePage = () => {
               draft={draftSales}
               activeDraft={activeDraft}
               payModal={payModal}
+              selectedRows={selectedRows}
               addNewDraft={addDraftSale}
               setPayModal={setPayModal}
               deleteDraft={deleteDraftSale}
@@ -201,6 +206,7 @@ const SalePage = () => {
             <SearchProductTable
               type="sale"
               debouncedSearch={debouncedSearch}
+              selectedRows={selectedRows}
               data={data ?? []}
               setExpandedRow={setExpandedRow}
               setExpandedId={setExpandedId}
