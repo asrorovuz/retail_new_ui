@@ -22,7 +22,6 @@ const BarcodeForm = ({
   setValue,
 }: BarcodeFormProps) => {
   const { t } = useTranslation();
-  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const countRefs = useRef<(HTMLInputElement | null)[]>([]);
   const { fields, append, remove } = useFieldArray({
     name: fieldName,
@@ -42,14 +41,16 @@ const BarcodeForm = ({
     remove(index);
   };
 
+  // Count inputga fokus berish
   useEffect(() => {
     if (focusedIndex === null) return;
 
-    const input = inputRefs.current[focusedIndex];
-    if (input) {
-      input.focus();
+    const el = countRefs.current[focusedIndex];
+    if (el) {
+      el.focus();
+      el.select();
     }
-  }, [fields.length]);
+  }, [focusedIndex, fields.length]);;
 
   useEffect(() => {
     if (!barcode || focusedIndex === null) return;

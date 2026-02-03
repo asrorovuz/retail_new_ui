@@ -62,7 +62,6 @@ const ProductForm: FC<ProductFormType> = ({
 }) => {
   const { handleSubmit, control, getValues, setValue, reset, watch } =
     useForm();
-  const inputWrapperRef = useRef<HTMLDivElement>(null);
   const lastAddedBarcodeIndex = useRef<number | null>(null);
   const isCatalogApplied = useRef(false);
   const [remainder, setRemainder] = useState<number>(defaultValue?.state || 0);
@@ -72,7 +71,7 @@ const ProductForm: FC<ProductFormType> = ({
   const [measurmentsPackages, setMeasurmentPackages] = useState<
     MeasurementPackage[]
   >([
-    { id: Date.now(), name: "", amount: 0 }, // default bitta
+    { id: Date.now(), name: "", amount: 1 }, // default bitta
   ]);
 
   const { wareHouseId } = useSettingsStore((s) => s);
@@ -115,12 +114,6 @@ const ProductForm: FC<ProductFormType> = ({
 
   const handleClick = (value: boolean) => {
     setIsShow(value);
-    if (value && inputWrapperRef.current) {
-      inputWrapperRef.current.scrollIntoView({
-        behavior: "smooth",
-        block: "center",
-      });
-    }
   };
 
   const options = useMemo<VatRateSelectorOption[]>(
@@ -732,6 +725,7 @@ const ProductForm: FC<ProductFormType> = ({
           {isShow ? (
             <>
               <Controller
+              
                 name={`catalog_code`}
                 control={control}
                 render={({ field }) => {

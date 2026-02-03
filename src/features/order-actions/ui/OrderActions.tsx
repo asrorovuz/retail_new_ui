@@ -259,10 +259,9 @@ const OrderActions = ({
         const isActiveBulk =
           type === "sale" && !!selectedRows?.[draftItem?.productId];
 
-        const priceAmount = isActiveBulk
-          ? (draftItem?.priceAmoutBulk ?? draftItem?.priceAmount)
+        const priceAmount = isActiveBulk && draftItem?.priceAmoutBulk
+          ? draftItem?.priceAmoutBulk
           : draftItem?.priceAmount;
-console.log(priceAmount, isActiveBulk, !!selectedRows?.[draftItem?.productId], activeDraft?.items);
 
         const saleAndRefunItem: SaleItemModel = {
           product_id: draftItem.productId,

@@ -180,7 +180,7 @@ const DateTimepicker = (props: DateTimepickerProps) => {
         setFocused(true)
     }
 
-    const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         openDropdown()
 
         const date = parseDate(event.target.value)

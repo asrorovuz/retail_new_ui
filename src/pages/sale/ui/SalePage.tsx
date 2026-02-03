@@ -115,15 +115,14 @@ const SalePage = () => {
   }, [isSuccess, findBarcodeData, isFetching]);
 
   useEffect(() => {
-    if (isError && !payModal) {
-      if (settings?.enable_create_unknown_product) {
+    if (!isError || payModal) return;
+    if (settings?.enable_create_unknown_product) {
         setBarcode(barcode);
         setIsOpenAddProduct(true);
       } else {
         showErrorLocalMessage("Товар не найден");
         setBarcode(null);
       }
-    }
   }, [isError]);
 
   return (

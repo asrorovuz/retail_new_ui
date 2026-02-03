@@ -62,9 +62,9 @@ export const handleScannedProduct = (
     ...(barcodeMark && barcodeMark.length > 14 ? { marks: [barcodeMark] } : {}),
   };
 
-  if(setExpandedId) {
-    setExpandedId(product?.id)
-  }
+  requestAnimationFrame(() => {
+    setExpandedId?.(product.id);
+  });
   addDraftItem(newItem);
 };
 

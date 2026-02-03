@@ -112,18 +112,21 @@ const SaleAndRefunTable = ({
     }
   }, [expendedId]);
 
-  useEffect(() => {
-    if (!expandedRow || !currentItem) return;
+  // barcode focuslanishi kerak.
+  // useEffect(() => {
+  //   if (!expandedRow) return;
+  //   if (!currentItem) return;
+  //   if (isEditing.isOpen && isEditing.type !== "quantity") return;
 
-    setIsEditing({ isOpen: true, type: "quantity" });
+  //   setIsEditing({ isOpen: true, type: "quantity" });
 
-    const id = requestAnimationFrame(() => {
-      quantityRef.current?.focus();
-      quantityRef.current?.select();
-    });
+  //   const id = requestAnimationFrame(() => {
+  //     quantityRef.current?.focus();
+  //     quantityRef.current?.select();
+  //   });
 
-    return () => cancelAnimationFrame(id);
-  }, [expandedRow, currentItem]);
+  //   return () => cancelAnimationFrame(id);
+  // }, [expandedRow]);
 
   const table = useReactTable({
     data: activeDraft?.items ?? [],
@@ -154,7 +157,7 @@ const SaleAndRefunTable = ({
             compact={true}
           >
             <THead className={"sticky top-0 bg-white"}>
-              {table.getHeaderGroups().map((headerGroup) => (
+              {table?.getHeaderGroups().map((headerGroup) => (
                 <Tr key={headerGroup.id}>
                   {headerGroup.headers.map((header, ind) => {
                     return (
@@ -494,9 +497,10 @@ const SaleAndRefunTable = ({
                 />
               ) : (
                 <div
-                  onClick={() =>
-                    setIsEditing({ isOpen: true, type: "totalPrice" })
-                  }
+                  onClick={() => {
+                    if (currentItem?.productPackageName?.toLowerCase() !== "шт")
+                      setIsEditing({ isOpen: true, type: "totalPrice" });
+                  }}
                   className=" xl:w-[220px] bg-white px-3 py-3 flex items-center justify-between gap-2 rounded-lg"
                 >
                   <span className="text-[14px] xl:text-base font-normal">

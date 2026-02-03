@@ -24,6 +24,19 @@ export const columns = (
   const cols: (ColumnDef<any> | null)[] = [
     {
       header: () => (
+        <div className="text-xs xl:text-sm font-medium text-gray-600">№</div>
+      ),
+      accessorKey: "index",
+      cell: ({ row }) => {
+        return <span>{row.index + 1}</span>;
+      },
+      meta: {
+        bodyCellClassName: "text-start",
+        headerClassName: "text-xs xl:text-xs font-medium text-gray-800",
+      },
+    },
+    {
+      header: () => (
         <div className="text-xs xl:text-sm font-medium text-gray-600">
           НОМЕНКЛАТУРА
         </div>
@@ -47,27 +60,19 @@ export const columns = (
         bodyCellClassName: "text-right min-w-full max-w-full",
       },
       cell: ({ row }) => {
-        return (
-          <FormattedNumber value={row.original.priceAmount ?? 0} scale={2} />
-        );
+        let reallyPrice = row.original.priceAmount;
+        if (type === "sale") {
+          if (
+            selectedRows[row.original.productId] &&
+            row.original.priceAmoutBulk
+          ) {
+            reallyPrice = row.original.priceAmoutBulk;
+          }
+        }
+
+        return <FormattedNumber value={reallyPrice ?? 0} scale={2} />;
       },
     },
-    type === "sale" ? {
-      header: () => (
-        <div className="text-xs xl:text-sm font-medium text-gray-600">
-          ОПТ. ЦЕНА
-        </div>
-      ),
-      accessorKey: "priceAmountBulk",
-      meta: {
-        bodyCellClassName: "text-right min-w-full max-w-full",
-      },
-      cell: ({ row }) => {
-        return (
-          <FormattedNumber value={row.original.priceAmoutBulk ?? 0} scale={2} />
-        );
-      },
-    } : null,
     {
       header: () => (
         <div className="text-xs xl:text-sm font-medium text-gray-600">
@@ -142,9 +147,10 @@ export const columns = (
 
                     // 2️⃣ totalPrice ni qayta hisoblash
                     if (updateDraftItemTotalPrice) {
-                      const price = checked && item.priceAmoutBulk > 0
-                        ? item.priceAmoutBulk
-                        : item.priceAmount;
+                      const price =
+                        checked && item.priceAmoutBulk > 0
+                          ? item.priceAmoutBulk
+                          : item.priceAmount;
 
                       const newTotal = item.quantity * price;
 
@@ -178,9 +184,10 @@ export const columns = (
                   }));
 
                   if (updateDraftItemTotalPrice) {
-                    const price = checked && product.priceAmoutBulk > 0
-                      ? product.priceAmoutBulk // OPT
-                      : product.priceAmount; // ODDIY
+                    const price =
+                      checked && product.priceAmoutBulk > 0
+                        ? product.priceAmoutBulk // OPT
+                        : product.priceAmount; // ODDIY
 
                     const newTotal = product.quantity * price;
 

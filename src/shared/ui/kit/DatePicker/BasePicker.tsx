@@ -53,7 +53,7 @@ interface BasePickerProps extends CommonProps, BasePickerSharedProps {
     inputLabel?: string
     onKeyDown?: (event: KeyboardEvent<HTMLInputElement>) => void
     onClear?: (event: MouseEvent<HTMLElement>) => void
-    onChange?: (event: ChangeEvent<HTMLInputElement>) => void
+    onChange?: (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void
     setDropdownOpened: (opened: boolean) => void
     ref?: Ref<HTMLInputElement>
 }
