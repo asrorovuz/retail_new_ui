@@ -90,10 +90,10 @@ const ProductForm: FC<ProductFormType> = ({
   const optionMeasurement = useMemo(
     () => [
       { label: "шт", value: "шт" },
+      { label: "кг", value: "кг" },
       { label: "л", value: "л" },
       { label: "м", value: "м" },
       { label: "кв м", value: "кв м" },
-      { label: "кг", value: "кг" },
     ],
     [],
   );
@@ -343,12 +343,12 @@ const ProductForm: FC<ProductFormType> = ({
   }, [defaultValue?.warehouse_items, isOpen]);
 
   useEffect(() => {
-    const catalog = getValues(`catalog_code`);
-    const packages = getValues(`package_code`);
+    const catalog = getValues(`catalog`);
+    const packages = getValues(`package`);
     const vat_rate = getValues(`vat_rate`);
     const shouldShow = !!catalog || !!packages || !!vat_rate;
     setIsShow(shouldShow);
-  }, [watch(`catalog_code`), watch(`package_code`), watch(`vat_rate`), isOpen]);
+  }, [watch(`catalog`), watch(`package`), watch(`vat_rate`), isOpen]);
 
   useEffect(() => {
     setRemainder(defaultValue?.state || 0);
@@ -611,6 +611,14 @@ const ProductForm: FC<ProductFormType> = ({
                       (opt) => opt.value === field.value,
                     ) || null
                   }
+                  menuPortalTarget={document.body}
+                  menuPosition="fixed"
+                  styles={{
+                    menuPortal: (base) => ({
+                      ...base,
+                      zIndex: 9999,
+                    }),
+                  }}
                   onChange={(option) => field.onChange(option?.value)}
                 />
               </FormItem>
@@ -725,7 +733,6 @@ const ProductForm: FC<ProductFormType> = ({
           {isShow ? (
             <>
               <Controller
-              
                 name={`catalog_code`}
                 control={control}
                 render={({ field }) => {

@@ -37,6 +37,7 @@ const EditProductModal: FC<ProductTableProps & EXtraPropsType> = ({
   // 🔥 DEFAULT VALUES NI useEffect ICHIDA HISOBLAYMIZ
   useEffect(() => {
     if (!product) return;
+console.log(product, "product");
 
     const prices = safeProductPriceType?.map((i: ProductPriceType, inx: number) => {
       return {

@@ -58,10 +58,10 @@ interface StatusState {
 
 const optionSelect = [
   { label: "Название", value: "name" },
-  { label: "Описание", value: "description" },
   { label: "Артикул", value: "sku" },
   { label: "Код", value: "code" },
-  { label: "Штрих-код", value: "barcode" },
+  { label: "Штрих-коды", value: "barcode" },
+  { label: "Штрих-коды с количеством", value: "barcodeCount" },
   { label: "Остаток", value: "state" },
   { label: "Единица измерения", value: "measurement" },
   { label: "Категория", value: "category" },
@@ -109,7 +109,7 @@ const UploadExcelFile = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [selectedSelect, setSelectedSelect] = useState<Record<number, string>>(
-    {}
+    {},
   );
   const [loadData, setLoadData] = useState(false);
   const [faildData, setFaildData] = useState<
@@ -154,7 +154,30 @@ const UploadExcelFile = () => {
     setSuccessIndex([]);
     setRememberData([]);
     if (fileInputRef.current) fileInputRef.current.value = "";
-  }, []);
+  }, []); 
+
+  const parseBarcodesWithCount = (
+    barcode?: string,
+    barcodeCount?: string | number,
+  ) => {
+    const barcodes = String(barcode || "")
+      .trim()
+      .split(/[\s,:]+/)
+      .filter(Boolean);
+
+    // agar count ham string bo‘lib kelsa
+    const counts = barcodeCount
+      ? String(barcodeCount)
+          .trim()
+          .split(/[\s,:]+/)
+          .map((c) => Number(c) || 1)
+      : [];
+
+    return barcodes.map((code, index) => ({
+      value: code,
+      count: counts[index] ?? counts[0] ?? 1,
+    }));
+  };
 
   const onClose = useCallback(() => {
     setLoadData(true);
@@ -181,17 +204,17 @@ const UploadExcelFile = () => {
             setData(response);
             showSuccessMessage(
               messages.uz.SUCCESS_MESSAGE,
-              messages.ru.SUCCESS_MESSAGE
+              messages.ru.SUCCESS_MESSAGE,
             );
             setFaildData([]);
           },
           onError(err) {
             showErrorMessage(err);
           },
-        }
+        },
       );
     },
-    [createWithExcel]
+    [createWithExcel],
   );
 
   const downloadFailedExcel = () => {
@@ -215,7 +238,7 @@ const UploadExcelFile = () => {
         .map(
           (i) =>
             optionSelect.find((opt) => opt.value === selectedSelect[i])
-              ?.label ?? null
+              ?.label ?? null,
         );
 
       headers.push("Ошибка"); // oxirgi ustun
@@ -223,7 +246,7 @@ const UploadExcelFile = () => {
       exportToExcel([headers, ...failedRows], "Ошибочные файлы");
       showSuccessMessage(
         messages.uz.SUCCESS_MESSAGE,
-        messages.ru.SUCCESS_MESSAGE
+        messages.ru.SUCCESS_MESSAGE,
       );
     } catch (err) {
       showErrorMessage(err);
@@ -240,7 +263,7 @@ const UploadExcelFile = () => {
         showErrorLocalMessage(
           `Необходимо выбрать колонку для поля "${
             field === "name" ? "Название" : "Цена продажи"
-          }"!`
+          }"!`,
         );
         return;
       }
@@ -269,7 +292,7 @@ const UploadExcelFile = () => {
     const resultData = noSelectData?.map((elem) => {
       let product: any = productData?.find((p: any) => p?.name === elem?.name);
       let category: any = categoryData?.find(
-        (p: any) => p?.name === elem?.category_name
+        (p: any) => p?.name === elem?.category_name,
       );
 
       const baseProduct = initialState?.edit ? product : null;
@@ -285,10 +308,10 @@ const UploadExcelFile = () => {
         purchase_price: {
           amount:
             initialState?.edit && !elem?.purchasePrice
-              ? product?.purchase_price?.amount ?? null
+              ? (product?.purchase_price?.amount ?? null)
               : elem?.purchasePrice
-              ? Number(elem.purchasePrice.replace(",", ""))
-              : null,
+                ? Number(elem.purchasePrice.replace(",", ""))
+                : null,
           currency_code: currencyCode,
         },
 
@@ -302,10 +325,15 @@ const UploadExcelFile = () => {
 
         barcodes:
           initialState?.edit && !elem?.barcode
-            ? product?.barcodes?.map((item: any) => item?.value) ?? []
+            ? (product?.barcodes ?? [])
             : elem?.barcode
-            ? String(elem.barcode).trim().split(/[\s,:]+/).filter(Boolean)
-            : generateBarcode(),
+              ? parseBarcodesWithCount(elem.barcode, elem.barcodeCount)
+              : [
+                  {
+                    value: generateBarcode(),
+                    count: 1,
+                  },
+                ],
 
         category_name:
           initialState?.edit && !elem?.categoryName
@@ -330,20 +358,20 @@ const UploadExcelFile = () => {
           {
             amount:
               initialState?.edit && !elem?.commonPrice
-                ? product?.prices?.[0]?.amount ?? 0
+                ? (product?.prices?.[0]?.amount ?? 0)
                 : elem?.commonPrice
-                ? Number(elem.commonPrice.replace(",", ""))
-                : 0,
+                  ? Number(elem.commonPrice.replace(",", ""))
+                  : 0,
             price_type_id: 1,
             currency_code: currencyCode,
           },
           {
             amount:
               initialState?.edit && !elem?.bulkPrice
-                ? product?.prices?.[1]?.amount ?? 0
+                ? (product?.prices?.[1]?.amount ?? 0)
                 : elem?.bulkPrice
-                ? Number(elem.bulkPrice.replace(",", ""))
-                : 0,
+                  ? Number(elem.bulkPrice.replace(",", ""))
+                  : 0,
             price_type_id: 2,
             currency_code: currencyCode,
           },
@@ -469,7 +497,7 @@ const UploadExcelFile = () => {
           onSuccess() {
             setRememberData([]);
           },
-        }
+        },
       );
     }
   }, [rememberData]);
@@ -588,7 +616,7 @@ const ProductHeader = ({
   initialState: InitialState;
   faildData: any;
   setInitialState: (
-    state: InitialState | ((prev: InitialState) => InitialState)
+    state: InitialState | ((prev: InitialState) => InitialState),
   ) => void;
   addProduct: () => void;
   downloadFailedExcel: () => void;
@@ -596,7 +624,7 @@ const ProductHeader = ({
 }) => {
   const upDateInitialState = (
     field: keyof InitialState,
-    value: string | number | boolean
+    value: string | number | boolean,
   ) => {
     setInitialState((prev) => ({ ...prev, [field]: value }));
   };
@@ -712,7 +740,7 @@ const RenderTable = ({
   pagination: any;
   setPagination: any;
   setInitialState: (
-    state: InitialState | ((prev: InitialState) => InitialState)
+    state: InitialState | ((prev: InitialState) => InitialState),
   ) => void;
   setSelectedSelect: React.Dispatch<
     React.SetStateAction<Record<number, string>>
@@ -776,12 +804,12 @@ const RenderTable = ({
                       options={optionSelect.filter(
                         (opt) =>
                           !Object.values(selectedSelect).includes(opt.value) ||
-                          selectedSelect[index] === opt.value
+                          selectedSelect[index] === opt.value,
                       )}
                       classNamePrefix="react-select"
                       value={
                         optionSelect.find(
-                          (opt) => opt.value === selectedSelect[index]
+                          (opt) => opt.value === selectedSelect[index],
                         ) || null
                       }
                       onChange={(option) => {
@@ -819,7 +847,8 @@ const RenderTable = ({
                           value={
                             initialState?.currency
                               ? currencyOption.find(
-                                  (w: any) => w.value === initialState?.currency
+                                  (w: any) =>
+                                    w.value === initialState?.currency,
                                 )
                               : null
                           }
@@ -904,7 +933,7 @@ const RenderTable = ({
           options={pageSizeOptions}
           isSearchable={false}
           value={pageSizeOptions.find(
-            (opt) => opt.value === pagination.pageSize
+            (opt) => opt.value === pagination.pageSize,
           )}
           size="sm"
           menuPlacement="top"

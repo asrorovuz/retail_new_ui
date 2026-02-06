@@ -24,51 +24,50 @@ const CatalogPackageSelector = ({
   options = [],
   ...props
 }: CatalogPackageSelectorProps) => {
-  const [selected, setSelected] = useState(value || null);
-
-  const handleChange = (option: any) => {
-    multiplay
-      ? setValue(`products.${index}.package`, option)
-      : setValue("package", option);
-    setSelected(option);
-    onChange(option);
-  };
-
   const selectOption = useMemo(() => {
-    if (!options || !Array.isArray(options)) return [];
+    if (!Array.isArray(options)) return [];
     return options.map((item: any) => ({
       label: item.name_uz,
       value: item.code,
       ...item,
     }));
-  }, [value, options]);
+  }, [options]);
 
-  // 🔹 Default yoki value bo‘lganda tanlovni yangilash
+  const [selectedOption, setSelectedOption] = useState<any>(null);
+
+  // value yoki options yangilanishini kuzatib, selectedOptionni set qilish
   useEffect(() => {
-    if (value !== null && value !== undefined) {
-      const found =
-        typeof value === "object"
-          ? value
-          : selectOption?.find((opt) => opt.value === value);
-
-      if (found) {
-        setSelected(found);
-        return;
-      }
+    if (!selectOption.length) {
+      setSelectedOption(null);
+      return;
     }
-  }, []);
 
-  useEffect(() => {
-    // Agar hozirda tanlangan option bo'lmasa, default qilib birinchi option-ni tanlaymiz
-    if (!selected && selectOption.length > 0) {
-      const defaultOption = selectOption[0];
-      setSelected(defaultOption);
-      multiplay
-        ? setValue(`products.${index}.package`, defaultOption)
-        : setValue("package", defaultOption);
-      onChange(defaultOption);
+    // value object bo'lsa ishlatamiz
+    if (value && typeof value === "object") {
+      setSelectedOption(value);
+      return;
     }
-  }, [selectOption]);
+
+    // value code bo'lsa, option ichidan topamiz
+    if (value) {
+      const found = selectOption.find((opt) => opt.value === value);
+      setSelectedOption(found || null);
+      return;
+    }
+
+    // value bo'lmasa, birinchi optionni tanlaymiz
+    setSelectedOption(selectOption[0]);
+  }, [value, selectOption]);
+
+  const handleChange = (option: any) => {
+    setSelectedOption(option); // tanlangan optionni statega saqlaymiz
+
+    multiplay
+      ? setValue(`products.${index}.package`, option)
+      : setValue("package", option);
+
+    onChange(option);
+  };
 
   return (
     <Select
@@ -76,7 +75,8 @@ const CatalogPackageSelector = ({
       placeholder={placeholder}
       isSearchable={false}
       options={selectOption}
-      value={selected}
+      value={selectedOption}
+      isLoading={!selectOption.length}
       onChange={handleChange}
       getOptionLabel={(option: any) => option.label}
       getOptionValue={(option: any) => option.value}

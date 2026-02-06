@@ -35,34 +35,33 @@ const CatalogSelector = ({
 }: CatalogSelectorProps) => {
   const [inputValue, setInputValue] = useState(value);
   const [selected, setSelected] = useState<any>(null);
-  const [cachedOptions, setCachedOptions] = useState<any[]>([]);
 
   // 🔹 Debounced query
   const debouncedQuery = useDebounce(inputValue, 500);
 
   const { data, isLoading } = useCatalogSearchApi(
-    debouncedQuery, // 🔹 bo‘sh string yubormaymiz
-    isOpen
+    debouncedQuery || value, // 🔹 bo‘sh string yubormaymiz
+    isOpen,
   );
 
   // 🔹 Data o‘zgarganda optionlarni tayyorlash
   const options = useMemo(() => {
-    if (!data || !Array.isArray(data)) return cachedOptions;
-    const newOptions = data?.map((item: any) => ({
+    if (!Array.isArray(data)) return [];
+    return data?.map((item: any) => ({
       label: `${item.class_code} - ${item.class_name}`,
       value: item.class_code,
       data: item,
     }));
-    setCachedOptions(newOptions); // 🔹 yangi natijani cachega yozamiz
-    return newOptions;
   }, [data]);
 
   // 🔹 Tanlovni o‘zgartirish
   const handleChange = (option: any) => {
-    setSelected(option);
-    multiplay ? setValue(`products.${index}.catalog`, option) : setValue("catalog", option);
+    setSelected(option || null);
     setPackageNames(option?.data?.package_names || []);
-    onChange(option ? option : null);
+    multiplay
+      ? setValue(`products.${index}.catalog`, option || null)
+      : setValue("catalog", option || null);
+    onChange(option || null);
   };
 
   // 🔹 Input o‘zgarganda, lekin o‘chirilganda emas
@@ -72,12 +71,25 @@ const CatalogSelector = ({
 
   // 🔹 default value update qilish (edit holatda)
   useEffect(() => {
-    if (!value) return;
+    if (value == null) {
+      setSelected(null);
+      setPackageNames([]);
+      return;
+    }
 
-    const found = options?.find((opt) => opt.value === value);
+    // Edit rejimida value string (code) bo‘lishi mumkin
+    // yoki object bo‘lishi mumkin
+    const valToFind = typeof value === "object" ? value.value : value;
+
+    // optionlar ichidan topamiz
+    const found = options.find((opt) => opt.value === valToFind);
+
     if (found) {
-      setSelected(found);
-      setPackageNames(found?.data?.package_names || []);
+      setSelected(found); // 🔹 bu Select uchun to‘liq object
+      setPackageNames(found.data?.package_names || []);
+    } else {
+      setSelected(null);
+      setPackageNames([]);
     }
   }, [value, options]);
 
@@ -91,12 +103,8 @@ const CatalogSelector = ({
       inputValue={inputValue}
       onInputChange={handleInputChange}
       onChange={handleChange}
-      getOptionLabel={(option: any) =>
-        option?.label ? String(option.label) : ""
-      }
-      getOptionValue={(option: any) =>
-        option?.value ? String(option.value) : ""
-      }
+      getOptionLabel={(option: any) => option?.label || ""}
+      getOptionValue={(option: any) => option?.value || ""}
       className={width}
       isClearable
       menuPortalTarget={document.body}

@@ -34,7 +34,7 @@ const Discount = ({
 
   return (
     <div className="flex justify-between">
-      <ul className="w-full grid grid-cols-3 gap-2">
+      <ul className="w-full h-10 grid grid-cols-3 gap-2">
         {getDynamicDiscounts(toDebtAmount || 0)?.map((item) => (
           <li
             key={item}
