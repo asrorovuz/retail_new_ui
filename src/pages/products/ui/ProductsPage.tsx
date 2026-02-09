@@ -3,6 +3,8 @@ import {
   useFindBarcode,
   usePriceTypeApi,
 } from "@/entities/products/repository";
+import { FilterTable } from "@/features/filter-table";
+import type { FilterParams } from "@/features/filter-table/ui/options";
 import { AddMoreProducts } from "@/features/modals";
 import AddProductModal from "@/features/modals/ui/AddProductModal";
 import ProductTable from "@/features/products";
@@ -11,22 +13,37 @@ import UploadExcelFile from "@/features/upload-excel-file";
 import eventBus from "@/shared/lib/eventBus";
 import { handleBarcodeScanned } from "@/shared/lib/handleScannedBarcode";
 import { showErrorLocalMessage } from "@/shared/lib/showMessage";
+import { Button } from "@/shared/ui/kit";
 import { useEffect, useState } from "react";
-import ReactSelect from "react-select";
 
-type FilterType = "all" | "white" | "black";
-type FilterOption = {
-  label: string;
-  value: FilterType;
-};
+// type FilterType = "all" | "white" | "black";
+// type FilterOption = {
+//   label: string;
+//   value: FilterType;
+// };
 
 const ProductsPage = () => {
   const [search, setSearch] = useState("");
-  const [isLegal, setIsLegal] = useState<FilterType>("all");
   const [barcode, setBarcode] = useState<string | null>(null);
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [openFilter, setOpenFilter] = useState(false);
+  const [filterParams, setFilterParams] = useState<FilterParams>({
+    is_legal: null, 
+    category_exists: null, 
+    category_id: null,
+    state: null, 
+    measurement_code: null,
+    sku: null,
+    sku_exists: null, 
+    code: null,
+    code_exists: null, 
+    barcode_exists: null, 
+    catalog_code_exists: null, 
+    sort: null,
+    is_selling_at_loss: null, 
+  });
 
   const { data: productPriceType } = usePriceTypeApi();
   const {
@@ -68,30 +85,19 @@ const ProductsPage = () => {
     }
   }, [isError]);
 
-  const options: FilterOption[] = [
-    { label: "Все", value: "all" },
-    { label: "Белые", value: "white" },
-    { label: "Чёрные", value: "black" },
-  ];
-
   return (
-    <div className="bg-white rounded-3xl p-6 h-[calc(100vh-100px)]">
+    <div className="bg-white rounded-3xl p-6 h-[calc(100vh-100px)] overflow-y-auto">
       <div className="mb-3 flex items-center gap-x-2">
         <SearchProduct setSearch={setSearch} search={search} />
-        <ReactSelect<FilterOption>
-          options={options}
-          value={options.find((o) => o.value === isLegal)}
-          onChange={(option) => option && setIsLegal(option.value)}
-          menuPortalTarget={document.body}
-          menuPosition="fixed"
-          styles={{
-            singleValue: (base) => ({
-              ...base,
-              width: "120px",
-            }),
-            menuPortal: (base) => ({ ...base, zIndex: 9999, width: "120px" }),
-          }}
-        />
+        <Button
+          size="sm"
+          variant="solid"
+          type="button"
+          icon={<i className="ri-filter-line text-lg" />}
+          onClick={() => setOpenFilter(!openFilter)}
+        >
+          Фильтр
+        </Button>
         <UploadExcelFile />
         <AddProductModal
           type={"add"}
@@ -110,10 +116,15 @@ const ProductsPage = () => {
           setIsOpen={setIsOpen}
         />
       </div>
+      <FilterTable
+        openFilter={openFilter}
+        filterParams={filterParams}
+        setFilterParams={setFilterParams}
+      />
       <ProductTable
         search={search}
         setBarcode={setBarcode}
-        isLegal={isLegal}
+        filterParams={filterParams}
         barcode={barcode}
         setIsOpen={setIsEditOpen}
         isOpen={isEditOpen}
