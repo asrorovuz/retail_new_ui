@@ -22,10 +22,9 @@ export const getAllProductApi = async (
   size?: number,
   index?: number,
   search?: string,
-  isLegal?: string
+  filterParams?: any
 ): Promise<Product[]> => {
   const skip = index && size ? (index - 1) * size : 0;
-  const is_legal = isLegal === "white" ? true : isLegal === "black" ? false : null
 
   return await apiRequest<Product[]>({
     url: pathServices.products.getAllProductsPath,
@@ -34,7 +33,7 @@ export const getAllProductApi = async (
       limit: size ?? 20,
       skip,
       query: search,
-      is_legal
+      ...filterParams,
     },
   });
 };
@@ -46,13 +45,13 @@ export const getAllFavoritProductApi = async (): Promise<FavouriteProductType[]>
   });
 };
 
-export const getAllProductCountApi = async (search?: string, isLegal?: string): Promise<number> => {
-  const is_legal = isLegal === "white" ? true : isLegal === "black" ? false : null
+export const getAllProductCountApi = async (search?: string, filterParams?: any): Promise<number> => {
+  const is_legal = filterParams?.isLegal === "white" ? true : filterParams?.isLegal === "black" ? false : null
 
   return await apiRequest<number>({
     url: pathServices.products.getAllProductsCountPath,
     method: "GET",
-    params: { query: search, is_legal },
+    params: { query: search, is_legal, ...filterParams },
   });
 };
 

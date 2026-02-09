@@ -36,11 +36,11 @@ export const useAllProductApi = (
   pageSize?: number,
   pageIndex?: number,
   search?: string,
-  isLegal?: "all" | "white" | "black"
+  filterParams?: any
 ) => {
   return useQuery({
-    queryKey: ["all-products", pageSize, pageIndex, search, isLegal],
-    queryFn: () => getAllProductApi(pageSize, pageIndex, search, isLegal),
+    queryKey: ["all-products", pageSize, pageIndex, search, filterParams],
+    queryFn: () => getAllProductApi(pageSize, pageIndex, search, filterParams),
   });
 };
 
@@ -51,10 +51,10 @@ export const useAllFavoritProductApi = () => {
   });
 };
 
-export const useAllProductCountApi = (search?: string, isLegal?: string) => {
+export const useAllProductCountApi = (search?: string, filterParams?: any) => {
   return useQuery({
-    queryKey: ["all-products-count", search, isLegal],
-    queryFn: () => getAllProductCountApi(search, isLegal),
+    queryKey: ["all-products-count", search, filterParams],
+    queryFn: () => getAllProductCountApi(search, filterParams),
   });
 };
 

@@ -1,4 +1,5 @@
 import type { WarehouseItem } from "@/@types/products";
+import type { FilterParams } from "@/features/filter-table/ui/options";
 
 export type FavouriteProduct = {
   product_id: number | null;
@@ -23,8 +24,8 @@ export type ProductModalProps = {
 
 export type ProductTableProps = {
   type?: "add" | "edit" | "print";
+  filterParams?: FilterParams;
   barcode: string | null;
-  isLegal?: "all" | "white" | "black";
   setBarcode: (val: string | null) => void;
   setIsOpen: (val: boolean) => void;
   isOpen: boolean;
