@@ -38,6 +38,27 @@ export const getAllProductApi = async (
   });
 };
 
+export const getAllInfoProductApi = async (
+  size?: number,
+  index?: number,
+  search?: string,
+  filterParams?: any
+): Promise<Product[]> => {
+  const skip = index && size ? (index - 1) * size : 0;
+
+  return await apiRequest<Product[]>({
+    url: pathServices.products.getAllInfoProductsPath,
+    method: "GET",
+    params: {
+      limit: size ?? 20,
+      skip,
+      query: search,
+      ...filterParams,
+    },
+  });
+};
+
+
 export const getAllFavoritProductApi = async (): Promise<FavouriteProductType[]> => {
   return await apiRequest<FavouriteProductType[]>({
     url: pathServices.products.getFavoritProduct,
@@ -204,6 +225,16 @@ export const createProductWithExcel = async (payload: any): Promise<any> => {
     url: pathServices.products.createExcelFileProduct,
     method: "POST",
     data: payload
+  })
+}
+
+export const exportProductWithExcel = async (params: any): Promise<any> => {
+  return await apiRequest<any>({
+    url: pathServices.products.exportExcelFileProduct,
+    method: "POST",
+    responseType: "blob",
+    data: null,
+    params: params
   })
 }
 

@@ -14,3 +14,24 @@ export function exportToExcel(
   // faylni yuklab olish
   XLSX.writeFile(workbook, `${fileName}.xlsx`);
 }
+
+export const exportToExcelApi = (
+  file: Blob,
+  fileName: string
+): void => {
+  if (!(file instanceof Blob)) {
+    console.error("Полученные данные не являются файлом");
+    return;
+  }
+
+  const url = window.URL.createObjectURL(file);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `${fileName}.xlsx`;
+  document.body.appendChild(a);
+  a.click();
+
+  a.remove();
+  window.URL.revokeObjectURL(url);
+};

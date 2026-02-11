@@ -94,7 +94,7 @@ const generateBarcode = (): string[] => {
   ];
 };
 
-const UploadExcelFile = () => {
+const UploadExcelFile = ({isOpen, setIsOpen}: any) => {
   const { data: productData } = useAllProductApi();
   const { data: currencies } = useCurrancyApi();
   const { data: categoryData } = useCategoryApi();
@@ -105,8 +105,6 @@ const UploadExcelFile = () => {
   const { mutateAsync: updateProduct } = useUpdateProduct();
 
   const warhouseId = useSettingsStore((s) => s.wareHouseId);
-
-  const [isOpen, setIsOpen] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [selectedSelect, setSelectedSelect] = useState<Record<number, string>>(
     {},
@@ -129,10 +127,6 @@ const UploadExcelFile = () => {
   const [openStatusBar, setOpenStatusBar] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-
-  const onOpenModal = () => {
-    setIsOpen(true);
-  };
 
   const handleCloseBar = useCallback(() => {
     setOpenStatusBar(false);
@@ -503,11 +497,7 @@ const UploadExcelFile = () => {
   }, [rememberData]);
 
   return (
-    <div>
-      <Button size="sm" onClick={onOpenModal} variant="solid">
-        Загрузить Excel
-      </Button>
-
+    <>
       <Dialog
         width={"100vw"}
         height={"90vh"}
@@ -595,7 +585,7 @@ const UploadExcelFile = () => {
         openStatusBar={openStatusBar}
         status={status}
       />
-    </div>
+    </>
   );
 };
 

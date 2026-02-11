@@ -67,6 +67,7 @@ export const pathServices = {
   products: {
     // GET
     getAllProductsPath: "/api/product/get",
+    getAllInfoProductsPath: "/api/product/stock/summary",
     getByIdPath: "/api/product/",
     getAllProductsCountPath: "/api/product/get/count",
     getTableSettingsPath: "/api/settings/account/get",
@@ -90,6 +91,7 @@ export const pathServices = {
     createFavouriteProductPath: "/api/favorite-product/add",
     createRegister: "/api/revision/register",
     createExcelFileProduct: `/api/excel/parse`,
+    exportExcelFileProduct: `/api/excel/products`,
 
     // DELETE
     deleteProductPath: `/api/product/delete`,

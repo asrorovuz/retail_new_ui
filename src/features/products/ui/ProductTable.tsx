@@ -44,7 +44,9 @@ const ProductTable = ({
   setIsOpen,
   isOpen,
   productPriceType,
-}: { search: string } & ProductTableProps) => {
+  pagination,
+  setPagination,
+}: { search: string, pagination: any, setPagination: any } & ProductTableProps) => {
   const debouncedSearch = useDebounce(search, 500);
   const [confirmProductId, setConfirmProductId] = useState<number | null>(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -52,19 +54,17 @@ const ProductTable = ({
   const [item, setItem] = useState<Product | null>(null);
   const { tableSettings } = useSettingsStore((s) => s);
 
-  const [pagination, setPagination] = useState({
-    pageIndex: 1,
-    pageSize: 20,
-  });
-
   // 🚀 API chaqiruv
   const { data, isPending } = useAllProductApi(
     pagination.pageSize,
     pagination.pageIndex,
     debouncedSearch || "",
-    filterParams
+    filterParams,
   );
-  const { data: countData } = useAllProductCountApi(debouncedSearch || "", filterParams);
+  const { data: countData } = useAllProductCountApi(
+    debouncedSearch || "",
+    filterParams,
+  );
   const { mutate: deleteProduct, isPending: productDeleteLoading } =
     useDeleteProduct();
 
@@ -77,7 +77,7 @@ const ProductTable = ({
       onSuccess: () => {
         showSuccessMessage(
           messages.uz.SUCCESS_MESSAGE,
-          messages.ru.SUCCESS_MESSAGE
+          messages.ru.SUCCESS_MESSAGE,
         );
         setDeleteModalOpen(false);
         setConfirmProductId(null);
@@ -119,7 +119,7 @@ const ProductTable = ({
         },
       }),
       columnHelper.display({
-        id: "totalReminder",
+        id: "totalRemainder",
         header: "ОСТАТОК",
         cell: (info) => {
           const total = info.row.original.warehouse_items?.[0]?.state;
@@ -136,34 +136,6 @@ const ProductTable = ({
         },
       }),
       columnHelper.display({
-        id: "totalReminderMin",
-        header: "МИН. ОСТАТОК",
-        cell: (info) => {
-          const total = info.row.original.warehouse_items?.[0]?.alert_on;
-
-          return `${total ? total?.toLocaleString() : "0"} ${showMeasurmentName(
-            info.row.original.measurement_code
-          )}`;
-        },
-        size: 80,
-        meta: {
-          color:
-            tableSettings?.find((i) => i.key === "totalRemainderMin")?.color ||
-            "#fff",
-        },
-      }),
-      // columnHelper.display({
-      //   id: "package",
-      //   header: "ЕД. ИЗМ.",
-      //   cell: (info) =>
-      //     showMeasurmentName(info.row.original.measurement_code) || "-",
-      //   size: 100,
-      //   meta: {
-      //     color:
-      //       tableSettings?.find((i) => i.key === "package")?.color || "#fff",
-      //   },
-      // }),
-      columnHelper.display({
         id: "price",
         header: "ЦЕНА",
         cell: (info) => {
@@ -173,6 +145,19 @@ const ProductTable = ({
         size: 140,
         meta: {
           color: tableSettings?.find((i) => i.key === "price")?.color || "#fff",
+        },
+      }),
+      columnHelper.display({
+        id: "bulkPrice",
+        header: "ОПТОВАЯ ЦЕНА",
+        cell: (info) => {
+          const price = info.row.original.prices?.[1]?.amount;
+          return price ? `${price.toLocaleString()} сум` : "-";
+        },
+        size: 140,
+        meta: {
+          color:
+            tableSettings?.find((i) => i.key === "bulkPrice")?.color || "#fff",
         },
       }),
       columnHelper.display({
@@ -188,19 +173,6 @@ const ProductTable = ({
           color:
             tableSettings?.find((i) => i.key === "purchesPrice")?.color ||
             "#fff",
-        },
-      }),
-      columnHelper.display({
-        id: "bulkPrice",
-        header: "ОПТОВАЯ ЦЕНА",
-        cell: (info) => {
-          const price = info.row.original.prices?.[1]?.amount;
-          return price ? `${price.toLocaleString()} сум` : "-";
-        },
-        size: 140,
-        meta: {
-          color:
-            tableSettings?.find((i) => i.key === "bulkPrice")?.color || "#fff",
         },
       }),
       columnHelper.display({
@@ -258,7 +230,23 @@ const ProductTable = ({
             "#fff",
         },
       }),
+      columnHelper.display({
+        id: "totalRemainderMin",
+        header: "МИН. ОСТАТОК",
+        cell: (info) => {
+          const total = info.row.original.warehouse_items?.[0]?.alert_on;
 
+          return `${total ? total?.toLocaleString() : "0"} ${showMeasurmentName(
+            info.row.original.measurement_code,
+          )}`;
+        },
+        size: 80,
+        meta: {
+          color:
+            tableSettings?.find((i) => i.key === "totalRemainderMin")?.color ||
+            "#fff",
+        },
+      }),
       // 🧩 Actions ustuni
       columnHelper.display({
         id: "actions",
@@ -317,7 +305,7 @@ const ProductTable = ({
         },
       }),
     ],
-    [pagination, tableSettings]
+    [pagination, tableSettings],
   );
 
   console.log(data, "data");
@@ -327,10 +315,13 @@ const ProductTable = ({
     columns,
     getCoreRowModel: getCoreRowModel(),
     state: {
-      columnVisibility: tableSettings?.reduce((acc: any, i) => {
-        acc[i.key] = i.visible;
-        return acc;
-      }, {} as Record<string, boolean>),
+      columnVisibility: tableSettings?.reduce(
+        (acc: any, i) => {
+          acc[i.key] = i.visible;
+          return acc;
+        },
+        {} as Record<string, boolean>,
+      ),
     },
   });
 
@@ -355,12 +346,12 @@ const ProductTable = ({
                       <div
                         className={classNames(
                           "px-4 text-left font-medium text-xs xl:text-sm text-gray-800",
-                          header.column.columnDef.meta?.headerClassName
+                          header.column.columnDef.meta?.headerClassName,
                         )}
                       >
                         {flexRender(
                           header.column.columnDef.header,
-                          header.getContext()
+                          header.getContext(),
                         )}
                       </div>
                     </Th>
@@ -379,7 +370,7 @@ const ProductTable = ({
                   {row.getVisibleCells().map((cell) => (
                     <Td
                       className={classNames(
-                        cell.column.columnDef.meta?.color || "#fff"
+                        cell.column.columnDef.meta?.color || "#fff",
                       )}
                       key={cell.id}
                     >
@@ -388,7 +379,7 @@ const ProductTable = ({
                       >
                         {flexRender(
                           cell.column.columnDef.cell,
-                          cell.getContext()
+                          cell.getContext(),
                         )}
                       </div>
                     </Td>

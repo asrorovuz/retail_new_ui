@@ -10,7 +10,7 @@
     "name": "Название",
     "category": "Категория",
 
-    "totalRemainder": "Общий остаток",
+    "totalRemainder": "Остаток",
     "totalRemainderMin": "Минимальный остаток",
 
     "packInCount": "Кол-во в уп.",
