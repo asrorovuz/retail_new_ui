@@ -1,4 +1,3 @@
-import { Button } from "@/shared/ui/kit";
 import { useEffect, useState, type FC } from "react";
 import type { ProductDefaultValues, ProductModalProps } from "../model";
 import ProductForm from "@/features/product-form";
@@ -24,9 +23,6 @@ const AddProductModal: FC<ProductModalProps> = ({
     barcode || "",
     isOpen,
   );
-  const openModal = () => {
-    setIsOpen(true);
-  };
 
   useEffect(() => {
     if (!isOpen) return;
@@ -73,13 +69,7 @@ const AddProductModal: FC<ProductModalProps> = ({
   }, [isOpen]);
 
   return (
-    <div>
-      {pageType === "products" && (
-        <Button size="sm" onClick={openModal} variant="solid">
-          Добавить
-        </Button>
-      )}
-
+    <>
       {defaultValues && isOpen && (
         <ProductForm
           type={type}
@@ -94,7 +84,7 @@ const AddProductModal: FC<ProductModalProps> = ({
           catalogData={catalogData}
         />
       )}
-    </div>
+    </>
   );
 };
 

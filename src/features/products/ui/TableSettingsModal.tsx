@@ -109,6 +109,7 @@ const TableSettingsModal = () => {
                         tempHiddenColumns.find((j) => j.key === i.key)
                           ?.visible ?? false
                       }
+                      disabled={i?.key === "name"}
                       onChange={() => changeVisibleColumns(i.key)}
                     />
                     <Select

@@ -16,8 +16,8 @@ export type FilterParams = {
 
 export const isLegalOptions = [
   { label: "Все", value: null },
-  { label: "Белые", value: "white" },
-  { label: "Чёрные", value: "black" },
+  { label: "Белые", value: true },
+  { label: "Чёрные", value: false },
 ];
 
 export const categoryOptions = [

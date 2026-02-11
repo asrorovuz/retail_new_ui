@@ -83,26 +83,25 @@ const FilterTable = ({
       <h3 className="font-medium mb-4">Фильтры</h3>
 
       <div className="grid grid-cols-3 gap-4 mb-5">
-        <Select
-          options={isLegalOptions}
-          value={isLegalOptions.find((o) => o.value === filterParams.is_legal)}
-          onChange={(option) =>
-            option &&
-            setFilterParams({
-              ...filterParams,
-              is_legal: option.value as FilterParams["is_legal"],
-            })
-          }
-          menuPortalTarget={document.body}
-          menuPosition="fixed"
-          styles={{
-            singleValue: (base) => ({
-              ...base,
-              width: "120px",
-            }),
-            menuPortal: (base) => ({ ...base, zIndex: 9999, width: "120px" }),
-          }}
-        />
+        <div className="flex flex-col gap-1">
+          <label className="text-sm text-gray-600">Товар</label>
+          <Select
+            options={isLegalOptions}
+            value={isLegalOptions.find(
+              (o) => o.value === filterParams.is_legal,
+            )}
+            onChange={(option) =>
+              option &&
+              setFilterParams({
+                ...filterParams,
+                is_legal: option.value as FilterParams["is_legal"],
+              })
+            }
+            menuPortalTarget={document.body}
+            menuPosition="fixed"
+            styles={selectStyles}
+          />
+        </div>
         {/* Категория */}
         <div className="flex flex-col gap-1">
           <label className="text-sm text-gray-600">Категория</label>

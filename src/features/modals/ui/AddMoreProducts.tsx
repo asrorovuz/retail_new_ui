@@ -1,4 +1,4 @@
-import { Button, Dialog } from "@/shared/ui/kit";
+import { Dialog } from "@/shared/ui/kit";
 import { useEffect, useState } from "react";
 import type { ProductDefaultValues, ProductPriceType } from "../model";
 import { ProductFormMultiple } from "@/features/product-form";
@@ -92,10 +92,6 @@ const AddMoreProducts = ({
 
   return (
     <>
-      <Button size="sm" onClick={() => setIsOpen(true)} variant="solid">
-        Добавить товары
-      </Button>
-
       <Dialog
         width="90vw"
         height="90vh"

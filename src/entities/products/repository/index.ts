@@ -7,7 +7,9 @@ import {
   createRegisterApi,
   deleteFavoritProductApi,
   deleteProductApi,
+  exportProductWithExcel,
   getAllFavoritProductApi,
+  getAllInfoProductApi,
   getAllProductApi,
   getAllProductCountApi,
   getCatalogSearchApi,
@@ -41,6 +43,18 @@ export const useAllProductApi = (
   return useQuery({
     queryKey: ["all-products", pageSize, pageIndex, search, filterParams],
     queryFn: () => getAllProductApi(pageSize, pageIndex, search, filterParams),
+  });
+};
+
+export const useAllInfoProductApi = (
+  pageSize?: number,
+  pageIndex?: number,
+  search?: string,
+  filterParams?: any
+) => {
+  return useQuery({
+    queryKey: ["all-info-products", pageSize, pageIndex, search, filterParams],
+    queryFn: () => getAllInfoProductApi(pageSize, pageIndex, search, filterParams),
   });
 };
 
@@ -215,6 +229,12 @@ export const useCreateProduct = () => {
 export const useCreateProductWithExcel = () => {
   return useMutation({
     mutationFn: (data: any) => createProductWithExcel(data)
+  })
+}
+
+export const useExportProductWithExcel = () => {
+  return useMutation({
+    mutationFn: (params: any) => exportProductWithExcel(params)
   })
 }
 
