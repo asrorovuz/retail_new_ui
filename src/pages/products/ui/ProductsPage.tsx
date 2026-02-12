@@ -5,6 +5,7 @@ import {
   useFindBarcode,
   usePriceTypeApi,
 } from "@/entities/products/repository";
+import DownloadFileForScales from "@/features/download-scale/DownloadFileForScale";
 import { FilterTable } from "@/features/filter-table";
 import type { FilterParams } from "@/features/filter-table/ui/options";
 import { AddMoreProducts } from "@/features/modals";
@@ -66,7 +67,12 @@ const ProductsPage = () => {
     isFetching,
     isSuccess,
   } = useFindBarcode(barcode);
-  const { data: infoData } = useAllInfoProductApi(undefined, undefined, search, filterParams);
+  const { data: infoData } = useAllInfoProductApi(
+    undefined,
+    undefined,
+    search,
+    filterParams,
+  );
   const { mutate: exportProductWithExcel, isPending } =
     useExportProductWithExcel();
 
@@ -145,6 +151,7 @@ const ProductsPage = () => {
         >
           Информация
         </Button>
+        <DownloadFileForScales />
         <Dropdown
           toggleClassName="text-2xl text-gray-600 flex justify-center"
           renderTitle={
@@ -186,8 +193,8 @@ const ProductsPage = () => {
             </div>
           </DropdownItem>
         </Dropdown>
+        
       </div>
-
       <AddProductModal
         type={"add"}
         pageType={"products"}
@@ -221,7 +228,11 @@ const ProductsPage = () => {
         pagination={pagination}
         setPagination={setPagination}
       />
-      <InfoModal isOpen={showInformation} setIsOpen={setShowInformation} infoData={infoData} />
+      <InfoModal
+        isOpen={showInformation}
+        setIsOpen={setShowInformation}
+        infoData={infoData}
+      />
     </div>
   );
 };
