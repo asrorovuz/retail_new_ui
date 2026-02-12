@@ -79,6 +79,7 @@ export const pathServices = {
     catalogSearch: "/api/product/catalog/search",
     getFavoritProduct: "/api/favorite-product/get/all",
     findByBarcode: `/api/product/find-by-barcode/`,
+    exportProductScale: `/api/product-export`,
 
     //UPDATE
     updateTableSettingsPath:
