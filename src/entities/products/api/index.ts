@@ -66,6 +66,15 @@ export const getAllFavoritProductApi = async (): Promise<FavouriteProductType[]>
   });
 };
 
+export const exportProductScaleApi = async (params: any): Promise<any[]> => {
+  return await apiRequest<any[]>({
+    url: pathServices.products.exportProductScale,
+    method: "GET",
+    params,
+    responseType: "arraybuffer",
+  });
+};
+
 export const getAllProductCountApi = async (search?: string, filterParams?: any): Promise<number> => {
   const is_legal = filterParams?.isLegal === "white" ? true : filterParams?.isLegal === "black" ? false : null
 

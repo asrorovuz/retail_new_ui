@@ -7,6 +7,7 @@ import {
   createRegisterApi,
   deleteFavoritProductApi,
   deleteProductApi,
+  exportProductScaleApi,
   exportProductWithExcel,
   getAllFavoritProductApi,
   getAllInfoProductApi,
@@ -62,6 +63,12 @@ export const useAllFavoritProductApi = () => {
   return useQuery({
     queryKey: ["all-favorit"],
     queryFn: () => getAllFavoritProductApi(),
+  });
+};
+
+export const useExportProductScaleApi = () => {
+  return useMutation({
+    mutationFn: exportProductScaleApi,
   });
 };
 
