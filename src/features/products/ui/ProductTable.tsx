@@ -46,7 +46,11 @@ const ProductTable = ({
   productPriceType,
   pagination,
   setPagination,
-}: { search: string, pagination: any, setPagination: any } & ProductTableProps) => {
+}: {
+  search: string;
+  pagination: any;
+  setPagination: any;
+} & ProductTableProps) => {
   const debouncedSearch = useDebounce(search, 500);
   const [confirmProductId, setConfirmProductId] = useState<number | null>(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -256,17 +260,18 @@ const ProductTable = ({
           </div>
         ),
         size: 50,
-        cell: (info) => {
-          const productId = info.row.original.id;
-          return (
+        cell: (info) => (
             <Dropdown
-              toggleClassName="text-2xl text-gray-600 flex justify-center"
-              renderTitle={<HiOutlineDotsHorizontal />}
+              renderTitle={
+                <div className="flex justify-center text-2xl text-gray-600">
+                  <HiOutlineDotsHorizontal />
+                </div>
+              }
             >
               <DropdownItem
                 onClick={() => {
                   setItem(info?.row?.original);
-                  setConfirmProductId(productId);
+                  setConfirmProductId(info.row.original.id);
                   setIsOpenPrint(true);
                 }}
                 className="h-auto!"
@@ -278,7 +283,7 @@ const ProductTable = ({
               </DropdownItem>
               <DropdownItem
                 onClick={() => {
-                  setConfirmProductId(productId);
+                  setConfirmProductId(info.row.original.id);
                   setIsOpen(true);
                 }}
                 className="h-auto!"
@@ -290,7 +295,7 @@ const ProductTable = ({
               </DropdownItem>
               <DropdownItem
                 onClick={() => {
-                  setConfirmProductId(productId);
+                  setConfirmProductId(info.row.original.id);
                   setDeleteModalOpen(true);
                 }}
                 className="h-auto!"
@@ -301,14 +306,11 @@ const ProductTable = ({
                 </div>
               </DropdownItem>
             </Dropdown>
-          );
-        },
+        ),
       }),
     ],
     [pagination, tableSettings],
   );
-
-  console.log(data, "data");
 
   const table = useReactTable({
     data: (data as unknown as Product[]) || [],
@@ -335,55 +337,69 @@ const ProductTable = ({
   return (
     <div className="h-[calc(100%-44px)] flex flex-col">
       {/* 🔹 Jadval */}
-      <div className="flex-1 mb-3 border border-gray-300 rounded-3xl overflow-y-auto">
-        {data && data.length > 0 && !isPending ? (
-          <Table className="w-full table-fixed">
-            <THead className="bg-white sticky top-0 z-10">
-              {table.getHeaderGroups().map((headerGroup) => (
-                <Tr key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
-                    <Th key={header.id}>
-                      <div
-                        className={classNames(
-                          "px-4 text-left font-medium text-xs xl:text-sm text-gray-800",
-                          header.column.columnDef.meta?.headerClassName,
-                        )}
-                      >
-                        {flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
-                      </div>
-                    </Th>
-                  ))}
-                </Tr>
-              ))}
+      <div className="flex-1 mb-3 border border-gray-300 rounded-3xl overflow-auto">
+        {data && data?.length > 0 && !isPending ? (
+          <Table className="min-w-full table-fixed border-separate border-spacing-0">
+            <THead>
+              {table.getHeaderGroups().map((headerGroup) => {
+                return (
+                  <Tr key={headerGroup.id}>
+                    {headerGroup.headers.map((header) => {
+                      const isActionsColumn = header.column.id === "actions";
+                      return (
+                        <Th
+                          className={
+                            isActionsColumn
+                              ? "sticky right-0 bg-white z-20"
+                              : ""
+                          }
+                          key={header.id}
+                        >
+                          <div
+                            className={classNames(
+                              "px-4 text-left font-medium text-xs xl:text-sm text-gray-800",
+                              header.column.columnDef.meta?.headerClassName,
+                            )}
+                          >
+                            {flexRender(
+                              header.column.columnDef.header,
+                              header.getContext(),
+                            )}
+                          </div>
+                        </Th>
+                      );
+                    })}
+                  </Tr>
+                );
+              })}
             </THead>
             <TBody>
               {table.getRowModel().rows.map((row, index) => (
                 <Tr
                   key={row.id}
-                  className={`${
-                    index % 2 ? "bg-white" : "bg-gray-100"
-                  } hover:bg-gray-100 transition`}
+                  className={`${index % 2 ? "bg-white" : "bg-gray-100"} hover:bg-gray-100 transition`}
                 >
-                  {row.getVisibleCells().map((cell) => (
-                    <Td
-                      className={classNames(
-                        cell.column.columnDef.meta?.color || "#fff",
-                      )}
-                      key={cell.id}
-                    >
-                      <div
-                        className={classNames("px-4 py-3 text-xs xl:text-sm")}
-                      >
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
+                  {row.getVisibleCells().map((cell) => {
+                    return (
+                      <Td
+                        key={cell.id}
+                        className={classNames(
+                          cell.column.columnDef.meta?.bodyCellClassName,
                         )}
-                      </div>
-                    </Td>
-                  ))}
+                      >
+                        <div
+                          className={classNames(
+                            "py-3 text-xs xl:text-sm px-4"
+                          )}
+                        >
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext(),
+                          )}
+                        </div>
+                      </Td>
+                    );
+                  })}
                 </Tr>
               ))}
             </TBody>

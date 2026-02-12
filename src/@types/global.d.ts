@@ -5,7 +5,7 @@ declare global {
     astilectron?: {
       sendMessage?: (message: any, callback?: (message: any) => void) => void;
       onMessage?: (
-        callback: (message: { name: string; payload: any }) => void
+        callback: (message: { name: string; payload: any }) => void,
       ) => void;
     };
   }
@@ -13,7 +13,7 @@ declare global {
   const astilectron: {
     sendMessage?: (message: any, callback?: (message: any) => void) => void;
     onMessage?: (
-      callback: (message: { name: string; payload: any }) => void
+      callback: (message: { name: string; payload: any }) => void,
     ) => void;
   };
 }
@@ -23,6 +23,11 @@ declare module "@tanstack/react-table" {
     color?: string;
     bodyCellClassName?: string;
     headerClassName?: string;
+    sticky?: boolean;
+    fixed?: boolean;
+    bgColor?: string;
+    right?: number;
+    zIndex?: number;
   }
 }
 
