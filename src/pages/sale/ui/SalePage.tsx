@@ -43,7 +43,7 @@ const SalePage = () => {
     useState<number>(1);
 
   const { draftSales, addDraftSale, activateDraftSale } = useDraftSaleStore(
-    (store) => store
+    (store) => store,
   );
 
   const { data, isPending } = useAllProductApi(50, 1, debouncedSearch || "");
@@ -58,28 +58,28 @@ const SalePage = () => {
   const { settings } = useSettingsStore((s) => s);
   const deleteDraftSale = useDraftSaleStore((store) => store.deleteDraftSale);
   const deleteDraftSaleItem = useDraftSaleStore(
-    (store) => store.deleteDraftSaleItem
+    (store) => store.deleteDraftSaleItem,
   );
   const updateDraftSaleItemPrice = useDraftSaleStore(
-    (store) => store.updateDraftSaleItemPrice
+    (store) => store.updateDraftSaleItemPrice,
   );
   const updateDraftSaleItemQuantity = useDraftSaleStore(
-    (store) => store.updateDraftSaleItemQuantity
+    (store) => store.updateDraftSaleItemQuantity,
   );
   const updateDraftSaleItemTotalPrice = useDraftSaleStore(
-    (store) => store.updateDraftSaleItemTotalPrice
+    (store) => store.updateDraftSaleItemTotalPrice,
   );
   const updateDraftSaleDiscount = useDraftSaleStore(
-    (store) => store.updateDraftSaleDiscount
+    (store) => store.updateDraftSaleDiscount,
   );
   const updateDraftSalePayment = useDraftSaleStore(
-    (store) => store.updateDraftSalePayment
+    (store) => store.updateDraftSalePayment,
   );
   const completeActiveDraftSale = useDraftSaleStore(
-    (store) => store.completeActiveDraftSale
+    (store) => store.completeActiveDraftSale,
   );
   const deleteDraftSaleMark = useDraftSaleStore(
-    (store) => store.deleteDraftSaleMark
+    (store) => store.deleteDraftSaleMark,
   );
 
   const activeDraft: DraftSaleSchema =
@@ -108,7 +108,13 @@ const SalePage = () => {
   useEffect(() => {
     if (isSuccess && !isFetching && !payModal) {
       if (findBarcodeData) {
-        handleScannedProduct(findBarcodeData, "sale", setExpandedId, selectedRows, barcodeMark);
+        handleScannedProduct(
+          findBarcodeData,
+          "sale",
+          setExpandedId,
+          selectedRows,
+          barcodeMark,
+        );
         setBarcode(null); // qayta so‘rov yubormaslik uchun tozalaymiz
       }
     }
@@ -117,17 +123,17 @@ const SalePage = () => {
   useEffect(() => {
     if (!isError || payModal) return;
     if (settings?.enable_create_unknown_product) {
-        setBarcode(barcode);
-        setIsOpenAddProduct(true);
-      } else {
-        showErrorLocalMessage("Товар не найден");
-        setBarcode(null);
-      }
+      setBarcode(barcode);
+      setIsOpenAddProduct(true);
+    } else {
+      showErrorLocalMessage("Товар не найден");
+      setBarcode(null);
+    }
   }, [isError]);
 
   return (
-    <div className="flex justify-between gap-x-2 h-[calc(100vh-90px)]">
-      <div className="bg-white p-3 rounded-2xl w-full">
+    <div className="grid grid-cols-2 gap-x-3">
+      <div className="bg-white rounded-2xl p-3">
         <Cashbox
           type={"sale"}
           drafts={draftSales}
@@ -157,81 +163,86 @@ const SalePage = () => {
           setExpandedId={setExpandedId}
         />
       </div>
-
-      <div className="bg-white p-3 rounded-2xl w-[320px]">
-        <div className="rounded-2xl mb-2">
-          <SearchProduct search={search} setSearch={setSearch} />
-        </div>
-
-        {!search && !isPending && (
-          <>
-            <PaymeTypeCards
-              type={"sale"}
-              activeDraft={activeDraft}
-              activeSelectPaymetype={activeSelectPaymetype}
-              setActivePaymentSelectType={setActivePaymentSelectType}
-              updateDraftPayment={updateDraftSalePayment}
-              activeOnlyType={activeOnlyType}
-              setActiveOnlyType={setActiveOnlyType}
-            />
-            <PaymentSection
-              type={"sale"}
-              activeDraft={activeDraft}
-              activeSelectPaymetype={activeSelectPaymetype}
-              value={value}
-              setValue={setValue}
-              updateDraftDiscount={updateDraftSaleDiscount}
-              updateDraftPayment={updateDraftSalePayment}
-            />
-            <OrderActions
-              type={"sale"}
-              draft={draftSales}
-              activeDraft={activeDraft}
-              payModal={payModal}
-              selectedRows={selectedRows}
-              addNewDraft={addDraftSale}
-              setPayModal={setPayModal}
-              deleteDraft={deleteDraftSale}
-              updateDraftDiscount={updateDraftSaleDiscount}
-              activeSelectPaymetype={activeSelectPaymetype}
-              setActivePaymentSelectType={setActivePaymentSelectType}
-              complateActiveDraft={completeActiveDraftSale}
-            />
-          </>
-        )}
-
-        {search && !isPending && (
-          <>
-            <SearchProductTable
-              type="sale"
-              debouncedSearch={debouncedSearch}
-              selectedRows={selectedRows}
-              data={data ?? []}
-              setExpandedRow={setExpandedRow}
-              setExpandedId={setExpandedId}
-            />
-          </>
-        )}
-
-        <AddProductModal
-          type={"add"}
-          setBarcode={setBarcode}
-          barcode={barcode}
-          isOpen={isOpenAddProduct}
-          setIsOpen={setIsOpenAddProduct}
-          productPriceType={productPriceType!}
-        />
-
-        {mark ? (
-          <ViewMark
-            item={mark}
-            onClose={() => setMark(null)}
-            activeDraft={activeDraft}
-            deleteDraftMark={deleteDraftSaleMark}
-          />
-        ) : null}
+      <div className="bg-white rounded-2xl p-3">
+        
       </div>
     </div>
+    // <div className="flex justify-between gap-x-2 h-[calc(100vh-90px)]">
+
+    //   <div className="bg-white p-3 rounded-2xl w-[320px]">
+    //     <div className="rounded-2xl mb-2">
+    //       <SearchProduct search={search} setSearch={setSearch} />
+    //     </div>
+
+    //     {!search && !isPending && (
+    //       <>
+    //         <PaymeTypeCards
+    //           type={"sale"}
+    //           activeDraft={activeDraft}
+    //           activeSelectPaymetype={activeSelectPaymetype}
+    //           setActivePaymentSelectType={setActivePaymentSelectType}
+    //           updateDraftPayment={updateDraftSalePayment}
+    //           activeOnlyType={activeOnlyType}
+    //           setActiveOnlyType={setActiveOnlyType}
+    //         />
+    //         <PaymentSection
+    //           type={"sale"}
+    //           activeDraft={activeDraft}
+    //           activeSelectPaymetype={activeSelectPaymetype}
+    //           value={value}
+    //           setValue={setValue}
+    //           updateDraftDiscount={updateDraftSaleDiscount}
+    //           updateDraftPayment={updateDraftSalePayment}
+    //         />
+    //         <OrderActions
+    //           type={"sale"}
+    //           draft={draftSales}
+    //           activeDraft={activeDraft}
+    //           payModal={payModal}
+    //           selectedRows={selectedRows}
+    //           addNewDraft={addDraftSale}
+    //           setPayModal={setPayModal}
+    //           deleteDraft={deleteDraftSale}
+    //           updateDraftDiscount={updateDraftSaleDiscount}
+    //           activeSelectPaymetype={activeSelectPaymetype}
+    //           setActivePaymentSelectType={setActivePaymentSelectType}
+    //           complateActiveDraft={completeActiveDraftSale}
+    //         />
+    //       </>
+    //     )}
+
+    //     {search && !isPending && (
+    //       <>
+    //         <SearchProductTable
+    //           type="sale"
+    //           debouncedSearch={debouncedSearch}
+    //           selectedRows={selectedRows}
+    //           data={data ?? []}
+    //           setExpandedRow={setExpandedRow}
+    //           setExpandedId={setExpandedId}
+    //         />
+    //       </>
+    //     )}
+
+    //     <AddProductModal
+    //       type={"add"}
+    //       setBarcode={setBarcode}
+    //       barcode={barcode}
+    //       isOpen={isOpenAddProduct}
+    //       setIsOpen={setIsOpenAddProduct}
+    //       productPriceType={productPriceType!}
+    //     />
+
+    //     {mark ? (
+    //       <ViewMark
+    //         item={mark}
+    //         onClose={() => setMark(null)}
+    //         activeDraft={activeDraft}
+    //         deleteDraftMark={deleteDraftSaleMark}
+    //       />
+    //     ) : null}
+    //   </div>
+    // </div>
   );
 };
 

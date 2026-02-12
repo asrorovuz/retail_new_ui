@@ -112,31 +112,15 @@ const SaleAndRefunTable = ({
     }
   }, [expendedId]);
 
-  // barcode focuslanishi kerak.
-  // useEffect(() => {
-  //   if (!expandedRow) return;
-  //   if (!currentItem) return;
-  //   if (isEditing.isOpen && isEditing.type !== "quantity") return;
-
-  //   setIsEditing({ isOpen: true, type: "quantity" });
-
-  //   const id = requestAnimationFrame(() => {
-  //     quantityRef.current?.focus();
-  //     quantityRef.current?.select();
-  //   });
-
-  //   return () => cancelAnimationFrame(id);
-  // }, [expandedRow]);
-
   const table = useReactTable({
     data: activeDraft?.items ?? [],
     columns: columns(
       setMark,
-      activeDraft,
+      // activeDraft,
       type,
       selectedRows,
-      setSelectedRows,
-      updateDraftItemTotalPrice,
+      // setSelectedRows,
+      // updateDraftItemTotalPrice,
     ),
     getRowCanExpand: () => true,
     getCoreRowModel: getCoreRowModel(),
@@ -147,10 +131,11 @@ const SaleAndRefunTable = ({
   });
 
   return (
-    <div className="overflow-hidden min-h-[48vh] xl:min-h-[44vh] mb-3 rounded-2xl">
-      <div className="bg-gray-100 border-2 border-gray-100 overflow-y-auto rounded-2xl h-[48vh] xl:h-[44vh]">
-        <div className="flex flex-col justify-between h-full bg-white">
+    <div className="overflow-hidden h-[53.3vh] mb-3 rounded-2xl">
+      <div className="border-2 border-slate-200 overflow-y-auto rounded-2xl h-[48vh]">
+        <div className="h-full flex flex-col justify-between">
           <Table
+            className="table-fixed border-separate border-spacing-0"
             tabIndex={Number(expandedRow)}
             key={activeDraft?.id}
             overflow={false}
@@ -183,7 +168,7 @@ const SaleAndRefunTable = ({
               ))}
             </THead>
 
-            <TBody className="!bg-white">
+            <TBody>
               {table.getRowModel().rows.length > 0 ? (
                 table.getRowModel().rows.map((row, rowIndex) => {
                   const oddEven = rowIndex % 2 === 0;
@@ -194,14 +179,14 @@ const SaleAndRefunTable = ({
                         setExpandedRow(String(rowIndex));
                       }}
                       className={classNames(
-                        oddEven ? "bg-gray-100" : "bg-white",
+                        oddEven ? "bg-slate-200" : "bg-white",
                         expandedRow?.toString() === row.id &&
                           (type === "sale"
                             ? "text-primary"
                             : type === "refund"
                               ? "text-red-500"
                               : "text-green-600"),
-                        "cursor-pointer",
+                        "!h-max cursor-pointer",
                       )}
                     >
                       {row.getVisibleCells().map((cell) => (
@@ -210,7 +195,7 @@ const SaleAndRefunTable = ({
                           style={{ width: cell.column.getSize() }}
                           className={classNames(
                             cell.column.columnDef.meta?.bodyCellClassName,
-                            "px-3 py-2 text-sm",
+                            "p-2 text-xs",
                           )}
                         >
                           {flexRender(
@@ -224,20 +209,18 @@ const SaleAndRefunTable = ({
                 })
               ) : (
                 // 🟢 Bo‘sh holatda — Empty chiqadi
-                <Tr>
-                  <Td colSpan={table.getAllColumns().length}>
-                    <div className="py-10 flex justify-center">
-                      <Empty textSize="text-base" size={60} />
-                    </div>
+                <Tr key="empty">
+                  <Td className="!py-20" colSpan={table.getAllColumns().length}>
+                    <Empty textSize="text-base" size={60} />
                   </Td>
                 </Tr>
               )}
             </TBody>
           </Table>
-          <div className="w-full sticky bottom-0 bg-white border-t border-gray-300">
+          <div className="w-full sticky bottom-0 bg-white border-t border-slate-200">
             <div className="flex items-center justify-end gap-x-2">
               <div className="flex justify-end gap-x-2 items-center px-2 py-2.5">
-                <div className="text-base font-medium text-gray-500">
+                <div className="text-base font-medium text-slate-500">
                   Итого:{" "}
                 </div>{" "}
                 <div
@@ -256,7 +239,7 @@ const SaleAndRefunTable = ({
 
               {type === "sale" && activeDraft?.discountAmount ? (
                 <div className="flex justify-end gap-x-2 items-center px-2 py-2.5">
-                  <div className="text-base font-medium text-gray-500">
+                  <div className="text-base font-medium text-slate-500">
                     Со скидкой:{" "}
                   </div>{" "}
                   <div
@@ -282,7 +265,7 @@ const SaleAndRefunTable = ({
 
               {type === "sale" && activeDraft?.discountAmount ? (
                 <div className="flex justify-end gap-x-2 items-center px-2 py-2.5">
-                  <div className="text-base font-medium text-gray-500">
+                  <div className="text-base font-medium text-slate-500">
                     Скидка:{" "}
                   </div>{" "}
                   <div
@@ -310,28 +293,17 @@ const SaleAndRefunTable = ({
             <div
               className={classNames(
                 expandedRow && activeDraft?.items?.length
-                  ? "flex items-center justify-between"
+                  ? "flex items-center justify-between gap-x-2"
                   : "hidden",
-                `px-2 py-2.5 bg-gray-100 border-t border-gray-200`,
+                `py-2 px-1 bg-slate-200 border-t border-slate-200`,
               )}
             >
-              <CommonDeleteDialog
-                description={`Удалить товар "${currentItem?.productName}"? Действие нельзя будет отменить.`}
-                onDelete={onDeleteDraftItem}
-              >
-                <Button
-                  variant="plain"
-                  icon={<HiTrash size={20} />}
-                  className="bg-red-100 text-red-500 hover:text-red-400 active:scale-90 active:bg-red-200 transition-all duration-300"
-                />
-              </CommonDeleteDialog>
-
               {isEditing?.isOpen && isEditing?.type === "price" ? (
                 <Input
                   size="sm"
                   type="number"
                   autoFocus={true}
-                  className="!w-[155px] xl:!w-[220px]"
+                  className="!w-[145px]"
                   value={currentItem?.priceAmount ?? 0}
                   onChange={(val) => {
                     const newPrice = Number(val?.target?.value);
@@ -362,19 +334,18 @@ const SaleAndRefunTable = ({
               ) : (
                 <div
                   onClick={() => setIsEditing({ isOpen: true, type: "price" })}
-                  className=" xl:w-[220px] bg-white px-3 py-3 flex items-center justify-between gap-2 rounded-lg"
+                  className="w-[145px] h-8 bg-white p-2 flex items-center justify-between gap-2 rounded-lg"
                 >
-                  <span className="text-[14px] xl:text-base font-normal">
+                  <span className="text-xs font-normal">
                     Цена:
                   </span>
-                  <div className="text-[14px] xl:text-base font-medium text-gray-800">
+                  <div className="text-xs font-medium text-slate-800">
                     <FormattedNumber value={currentItem?.priceAmount ?? 0} />
-                    <span className="ml-1">сум</span>
                   </div>
                 </div>
               )}
 
-              <div className="flex items-center gap-x-2 w-[154px] xl:w-auto">
+              <div className="flex items-center gap-x-1 w-[125px]">
                 {isEditing?.type !== "quantity" &&
                   (() => {
                     const showDeleteDialog = !(
@@ -385,7 +356,7 @@ const SaleAndRefunTable = ({
                     const minusButton = (
                       <Button
                         variant="solid"
-                        className="w-12 h-12 p-3 flex items-center justify-center !bg-white hover:bg-gray-100 rounded-lg active:!bg-gray-200 text-gray-800"
+                        className="w-8 h-8 p-2 flex items-center justify-center !bg-white hover:bg-slate-100 rounded-lg active:!bg-slate-200 text-slate-800"
                         onClick={decrease}
                       >
                         -
@@ -409,7 +380,7 @@ const SaleAndRefunTable = ({
                     ref={quantityRef}
                     size="md"
                     type="number"
-                    className="!w-[154px] xl:!w-[100px]"
+                    className="!w-[125px]"
                     autoFocus={true}
                     numberMode={
                       currentItem?.productPackageName === "шт" ? "int" : "float"
@@ -443,7 +414,7 @@ const SaleAndRefunTable = ({
                     onClick={() =>
                       setIsEditing({ isOpen: true, type: "quantity" })
                     }
-                    className="w-[80px] xl:w-[100px] h-12 text-[14px] xl:text-base font-medium text-gray-800 flex items-center justify-center bg-white rounded-lg"
+                    className="w-[53px] h-8 text-xs font-medium text-slate-800 flex items-center justify-center bg-white rounded-lg"
                   >
                     <FormattedNumber value={currentItem?.quantity} scale={3} />
                   </div>
@@ -453,7 +424,7 @@ const SaleAndRefunTable = ({
                   <Button
                     variant="solid"
                     className={classNames(
-                      "w-12 h-12 p-3 flex items-center justify-center !bg-white hover:bg-gray-100 rounded-lg active:!bg-gray-200 text-gray-800",
+                      "w-8 h-8 p-2 flex items-center justify-center !bg-white hover:bg-slate-100 rounded-lg active:!bg-slate-200 text-slate-800",
                     )}
                     onClick={increase}
                   >
@@ -467,7 +438,7 @@ const SaleAndRefunTable = ({
                   size="sm"
                   type="number"
                   autoFocus
-                  className="!w-[155px] xl:!w-[220px]"
+                  className="!w-[145px]"
                   value={currentItem?.totalAmount}
                   onChange={(val) => {
                     const price = getActivePrice(
@@ -501,20 +472,31 @@ const SaleAndRefunTable = ({
                     if (currentItem?.productPackageName?.toLowerCase() !== "шт")
                       setIsEditing({ isOpen: true, type: "totalPrice" });
                   }}
-                  className=" xl:w-[220px] bg-white px-3 py-3 flex items-center justify-between gap-2 rounded-lg"
+                  className="bg-white h-8 w-[145px] p-2 flex items-center justify-between gap-2 rounded-lg"
                 >
-                  <span className="text-[14px] xl:text-base font-normal">
+                  <span className="text-xs font-normal">
                     Сумма:
                   </span>
-                  <div className="text-[14px] xl:text-base font-medium text-gray-800">
+                  <div className="text-xs font-medium text-slate-800">
                     <FormattedNumber
                       value={currentItem?.totalAmount}
                       scale={2}
                     />
-                    <span className="ml-1">сум</span>
                   </div>
                 </div>
               )}
+
+              <CommonDeleteDialog
+                description={`Удалить товар "${currentItem?.productName}"? Действие нельзя будет отменить.`}
+                onDelete={onDeleteDraftItem}
+              >
+                <Button
+                  variant="plain"
+                  size="sm"
+                  icon={<HiTrash size={20} />}
+                  className="bg-red-100 text-red-500 hover:text-red-400 active:scale-90 active:bg-red-200 transition-all duration-300 h-8 w-8"
+                />
+              </CommonDeleteDialog>
             </div>
           </div>
         </div>

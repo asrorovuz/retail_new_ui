@@ -19,7 +19,7 @@ const FavouriteProduct = ({
   type = "sale",
   setExpandedRow,
   setExpandedId,
-  selectedRows
+  selectedRows,
 }: LikedType) => {
   const { data: favoriteProducts, isPending } = useAllFavoritProductApi();
   const { updateDraftSaleItem, draftSales } = useDraftSaleStore();
@@ -54,7 +54,8 @@ const FavouriteProduct = ({
       (p) => p.productId === item.product.id,
     );
 
-    const isSelectedBulk = selectedRows && type === "sale" ? !!selectedRows[item.product.id] : false;
+    const isSelectedBulk =
+      selectedRows && type === "sale" ? !!selectedRows[item.product.id] : false;
 
     const packagePrice =
       type === "purchase"
@@ -77,7 +78,11 @@ const FavouriteProduct = ({
       priceAmount: packagePrice?.amount,
       priceAmoutBulk: packagePriceBulk?.amount,
       quantity: quantity + 1,
-      totalAmount: (quantity + 1) * (isSelectedBulk && type === "sale" ? packagePriceBulk?.amount : packagePrice?.amount),
+      totalAmount:
+        (quantity + 1) *
+        (isSelectedBulk && type === "sale"
+          ? packagePriceBulk?.amount
+          : packagePrice?.amount),
       catalogCode: item?.product?.catalog_code,
       catalogName: item?.product?.catalog_name,
     };
@@ -88,36 +93,34 @@ const FavouriteProduct = ({
   };
 
   return (
-    <div className="xl:h-[27vh] h-[170px] rounded-2xl overflow-hidden">
-      <div className="xl:h-[27vh] h-[170px] overflow-y-auto">
-        <div className="min-h-full bg-gray-100 p-2 grid grid-cols-3 gap-2">
-          {isPending && (
-            <div className="col-span-3 flex justify-center">
-              <Loading />
-            </div>
-          )}
+    <div className="h-[26.58vh] rounded-2xl overflow-auto">
+      <div className="min-h-full bg-slate-200 p-2 grid grid-cols-3 gap-2">
+        {isPending && (
+          <div className="col-span-3 flex justify-center">
+            <Loading />
+          </div>
+        )}
 
-          {!isPending && !favoriteProducts?.length ? (
-            <div className="col-span-3 flex justify-center">
-              <Empty size={64} textSize="32px" text="Нет избранных товаров" />
-            </div>
-          ) : (
-            ""
-          )}
+        {!isPending && !favoriteProducts?.length ? (
+          <div className="col-span-3 flex justify-center">
+            <Empty size={64} textSize="32px" text="Нет избранных товаров" />
+          </div>
+        ) : (
+          ""
+        )}
 
-          {!isPending && favoriteProducts?.length
-            ? favoriteProducts?.map((item) => {
-                return (
-                  <FavouriteCard
-                    name={item?.product?.name}
-                    onItemChange={() => onChange(item)}
-                    img={item?.product?.images ?? []}
-                    prices={item?.product?.prices}
-                  />
-                );
-              })
-            : ""}
-        </div>
+        {!isPending && favoriteProducts?.length
+          ? favoriteProducts?.map((item) => {
+              return (
+                <FavouriteCard
+                  name={item?.product?.name}
+                  onItemChange={() => onChange(item)}
+                  img={item?.product?.images ?? []}
+                  prices={item?.product?.prices}
+                />
+              );
+            })
+          : ""}
       </div>
     </div>
   );

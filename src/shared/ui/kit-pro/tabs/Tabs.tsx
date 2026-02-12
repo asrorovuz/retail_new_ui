@@ -81,7 +81,7 @@ export default function Tabs({
   }, [drafts]); // drafts o‘zgarganda ishlaydi
 
   return (
-    <div className="w-full max-w-[calc(100%-110px)] xl:max-w-[calc(100%-130px)] flex items-center gap-x-2">
+    <div className="w-full max-w-[calc(100%-110px)] flex items-center gap-x-2">
       {/* Tabs */}
       <div
         ref={scrollRef}
@@ -101,17 +101,11 @@ export default function Tabs({
             variant="plain"
             onClick={() => activateDraft(index)}
             className={classNames(
-              "px-3 xl:px-5 !text-xs !xl:text-sm font-medium rounded-lg transition-colors bg-transparent",
-              draft?.isActive && type === "sale" && "!text-primary bg-white",
-              draft?.isActive && type === "refund" && "!text-red-500 bg-white",
-              draft?.isActive && type === "purchase" && "!text-green-600 bg-white"
+              "py-1.5 px-2 text-xs font-medium rounded-lg transition-colors bg-transparent",
+              draft?.isActive ? "!text-primary bg-white" : "text-slate-500"
             )}
           >
-            {type === "sale"
-              ? "Продажа"
-              : type === "refund"
-              ? "Возврат"
-              : "Приход"}{" "}
+            <span className="mr-1">Окно</span>
             {index > 9 ? index + 1 : "0" + (index + 1)}
           </Button>
         ))}
@@ -123,10 +117,9 @@ export default function Tabs({
         size="sm"
         iconAlignment="end"
         icon={<FaPlus className="text-sm" />}
-        className="bg-white !text-xs xl:text-sm font-medium rounded-lg"
+        className="bg-white text-xs font-medium rounded-lg text-slate-900"
       >
-        Добавить{" "}
-        {type === "sale" ? "продажа" : type === "refund" ? "возврат" : "приход"}
+        Доп. oкно
       </Button>
     </div>
   );
