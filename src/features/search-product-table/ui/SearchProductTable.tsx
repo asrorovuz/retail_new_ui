@@ -90,7 +90,7 @@ const SearchProductTable = ({
   };
 
   return (
-    <div className="h-[69vh] overflow-y-auto w-full">
+    <div className="h-[56.6vh] bg-white overflow-y-auto w-full rounded-md mt-1">
       {data?.map((item, index) => {
         const price = item?.prices?.find(
           (el) => el?.product_price_type?.is_primary,
@@ -100,8 +100,8 @@ const SearchProductTable = ({
           <div
             onClick={() => onChange(item)}
             className={classNames(
-              "flex justify-between items-start gap-x-[30px] text-base text-gray-400 p-2 active:bg-gray-100",
-              !!index && "border-t border-gray-200",
+              "flex justify-between items-start gap-x-[30px] text-xs text-slate-700 p-2 active:bg-slate-100",
+              !!index && "border-t border-slate-200",
             )}
           >
             {highlightText(item?.name, debouncedSearch)}

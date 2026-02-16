@@ -11,13 +11,13 @@ const SearchProduct = ({
 }) => {
   return (
     <Input
-      className="w-full text-sm font-medium !bg-transparent border-none outline-none ring-0 !focus:ring-0 !focus:border-none !focus:outline-none"
+      className="w-full text-xs font-medium !bg-transparent border-none outline-none ring-0 !focus:ring-0 !focus:border-none !focus:outline-none"
       type="text"
       size="sm"
       suffix={
         search ? (
           <div onClick={() => setSearch("")}>
-            <IoMdClose size={22} />
+            <IoMdClose size={20} />
           </div>
         ) : (
           <BsSearch />

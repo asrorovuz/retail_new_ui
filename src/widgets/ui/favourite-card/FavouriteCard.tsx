@@ -39,9 +39,9 @@ const FavouriteCard = ({ name, prices, img, onItemChange }: Propstype) => {
       onClick={onItemChange}
       className="flex justify-between bg-white rounded-lg max-h-[72px] overflow-hidden active:bg-gray-100 active:scale-105 transition-all duration-300"
     >
-      <div className="w-full p-4">
-        <h4 className="text-base font-semibold line-clamp-1">{name}</h4>
-        <p className="text-sm font-normal">
+      <div className="w-full p-3">
+        <h4 className="text-xs font-semibold line-clamp-1">{name}</h4>
+        <p className="text-xs font-normal">
           <FormattedNumber value={Number(price?.amount ?? 0)} /> Сум
         </p>
       </div>

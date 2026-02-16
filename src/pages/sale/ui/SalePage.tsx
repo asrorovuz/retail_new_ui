@@ -22,6 +22,9 @@ import { showErrorLocalMessage } from "@/shared/lib/showMessage";
 import { useSettingsStore } from "@/app/store/useSettingsStore";
 import OrderActions from "@/features/order-actions";
 import ViewMark from "@/features/viewMark";
+import Keybord from "@/widgets/ui/keyboard/Keybord";
+import { Button } from "@/shared/ui/kit";
+import { TfiReload } from "react-icons/tfi";
 
 const SalePage = () => {
   const [search, setSearch] = useState("");
@@ -162,17 +165,45 @@ const SalePage = () => {
           setExpandedRow={setExpandedRow}
           setExpandedId={setExpandedId}
         />
+        <div className="flex justify-between items-center">
+          <Button
+            variant="default"
+            type="button"
+            size="sm"
+            className="!text-red-500 h-8 py-0 ring-0 hover:ring-0 active:ring-0 hover:border-red-500 active:border-red-500 active:text-red-600"
+          >
+            Удалить окно
+          </Button>
+          <div className="flex items-center gap-x-2">
+            <Button className="h-8 py-0" size="sm" type="button">Другие</Button>
+            <Button className="h-8 py-0" size="sm" icon={<TfiReload />} variant="solid" type="button">
+              Смена
+            </Button>
+          </div>
+        </div>
       </div>
       <div className="bg-white rounded-2xl p-3">
-        
+        <div className="rounded-2xl mb-2 bg-slate-200 p-1">
+          <SearchProduct search={search} setSearch={setSearch} />
+          {search && !isPending && (
+            <>
+              <SearchProductTable
+                type="sale"
+                debouncedSearch={debouncedSearch}
+                selectedRows={selectedRows}
+                data={data ?? []}
+                setExpandedRow={setExpandedRow}
+                setExpandedId={setExpandedId}
+              />
+            </>
+          )}
+          <Keybord />
+        </div>
       </div>
     </div>
     // <div className="flex justify-between gap-x-2 h-[calc(100vh-90px)]">
 
     //   <div className="bg-white p-3 rounded-2xl w-[320px]">
-    //     <div className="rounded-2xl mb-2">
-    //       <SearchProduct search={search} setSearch={setSearch} />
-    //     </div>
 
     //     {!search && !isPending && (
     //       <>
@@ -207,19 +238,6 @@ const SalePage = () => {
     //           activeSelectPaymetype={activeSelectPaymetype}
     //           setActivePaymentSelectType={setActivePaymentSelectType}
     //           complateActiveDraft={completeActiveDraftSale}
-    //         />
-    //       </>
-    //     )}
-
-    //     {search && !isPending && (
-    //       <>
-    //         <SearchProductTable
-    //           type="sale"
-    //           debouncedSearch={debouncedSearch}
-    //           selectedRows={selectedRows}
-    //           data={data ?? []}
-    //           setExpandedRow={setExpandedRow}
-    //           setExpandedId={setExpandedId}
     //         />
     //       </>
     //     )}

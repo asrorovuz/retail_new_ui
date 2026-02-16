@@ -93,8 +93,8 @@ const FavouriteProduct = ({
   };
 
   return (
-    <div className="h-[26.58vh] rounded-2xl overflow-auto">
-      <div className="min-h-full bg-slate-200 p-2 grid grid-cols-3 gap-2">
+    <div className="h-[26.58vh] mb-3 rounded-2xl overflow-auto">
+      <div className="min-h-full bg-slate-200 p-1 grid grid-cols-2 gap-2">
         {isPending && (
           <div className="col-span-3 flex justify-center">
             <Loading />

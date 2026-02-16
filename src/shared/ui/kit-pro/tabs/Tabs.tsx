@@ -101,7 +101,7 @@ export default function Tabs({
             variant="plain"
             onClick={() => activateDraft(index)}
             className={classNames(
-              "py-1.5 px-2 text-xs font-medium rounded-lg transition-colors bg-transparent",
+              "px-2 h-8 text-xs font-medium rounded-lg transition-colors bg-transparent",
               draft?.isActive ? "!text-primary bg-white" : "text-slate-500"
             )}
           >
@@ -117,7 +117,7 @@ export default function Tabs({
         size="sm"
         iconAlignment="end"
         icon={<FaPlus className="text-sm" />}
-        className="bg-white text-xs font-medium rounded-lg text-slate-900"
+        className="bg-white h-8 text-xs font-medium rounded-lg text-slate-900"
       >
         Доп. oкно
       </Button>

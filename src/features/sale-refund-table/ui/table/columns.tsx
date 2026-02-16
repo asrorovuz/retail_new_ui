@@ -22,19 +22,19 @@ export const columns = (
   // updateDraftItemTotalPrice?: (ind: number, total: number) => void,
 ): ColumnDef<any>[] => {
   const cols: (ColumnDef<any> | null)[] = [
-    {
-      header: () => (
-        <div className="text-xs font-medium text-slate-900">№</div>
-      ),
-      accessorKey: "index",
-      cell: ({ row }) => {
-        return <span>{row.index + 1}</span>;
-      },
-      meta: {
-        bodyCellClassName: "text-start",
-        headerClassName: "text-xs font-medium text-slate-900",
-      },
-    },
+    // {
+    //   header: () => (
+    //     <div className="text-xs font-medium text-slate-900">№</div>
+    //   ),
+    //   accessorKey: "index",
+    //   cell: ({ row }) => {
+    //     return <span>{row.index + 1}</span>;
+    //   },
+    //   meta: {
+    //     bodyCellClassName: "text-start",
+    //     headerClassName: "text-xs font-medium text-slate-900",
+    //   },
+    // },
     {
       header: () => (
         <div className="text-xs font-medium text-slate-900">
@@ -75,7 +75,7 @@ export const columns = (
     },
     {
       header: () => (
-        <div className="text-xs font-medium text-slate-900">
+        <div className="text-xs font-medium text-slate-900 text-nowrap">
           КОЛ-ВО
         </div>
       ),
