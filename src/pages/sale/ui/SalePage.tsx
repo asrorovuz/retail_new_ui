@@ -1,4 +1,7 @@
-import type { DraftSaleSchema } from "@/@types/sale";
+import type {
+  DraftSalePaymentAmountSchema,
+  DraftSaleSchema,
+} from "@/@types/sale";
 import { useDraftSaleStore } from "@/app/store/useSaleDraftStore";
 import {
   useAllProductApi,
@@ -22,9 +25,14 @@ import { showErrorLocalMessage } from "@/shared/lib/showMessage";
 import { useSettingsStore } from "@/app/store/useSettingsStore";
 import OrderActions from "@/features/order-actions";
 import ViewMark from "@/features/viewMark";
-import Keybord from "@/widgets/ui/keyboard/Keybord";
 import { Button } from "@/shared/ui/kit";
 import { TfiReload } from "react-icons/tfi";
+import FormattedNumber from "@/shared/ui/kit-pro/numeric-format/NumericFormat";
+import classNames from "@/shared/lib/classNames";
+import { LogoutSvg } from "@/shared/ui/svg/LogoutSvg";
+import Alert from "@/shared/ui/kit-pro/alert/Alert";
+import { useAuthContext } from "@/app/providers/AuthProvider";
+import { getActivePrice } from "@/shared/lib/getActivatePrice";
 
 const SalePage = () => {
   const [search, setSearch] = useState("");
@@ -38,16 +46,16 @@ const SalePage = () => {
   const [mark, setMark] = useState<number | null>(null);
   const [selectedRows, setSelectedRows] = useState<Record<number, boolean>>({});
   const [payModal, setPayModal] = useState(false);
-  const [activeOnlyType, setActiveOnlyType] = useState({
-    isOpen: false,
-    ind: -1,
-  });
   const [activeSelectPaymetype, setActivePaymentSelectType] =
     useState<number>(1);
+  const [showAlert, setShowAlert] = useState(false);
+  const [activeType, setActiveType] = useState<"numeric" | "qwerty">("numeric");
 
   const { draftSales, addDraftSale, activateDraftSale } = useDraftSaleStore(
     (store) => store,
   );
+
+  const { logout } = useAuthContext();
 
   const { data, isPending } = useAllProductApi(50, 1, debouncedSearch || "");
   const {
@@ -147,6 +155,7 @@ const SalePage = () => {
           type="sale"
           setMark={setMark}
           draft={draftSales}
+          setActiveTypeKeyboard={setActiveType}
           activeDraft={activeDraft}
           expandedRow={expandedRow}
           setExpandedRow={setExpandedRow}
@@ -166,25 +175,49 @@ const SalePage = () => {
           setExpandedId={setExpandedId}
         />
         <div className="flex justify-between items-center">
-          <Button
-            variant="default"
-            type="button"
-            size="sm"
-            className="!text-red-500 h-8 py-0 ring-0 hover:ring-0 active:ring-0 hover:border-red-500 active:border-red-500 active:text-red-600"
-          >
-            Удалить окно
-          </Button>
           <div className="flex items-center gap-x-2">
-            <Button className="h-8 py-0" size="sm" type="button">Другие</Button>
-            <Button className="h-8 py-0" size="sm" icon={<TfiReload />} variant="solid" type="button">
+            <Button
+              onClick={() => setShowAlert(true)}
+              className="bg-red-100 h-8 text-red-500 text-xs font-semibold active:bg-red-200 active:text-red-500 hover:text-red-500 transition duration-300"
+              variant="plain"
+              size="sm"
+              icon={<LogoutSvg height={20} width={20} />}
+            >
+              Выход
+            </Button>
+            <Button
+              variant="default"
+              type="button"
+              size="sm"
+              className="!text-red-500 h-8 py-0 ring-0 hover:ring-0 active:ring-0 hover:border-red-500 active:border-red-500 active:text-red-600"
+            >
+              Удалить окно
+            </Button>
+          </div>
+          <div className="flex items-center gap-x-2">
+            <Button className="h-8 py-0" size="sm" type="button">
+              Другие
+            </Button>
+            <Button
+              className="h-8 py-0"
+              size="sm"
+              icon={<TfiReload />}
+              variant="solid"
+              type="button"
+            >
               Смена
             </Button>
           </div>
         </div>
       </div>
       <div className="bg-white rounded-2xl p-3">
-        <div className="rounded-2xl mb-2 bg-slate-200 p-1">
-          <SearchProduct search={search} setSearch={setSearch} />
+        <div className="rounded-2xl mb-3 bg-slate-200 p-1">
+          <SearchProduct
+            search={search}
+            setSearch={setSearch}
+            setActiveType={setActiveType}
+            activeType={activeType}
+          />
           {search && !isPending && (
             <>
               <SearchProductTable
@@ -197,9 +230,109 @@ const SalePage = () => {
               />
             </>
           )}
-          <Keybord />
+        </div>
+        <div className="rounded-2xl bg-slate-200 mb-3 p-1">
+          {!search && !isPending && (
+            <>
+              <PaymeTypeCards
+                type={"sale"}
+                activeDraft={activeDraft}
+                activeSelectPaymetype={activeSelectPaymetype}
+                setActivePaymentSelectType={setActivePaymentSelectType}
+              />
+            </>
+          )}
+        </div>
+        <div className="rounded-2xl bg-slate-200 mb-3 p-1">
+          {!search && !isPending && (
+            <>
+              <div className="flex items-center gap-1 mb-1">
+                {["20000", "50000", "100000", "200000"].map((amountStr) => (
+                  <div
+                    key={amountStr}
+                    onClick={() => {
+                      const amount = amountStr.toString(); // string tipiga o'tkazamiz
+                      const payments: DraftSalePaymentAmountSchema[] =
+                        activeDraft?.payment?.amounts?.map((p) => ({
+                          ...p,
+                        })) ?? [];
+
+                      const existingIndex = payments.findIndex(
+                        (p) => p.paymentType === 1,
+                      );
+
+                      let updatedAmounts: DraftSalePaymentAmountSchema[];
+
+                      if (
+                        existingIndex >= 0 &&
+                        payments[existingIndex].amount === amount
+                      ) {
+                        payments[existingIndex] = {
+                          ...payments[existingIndex],
+                          amount: "0",
+                        };
+                        updatedAmounts = payments;
+
+                        setValue("0");
+                      } else if (existingIndex >= 0) {
+                        // mavjud bo‘lsa, amount-ni yangilaymiz
+                        payments[existingIndex] = {
+                          ...payments[existingIndex],
+                          amount,
+                        };
+                        updatedAmounts = payments;
+                      } else {
+                        // yo‘q bo‘lsa, yangi qo‘shamiz
+                        updatedAmounts = [
+                          ...payments,
+                          { paymentType: 1, amount },
+                        ];
+                      }
+
+                      setActivePaymentSelectType(1);
+                      setValue(amount);
+                      updateDraftSalePayment(updatedAmounts);
+                    }}
+                    className={classNames(
+                      "h-9 px-4 text-sm flex items-center cursor-pointer rounded-lg bg-white font-medium transition-all",
+                      activeDraft?.payment?.amounts.find(
+                        (p) => p.paymentType === 1 && p.amount === amountStr,
+                      )
+                        ? "text-blue-500"
+                        : "",
+                    )}
+                  >
+                    <FormattedNumber value={+amountStr} />
+                  </div>
+                ))}
+              </div>
+
+              <PaymentSection
+                type={"sale"}
+                activeDraft={activeDraft}
+                activeSelectPaymetype={activeSelectPaymetype}
+                value={value}
+                setValue={setValue}
+                activeType={activeType}
+                updateDraftDiscount={updateDraftSaleDiscount}
+                updateDraftPayment={updateDraftSalePayment}
+              />
+            </>
+          )}
         </div>
       </div>
+      {showAlert && (
+        <Alert
+          type="warning"
+          title="Выход из системы"
+          content="Вы действительно хотите выйти из системы?"
+          onCancel={() => setShowAlert(false)}
+          onConfirm={() => {
+            logout();
+            setShowAlert(false);
+          }}
+        />
+      )}
     </div>
     // <div className="flex justify-between gap-x-2 h-[calc(100vh-90px)]">
 
@@ -207,24 +340,7 @@ const SalePage = () => {
 
     //     {!search && !isPending && (
     //       <>
-    //         <PaymeTypeCards
-    //           type={"sale"}
-    //           activeDraft={activeDraft}
-    //           activeSelectPaymetype={activeSelectPaymetype}
-    //           setActivePaymentSelectType={setActivePaymentSelectType}
-    //           updateDraftPayment={updateDraftSalePayment}
-    //           activeOnlyType={activeOnlyType}
-    //           setActiveOnlyType={setActiveOnlyType}
-    //         />
-    //         <PaymentSection
-    //           type={"sale"}
-    //           activeDraft={activeDraft}
-    //           activeSelectPaymetype={activeSelectPaymetype}
-    //           value={value}
-    //           setValue={setValue}
-    //           updateDraftDiscount={updateDraftSaleDiscount}
-    //           updateDraftPayment={updateDraftSalePayment}
-    //         />
+
     //         <OrderActions
     //           type={"sale"}
     //           draft={draftSales}

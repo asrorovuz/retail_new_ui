@@ -16,7 +16,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 const Header = () => {
   const location = useLocation();
-  const [showAlert, setShowAlert] = useState(false);
+  
   const [shiftAddModal, setShiftAddModal] = useState(false);
   const [shiftUpdateModal, setShiftUpdateModal] = useState(false);
   const { data, error } = useShiftApi(shiftAddModal || shiftUpdateModal);

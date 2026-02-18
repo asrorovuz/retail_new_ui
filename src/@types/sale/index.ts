@@ -5,7 +5,7 @@ export type DraftSaleSchema = {
   isActive: boolean;
   items: DraftSaleItemSchema[];
   payment?: DraftSalePaymentSchema;
-  discountAmount?: number;
+  discountAmount?: string;
   is_fiscalized?: boolean;
 };
 
@@ -185,6 +185,7 @@ export type DraftSaleItemSchema = {
   productName: string;
   productPackageName: any;
   priceAmount: number;
+  priceAmoutBulk?: number;
   priceTypeId: number;
   quantity: number;
   totalAmount: number;
@@ -197,7 +198,7 @@ type DraftSalePaymentSchema = {
   amounts: DraftSalePaymentAmountSchema[];
 };
 export type DraftSalePaymentAmountSchema = {
-  amount: number;
+  amount: string;
   paymentType: number;
 };
 
@@ -220,7 +221,7 @@ export interface SaleStoreActions {
     draftSaleItemIndex: number,
     totalPrice: number
   ) => void;
-  updateDraftSaleDiscount: (discountAmount: number) => void;
+  updateDraftSaleDiscount: (discountAmount: string) => void;
   updateDraftSalePayment: (payment: DraftSalePaymentAmountSchema[]) => void;
   completeActiveDraftSale: () => void;
 

@@ -14,6 +14,7 @@ export type DraftPurchaseItemSchema = {
   // productPackageId: number;
   productPackageName: string | null;
   priceAmount: number;
+  priceAmoutBulk?: number;
   priceTypeId: number;
   quantity: number;
   totalAmount: number;

@@ -113,6 +113,7 @@ const FavouriteProduct = ({
           ? favoriteProducts?.map((item) => {
               return (
                 <FavouriteCard
+                  key={item?.product?.id}
                   name={item?.product?.name}
                   onItemChange={() => onChange(item)}
                   img={item?.product?.images ?? []}

@@ -13,10 +13,10 @@ const initialState: SaleStoreInitialState = {
     {
       items: [],
       isActive: true,
-      discountAmount: 0,
+      discountAmount: "0",
       payment: {
         amounts: PaymentTypes.map((paymentType) => {
-          return { amount: 0, paymentType: paymentType.type };
+          return { amount: "0", paymentType: paymentType.type };
         }),
       },
     },
@@ -31,7 +31,7 @@ export const useDraftSaleStore = create<
     addDraftSale: (draftSale) =>
       set((state) => {
         const activeSale = state.draftSales.find(
-          (s: DraftSaleSchema) => s.isActive
+          (s: DraftSaleSchema) => s.isActive,
         );
         if (activeSale) {
           activeSale.isActive = false;
@@ -41,7 +41,7 @@ export const useDraftSaleStore = create<
 
         if (draftSale.id) {
           const existIndex = state.draftSales.findIndex(
-            (s: DraftSaleSchema) => s.id === draftSale.id
+            (s: DraftSaleSchema) => s.id === draftSale.id,
           );
           if (existIndex !== -1) {
             state.draftSales[existIndex].isActive = true;
@@ -71,17 +71,17 @@ export const useDraftSaleStore = create<
           const newDraftSale: DraftSaleSchema = {
             items: [],
             isActive: true,
-            discountAmount: 0,
+            discountAmount: "0",
             payment: {
               amounts: PaymentTypes.map((paymentType) => {
-                return { amount: 0, paymentType: paymentType.type };
+                return { amount: "0", paymentType: paymentType.type };
               }),
             },
           };
           state.draftSales = [newDraftSale];
         } else {
           let items = state.draftSales.filter(
-            (_, index) => index !== draftSaleIndex
+            (_, index) => index !== draftSaleIndex,
           );
           if (draftSaleIndex === 0) items[0].isActive = true;
           else items[draftSaleIndex - 1].isActive = true;
@@ -125,9 +125,9 @@ export const useDraftSaleStore = create<
         const activeSale = state.draftSales.find((s) => s.isActive);
         if (activeSale) {
           activeSale.items = [];
-          activeSale.discountAmount = 0;
+          activeSale.discountAmount = "0";
           if (activeSale.payment) {
-            activeSale.payment.amounts.forEach((a) => (a.amount = 0));
+            activeSale.payment.amounts.forEach((a) => (a.amount = "0"));
           }
         }
       }),
@@ -140,7 +140,7 @@ export const useDraftSaleStore = create<
       }),
     updateDraftSaleItemPrice: (
       draftSaleItemIndex: number,
-      priceAmount: number
+      priceAmount: number,
     ) =>
       set((state) => {
         const activeSale = state.draftSales.find((s) => s.isActive);
@@ -150,7 +150,7 @@ export const useDraftSaleStore = create<
       }),
     updateDraftSaleItemTotalPrice: (
       draftSaleItemIndex: number,
-      totalPrice: number
+      totalPrice: number,
     ) =>
       set((state) => {
         const activeSale = state.draftSales.find((s) => s.isActive);
@@ -160,7 +160,7 @@ export const useDraftSaleStore = create<
       }),
     updateDraftSaleItemQuantity: (
       draftSaleItemIndex: number,
-      quantity: number
+      quantity: number,
     ) =>
       set((state) => {
         const activeSale = state.draftSales.find((s) => s.isActive);
@@ -168,7 +168,7 @@ export const useDraftSaleStore = create<
           activeSale.items[draftSaleItemIndex].quantity = quantity;
         }
       }),
-    updateDraftSaleDiscount: (discountAmount: number) =>
+    updateDraftSaleDiscount: (discountAmount: string) =>
       set((state) => {
         const activeSale = state.draftSales.find((s) => s.isActive);
         if (activeSale) {
@@ -198,19 +198,19 @@ export const useDraftSaleStore = create<
               const newDraftSale: DraftSaleSchema = {
                 items: [],
                 isActive: true,
-                discountAmount: 0,
+                discountAmount: "0",
                 payment: {
                   amounts: PaymentTypes.map((paymentType) => {
-                    return { amount: 0, paymentType: paymentType.type };
+                    return { amount: "0", paymentType: paymentType.type };
                   }),
                 },
               };
               state.draftSales = [newDraftSale];
             } else {
               activeSale.items = [];
-              activeSale.discountAmount = 0;
+              activeSale.discountAmount = "0";
               if (activeSale.payment) {
-                activeSale.payment.amounts.forEach((a) => (a.amount = 0));
+                activeSale.payment.amounts.forEach((a) => (a.amount = "0"));
               }
             }
           }
@@ -238,12 +238,13 @@ export const useDraftSaleStore = create<
           if (existSaleItem) {
             existSaleItem.quantity += 1;
             existSaleItem.totalAmount =
-              existSaleItem.quantity * existSaleItem.priceAmount;
+              Number(existSaleItem.quantity) *
+              Number(existSaleItem.priceAmount);
             if (mark) {
               existSaleItem.marks ??= [];
 
               const isExist = existSaleItem.marks.some(
-                (existing) => existing === mark
+                (existing) => existing === mark,
               );
 
               if (!isExist) {
@@ -268,5 +269,5 @@ export const useDraftSaleStore = create<
           }
         }
       }),
-  }))
+  })),
 );

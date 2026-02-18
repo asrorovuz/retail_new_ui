@@ -3,7 +3,7 @@ export type DraftRefundSchema = {
   isActive: boolean;
   items: DraftRefundItemSchema[];
   payout?: DraftRefundPayoutSchema;
-  discountAmount?: number;
+  discountAmount?: string;
   is_fiscalized?: boolean;
 };
 
@@ -28,7 +28,7 @@ export type DraftRefundPayoutSchema = {
 };
 
 export type DraftRefundPayoutAmountSchema = {
-  amount: number;
+  amount: string;
   paymentType: number;
 };
 

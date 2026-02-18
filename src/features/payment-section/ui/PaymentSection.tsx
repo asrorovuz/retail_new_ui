@@ -3,22 +3,27 @@ import type {
   DraftSalePaymentAmountSchema,
   DraftSaleSchema,
 } from "@/@types/sale";
-import { Calculator, Discount, PriceForm } from "@/widgets";
+import { Button } from "@/shared/ui/kit";
+import MagnetSvg from "@/shared/ui/svg/MagnetSvg";
+import { KeyboardSwitcher } from "@/widgets/ui/keyboard/Keybord";
 import { useEffect, useMemo } from "react";
+import { LuDelete } from "react-icons/lu";
 
 type PaymentSectionPropsType = {
   type: "sale" | "refund" | "purchase";
   activeDraft: DraftSaleSchema & DraftRefundSchema;
   activeSelectPaymetype: number;
   value: string;
+  activeType: "numeric" | "qwerty";
   setValue: (val: string) => void;
-  updateDraftDiscount: (val: number) => void;
+  updateDraftDiscount: (val: string) => void;
   updateDraftPayment: (val: DraftSalePaymentAmountSchema[]) => void;
 };
 
 const PaymentSection = ({
   type,
   activeDraft,
+  activeType,
   activeSelectPaymetype,
   updateDraftPayment,
   updateDraftDiscount,
@@ -26,60 +31,127 @@ const PaymentSection = ({
   setValue,
 }: PaymentSectionPropsType) => {
   const netPrice = useMemo<number>(() => {
-    let totalAmount =
-      (activeDraft?.items?.length &&
-        activeDraft?.items?.reduce(
-          (acc, item) => acc + item?.totalAmount,
-          0
-        )) ||
-      0;
-    return totalAmount;
-  }, [activeDraft]);
-
-  const toPayAmount = useMemo<number>(() => {
-    const list =
-      type === "sale"
-        ? activeDraft?.payment?.amounts
-        : activeDraft?.payout?.amounts;
+    if (!activeDraft) return 0; // <— himoya
 
     const totalAmount =
-      list?.reduce((acc, item) => acc + (item?.amount || 0), 0) || 0;
+      activeDraft.items?.reduce((acc, item) => acc + item.totalAmount, 0) || 0;
 
-    return netPrice - totalAmount - (activeDraft?.discountAmount || 0);
-  }, [activeDraft, type]);
+    const discount = activeDraft.discountAmount || 0;
 
-  const toDebtAmount = netPrice;
+    return totalAmount - Number(discount);
+  }, [activeDraft]);
 
-  const onPaymentChanged = (paymentType: number, amount: number) => {
+  const totalPaymentAmount = useMemo<number>(() => {
+    return (
+      (type === "sale"
+        ? activeDraft?.payment
+        : activeDraft?.payout
+      )?.amounts.reduce(
+        (acc: number, payment: DraftSalePaymentAmountSchema) =>
+          acc + Number(payment.amount || 0),
+        0,
+      ) ?? 0
+    );
+  }, [(type === "sale" ? activeDraft?.payment : activeDraft?.payout)?.amounts]);
+
+  const cashBackAmount = useMemo<number>(() => {
+    const backAmount = totalPaymentAmount - netPrice;
+    return backAmount > 0 ? backAmount : 0;
+  }, [netPrice, totalPaymentAmount]);
+
+  const onPaymentChanged = (paymentType: number, amount: string) => {
     if (paymentType === 0) {
       updateDraftDiscount(amount);
       return;
     }
 
-    const existing = (
-      type === "sale" ? activeDraft?.payment : activeDraft?.payout
-    )?.amounts.find((p) => p?.paymentType === paymentType);
+    const payments =
+      type === "sale"
+        ? (activeDraft?.payment?.amounts ?? [])
+        : (activeDraft?.payout?.amounts ?? []);
 
-    let updatedAmounts;
+    const existingIndex = payments.findIndex(
+      (p) => p.paymentType === paymentType,
+    );
 
-    if (existing) {
-      // Mavjud bo‘lsa, faqat amountni yangilaymiz (hatto 0 bo‘lsa ham)
-      updatedAmounts = (
-        type === "sale" ? activeDraft?.payment : activeDraft?.payout
-      )?.amounts.map((p: DraftSalePaymentAmountSchema) =>
-        p?.paymentType === paymentType ? { paymentType, amount } : p
+    let updatedAmounts: DraftSalePaymentAmountSchema[];
+
+    if (existingIndex >= 0) {
+      updatedAmounts = payments.map((p, i) =>
+        i === existingIndex ? { ...p, amount } : p,
       );
     } else {
-      // Mavjud bo‘lmasa, yangi qo‘shamiz
-      updatedAmounts = [
-        ...(type === "sale" ? activeDraft?.payment : activeDraft?.payout)
-          ?.amounts!,
-        { paymentType, amount },
-      ];
+      updatedAmounts = [...payments, { paymentType, amount }];
     }
 
-    updateDraftPayment(updatedAmounts as DraftSalePaymentAmountSchema[]);
+    updateDraftPayment(updatedAmounts);
   };
+
+  const onClickNumber = (num: string) => {
+    const current = getCurrentAmount();
+    const newValue = current === "0" ? num : current + num;
+
+    setValue(newValue);
+    onPaymentChanged(activeSelectPaymetype, newValue);
+  };
+
+  const getCurrentAmount = () => {
+    if (activeSelectPaymetype === 0) {
+      return activeDraft?.discountAmount ?? "";
+    }
+
+    const payments =
+      type === "sale"
+        ? (activeDraft?.payment?.amounts ?? [])
+        : (activeDraft?.payout?.amounts ?? []);
+
+    return (
+      payments.find((p) => p.paymentType === activeSelectPaymetype)?.amount ??
+      ""
+    );
+  };
+
+  const toPayAmount = useMemo<number>(() => {
+    return netPrice - totalPaymentAmount;
+  }, [netPrice, totalPaymentAmount]);
+
+  const onMagent = () => {
+    if (toPayAmount <= 0) return;
+
+    const newAmount = String(toPayAmount);
+
+    setValue(newAmount);
+    onPaymentChanged(activeSelectPaymetype, newAmount);
+  };
+
+  const onBackSpace = () => {
+    if (!value) return;
+
+    const newValue = value.length <= 1 ? "0" : value.slice(0, -1);
+
+    setValue(newValue);
+
+    if (activeSelectPaymetype === 0) {
+      updateDraftDiscount(newValue);
+    } else {
+      onPaymentChanged(activeSelectPaymetype, newValue);
+    }
+  };
+
+  const onClear = () => {
+    setValue("0");
+
+    if (activeSelectPaymetype === 0) {
+      updateDraftDiscount("0");
+    } else {
+      onPaymentChanged(activeSelectPaymetype, "0");
+    }
+  };
+
+  const amounts =
+    type === "sale"
+      ? activeDraft?.payment?.amounts
+      : activeDraft?.payout?.amounts;
 
   useEffect(() => {
     if (activeSelectPaymetype === 0) {
@@ -90,37 +162,64 @@ const PaymentSection = ({
       )?.amounts.find((p) => p?.paymentType === activeSelectPaymetype);
       setValue(current ? current?.amount?.toString() : "0");
     }
-  }, [
-    (type === "sale" ? activeDraft?.payment : activeDraft?.payout)?.amounts,
-    activeSelectPaymetype,
-  ]);
+  }, [amounts, activeSelectPaymetype]);
 
   return (
-    <div className="rounded-2xl bg-gray-100 p-2 flex flex-col gap-y-2 mb-2">
-      <PriceForm
-        type={type}
-        value={value}
-        setValue={setValue}
-        toPayAmount={toPayAmount}
-        activeSelectPaymetype={activeSelectPaymetype}
-        onPaymentChanged={onPaymentChanged}
-      />
-      {type === "sale" ? (
-        <Discount
-          toDebtAmount={toDebtAmount}
-          updateDraftDiscount={updateDraftDiscount}
-          active={activeDraft?.discountAmount ?? 0}
-          clearDiscount={!!activeDraft?.items?.length}
-        />
-      ) : (
-        <div className="h-10"></div>
-      )}
-      <Calculator
-        value={value}
-        setValue={setValue}
-        onPaymentChanged={(pt, amount) => onPaymentChanged(pt, amount)}
-        activeSelectPaymetype={activeSelectPaymetype}
-      />
+    <div className="flex flex-col gap-y-2">
+      <div className="py-3 px-4 flex justify-between">
+        <div className="w-full">
+          <div className="flex justify-between text-slate-900">
+            <span className="text-sm">ОПЛАТA</span>
+            <span className="text-2xl">{value ? value : "0"}</span>
+          </div>
+          <div className="border-t text-sm border-slate-400 text-slate-600 flex justify-between pt-1">
+            <span>Сдача</span>
+            <span>{cashBackAmount.toLocaleString("ru-RU")}</span>
+          </div>
+        </div>
+          <Button
+            variant="plain"
+            className="bg-transparent text-blue-500 w-max h-8 ml-1"
+            onClick={onMagent}
+            icon={<MagnetSvg size={28}/>}
+          />
+      </div>
+      <div className="grid grid-cols-4 gap-1">
+        <Button
+          size="sm"
+          type="button"
+          variant="plain"
+          className="w-full bg-slate-300 text-slate-700"
+        >
+          ABC
+        </Button>
+        <Button
+          size="sm"
+          type="button"
+          variant="plain"
+          className="w-full bg-slate-300 text-slate-700"
+        >
+          Скидка
+        </Button>
+        <Button
+          size="sm"
+          type="button"
+          variant="plain"
+          onClick={onClear}
+          className="w-full bg-slate-300 text-slate-700"
+        >
+          Oчистить
+        </Button>
+        <Button
+          size="sm"
+          type="button"
+          variant="plain"
+          onClick={onBackSpace}
+          className="w-full bg-slate-300 text-slate-700"
+          icon={<LuDelete />}
+        ></Button>
+      </div>
+      <KeyboardSwitcher onClickNumber={onClickNumber} activeType={activeType} />
     </div>
   );
 };

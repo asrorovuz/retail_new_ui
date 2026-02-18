@@ -15,11 +15,8 @@ export interface ProductRow {
 // 🔹 Ustunlarni qaytaruvchi funksiya
 export const columns = (
   setMark: (id: string) => void,
-  // activeDraft: any,
   type: "sale" | "refund" | "purchase",
   selectedRows: any,
-  // setSelectedRows: any,
-  // updateDraftItemTotalPrice?: (ind: number, total: number) => void,
 ): ColumnDef<any>[] => {
   const cols: (ColumnDef<any> | null)[] = [
     // {
@@ -118,94 +115,6 @@ export const columns = (
           />
         ) : null,
     },
-    // type === "sale"
-    //   ? {
-    //       id: "select",
-    //       header: () => {
-    //         const allSelected = activeDraft?.items?.every(
-    //           (item: any) => selectedRows[item.productId],
-    //         );
-    //         const someSelected =
-    //           activeDraft?.items?.some(
-    //             (item: any) => selectedRows[item.productId],
-    //           ) && !allSelected;
-
-    //         return (
-    //           <input
-    //             type="checkbox"
-    //             checked={!!allSelected}
-    //             ref={(el) => {
-    //               if (el) el.indeterminate = !!someSelected;
-    //             }}
-    //             onChange={(e) => {
-    //               const checked = e.target.checked;
-    //               const updated: Record<string, boolean> = {};
-
-    //               activeDraft?.items?.forEach((item: any, index: number) => {
-    //                 // 1️⃣ checkbox state
-    //                 updated[item.productId] = checked;
-
-    //                 // 2️⃣ totalPrice ni qayta hisoblash
-    //                 if (updateDraftItemTotalPrice) {
-    //                   const price =
-    //                     checked && item.priceAmoutBulk > 0
-    //                       ? item.priceAmoutBulk
-    //                       : item.priceAmount;
-
-    //                   const newTotal = item.quantity * price;
-
-    //                   updateDraftItemTotalPrice(
-    //                     index,
-    //                     isNaN(newTotal) ? 0 : newTotal,
-    //                   );
-    //                 }
-    //               });
-
-    //               setSelectedRows(updated);
-    //             }}
-    //           />
-    //         );
-    //       },
-
-    //       cell: ({ row }) => {
-    //         const product = row.original;
-    //         const index = row.index;
-
-    //         return (
-    //           <input
-    //             type="checkbox"
-    //             checked={!!selectedRows[row.original.productId]}
-    //             onChange={(e) => {
-    //               const checked = e.target.checked;
-
-    //               setSelectedRows((prev: any) => ({
-    //                 ...prev,
-    //                 [row.original.productId]: e.target.checked,
-    //               }));
-
-    //               if (updateDraftItemTotalPrice) {
-    //                 const price =
-    //                   checked && product.priceAmoutBulk > 0
-    //                     ? product.priceAmoutBulk // OPT
-    //                     : product.priceAmount; // ODDIY
-
-    //                 const newTotal = product.quantity * price;
-
-    //                 updateDraftItemTotalPrice(
-    //                   index,
-    //                   isNaN(newTotal) ? 0 : newTotal,
-    //                 );
-    //               }
-    //             }}
-    //           />
-    //         );
-    //       },
-    //       meta: {
-    //         bodyCellClassName: "text-right",
-    //         headerClassName: "text-xs font-medium text-slate-900",
-    //       },
-    //     }
-    //   : null,
   ];
 
   return cols.filter((c): c is ColumnDef<any> => !!c);

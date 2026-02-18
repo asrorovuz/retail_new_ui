@@ -5,7 +5,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { columns } from "./table/columns";
-import { Button, Input, Table } from "@/shared/ui/kit";
+import { Button, Input, Select, Table } from "@/shared/ui/kit";
 import THead from "@/shared/ui/kit/Table/THead";
 import Tr from "@/shared/ui/kit/Table/Tr";
 import Th from "@/shared/ui/kit/Table/Th";
@@ -13,7 +13,7 @@ import classNames from "@/shared/lib/classNames";
 import TBody from "@/shared/ui/kit/Table/TBody";
 import type { DraftSaleSchema } from "@/@types/sale";
 import Td from "@/shared/ui/kit/Table/Td";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import FormattedNumber from "@/shared/ui/kit-pro/numeric-format/NumericFormat";
 import { HiTrash } from "react-icons/hi";
 import Empty from "@/shared/ui/kit-pro/empty/Empty";
@@ -21,6 +21,9 @@ import type { DraftRefundSchema } from "@/@types/refund";
 import { CommonDeleteDialog } from "@/widgets/ui/delete-dialog/CommonDeleteDialog";
 import type { DraftPurchaseSchema } from "@/@types/purchase";
 import { getActivePrice } from "@/shared/lib/getActivatePrice";
+import { components } from "react-select";
+import { BsChevronDown } from "react-icons/bs";
+import { useKeyboard } from "@/app/providers/KeyboardProvider";
 
 type PropsType = {
   type: "sale" | "refund" | "purchase";
@@ -31,6 +34,7 @@ type PropsType = {
   expendedId: number | null;
   setSelectedRows?: any;
   selectedRows?: any;
+  setActiveTypeKeyboard: (type: "numeric" | "qwerty") => void;
   setExpandedRow: React.Dispatch<React.SetStateAction<string | null>>;
   setExpandedId: React.Dispatch<React.SetStateAction<number | null>>;
   deleteDraftItem: (val: number) => void;
@@ -46,20 +50,19 @@ const SaleAndRefunTable = ({
   expendedId,
   setExpandedId,
   setExpandedRow,
+  setActiveTypeKeyboard,
   expandedRow,
   selectedRows,
-  // setSelectedRows,
+  setSelectedRows,
   deleteDraftItem,
   updateDraftItemPrice,
   updateDraftItemTotalPrice,
   updateDraftItemQuantity,
 }: PropsType) => {
-  const quantityRef = useRef<HTMLInputElement | null>(null);
   const [isEditing, setIsEditing] = useState({
     isOpen: false,
     type: "price",
   });
-
   const currentItem = activeDraft?.items?.[Number(expandedRow)] ?? null;
 
   const onDeleteDraftItem = () => {
@@ -114,14 +117,7 @@ const SaleAndRefunTable = ({
 
   const table = useReactTable({
     data: activeDraft?.items ?? [],
-    columns: columns(
-      setMark,
-      // activeDraft,
-      type,
-      selectedRows,
-      // setSelectedRows,
-      // updateDraftItemTotalPrice,
-    ),
+    columns: columns(setMark, type, selectedRows),
     getRowCanExpand: () => true,
     getCoreRowModel: getCoreRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
@@ -129,6 +125,15 @@ const SaleAndRefunTable = ({
       expanded: expandedRow ? { [expandedRow]: true } : {},
     },
   });
+
+  const SmallDropdownIndicator = (props: any) => (
+    <components.DropdownIndicator {...props}>
+      <span className="text-slate-500">
+        <BsChevronDown size={12} />
+      </span>{" "}
+      {/* icon o‘lchami 14px */}
+    </components.DropdownIndicator>
+  );
 
   return (
     <div className="overflow-hidden h-[53.3vh] mb-3 rounded-2xl">
@@ -218,14 +223,14 @@ const SaleAndRefunTable = ({
             </TBody>
           </Table>
           <div className="w-full sticky bottom-0 bg-white border-t border-slate-200">
-            <div className="flex items-center justify-end gap-x-2">
+            <div className="flex items-center justify-between gap-x-2">
               <div className="flex justify-end gap-x-2 items-center px-2 py-2.5">
-                <div className="text-base font-medium text-slate-500">
+                <div className="text-sm font-medium text-slate-500">
                   Итого:{" "}
                 </div>{" "}
                 <div
                   className={classNames(
-                    "text-base font-semibold",
+                    "text-sm font-semibold",
                     type === "sale"
                       ? "text-primary"
                       : type === "refund"
@@ -233,44 +238,18 @@ const SaleAndRefunTable = ({
                         : "text-green-600",
                   )}
                 >
-                  <FormattedNumber value={totalPrice} scale={2} /> сум{" "}
+                  <FormattedNumber value={totalPrice} scale={2} />
                 </div>
               </div>
 
               {type === "sale" && activeDraft?.discountAmount ? (
                 <div className="flex justify-end gap-x-2 items-center px-2 py-2.5">
-                  <div className="text-base font-medium text-slate-500">
-                    Со скидкой:{" "}
-                  </div>{" "}
-                  <div
-                    className={classNames(
-                      "text-base font-semibold",
-                      type === "sale"
-                        ? "text-primary"
-                        : type === "refund"
-                          ? "text-red-500"
-                          : "text-green-600",
-                    )}
-                  >
-                    <FormattedNumber
-                      value={totalPrice - (activeDraft?.discountAmount ?? 0)}
-                      scale={2}
-                    />{" "}
-                    сум{" "}
-                  </div>
-                </div>
-              ) : (
-                ""
-              )}
-
-              {type === "sale" && activeDraft?.discountAmount ? (
-                <div className="flex justify-end gap-x-2 items-center px-2 py-2.5">
-                  <div className="text-base font-medium text-slate-500">
+                  <div className="text-sm font-medium text-slate-500">
                     Скидка:{" "}
                   </div>{" "}
                   <div
                     className={classNames(
-                      "text-base font-semibold",
+                      "text-sm font-semibold",
                       type === "sale"
                         ? "text-primary"
                         : type === "refund"
@@ -282,7 +261,33 @@ const SaleAndRefunTable = ({
                       value={activeDraft?.discountAmount ?? 0}
                       scale={2}
                     />{" "}
-                    сум{" "}
+                  </div>
+                </div>
+              ) : (
+                ""
+              )}
+
+              {type === "sale" && activeDraft?.discountAmount ? (
+                <div className="flex justify-end gap-x-2 items-center px-2 py-2.5">
+                  <div className="text-sm font-medium text-slate-500">
+                    Со скидкой:{" "}
+                  </div>{" "}
+                  <div
+                    className={classNames(
+                      "text-sm font-semibold",
+                      type === "sale"
+                        ? "text-primary"
+                        : type === "refund"
+                          ? "text-red-500"
+                          : "text-green-600",
+                    )}
+                  >
+                    <FormattedNumber
+                      value={
+                        totalPrice - Number(activeDraft?.discountAmount ?? 0)
+                      }
+                      scale={2}
+                    />{" "}
                   </div>
                 </div>
               ) : (
@@ -302,9 +307,14 @@ const SaleAndRefunTable = ({
                 <Input
                   size="sm"
                   type="number"
+                  space={false}
                   autoFocus={true}
-                  className="!w-[145px]"
+                  numberMode={
+                    currentItem?.productPackageName === "шт" ? "int" : "float"
+                  }
+                  className="!w-[145px] h-8"
                   value={currentItem?.priceAmount ?? 0}
+                  onFocus={() => setActiveTypeKeyboard("numeric")}
                   onChange={(val) => {
                     const newPrice = Number(val?.target?.value);
                     const price = getActivePrice(
@@ -332,14 +342,94 @@ const SaleAndRefunTable = ({
                   }}
                 />
               ) : (
-                <div
-                  onClick={() => setIsEditing({ isOpen: true, type: "price" })}
-                  className="w-[145px] h-8 bg-white p-2 flex items-center justify-between gap-2 rounded-lg"
-                >
+                <div className="w-[145px] h-8 bg-white p-2 flex items-center rounded-lg">
                   <span className="text-xs font-normal">
-                    Цена:
+                    <Select
+                      size="sm"
+                      className="h-8 w-[71px] text-xs"
+                      options={[
+                        { value: 1, label: "Розн. цена" },
+                        { value: 2, label: "Опт. цена" },
+                      ]}
+                      components={{
+                        DropdownIndicator: SmallDropdownIndicator,
+                      }}
+                      value={
+                        selectedRows?.[currentItem?.productId]
+                          ? { value: 2, label: "Опт. цена" }
+                          : { value: 1, label: "Розн. цена" }
+                      }
+                      onChange={(val: any) => {
+                        // Selectdan tanlash
+                        const activeIndex = Number(expandedRow);
+                        const product =
+                          activeDraft?.items?.[Number(expandedRow)] ?? null;
+
+                        setSelectedRows((prev: any) => ({
+                          ...prev,
+                          [currentItem?.productId]: val.value === 2,
+                        }));
+
+                        if (updateDraftItemTotalPrice) {
+                          const price =
+                            val.value === 2 &&
+                            (product?.priceAmoutBulk ?? 0) > 0
+                              ? (product?.priceAmoutBulk ?? 0) // OPT
+                              : (product?.priceAmount ?? 0); // ODDIY
+
+                          const newTotal = currentItem.quantity * price;
+
+                          updateDraftItemTotalPrice(
+                            activeIndex,
+                            isNaN(newTotal) ? 0 : newTotal,
+                          );
+                        }
+                      }}
+                      styles={{
+                        control: (base) => ({
+                          ...base,
+                          borderTopRightRadius: 0,
+                          borderBottomRightRadius: 0,
+                          border: "none",
+                          minHeight: "32px",
+                          width: "54px",
+                          backgroundColor: "transparent",
+                          boxShadow: "none",
+                        }),
+                        valueContainer: (base) => ({
+                          ...base,
+                          padding: "0",
+                        }),
+                        singleValue: (base) => ({
+                          ...base,
+                          fontSize: "11px",
+                          margin: 0,
+                        }),
+                        dropdownIndicator: (base) => ({
+                          ...base,
+                          padding: "0",
+                        }),
+
+                        indicatorSeparator: () => ({
+                          display: "none",
+                        }),
+
+                        menuPortal: (base) => ({
+                          ...base,
+                          zIndex: 9999,
+                          width: "150px",
+                        }),
+                      }}
+                      menuPortalTarget={document.body}
+                      menuPosition="fixed"
+                    />
                   </span>
-                  <div className="text-xs font-medium text-slate-800">
+                  <div
+                    onClick={() =>
+                      setIsEditing({ isOpen: true, type: "price" })
+                    }
+                    className="text-xs text-nowrap font-medium text-slate-800"
+                  >
                     <FormattedNumber value={currentItem?.priceAmount ?? 0} />
                   </div>
                 </div>
@@ -377,15 +467,16 @@ const SaleAndRefunTable = ({
 
                 {isEditing?.isOpen && isEditing?.type === "quantity" ? (
                   <Input
-                    ref={quantityRef}
                     size="md"
                     type="number"
-                    className="!w-[125px]"
+                    className="!w-[125px] h-8"
                     autoFocus={true}
+                    space={false}
                     numberMode={
                       currentItem?.productPackageName === "шт" ? "int" : "float"
                     }
                     value={currentItem?.quantity}
+                    onFocus={() => setActiveTypeKeyboard("numeric")}
                     onChange={(val) => {
                       const qty = Number(val?.target?.value);
                       const price = getActivePrice(
@@ -437,9 +528,11 @@ const SaleAndRefunTable = ({
                 <Input
                   size="sm"
                   type="number"
+                  space={false}
                   autoFocus
-                  className="!w-[145px]"
+                  className="!w-[145px] h-8"
                   value={currentItem?.totalAmount}
+                  onFocus={() => setActiveTypeKeyboard("numeric")}
                   onChange={(val) => {
                     const price = getActivePrice(
                       currentItem,
@@ -474,9 +567,7 @@ const SaleAndRefunTable = ({
                   }}
                   className="bg-white h-8 w-[145px] p-2 flex items-center justify-between gap-2 rounded-lg"
                 >
-                  <span className="text-xs font-normal">
-                    Сумма:
-                  </span>
+                  <span className="text-xs font-normal">Сумма:</span>
                   <div className="text-xs font-medium text-slate-800">
                     <FormattedNumber
                       value={currentItem?.totalAmount}

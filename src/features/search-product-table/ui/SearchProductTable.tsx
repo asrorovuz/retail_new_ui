@@ -98,6 +98,7 @@ const SearchProductTable = ({
 
         return (
           <div
+            key={item?.id}
             onClick={() => onChange(item)}
             className={classNames(
               "flex justify-between items-start gap-x-[30px] text-xs text-slate-700 p-2 active:bg-slate-100",
