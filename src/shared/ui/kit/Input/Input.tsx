@@ -76,6 +76,36 @@ const Input = (props: InputProps) => {
 
   const inputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const fieldObjRef = useRef<any | null>(null); // ActiveField obyekti saqlash uchun
+
+  // tayyorlaydigan funksiya, register uchun foydalanamiz
+  const createFieldObj = () => ({
+    type: type === "number" ? "numeric" : "qwerty",
+    onChange: (val: string) => {
+      let raw = val;
+
+      if (type === "number") {
+        raw = raw.replace(/\s+/g, "");
+
+        if (numberMode === "int") {
+          raw = raw.replace(/[^0-9]/g, "");
+        } else {
+          raw = raw.replace(/[^0-9.]/g, "");
+          const parts = raw.split(".");
+          if (parts.length > 2) {
+            raw = parts[0] + "." + parts.slice(1).join("");
+          }
+        }
+      }
+
+      setDisplayValue(space && type === "number" ? formatValue(raw) : raw);
+
+      onChange?.({
+        target: { value: raw },
+      } as any);
+    },
+    ref: inputRef as React.RefObject<HTMLInputElement>,
+  });
 
   const onlyValidNumbers = (val: string) => val.replace(/[^0-9.]/g, "");
   const onlyInt = (val: string) => val.replace(/[^0-9]/g, "");
@@ -92,43 +122,6 @@ const Input = (props: InputProps) => {
   };
 
   const { registerField, unregisterField } = useKeyboard();
-
-  useEffect(() => {
-    if (inputRef.current && !textArea) {
-      registerField({
-        type: type === "number" ? "numeric" : "qwerty",
-        onChange: (val: string) => {
-          let raw = val;
-
-          if (type === "number") {
-            raw = raw.replace(/\s+/g, "");
-
-            if (numberMode === "int") {
-              raw = raw.replace(/[^0-9]/g, "");
-            } else {
-              raw = raw.replace(/[^0-9.]/g, "");
-
-              const parts = raw.split(".");
-              if (parts.length > 2) {
-                raw = parts[0] + "." + parts.slice(1).join("");
-              }
-            }
-          }
-
-          setDisplayValue(space && type === "number" ? formatValue(raw) : raw);
-
-          onChange?.({
-            target: { value: raw },
-          } as any);
-        },
-        ref: inputRef as React.RefObject<HTMLInputElement>,
-      });
-
-      return () => {
-        unregisterField();
-      };
-    }
-  }, [type, numberMode, space]);
 
   useEffect(() => {
     if (type === "number" && value !== undefined && value !== null) {
@@ -199,6 +192,19 @@ const Input = (props: InputProps) => {
   ) => {
     e.target.select();
     onFocus?.(e as React.FocusEvent<HTMLInputElement>);
+
+    // register qilish
+    const fieldObj: any = createFieldObj();
+    fieldObjRef.current = fieldObj;
+    registerField(fieldObj);
+  };
+
+  const handleBlur = () => {
+    if (fieldObjRef.current) {
+      // provider unregisterField signature'iga qarab yuqoridagi object-ni uzatamiz
+      unregisterField(fieldObjRef.current);
+      fieldObjRef.current = null;
+    }
   };
 
   const { controlSize, direction } = useConfig();
@@ -270,6 +276,7 @@ const Input = (props: InputProps) => {
     value: displayValue,
     onChange: handleChange,
     onFocus: handleFocus,
+    onBlur: handleBlur,
     autoFocus,
     inputMode: type === "number" ? "decimal" : undefined,
     ...rest,

@@ -1,5 +1,5 @@
-// KeyboardContext.tsx - The context and provider for managing active input and keyboard actions
-import React, { createContext, useContext } from "react";
+// KeyboardProvider.tsx
+import React, { createContext, useContext, useRef } from "react";
 
 type KeyboardType = "numeric" | "qwerty" | "alphanumeric" | null;
 
@@ -10,10 +10,8 @@ interface ActiveField {
 }
 
 interface KeyboardContextType {
-  // activeType: KeyboardType;
-  // setActiveType: (type: KeyboardType) => void;
   registerField: (field: ActiveField) => void;
-  unregisterField: () => void;
+  unregisterField: (field?: ActiveField) => void;
   insert: (key: string, onClickNumber?: () => void) => void;
   backspace: () => void;
   blurActiveField: () => void;
@@ -23,33 +21,31 @@ const KeyboardContext = createContext<KeyboardContextType | undefined>(
   undefined,
 );
 
-import { useRef } from "react";
-
 export const KeyboardProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [activeType, setActiveType] = React.useState<KeyboardType>("numeric");
   const activeFieldRef = useRef<ActiveField | null>(null);
 
   const registerField = (field: ActiveField) => {
     activeFieldRef.current = field;
   };
 
-  const unregisterField = () => {
-    activeFieldRef.current = null;
+  // ✅ Правильный вариант
+  const unregisterField = (field?: ActiveField) => {
+    if (!field) return;
+    const inputRef = field.ref;
+    // теперь inputRef можно использовать
+    if (inputRef.current) {
+      // какие-то действия с inputRef.current
+    }
   };
 
   const insert = (key: string, onClickNumber?: () => void) => {
     const activeField = activeFieldRef.current;
 
-    if (!activeField?.ref?.current) {
-      // Faqat numeric keyboard sahifasida onClickNumber chaqiriladi
-      if (
-        typeof onClickNumber === "function" &&
-        activeField?.type === "numeric"
-      ) {
-        onClickNumber();
-      }
+    // 🔥 Fokus yo'q bo'lsa
+    if (!activeField || !activeField.ref.current) {
+      onClickNumber?.();
       return;
     }
 
@@ -58,28 +54,19 @@ export const KeyboardProvider: React.FC<{ children: React.ReactNode }> = ({
     const end = input.selectionEnd ?? 0;
     const currentValue = input.value;
 
-    // Agar type numeric bo'lsa, faqat raqam kiritish
-    if (activeField.type === "numeric" && !/[\d.]/.test(key)) {
-      return; // raqam bo'lmagan belgilarni o'tkazib yuborish
-    }
+    if (activeField.type === "numeric" && !/[\d.]/.test(key)) return;
 
     let newValue =
       currentValue.substring(0, start) + key + currentValue.substring(end);
 
-    // Agar numeric bo'lsa, tekshirish — faqat bitta '.' bo'lishi mumkin
-    if (activeField?.type === "numeric") {
-      const parts = newValue.split(".");
-      if (parts.length > 2) {
-        return; // ko'p nuqta bo'lsa insert qilinmasin
-      }
+    if (activeField.type === "numeric") {
+      if (newValue.split(".").length > 2) return;
     }
 
     activeField.onChange(newValue);
 
     requestAnimationFrame(() => {
-      if (document.activeElement === input) {
-        input.setSelectionRange(start + key.length, start + key.length);
-      }
+      input.setSelectionRange(start + key.length, start + key.length);
     });
   };
 
@@ -114,9 +101,8 @@ export const KeyboardProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const blurActiveField = () => {
     const activeField = activeFieldRef.current;
-
     if (activeField?.ref?.current) {
-      activeField.ref.current.blur(); // focus yo'qotadi
+      activeField.ref.current.blur();
     }
   };
 
@@ -137,8 +123,7 @@ export const KeyboardProvider: React.FC<{ children: React.ReactNode }> = ({
 
 export const useKeyboard = () => {
   const context = useContext(KeyboardContext);
-  if (!context) {
+  if (!context)
     throw new Error("useKeyboard must be used within a KeyboardProvider");
-  }
   return context;
 };

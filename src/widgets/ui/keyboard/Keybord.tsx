@@ -2,11 +2,19 @@ import React from "react";
 import NumericKeyboard from "./NumericKeyboard";
 import QuertyKeyboard from "./QuertyKeyboard";
 
-export const KeyboardSwitcher: React.FC<any> = ({
-  onClickNumber, 
-  activeType,
-}) => {
+interface KeyboardSwitcherProps {
+  onClickNumber: (num: string) => void;
+  activeType: "numeric" | "qwerty" | null;
+  setActiveType: (type: "numeric" | "qwerty") => void;
+  setSearch: (val: string) => void;
+}
 
+export const KeyboardSwitcher: React.FC<KeyboardSwitcherProps> = ({
+  onClickNumber,
+  activeType,
+  setActiveType,
+  setSearch,
+}) => {
   if (!activeType) return null;
 
   return (
@@ -14,8 +22,13 @@ export const KeyboardSwitcher: React.FC<any> = ({
       {activeType === "numeric" && (
         <NumericKeyboard onClickNumber={onClickNumber} />
       )}
-      {activeType === 'qwerty' && <QuertyKeyboard />}
-      {/* {activeType === 'alphanumeric' && <AlphanumericKeyboard />} */}
+
+      {activeType === "qwerty" && (
+        <QuertyKeyboard
+          setActiveType={setActiveType}
+          setSearch={setSearch}
+        />
+      )}
     </>
   );
 };

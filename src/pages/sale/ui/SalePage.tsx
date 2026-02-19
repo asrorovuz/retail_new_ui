@@ -32,11 +32,10 @@ import classNames from "@/shared/lib/classNames";
 import { LogoutSvg } from "@/shared/ui/svg/LogoutSvg";
 import Alert from "@/shared/ui/kit-pro/alert/Alert";
 import { useAuthContext } from "@/app/providers/AuthProvider";
-import { getActivePrice } from "@/shared/lib/getActivatePrice";
 
 const SalePage = () => {
-  const [search, setSearch] = useState("");
-  const debouncedSearch = useDebounce(search, 500);
+  const [search, setSearch] = useState<string>("");
+  const debouncedSearch = useDebounce(search ?? "", 500);
   const [barcode, setBarcode] = useState<string | null>(null);
   const [barcodeMark, setBarcodeMark] = useState("");
   const [isOpenAddProduct, setIsOpenAddProduct] = useState(false);
@@ -214,11 +213,9 @@ const SalePage = () => {
         <div className="rounded-2xl mb-3 bg-slate-200 p-1">
           <SearchProduct
             search={search}
-            setSearch={setSearch}
             setActiveType={setActiveType}
-            activeType={activeType}
           />
-          {search && !isPending && (
+          {activeType === "qwerty" && (
             <>
               <SearchProductTable
                 type="sale"
@@ -231,8 +228,8 @@ const SalePage = () => {
             </>
           )}
         </div>
-        <div className="rounded-2xl bg-slate-200 mb-3 p-1">
-          {!search && !isPending && (
+        {activeType === "numeric" && (
+          <div className="rounded-2xl bg-slate-200 mb-3 p-1">
             <>
               <PaymeTypeCards
                 type={"sale"}
@@ -241,11 +238,11 @@ const SalePage = () => {
                 setActivePaymentSelectType={setActivePaymentSelectType}
               />
             </>
-          )}
-        </div>
+          </div>
+        )}
         <div className="rounded-2xl bg-slate-200 mb-3 p-1">
-          {!search && !isPending && (
-            <>
+          <>
+            {activeType === "numeric" && (
               <div className="flex items-center gap-1 mb-1">
                 {["20000", "50000", "100000", "200000"].map((amountStr) => (
                   <div
@@ -306,19 +303,20 @@ const SalePage = () => {
                   </div>
                 ))}
               </div>
-
-              <PaymentSection
-                type={"sale"}
-                activeDraft={activeDraft}
-                activeSelectPaymetype={activeSelectPaymetype}
-                value={value}
-                setValue={setValue}
-                activeType={activeType}
-                updateDraftDiscount={updateDraftSaleDiscount}
-                updateDraftPayment={updateDraftSalePayment}
-              />
-            </>
-          )}
+            )}
+            <PaymentSection
+              type={"sale"}
+              activeDraft={activeDraft}
+              activeSelectPaymetype={activeSelectPaymetype}
+              value={value}
+              setValue={setValue}
+              setSearch={setSearch}
+              activeType={activeType}
+              setActiveType={setActiveType}
+              updateDraftDiscount={updateDraftSaleDiscount}
+              updateDraftPayment={updateDraftSalePayment}
+            />
+          </>
         </div>
       </div>
       {showAlert && (
