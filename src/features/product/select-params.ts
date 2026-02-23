@@ -1,5 +1,5 @@
 export type FilterParams = {
-  is_legal: null | "white" | "black";
+  is_legal: null | boolean;
   category_exists: boolean | null;
   category_id: number | null;
   state: null | number;
@@ -12,6 +12,27 @@ export type FilterParams = {
   catalog_code_exists: null | boolean;
   sort: null | number;
   is_selling_at_loss: null | boolean;
+};
+
+export type SelectOption = {
+  label: string;
+  value: string | boolean | number | null;
+};
+
+export const defaultParams = {
+  is_legal: null,
+  category_exists: null,
+  category_id: null,
+  state: null,
+  measurement_code: null,
+  sku: null,
+  sku_exists: null,
+  code: null,
+  code_exists: null,
+  barcode_exists: null,
+  catalog_code_exists: null,
+  sort: null,
+  is_selling_at_loss: null,
 };
 
 export const isLegalOptions = [
@@ -166,3 +187,30 @@ export const sortOptions = [
     value: 18,
   },
 ];
+
+export const selectStyles = {
+  control: (base: any) => ({
+    ...base,
+    backgroundColor: "white",
+    borderRadius: "0.5rem",
+    borderColor: "#d9d9d9",
+    boxShadow: "none",
+    minHeight: "38px",
+  }),
+  menu: (base: any) => ({
+    ...base,
+    backgroundColor: "white",
+    borderRadius: "0.5rem",
+  }),
+  option: (base: any, state: any) => ({
+    ...base,
+    backgroundColor: state.isSelected
+      ? "#e6f0ff"
+      : state.isFocused
+        ? "#f5f5f5"
+        : "white",
+    color: "#000",
+    cursor: "pointer",
+  }),
+  menuPortal: (base: any) => ({ ...base, zIndex: 9999 }),
+};

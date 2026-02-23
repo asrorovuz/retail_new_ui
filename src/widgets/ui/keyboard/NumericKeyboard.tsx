@@ -12,12 +12,12 @@ const NumericKeyboard = ({
   const keys = ["7", "8", "9", "4", "5", "6", "1", "2", "3", "0", "."];
 
   return (
-    <div className="grid grid-cols-3 gap-1">
+    <div className="grid grid-cols-3 grid-rows-4 h-[35.9vh] gap-1">
       {keys.map((key) => (
         <Button
           key={key}
           variant="solid"
-          className="bg-white h-[65px] font-medium text-xl text-slate-800 hover:bg-blue-50 transition-all"
+          className="bg-white h-full font-medium text-xl text-slate-800 hover:bg-blue-50 transition-all"
           type="button"
           onMouseDown={(e) => {
             e.preventDefault();
@@ -32,7 +32,7 @@ const NumericKeyboard = ({
       <Button
         variant="solid"
         icon={<AiOutlineEnter size={24} />}
-        className="bg-white h-[65px] text-slate-800 font-medium text-xl w-full hover:bg-blue-50 transition-all"
+        className="bg-white h-full text-slate-800 font-medium text-xl w-full hover:bg-blue-50 transition-all"
         onMouseDown={(e) => {
           e.preventDefault();
           blurActiveField();

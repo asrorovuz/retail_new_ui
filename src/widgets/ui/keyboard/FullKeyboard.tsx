@@ -1,15 +1,27 @@
+import { useKeyboard } from "@/app/providers/KeyboardProvider";
 import classNames from "@/shared/lib/classNames";
 import { Button } from "@/shared/ui/kit";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { AiOutlineEnter } from "react-icons/ai";
 import { LuArrowBigUp } from "react-icons/lu";
 import { RiDeleteBack2Line, RiSpace } from "react-icons/ri";
 
-const QuertyKeyboard = ({ setActiveType, setSearch }: any) => {
+const FullKeyboard = ({ setSearch }: any) => {
   const [upperLater, setUpperLater] = useState(false);
   const [lang, setLang] = useState("en");
+  const { insert, blurActiveField } = useKeyboard();
 
   const keysEn = [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "0",
     "q",
     "w",
     "e",
@@ -42,6 +54,18 @@ const QuertyKeyboard = ({ setActiveType, setSearch }: any) => {
   ];
 
   const keysRu = [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "0",
+    "-",
+    "_",
     "й",
     "ц",
     "у",
@@ -80,6 +104,14 @@ const QuertyKeyboard = ({ setActiveType, setSearch }: any) => {
     ".",
   ];
 
+  const handleInsert = (value: string) => {
+    if (typeof setSearch === "function") {
+      setSearch((prev: string) => prev + value);
+    } else {
+      insert(value);
+    }
+  };
+
   const changeLang = () => {
     if (lang === "en") {
       setLang("ru");
@@ -98,42 +130,8 @@ const QuertyKeyboard = ({ setActiveType, setSearch }: any) => {
     setSearch((prev: string) => prev + sym);
   };
 
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      // Enter
-      if (e.key === "Enter") {
-        setActiveType("numeric");
-        setSearch("");
-        return;
-      }
-
-      // Backspace
-      if (e.key === "Backspace") {
-        setSearch((prev: string) => prev.slice(0, -1));
-        return;
-      }
-
-      // Space
-      if (e.key === " ") {
-        setSearch((prev: string) => prev + " ");
-        return;
-      }
-
-      // Oddiy harflar va belgilar
-      if (e.key.length === 1) {
-        setSearch((prev: string) => prev + e.key);
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [setSearch, setActiveType]);
-
   return (
-    <div className="h-[28vh]">
+    <div className="h-[31.88vh] shadow-lg">
       <div
         className={classNames(
           "grid grid-rows-3 gap-1 mb-1",
@@ -146,14 +144,11 @@ const QuertyKeyboard = ({ setActiveType, setSearch }: any) => {
               <Button
                 key={index}
                 variant="solid"
-                className="w-full h-12 p-0 bg-white font-medium text-xl text-slate-800 hover:bg-blue-50 transition-all"
+                className="w-full h-[42px] bg-white font-medium text-xl text-slate-800 hover:bg-blue-50 transition-all"
                 type="button"
                 onMouseDown={(e) => {
                   e.preventDefault();
-                  setSearch(
-                    (prev: string) =>
-                      (prev || "") + (upperLater ? key.toUpperCase() : key),
-                  );
+                  handleInsert(upperLater ? key.toUpperCase() : key);
                 }}
               >
                 {upperLater ? key.toUpperCase() : key}
@@ -165,7 +160,7 @@ const QuertyKeyboard = ({ setActiveType, setSearch }: any) => {
             <Button
               key={index}
               variant="solid"
-              className="w-full h-12 bg-white p-0 font-medium text-xl text-slate-800 hover:bg-blue-50 transition-all"
+              className="w-full h-[42px] bg-white font-medium text-xl text-slate-800 hover:bg-blue-50 transition-all"
               type="button"
               icon={key}
               onMouseDown={(e) => {
@@ -178,7 +173,7 @@ const QuertyKeyboard = ({ setActiveType, setSearch }: any) => {
 
         <Button
           variant="solid"
-          className="w-full h-12 bg-white p-0 font-medium text-xl text-slate-800 hover:bg-blue-50 transition-all"
+          className="w-full h-[42px] bg-white font-medium text-xl text-slate-800 hover:bg-blue-50 transition-all"
           type="button"
           icon={<RiDeleteBack2Line />}
           onMouseDown={(e) => {
@@ -190,45 +185,54 @@ const QuertyKeyboard = ({ setActiveType, setSearch }: any) => {
       <div className="grid grid-cols-10 gap-1">
         <Button
           variant="solid"
-          className="bg-white h-12 p-0 text-slate-800 font-medium text-xs w-full hover:bg-blue-50 transition-all"
-          onClick={() => setActiveType("numeric")}
-        >
-          123
-        </Button>
-        <Button
-          variant="solid"
-          className="bg-white h-12 p-0 text-slate-800 font-medium text-xs w-full hover:bg-blue-50 transition-all"
-          onClick={changeLang}
+          type="button"
+          className="bg-white h-[42px] text-slate-800 font-medium text-xs w-full hover:bg-blue-50 transition-all"
+          onMouseDown={(e) => {
+            e.preventDefault();
+            changeLang();
+          }}
         >
           РУС
         </Button>
         {/* <Button
-          variant="solid"
-          icon={<IoCaretBackOutline />}
-          className="bg-white h-12 p-0 text-slate-800 font-medium text-xl w-full hover:bg-blue-50 transition-all"
-          onClick={() => blurActiveField()}
-        />
+           variant="solid"
+           icon={<IoCaretBackOutline />}
+           className="bg-white h-[42px] text-slate-800 font-medium text-xl w-full hover:bg-blue-50 transition-all"
+           onClick={() => blurActiveField()}
+         />
+         <Button
+           variant="solid"
+           icon={<IoCaretForwardOutline />}
+           className="bg-white h-[42px] text-slate-800 font-medium text-xl w-full hover:bg-blue-50 transition-all"
+           onClick={() => blurActiveField()}
+         /> */}
         <Button
           variant="solid"
-          icon={<IoCaretForwardOutline />}
-          className="bg-white h-12 p-0 text-slate-800 font-medium text-xl w-full hover:bg-blue-50 transition-all"
-          onClick={() => blurActiveField()}
-          
-        /> */}
-        <Button
-          variant="solid"
-          className="bg-white h-12 p-0 text-slate-800 font-medium text-xl w-full hover:bg-blue-50 transition-all"
+          type="button"
+          className="bg-white h-[42px] text-slate-800 font-medium text-xl w-full hover:bg-blue-50 transition-all"
           onMouseDown={(e) => {
             e.preventDefault();
-            onWriteSymbol("-");
+            onWriteSymbol("#");
           }}
         >
-          -
+          #
+        </Button>
+        <Button
+          variant="solid"
+          type="button"
+          className="bg-white h-[42px] text-slate-800 font-medium text-xl w-full hover:bg-blue-50 transition-all"
+          onMouseDown={(e) => {
+            e.preventDefault();
+            onWriteSymbol("#");
+          }}
+        >
+          %
         </Button>
         <Button
           variant="solid"
           icon={<RiSpace />}
-          className="bg-white h-12 p-0 col-span-3 text-slate-800 font-medium text-xl w-full hover:bg-blue-50 transition-all"
+          type="button"
+          className="bg-white h-[42px] col-span-3 text-slate-800 font-medium text-xl w-full hover:bg-blue-50 transition-all"
           onMouseDown={(e) => {
             e.preventDefault();
             onWriteSymbol(" ");
@@ -237,17 +241,19 @@ const QuertyKeyboard = ({ setActiveType, setSearch }: any) => {
 
         <Button
           variant="solid"
+          type="button"
           icon={<AiOutlineEnter />}
-          className="bg-white h-12 p-0 col-span-2 text-slate-800 font-medium text-xl w-full hover:bg-blue-50 transition-all"
-          onClick={() => {
-            setActiveType("numeric");
-            setSearch("");
+          className="bg-white h-[42px] col-span-2 text-slate-800 font-medium text-xl w-full hover:bg-blue-50 transition-all"
+          onMouseDown={() => {
+            blurActiveField()
           }}
         />
         <Button
           variant="solid"
-          className="bg-white h-12 p-0 col-span-2 text-slate-800 font-medium text-sm w-full hover:bg-blue-50 transition-all"
-          onClick={() => {
+          type="button"
+          className="bg-white h-[42px] col-span-2 text-slate-800 font-medium text-sm w-full hover:bg-blue-50 transition-all"
+          onMouseDown={(e) => {
+            e.preventDefault();
             setSearch("");
           }}
         >
@@ -258,4 +264,4 @@ const QuertyKeyboard = ({ setActiveType, setSearch }: any) => {
   );
 };
 
-export default QuertyKeyboard;
+export default FullKeyboard;

@@ -1,9 +1,7 @@
 import type { PaymentAmount } from "@/@types/common";
 import type { DraftRefundSchema } from "@/@types/refund";
-import type {
-  DraftSalePaymentAmountSchema,
-  DraftSaleSchema,
-} from "@/@types/sale";
+import type { DraftSaleSchema } from "@/@types/sale";
+import { GetPaymentLabel } from "@/app/constants/payment.types";
 import { useSettingsStore } from "@/app/store/useSettingsStore";
 import { Button, Dialog } from "@/shared/ui/kit";
 import FormattedNumber from "@/shared/ui/kit-pro/numeric-format/NumericFormat";
@@ -15,9 +13,11 @@ type PaymentModalType = {
   cashBackAmount: number;
   totalPaymentAmount: number;
   isOpen: boolean;
+  totalAmount: number;
   onSubmitPaymentHandler: (
     paymentAmounts: PaymentAmount[],
-    callback: (success: boolean) => void
+    callback: (success: boolean) => void,
+    typeButton: boolean,
   ) => void;
   activeDraft: DraftSaleSchema & DraftRefundSchema;
   setActivePaymentSelectType: (val: number) => void;
@@ -26,35 +26,43 @@ type PaymentModalType = {
 
 const PaymentModal = ({
   type,
+  totalAmount,
   cashBackAmount,
   totalPaymentAmount,
-  setActivePaymentSelectType,
   isOpen,
   activeDraft,
-  onSubmitPaymentHandler,
   setIsOpenPayment,
+  onSubmitPaymentHandler,
+  setActivePaymentSelectType,
 }: PaymentModalType) => {
   const [loading, setIsLoading] = useState(false);
+  const [loadingChek, setIsLoadingChek] = useState(false);
   const { settings } = useSettingsStore((s) => s);
 
-  const totalAmount =
-    activeDraft?.items?.reduce((acc, item) => acc + item?.totalAmount, 0) ?? 0;
+  const onSubmitPayment = (typeButton: boolean): void => {
+    if (typeButton) {
+      setIsLoadingChek(true);
+    }
 
-  const onSubmitPayment = (): void => {
-    setIsLoading(true);
+    if (!typeButton) {
+      setIsLoading(true);
+    }
     let subtracted = false;
     onSubmitPaymentHandler(
       (type === "sale"
         ? activeDraft?.payment
         : activeDraft?.payout
-      )?.amounts?.map((item: DraftSalePaymentAmountSchema) => {
-        if (!subtracted && item?.amount > cashBackAmount) {
+      )?.amounts?.map((item: any) => {
+        const amountNumber = Number(item.amount);
+
+        if (!subtracted && amountNumber > cashBackAmount) {
           subtracted = true;
-          return { ...item, amount: item?.amount - cashBackAmount };
+          return { ...item, amount: amountNumber - cashBackAmount };
         }
-        return item;
+        return { ...item, amountNumber };
       })!,
       (success) => {
+        setIsLoadingChek(false);
         setIsLoading(false);
         setActivePaymentSelectType(1);
         if (success) {
@@ -69,7 +77,8 @@ const PaymentModal = ({
             return;
           }
         }
-      }
+      },
+      typeButton,
     );
   };
 
@@ -82,42 +91,90 @@ const PaymentModal = ({
     >
       <div className="flex justify-center flex-col items-center mb-4">
         <SuccessSvg />
-        <p className="text-green-500 mt-4 text-base font-medium">
+        <p className="text-green-500 mt-3 text-base font-medium">
           Оплачено успешно
         </p>
       </div>
-      <div className="bg-gray-100 rounded-2xl p-4 text-gray-900 mb-4">
-        <div className="flex justify-between py-4 border-b border-dashed">
-          <span>Общая сумма:</span>
-          <FormattedNumber value={totalAmount ?? 0} />
-        </div>
-        <div className="flex justify-between py-4 border-b border-dashed">
-          <span>Скидка:</span>
-          <FormattedNumber value={activeDraft?.discountAmount ?? 0} />
-        </div>
-        <div className="flex justify-between py-4 border-b border-dashed">
-          <span>Итого со скидкой:</span>
-          <FormattedNumber
-            value={totalAmount - (activeDraft?.discountAmount ?? 0)}
-          />
-        </div>
+      <div className="bg-slate-200 rounded-2xl text-slate-800 mb-4 p-4">
+        <div className="flex flex-col gap-y-3 mb-3 pb-3 border-b border-dashed border-slate-500">
+          <div className="flex justify-between border-b border-dashed">
+            <span>Скидка:</span>
+            <FormattedNumber value={activeDraft?.discountAmount ?? 0} />
+          </div>
+          <div className="flex justify-between border-b border-dashed">
+            <span>Оплаченная сумма:</span>
+            <FormattedNumber value={totalPaymentAmount ?? 0} />
+          </div>
+          {type === "sale" && (
+            <div className="flex justify-between border-b border-dashed">
+              <span>Долг:</span>
+              <FormattedNumber
+                value={
+                  totalAmount -
+                    Number(activeDraft?.discountAmount ?? 0) -
+                    totalPaymentAmount || 0
+                }
+              />
+            </div>
+          )}
+          {(type === "sale"
+            ? activeDraft?.payment
+            : activeDraft?.payout
+          )?.amounts?.map((payment) => {
+            if (payment?.paymentType === 0) return null;
+            if (+payment?.amount <= 0) return null;
 
-        <div className="flex justify-between py-4 border-b border-dashed">
-          <span>Оплаченная сумма:</span>
-          <FormattedNumber value={totalPaymentAmount ?? 0} />
+            return (
+              <div className="flex justify-between border-b border-dashed">
+                {GetPaymentLabel(payment?.paymentType)}
+                <FormattedNumber value={Number(payment?.amount ?? 0)} />
+              </div>
+            );
+          })}
         </div>
-        <div className="flex justify-between py-4 border-b border-dashed">
-          <span>Долг:</span>
-          <FormattedNumber value={(totalAmount - (activeDraft?.discountAmount ?? 0)) - totalPaymentAmount || 0} />
+        <div className="text-base font-semibold flex flex-col gap-y-3">
+          <div className="flex justify-between border-b border-dashed">
+            <span>Общая сумма:</span>
+            <FormattedNumber value={totalAmount ?? 0} />
+          </div>
+          {type === "sale" && (
+            <>
+              <div className="flex justify-between border-b border-dashed">
+                <span>Итого со скидкой:</span>
+                <FormattedNumber
+                  value={totalAmount - Number(activeDraft?.discountAmount ?? 0)}
+                />
+              </div>
+              <div className="flex justify-between">
+                <span>Сдача:</span>
+                <FormattedNumber value={cashBackAmount ?? 0} />
+              </div>
+            </>
+          )}
         </div>
-        <div className="flex justify-between pt-4 text-xl font-semibold">
-          <span>Сдача:</span>
-          <FormattedNumber value={cashBackAmount ?? 0} />
-        </div>
+      </div>
+      <div className="flex gap-x-2 mb-2">
+        <Button
+          loading={loadingChek}
+          onClick={() => onSubmitPayment(true)}
+          variant="default"
+          className="w-full"
+        >
+          Чек
+        </Button>
+        {type === "sale" && <Button
+          // loading={loading}
+          // onClick={onSubmitPayment}
+          disabled={true}
+          variant="default"
+          className="w-full"
+        >
+          Кэшбэк
+        </Button>}
       </div>
       <Button
         loading={loading}
-        onClick={onSubmitPayment}
+        onClick={() => onSubmitPayment(false)}
         variant="solid"
         className="w-full"
       >

@@ -1,8 +1,8 @@
 const SuccessSvg = () => {
   return (
     <svg
-      width="88"
-      height="88"
+      width="68"
+      height="68"
       viewBox="0 0 88 88"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

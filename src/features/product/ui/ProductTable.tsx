@@ -38,6 +38,7 @@ import { showMeasurmentName } from "@/shared/lib/showMeausermentName";
 
 const ProductTable = ({
   search,
+  searchFocus,
   filterParams,
   setBarcode,
   barcode,
@@ -48,6 +49,7 @@ const ProductTable = ({
   setPagination,
 }: {
   search: string;
+  searchFocus: boolean;
   pagination: any;
   setPagination: any;
 } & ProductTableProps) => {
@@ -116,15 +118,14 @@ const ProductTable = ({
       }),
       columnHelper.accessor("name", {
         header: "НАЗВАНИЕ",
-        cell: (info) => info.getValue() || "-",
-        size: 180,
+        cell: (info) => <p className="w-[280px]">{info.getValue() || "-"}</p>,
         meta: {
           color: tableSettings?.find((i) => i.key === "name")?.color || "#fff",
         },
       }),
       columnHelper.display({
         id: "totalRemainder",
-        header: "ОСТАТОК",
+        header: () => <span className="text-nowrap">ОСТАТОК</span>,
         cell: (info) => {
           const total = info.row.original.warehouse_items?.[0]?.state;
 
@@ -141,22 +142,29 @@ const ProductTable = ({
       }),
       columnHelper.display({
         id: "price",
-        header: "ЦЕНА",
+        header: () => <span className="text-nowrap">ЦЕНА</span>,
         cell: (info) => {
           const price = info.row.original.prices?.[0]?.amount;
-          return price ? `${price.toLocaleString()} сум` : "-";
+          return (
+            <p className="w-[140px]">
+              {price ? `${price.toLocaleString()}` : "-"}
+            </p>
+          );
         },
-        size: 140,
         meta: {
           color: tableSettings?.find((i) => i.key === "price")?.color || "#fff",
         },
       }),
       columnHelper.display({
         id: "bulkPrice",
-        header: "ОПТОВАЯ ЦЕНА",
+        header: () => <span className="text-nowrap">ОПТОВАЯ ЦЕНА</span>,
         cell: (info) => {
           const price = info.row.original.prices?.[1]?.amount;
-          return price ? `${price.toLocaleString()} сум` : "-";
+          return (
+            <p className="w-[140px]">
+              {price ? `${price.toLocaleString()}` : "-"}
+            </p>
+          );
         },
         size: 140,
         meta: {
@@ -166,7 +174,7 @@ const ProductTable = ({
       }),
       columnHelper.display({
         id: "purchesPrice",
-        header: "Приходная цена",
+        header: () => <span className="text-nowrap">Приходная цена</span>,
         cell: (info) => {
           const price =
             info.row.original.warehouse_items?.[0]?.purchase_price_amount;
@@ -181,7 +189,7 @@ const ProductTable = ({
       }),
       columnHelper.display({
         id: "category",
-        header: "КАТЕГОРИЯ",
+        header: () => <span className="text-nowrap">КАТЕГОРИЯ</span>,
         cell: (info) => info.row.original.category?.name || "-",
         size: 100,
         meta: {
@@ -191,7 +199,7 @@ const ProductTable = ({
       }),
       columnHelper.display({
         id: "barcode",
-        header: "ШТРИХ-КОД",
+        header: () => <span className="text-nowrap">ШТРИХ-КОД</span>,
         cell: (info) => {
           const barcodes = info.row.original.barcodes;
 
@@ -207,7 +215,7 @@ const ProductTable = ({
       }),
       columnHelper.display({
         id: "sku",
-        header: "АРТИКУЛ",
+        header: () => <span className="text-nowrap">АРТИКУЛ</span>,
         cell: (info) => info.row.original.sku || "-",
         size: 100,
         meta: {
@@ -216,7 +224,7 @@ const ProductTable = ({
       }),
       columnHelper.display({
         id: "code",
-        header: "КОД",
+        header: () => <span className="text-nowrap">КОД</span>,
         cell: (info) => info.row.original.code || "-",
         size: 100,
         meta: {
@@ -225,7 +233,7 @@ const ProductTable = ({
       }),
       columnHelper.display({
         id: "catalogCode",
-        header: "ИКПУ-код",
+        header: () => <span className="text-nowrap">ИКПУ-код</span>,
         cell: (info) => info.row.original.catalog_name || "-",
         size: 100,
         meta: {
@@ -236,7 +244,7 @@ const ProductTable = ({
       }),
       columnHelper.display({
         id: "totalRemainderMin",
-        header: "МИН. ОСТАТОК",
+        header: () => <span className="text-nowrap">МИН. ОСТАТОК</span>,
         cell: (info) => {
           const total = info.row.original.warehouse_items?.[0]?.alert_on;
 
@@ -261,51 +269,51 @@ const ProductTable = ({
         ),
         size: 50,
         cell: (info) => (
-            <Dropdown
-              renderTitle={
-                <div className="flex justify-center text-2xl text-gray-600">
-                  <HiOutlineDotsHorizontal />
-                </div>
-              }
+          <Dropdown
+            renderTitle={
+              <div className="flex justify-center text-2xl text-slate-600">
+                <HiOutlineDotsHorizontal />
+              </div>
+            }
+          >
+            <DropdownItem
+              onClick={() => {
+                setItem(info?.row?.original);
+                setConfirmProductId(info.row.original.id);
+                setIsOpenPrint(true);
+              }}
+              className="h-auto!"
             >
-              <DropdownItem
-                onClick={() => {
-                  setItem(info?.row?.original);
-                  setConfirmProductId(info.row.original.id);
-                  setIsOpenPrint(true);
-                }}
-                className="h-auto!"
-              >
-                <div className="w-full flex items-center gap-2 text-gray-700 py-3 px-5 rounded-xl">
-                  <ShtrixCod />
-                  Печать штрих код товара
-                </div>
-              </DropdownItem>
-              <DropdownItem
-                onClick={() => {
-                  setConfirmProductId(info.row.original.id);
-                  setIsOpen(true);
-                }}
-                className="h-auto!"
-              >
-                <div className="w-full flex items-center gap-2 text-orange-500 py-3 px-5 rounded-xl">
-                  <FaRegEdit />
-                  Редактировать
-                </div>
-              </DropdownItem>
-              <DropdownItem
-                onClick={() => {
-                  setConfirmProductId(info.row.original.id);
-                  setDeleteModalOpen(true);
-                }}
-                className="h-auto!"
-              >
-                <div className="w-full flex items-center gap-2 text-red-500 py-3 px-5 rounded-xl">
-                  <IoTrashOutline />
-                  Удалить
-                </div>
-              </DropdownItem>
-            </Dropdown>
+              <div className="w-full flex items-center gap-2 text-slate-700 py-3 px-5 rounded-xl">
+                <ShtrixCod />
+                Печать штрих код товара
+              </div>
+            </DropdownItem>
+            <DropdownItem
+              onClick={() => {
+                setConfirmProductId(info.row.original.id);
+                setIsOpen(true);
+              }}
+              className="h-auto!"
+            >
+              <div className="w-full flex items-center gap-2 text-orange-500 py-3 px-5 rounded-xl">
+                <FaRegEdit />
+                Редактировать
+              </div>
+            </DropdownItem>
+            <DropdownItem
+              onClick={() => {
+                setConfirmProductId(info.row.original.id);
+                setDeleteModalOpen(true);
+              }}
+              className="h-auto!"
+            >
+              <div className="w-full flex items-center gap-2 text-red-500 py-3 px-5 rounded-xl">
+                <IoTrashOutline />
+                Удалить
+              </div>
+            </DropdownItem>
+          </Dropdown>
         ),
       }),
     ],
@@ -329,18 +337,28 @@ const ProductTable = ({
 
   if (isPending)
     return (
-      <div className="p-4 space-y-3">
+      <div
+        className={classNames(
+          "p-4 space-y-3 mb-3",
+          !searchFocus ? "h-full" : "h-[46vh]",
+        )}
+      >
         <Loading />
       </div>
     );
 
   return (
-    <div className="h-[calc(100%-44px)] flex flex-col">
+    <div
+      className={classNames(
+        "h-[46vh] flex flex-col mb-3",
+        !searchFocus ? "h-[78vh]" : "h-[46vh]",
+      )}
+    >
       {/* 🔹 Jadval */}
-      <div className="flex-1 mb-3 border border-gray-300 rounded-3xl overflow-auto">
+      <div className="h-full mb-3 border border-slate-300 rounded-3xl overflow-auto">
         {data && data?.length > 0 && !isPending ? (
           <Table className="min-w-full table-fixed border-separate border-spacing-0">
-            <THead>
+            <THead className="sticky top-0">
               {table.getHeaderGroups().map((headerGroup) => {
                 return (
                   <Tr key={headerGroup.id}>
@@ -348,16 +366,12 @@ const ProductTable = ({
                       const isActionsColumn = header.column.id === "actions";
                       return (
                         <Th
-                          className={
-                            isActionsColumn
-                              ? "sticky right-0 bg-white z-20"
-                              : ""
-                          }
+                          className={isActionsColumn ? " bg-white" : ""}
                           key={header.id}
                         >
                           <div
                             className={classNames(
-                              "px-4 text-left font-medium text-xs xl:text-sm text-gray-800",
+                              "px-4 text-left font-medium text-xs xl:text-sm text-slate-800",
                               header.column.columnDef.meta?.headerClassName,
                             )}
                           >
@@ -377,7 +391,7 @@ const ProductTable = ({
               {table.getRowModel().rows.map((row, index) => (
                 <Tr
                   key={row.id}
-                  className={`${index % 2 ? "bg-white" : "bg-gray-100"} hover:bg-gray-100 transition`}
+                  className={`${index % 2 ? "bg-white" : "bg-slate-100"} hover:bg-slate-100 transition`}
                 >
                   {row.getVisibleCells().map((cell) => {
                     return (
@@ -388,9 +402,7 @@ const ProductTable = ({
                         )}
                       >
                         <div
-                          className={classNames(
-                            "py-3 text-xs xl:text-sm px-4"
-                          )}
+                          className={classNames("py-3 text-xs xl:text-sm px-4")}
                         >
                           {flexRender(
                             cell.column.columnDef.cell,
@@ -405,13 +417,14 @@ const ProductTable = ({
             </TBody>
           </Table>
         ) : (
-          <Empty />
+          <div>
+            <Empty />
+          </div>
         )}
       </div>
 
       {/* 🔹 Pagination */}
       <Pagination
-        displayTotal
         total={countData}
         pageSize={pagination.pageSize}
         pageSizeOptions={[20, 50, 100, 1000]}

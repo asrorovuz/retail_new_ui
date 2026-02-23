@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 type ModalProps = {
   isOpen: boolean;
   setDiscountModal: (isOpen: boolean) => void;
-  updateDraftDiscount: (val: number) => void;
-  discount?: number;
+  updateDraftDiscount: (val: string) => void;
+  discount?: string;
 };
 
 const DiscountModal = ({
@@ -28,7 +28,7 @@ const DiscountModal = ({
 
   const onSubmit = () => {
     if (value) {
-      updateDraftDiscount(Number(value));
+      updateDraftDiscount(value);
     }
     onClose();
   };

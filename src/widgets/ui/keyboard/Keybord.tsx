@@ -1,12 +1,13 @@
 import React from "react";
 import NumericKeyboard from "./NumericKeyboard";
 import QuertyKeyboard from "./QuertyKeyboard";
+import FullKeyboard from "./FullKeyboard";
 
 interface KeyboardSwitcherProps {
-  onClickNumber: (num: string) => void;
-  activeType: "numeric" | "qwerty" | null;
-  setActiveType: (type: "numeric" | "qwerty") => void;
-  setSearch: (val: string) => void;
+  onClickNumber?: (num: string) => void;
+  activeType?: "numeric" | "qwerty" | "fullkey" | null;
+  setActiveType?: (type: "numeric" | "qwerty" | "fullkey") => void;
+  setSearch?: (val: string) => void;
 }
 
 export const KeyboardSwitcher: React.FC<KeyboardSwitcherProps> = ({
@@ -28,6 +29,10 @@ export const KeyboardSwitcher: React.FC<KeyboardSwitcherProps> = ({
           setActiveType={setActiveType}
           setSearch={setSearch}
         />
+      )}
+
+      {activeType === "fullkey" && (
+        <FullKeyboard setSearch={setSearch}/>
       )}
     </>
   );

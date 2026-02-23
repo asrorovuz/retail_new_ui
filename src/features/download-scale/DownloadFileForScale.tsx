@@ -55,7 +55,7 @@ const DownloadFileForScales = () => {
     <Dropdown
       toggleClassName="bg-white flex items-center"
       renderTitle={
-        <Button variant="solid" size="sm" type="button">
+        <Button variant="default" size="sm" type="button">
             Скачать файл для весов
         </Button>
       }

@@ -6,7 +6,6 @@ import { useDraftSaleStore } from "@/app/store/useSaleDraftStore";
 import {
   useAllProductApi,
   useFindBarcode,
-  usePriceTypeApi,
 } from "@/entities/products/repository";
 import Cashbox from "@/features/cashbox";
 import FavouriteProduct from "@/features/favourite-product";
@@ -20,18 +19,16 @@ import PaymentSection from "@/features/payment-section/ui/PaymentSection";
 import eventBus from "@/shared/lib/eventBus";
 import { handleBarcodeScanned } from "@/shared/lib/handleScannedBarcode";
 import { handleScannedProduct } from "@/shared/lib/handleScannedProduct";
-import { AddProductModal } from "@/features/modals";
 import { showErrorLocalMessage } from "@/shared/lib/showMessage";
 import { useSettingsStore } from "@/app/store/useSettingsStore";
 import OrderActions from "@/features/order-actions";
-import ViewMark from "@/features/viewMark";
-import { Button } from "@/shared/ui/kit";
-import { TfiReload } from "react-icons/tfi";
+// import ViewMark from "@/features/viewMark";
 import FormattedNumber from "@/shared/ui/kit-pro/numeric-format/NumericFormat";
 import classNames from "@/shared/lib/classNames";
-import { LogoutSvg } from "@/shared/ui/svg/LogoutSvg";
 import Alert from "@/shared/ui/kit-pro/alert/Alert";
 import { useAuthContext } from "@/app/providers/AuthProvider";
+import { useOutletContext } from "react-router-dom";
+import Footer from "@/widgets/ui/footer/Footer";
 
 const SalePage = () => {
   const [search, setSearch] = useState<string>("");
@@ -48,7 +45,10 @@ const SalePage = () => {
   const [activeSelectPaymetype, setActivePaymentSelectType] =
     useState<number>(1);
   const [showAlert, setShowAlert] = useState(false);
-  const [activeType, setActiveType] = useState<"numeric" | "qwerty">("numeric");
+  const [activeType, setActiveType] = useState<"numeric" | "qwerty" | "fullkey">("numeric");
+
+  const setIsOpenNavigate =
+    useOutletContext<React.Dispatch<React.SetStateAction<boolean>>>();
 
   const { draftSales, addDraftSale, activateDraftSale } = useDraftSaleStore(
     (store) => store,
@@ -56,14 +56,14 @@ const SalePage = () => {
 
   const { logout } = useAuthContext();
 
-  const { data, isPending } = useAllProductApi(50, 1, debouncedSearch || "");
+  const { data } = useAllProductApi(50, 1, debouncedSearch || "");
   const {
     data: findBarcodeData,
     isSuccess,
     isError,
     isFetching,
   } = useFindBarcode(barcode);
-  const { data: productPriceType } = usePriceTypeApi();
+  // const { data: productPriceType } = usePriceTypeApi();
 
   const { settings } = useSettingsStore((s) => s);
   const deleteDraftSale = useDraftSaleStore((store) => store.deleteDraftSale);
@@ -88,9 +88,9 @@ const SalePage = () => {
   const completeActiveDraftSale = useDraftSaleStore(
     (store) => store.completeActiveDraftSale,
   );
-  const deleteDraftSaleMark = useDraftSaleStore(
-    (store) => store.deleteDraftSaleMark,
-  );
+  // const deleteDraftSaleMark = useDraftSaleStore(
+  //   (store) => store.deleteDraftSaleMark,
+  // );
 
   const activeDraft: DraftSaleSchema =
     draftSales?.find((s) => s.isActive) ?? draftSales[0];
@@ -154,13 +154,13 @@ const SalePage = () => {
           type="sale"
           setMark={setMark}
           draft={draftSales}
-          setActiveTypeKeyboard={setActiveType}
           activeDraft={activeDraft}
           expandedRow={expandedRow}
-          setExpandedRow={setExpandedRow}
           selectedRows={selectedRows}
-          setSelectedRows={setSelectedRows}
           expendedId={expendedId}
+          setActiveTypeKeyboard={setActiveType}
+          setExpandedRow={setExpandedRow}
+          setSelectedRows={setSelectedRows}
           setExpandedId={setExpandedId}
           deleteDraftItem={deleteDraftSaleItem}
           updateDraftItemPrice={updateDraftSaleItemPrice}
@@ -173,48 +173,14 @@ const SalePage = () => {
           setExpandedRow={setExpandedRow}
           setExpandedId={setExpandedId}
         />
-        <div className="flex justify-between items-center">
-          <div className="flex items-center gap-x-2">
-            <Button
-              onClick={() => setShowAlert(true)}
-              className="bg-red-100 h-8 text-red-500 text-xs font-semibold active:bg-red-200 active:text-red-500 hover:text-red-500 transition duration-300"
-              variant="plain"
-              size="sm"
-              icon={<LogoutSvg height={20} width={20} />}
-            >
-              Выход
-            </Button>
-            <Button
-              variant="default"
-              type="button"
-              size="sm"
-              className="!text-red-500 h-8 py-0 ring-0 hover:ring-0 active:ring-0 hover:border-red-500 active:border-red-500 active:text-red-600"
-            >
-              Удалить окно
-            </Button>
-          </div>
-          <div className="flex items-center gap-x-2">
-            <Button className="h-8 py-0" size="sm" type="button">
-              Другие
-            </Button>
-            <Button
-              className="h-8 py-0"
-              size="sm"
-              icon={<TfiReload />}
-              variant="solid"
-              type="button"
-            >
-              Смена
-            </Button>
-          </div>
-        </div>
+        <Footer
+          setIsOpenNavigate={setIsOpenNavigate}
+          setShowAlert={setShowAlert}
+        />
       </div>
       <div className="bg-white rounded-2xl p-3">
         <div className="rounded-2xl mb-3 bg-slate-200 p-1">
-          <SearchProduct
-            search={search}
-            setActiveType={setActiveType}
-          />
+          <SearchProduct pageType="sale" search={search} setActiveType={setActiveType} />
           {activeType === "qwerty" && (
             <>
               <SearchProductTable
@@ -313,10 +279,27 @@ const SalePage = () => {
               setSearch={setSearch}
               activeType={activeType}
               setActiveType={setActiveType}
+              setActivePaymentSelectType={setActivePaymentSelectType}
               updateDraftDiscount={updateDraftSaleDiscount}
               updateDraftPayment={updateDraftSalePayment}
             />
           </>
+        </div>
+
+        <div className="rounded-2xl bg-slate-200 p-1">
+          <OrderActions
+            type={"sale"}
+            draft={draftSales}
+            activeDraft={activeDraft}
+            payModal={payModal}
+            selectedRows={selectedRows}
+            addNewDraft={addDraftSale}
+            setPayModal={setPayModal}
+            deleteDraft={deleteDraftSale}
+            activeSelectPaymetype={activeSelectPaymetype}
+            setActivePaymentSelectType={setActivePaymentSelectType}
+            complateActiveDraft={completeActiveDraftSale}
+          />
         </div>
       </div>
       {showAlert && (
@@ -335,26 +318,6 @@ const SalePage = () => {
     // <div className="flex justify-between gap-x-2 h-[calc(100vh-90px)]">
 
     //   <div className="bg-white p-3 rounded-2xl w-[320px]">
-
-    //     {!search && !isPending && (
-    //       <>
-
-    //         <OrderActions
-    //           type={"sale"}
-    //           draft={draftSales}
-    //           activeDraft={activeDraft}
-    //           payModal={payModal}
-    //           selectedRows={selectedRows}
-    //           addNewDraft={addDraftSale}
-    //           setPayModal={setPayModal}
-    //           deleteDraft={deleteDraftSale}
-    //           updateDraftDiscount={updateDraftSaleDiscount}
-    //           activeSelectPaymetype={activeSelectPaymetype}
-    //           setActivePaymentSelectType={setActivePaymentSelectType}
-    //           complateActiveDraft={completeActiveDraftSale}
-    //         />
-    //       </>
-    //     )}
 
     //     <AddProductModal
     //       type={"add"}

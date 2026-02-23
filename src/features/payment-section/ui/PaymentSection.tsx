@@ -3,6 +3,7 @@ import type {
   DraftSalePaymentAmountSchema,
   DraftSaleSchema,
 } from "@/@types/sale";
+import classNames from "@/shared/lib/classNames";
 import { Button } from "@/shared/ui/kit";
 import MagnetSvg from "@/shared/ui/svg/MagnetSvg";
 import { KeyboardSwitcher } from "@/widgets/ui/keyboard/Keybord";
@@ -14,12 +15,13 @@ type PaymentSectionPropsType = {
   activeDraft: DraftSaleSchema & DraftRefundSchema;
   activeSelectPaymetype: number;
   value: string;
-  activeType: "numeric" | "qwerty";
+  activeType: "numeric" | "qwerty" | "fullkey";
   setValue: (val: string) => void;
   setSearch: (val: string) => void;
-  updateDraftDiscount: (val: string) => void;
+  updateDraftDiscount?: (val: string) => void;
   updateDraftPayment: (val: DraftSalePaymentAmountSchema[]) => void;
-  setActiveType: (val: "qwerty" | "numeric") => void;
+  setActiveType: (val: "qwerty" | "numeric" | "fullkey") => void;
+  setActivePaymentSelectType: (val: number) => void;
 };
 
 const PaymentSection = ({
@@ -32,7 +34,8 @@ const PaymentSection = ({
   value,
   setValue,
   setSearch,
-  setActiveType
+  setActiveType,
+  setActivePaymentSelectType,
 }: PaymentSectionPropsType) => {
   const netPrice = useMemo<number>(() => {
     if (!activeDraft) return 0; // <— himoya
@@ -64,7 +67,7 @@ const PaymentSection = ({
   }, [netPrice, totalPaymentAmount]);
 
   const onPaymentChanged = (paymentType: number, amount: string) => {
-    if (paymentType === 0) {
+    if (paymentType === 0 && updateDraftDiscount) {
       updateDraftDiscount(amount);
       return;
     }
@@ -135,7 +138,7 @@ const PaymentSection = ({
 
     setValue(newValue);
 
-    if (activeSelectPaymetype === 0) {
+    if (activeSelectPaymetype === 0 && updateDraftDiscount) {
       updateDraftDiscount(newValue);
     } else {
       onPaymentChanged(activeSelectPaymetype, newValue);
@@ -145,7 +148,7 @@ const PaymentSection = ({
   const onClear = () => {
     setValue("0");
 
-    if (activeSelectPaymetype === 0) {
+    if (activeSelectPaymetype === 0 && updateDraftDiscount) {
       updateDraftDiscount("0");
     } else {
       onPaymentChanged(activeSelectPaymetype, "0");
@@ -204,7 +207,8 @@ const PaymentSection = ({
               size="sm"
               type="button"
               variant="plain"
-              className="w-full bg-slate-300 text-slate-700"
+              onClick={() => setActivePaymentSelectType(0)}
+              className={classNames("w-full", activeSelectPaymetype ? "bg-slate-300 text-slate-700" : "bg-blue-400 !text-white")}
             >
               Скидка
             </Button>

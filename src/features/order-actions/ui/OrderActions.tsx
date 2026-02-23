@@ -1,6 +1,4 @@
-import { Button } from "@/shared/ui/kit";
-// import { MdOutlineDiscount } from "react-icons/md";
-// import { CiSquareMinus } from "react-icons/ci";
+import { Button, Dialog } from "@/shared/ui/kit";
 import type {
   DraftSalePaymentAmountSchema,
   DraftSaleSchema,
@@ -8,16 +6,9 @@ import type {
   SaleItemModel,
 } from "@/@types/sale";
 import type { DraftRefundSchema, RegisterRefundModel } from "@/@types/refund";
-import classNames from "@/shared/lib/classNames";
 import { useEffect, useMemo, useState } from "react";
-import { toast } from "react-toastify";
 import { useSettingsStore } from "@/app/store/useSettingsStore";
-import {
-  CommonDeleteDialog,
-  DiscountModal,
-  PaymentModal,
-  PrinterModal,
-} from "@/widgets";
+import { PaymentModal, PrinterModal } from "@/widgets";
 import { useCurrencyStore } from "@/app/store/useCurrencyStore";
 import type { PaymentAmount } from "@/@types/common";
 import { useCashboxApi, useCreatePrintApi } from "@/entities/init/repository";
@@ -28,7 +19,11 @@ import {
   useRegisterSellApi,
   useUpdateSellApi,
 } from "@/entities/sale/repository";
-import { showErrorMessage, showSuccessMessage } from "@/shared/lib/showMessage";
+import {
+  showErrorLocalMessage,
+  showErrorMessage,
+  showSuccessMessage,
+} from "@/shared/lib/showMessage";
 import { messages } from "@/app/constants/message.request";
 import { FiscalizedModal } from "@/features/modals";
 import type { FizcalResponsetype } from "@/entities/sale/model";
@@ -50,6 +45,8 @@ import type {
   RegisterPurchaseModel,
 } from "@/@types/purchase";
 import { PaymentTypes } from "@/app/constants/payment.types";
+import Alert from "@/shared/ui/kit-pro/alert/Alert";
+import SellDebetModal from "@/widgets/ui/sellDebet/SellDebetModal";
 
 type OrderActionType = {
   type: "sale" | "refund" | "purchase";
@@ -61,22 +58,18 @@ type OrderActionType = {
   selectedRows?: any;
   setPayModal: (open: boolean) => void;
   deleteDraft: (ind: number) => void;
-  updateDraftDiscount: (val: number) => void;
   setActivePaymentSelectType: (val: number) => void;
   complateActiveDraft: () => void;
 };
 
 const OrderActions = ({
   type,
-  draft,
   activeDraft,
   activeSelectPaymetype,
   payModal,
   selectedRows,
   setPayModal,
   addNewDraft,
-  deleteDraft,
-  updateDraftDiscount,
   setActivePaymentSelectType,
   complateActiveDraft,
 }: OrderActionType) => {
@@ -87,7 +80,8 @@ const OrderActions = ({
   const { settings, activeShift } = useSettingsStore();
   const [selectFiscalized, setSelectFiscalized] =
     useState<FizcalResponsetype | null>(null);
-  const [discountModal, setDiscountModal] = useState<boolean>(false);
+  const [sellDebit, setSellDebit] = useState(false);
+
   const [paymeType, setPaymeType] = useState<number[]>([]);
 
   const nationalCurrency = useCurrencyStore((store) => store.nationalCurrency);
@@ -107,11 +101,6 @@ const OrderActions = ({
   const { mutate: updatePurchase } = useUpdatePurchasedApi();
   const { mutate: updateRefund } = useUpdateRefundApi();
   const { mutate: updateSale } = useUpdateSellApi();
-
-  const onDeleteActivedraft = () => {
-    const findIndex = draft?.findIndex((item) => item?.isActive);
-    deleteDraft(findIndex);
-  };
 
   const addDrafts = () => {
     const newDraftSale:
@@ -140,7 +129,7 @@ const OrderActions = ({
 
     const discount = activeDraft.discountAmount || 0;
 
-    return totalAmount - discount;
+    return totalAmount - +discount;
   }, [activeDraft]);
 
   const totalPaymentAmount = useMemo<number>(() => {
@@ -150,11 +139,14 @@ const OrderActions = ({
         : activeDraft?.payout
       )?.amounts.reduce(
         (acc: number, payment: DraftSalePaymentAmountSchema) =>
-          acc + payment?.amount,
+          acc + +payment?.amount,
         0,
       ) ?? 0
     );
   }, [(type === "sale" ? activeDraft?.payment : activeDraft?.payout)?.amounts]);
+
+  const totalAmount =
+    activeDraft?.items?.reduce((acc, item) => acc + item?.totalAmount, 0) ?? 0;
 
   const handleCancelPrint = () => {
     setPrintSelect(false);
@@ -222,6 +214,7 @@ const OrderActions = ({
   function onSubmitPaymentHandler(
     paymentAmounts: PaymentAmount[],
     callback: (success: boolean) => void,
+    typeButton: boolean,
   ) {
     // init payload
     const payload: RegisterSaleModel &
@@ -235,18 +228,17 @@ const OrderActions = ({
 
     const typesPayme =
       (type === "sale" ? activeDraft?.payment : activeDraft?.payout)?.amounts
-        ?.filter((item) => item?.amount > 0)
+        ?.filter((item) => Number(item?.amount) > 0)
         ?.map((elem) => elem?.paymentType) || [];
 
     setPaymeType(typesPayme);
 
-    // prepare payload
     {
       // set exact discount
 
       if (activeDraft?.discountAmount) {
         payload?.exact_discount.push({
-          amount: activeDraft?.discountAmount,
+          amount: Number(activeDraft?.discountAmount),
           currency_code: nationalCurrency?.code, // todo set national currency id
         });
       }
@@ -259,9 +251,10 @@ const OrderActions = ({
         const isActiveBulk =
           type === "sale" && !!selectedRows?.[draftItem?.productId];
 
-        const priceAmount = isActiveBulk && draftItem?.priceAmoutBulk
-          ? draftItem?.priceAmoutBulk
-          : draftItem?.priceAmount;
+        const priceAmount =
+          isActiveBulk && draftItem?.priceAmoutBulk
+            ? draftItem?.priceAmoutBulk
+            : draftItem?.priceAmount;
 
         const saleAndRefunItem: SaleItemModel = {
           product_id: draftItem.productId,
@@ -334,17 +327,8 @@ const OrderActions = ({
               setSaleId(
                 data?.sale?.id || data?.purchase?.id || data?.refund?.id,
               );
-              if (settings?.auto_print_receipt && settings?.printer_name) {
-                onPrint(
-                  data?.sale?.id || data?.purchase?.id || data?.refund?.id,
-                );
-              } else if (
-                !settings?.auto_print_receipt &&
-                settings?.printer_name
-              ) {
-                setPrintSelect(true);
-              } else {
-                handleCancelPrint();
+              if (typeButton) {
+                onPrintCheck(data);
               }
             }
 
@@ -367,15 +351,8 @@ const OrderActions = ({
         onSuccess: (data: any) => {
           if (data?.sale?.id || data?.purchase?.id || data?.refund?.id) {
             setSaleId(data?.sale?.id || data?.purchase?.id || data?.refund?.id);
-            if (settings?.auto_print_receipt && settings?.printer_name) {
-              onPrint(data?.sale?.id || data?.purchase?.id || data?.refund?.id);
-            } else if (
-              !settings?.auto_print_receipt &&
-              settings?.printer_name
-            ) {
-              setPrintSelect(true);
-            } else {
-              handleCancelPrint();
+            if (typeButton) {
+              onPrintCheck(data);
             }
           }
 
@@ -395,14 +372,13 @@ const OrderActions = ({
     }
   }
 
-  const calcPricePayment = () => {
-    if (!activeShift && settings?.shift?.shift_enabled) {
-      toast.error("Смена не открыта.");
-      return;
-    }
-
-    if (activeDraft?.items?.length) {
-      setIsOpenPayment(true);
+  const onPrintCheck = (data: any) => {
+    if (settings?.auto_print_receipt && settings?.printer_name) {
+      onPrint(data?.sale?.id || data?.purchase?.id || data?.refund?.id);
+    } else if (!settings?.auto_print_receipt && settings?.printer_name) {
+      setPrintSelect(true);
+    } else {
+      handleCancelPrint();
     }
   };
 
@@ -445,7 +421,26 @@ const OrderActions = ({
   };
 
   const onSubmit = () => {
-    calcPricePayment();
+    const debit =
+      totalAmount -
+        Number(activeDraft?.discountAmount ?? 0) -
+        totalPaymentAmount || 0;
+    if (debit <= 0) {
+      setIsOpenPayment(true);
+    } else {
+      showErrorLocalMessage("Введённая сумма оплаты меньше общей суммы.");
+    }
+  };
+
+  const onSubmitDebit = () => {
+    const debit =
+      totalAmount -
+        Number(activeDraft?.discountAmount ?? 0) -
+        totalPaymentAmount || 0;
+    if (debit > 0) {
+      setIsOpenPayment(true);
+      setSellDebit(false);
+    }
   };
 
   useEffect(() => {
@@ -455,44 +450,43 @@ const OrderActions = ({
   }, [filterDataFiscal]);
 
   return (
-    <div className="p-2 bg-gray-100 rounded-2xl flex gap-x-1">
-      <CommonDeleteDialog
-        description="Удалить корзину? Действие нельзя будет отменить"
-        onDelete={onDeleteActivedraft}
-      >
-        <Button
-          variant="plain"
-          size="sm"
-          // icon={<CiSquareMinus size={16}/>}
-          className="!text-red-400 bg-white w-full text-xs"
-        >
-          Oчистка
-        </Button>
-      </CommonDeleteDialog>
-      <Button
-        variant="plain"
-        disabled={type === "refund" || type === "purchase"}
+    <div className="flex gap-x-1">
+      {type === "sale" && <Button
         size="sm"
-        onClick={() => setDiscountModal(true)}
-        // icon={<MdOutlineDiscount size={16}/>}
-        className={classNames(
-          "bg-white w-full  text-xs",
-          activeSelectPaymetype === 0 && "text-primary",
-        )}
+        onClick={() => setSellDebit(true)}
+        variant="plain"
+        disabled={!activeDraft?.items?.length}
+        className="w-full text-base font-medium text-slate-800 bg-white"
       >
-        Скидка
-      </Button>
+        В долг
+      </Button>}
       <Button
         size="sm"
         onClick={onSubmit}
         variant="solid"
-        className="w-full  text-xs"
+        disabled={!activeDraft?.items?.length}
+        className="w-full text-base font-medium"
       >
         Оформить
       </Button>
 
+      {sellDebit && (
+        <SellDebetModal
+          onCancel={() => setSellDebit(false)}
+          onSubmit={onSubmitDebit}
+        />
+        // <Alert
+        //   type="warning"
+        //   content="Оформляется продажа в долг. Оплата будет принята позже. Подтверждаете?"
+        //   title="Продажа в долг"
+        //   onCancel={() => setSellDebit(false)}
+        //   onConfirm={onSubmitDebit}
+        // />
+      )}
+
       <PaymentModal
         type={type}
+        totalAmount={totalAmount}
         cashBackAmount={cashBackAmount}
         totalPaymentAmount={totalPaymentAmount}
         setActivePaymentSelectType={setActivePaymentSelectType}
@@ -521,13 +515,6 @@ const OrderActions = ({
         setIsOpen={setFiscalizedModal}
         fiscalPending={fiscalPending}
         handleApproveFiscalization={handleApproveFiscalization}
-      />
-
-      <DiscountModal
-        isOpen={discountModal}
-        setDiscountModal={setDiscountModal}
-        updateDraftDiscount={updateDraftDiscount}
-        discount={activeDraft?.discountAmount ?? 0}
       />
 
       <PaymeWhithQR
