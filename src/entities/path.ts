@@ -2,8 +2,12 @@ export const pathServices = {
   auth: {
     auth: "/public/auth/status",
     login: "/public/auth/login",
+    confirmCode: "/public/auth/confirmation-code",
     globalLogin: "/public/auth/global-login",
     register: "/public/auth/register",
+    registeration: "/public/auth/register-account",
+    registerOrgPath: "/public/auth/register-organization",
+    registerOrgLocalPath: "/public/auth/register-organization-local"
   },
 
   init: {
