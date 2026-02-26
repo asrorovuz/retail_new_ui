@@ -10,6 +10,9 @@ type ImageFormProps = {
   fieldName: string;
   control: Control<any>; // tashqaridan beriladi
   imgId?: string | number | null;
+  width?: string;
+  height?: string;
+  extra?: boolean;
 };
 
 type Image = {
@@ -24,9 +27,11 @@ type Image = {
 const ImageList = ({
   imgList,
   onImageDelete,
+  extra = true,
 }: {
   imgList: Image[];
   onImageDelete: (img: Image) => void;
+  extra: boolean;
 }) => {
   const [selectedImg, setSelectedImg] = useState<Image>({} as Image);
   const [viewOpen, setViewOpen] = useState(false);
@@ -69,20 +74,22 @@ const ImageList = ({
             src={img.img}
             alt={img.name}
           />
-          <div className="absolute inset-2 bg-[#000000ba] group-hover:flex hidden text-xl items-center justify-center">
-            <span
-              className="text-gray-100 hover:text-gray-300 cursor-pointer p-1.5"
-              onClick={() => onViewOpen(img)}
-            >
-              <HiEye />
-            </span>
-            <span
-              className="text-gray-100 hover:text-gray-300 cursor-pointer p-1.5"
-              onClick={() => onDeleteConfirmation(img)}
-            >
-              <HiTrash />
-            </span>
-          </div>
+          {extra && (
+            <div className="absolute inset-2 bg-[#000000ba] group-hover:flex hidden text-xl items-center justify-center">
+              <span
+                className="text-gray-100 hover:text-gray-300 cursor-pointer p-1.5"
+                onClick={() => onViewOpen(img)}
+              >
+                <HiEye />
+              </span>
+              <span
+                className="text-gray-100 hover:text-gray-300 cursor-pointer p-1.5"
+                onClick={() => onDeleteConfirmation(img)}
+              >
+                <HiTrash />
+              </span>
+            </div>
+          )}
         </div>
       ))}
 
@@ -107,7 +114,12 @@ const ImageList = ({
 };
 
 // 🔹 Asosiy komponent (useFormContext yo‘q)
-const ImageForm = ({ fieldName, control, imgId = null }: ImageFormProps) => {
+const ImageForm = ({
+  fieldName,
+  control,
+  imgId = null,
+  extra = true
+}: ImageFormProps) => {
   const beforeUpload = (file: FileList | null) => {
     let valid: boolean | string = true;
     const allowedFileType = ["image/jpeg", "image/png", "image/avif"];
@@ -129,7 +141,7 @@ const ImageForm = ({ fieldName, control, imgId = null }: ImageFormProps) => {
   const handleUpload = (
     onChange: (images: Image[]) => void,
     originalImageList: Image[] = [],
-    files: File[]
+    files: File[],
   ) => {
     const latestFile = files[0];
     const image: Image = {
@@ -145,10 +157,10 @@ const ImageForm = ({ fieldName, control, imgId = null }: ImageFormProps) => {
   const handleImageDelete = (
     onChange: (images: Image[]) => void,
     originalImageList: Image[] = [],
-    deletedImg: Image
+    deletedImg: Image,
   ) => {
     const imgList = cloneDeep(originalImageList).filter(
-      (img) => img.id !== deletedImg.id && img.name !== deletedImg.name
+      (img) => img.id !== deletedImg.id && img.name !== deletedImg.name,
     );
     onChange(imgList);
   };
@@ -159,15 +171,19 @@ const ImageForm = ({ fieldName, control, imgId = null }: ImageFormProps) => {
       control={control}
       render={({ field }) => {
         const images: Image[] = (field.value || []).filter(
-          (img: any) => img && img.img
+          (img: any) => img && img.img,
         );
 
         return (
           <>
             {images.length > 0 ? (
-              <div className="h-[100px] w-[100px]">
+              <div
+                className={`w-[100px] h-[100px]`}
+              >
                 <ImageList
                   imgList={images}
+                  extra={extra}
+                  
                   onImageDelete={(img) =>
                     handleImageDelete(field.onChange, images, img)
                   }
@@ -177,14 +193,18 @@ const ImageForm = ({ fieldName, control, imgId = null }: ImageFormProps) => {
               <Upload
                 draggable
                 beforeUpload={beforeUpload}
-                className="w-[110px]"
+                className={"w-[100px]"}
                 showList={false}
                 onChange={(files) =>
                   handleUpload(field.onChange, images, files)
                 }
               >
-                <div className="flex flex-col px-4 py-8 justify-center items-center h-[100px] w-[100px]">
-                  <div className="text-[60px]">
+                <div
+                  className={`flex flex-col px-4 py-8 justify-center items-center w-[100px] h-[100px]`}
+                >
+                  <div
+                    className={`text-[60px]`}
+                  >
                     <PiImagesThin />
                   </div>
                 </div>

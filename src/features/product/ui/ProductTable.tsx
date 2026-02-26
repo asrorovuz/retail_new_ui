@@ -5,11 +5,7 @@ import {
   flexRender,
   createColumnHelper,
 } from "@tanstack/react-table";
-import {
-  useAllProductApi,
-  useAllProductCountApi,
-  useDeleteProduct,
-} from "@/entities/products/repository";
+import { useDeleteProduct } from "@/entities/products/repository";
 import { Dropdown, Pagination, Table } from "@/shared/ui/kit";
 import THead from "@/shared/ui/kit/Table/THead";
 import Tr from "@/shared/ui/kit/Table/Tr";
@@ -29,48 +25,45 @@ import { showErrorMessage, showSuccessMessage } from "@/shared/lib/showMessage";
 import { messages } from "@/app/constants/message.request";
 import ConfirmDialog from "@/shared/ui/kit-pro/confirm-dialog/ConfirmDialog";
 import { EditProductModal } from "@/features/modals";
-import type { ProductTableProps } from "@/features/modals/model";
+import type {
+  ProductPriceType,
+} from "@/features/modals/model";
 import { useSettingsStore } from "@/app/store/useSettingsStore";
 import PrintCheckProduct from "@/features/print-modal";
-import { useDebounce } from "@/shared/lib/useDebounce";
 import classNames from "@/shared/lib/classNames";
 import { showMeasurmentName } from "@/shared/lib/showMeausermentName";
 
 const ProductTable = ({
-  search,
+  data,
+  countData,
+  isPending,
   searchFocus,
-  filterParams,
-  setBarcode,
+  pagination,
+  setPagination,
   barcode,
+  setBarcode,
   setIsOpen,
   isOpen,
   productPriceType,
-  pagination,
-  setPagination,
 }: {
-  search: string;
+  data: any;
+  countData: number;
+  isPending: boolean;
   searchFocus: boolean;
   pagination: any;
   setPagination: any;
-} & ProductTableProps) => {
-  const debouncedSearch = useDebounce(search, 500);
+  barcode: string | null;
+  setBarcode: (val: string | null) => void;
+  setIsOpen: (val: boolean) => void;
+  isOpen: boolean;
+  productPriceType: ProductPriceType[];
+}) => {
   const [confirmProductId, setConfirmProductId] = useState<number | null>(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [isopenPrint, setIsOpenPrint] = useState(false);
   const [item, setItem] = useState<Product | null>(null);
   const { tableSettings } = useSettingsStore((s) => s);
 
-  // 🚀 API chaqiruv
-  const { data, isPending } = useAllProductApi(
-    pagination.pageSize,
-    pagination.pageIndex,
-    debouncedSearch || "",
-    filterParams,
-  );
-  const { data: countData } = useAllProductCountApi(
-    debouncedSearch || "",
-    filterParams,
-  );
   const { mutate: deleteProduct, isPending: productDeleteLoading } =
     useDeleteProduct();
 

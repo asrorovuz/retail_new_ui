@@ -2,7 +2,7 @@ import { Button, Input } from "@/shared/ui/kit";
 import { useEffect, useRef, useState } from "react";
 import { Controller, useFieldArray } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { FiDelete } from "react-icons/fi";
+import { IoMdClose } from "react-icons/io";
 
 type BarcodeFormProps = {
   fieldName: string;
@@ -50,7 +50,7 @@ const BarcodeForm = ({
       el.focus();
       el.select();
     }
-  }, [focusedIndex, fields.length]);;
+  }, [focusedIndex, fields.length]);
 
   useEffect(() => {
     if (!barcode || focusedIndex === null) return;
@@ -76,7 +76,7 @@ const BarcodeForm = ({
   }, [fields.length]);
 
   return (
-    <div className="flex flex-col mb-7">
+    <div className="flex flex-col">
       {/* <div> */}
       <div className="form-label flex justify-between mb-1 min-w-44">
         <span className="whitespace-nowrap">Штрих-коды</span>
@@ -128,10 +128,10 @@ const BarcodeForm = ({
               {fields.length > 1 ? (
                 <Button
                   type="button"
-                  variant="solid"
-                  className="px-3 bg-red-500 hover:bg-red-400 active:bg-red-400"
+                  variant="default"
+                  className="px-3 text-red-500 hover:text-red-400 active:text-red-400"
                   onClick={() => deleteBarcode(index)}
-                  icon={<FiDelete size={20} />}
+                  icon={<IoMdClose size={20} />}
                 />
               ) : (
                 ""

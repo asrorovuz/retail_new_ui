@@ -1,10 +1,9 @@
-import { Button, FormItem, Select } from "@/shared/ui/kit";
+import { FormItem, Select } from "@/shared/ui/kit";
 import { useMemo, useState } from "react";
 import { Controller } from "react-hook-form";
 import ModalCategory from "./ModalCategory";
 import { showErrorLocalMessage } from "@/shared/lib/showMessage";
 import { useCategoryApi } from "@/entities/products/repository";
-import { FiPlusCircle } from "react-icons/fi";
 
 type CategorySelectProps = {
   name: string;
@@ -32,7 +31,7 @@ const CategorySelect = ({
         value: item.id,
         label: item.name,
       })),
-    [allCategory]
+    [allCategory],
   );
 
   const handleShowAdd = (opts: {
@@ -74,22 +73,42 @@ const CategorySelect = ({
     setModals((prev) => prev.filter((m) => m.id !== id));
   };
   return (
-    <div className="flex justify-center items-center gap-x-1">
+    <div className="flex justify-center items-center gap-x-1 col-span-2">
       <Controller
         name={name}
         control={control}
         render={({ field }) => (
-          <FormItem className="w-full" label={label}>
+          <FormItem
+            className="w-full !mb-0"
+            labelClass="flex justify-between items-center"
+            label={label}
+            extra={
+              <div
+                className="text-blue-500 active:text-blue-400"
+                onClick={() =>
+                  handleShowAdd({
+                    parent_id: null,
+                    parentName: null,
+                    type: "add",
+                    chainDepth: 1,
+                  })
+                }
+              >
+                Добавить категорию
+              </div>
+            }
+          >
             <Select
               {...field}
               className={width ? width : "w-full"}
               isClearable
               hideSelectedOptions
+              size="sm"
               options={categoryOptions}
               value={
                 field?.value
                   ? categoryOptions?.find(
-                      (opt) => opt.value === field.value.id
+                      (opt) => opt.value === field.value.id,
                     ) || null
                   : null
               }
@@ -139,21 +158,6 @@ const CategorySelect = ({
           </FormItem>
         )}
       />
-
-      <Button
-        type="button"
-        icon={<FiPlusCircle />}
-        className="bg-gray-400"
-        variant="solid"
-        onClick={() =>
-          handleShowAdd({
-            parent_id: null,
-            parentName: null,
-            type: "add",
-            chainDepth: 1,
-          })
-        }
-      ></Button>
     </div>
   );
 };

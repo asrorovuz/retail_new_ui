@@ -1,5 +1,5 @@
 import type { WarehouseItem } from "@/@types/products";
-import type { FilterParams } from "@/features/filter-table/ui/options";
+import type { FilterParams } from "@/features/product/select-params";
 
 export type FavouriteProduct = {
   product_id: number | null;
@@ -16,6 +16,8 @@ export type ProductModalProps = {
   type: "add" | "edit" | "print";
   pageType?: string;
   barcode: string | null;
+  catalogCode: string | null;
+  setCatalogCode: (val: string | null) => void;
   setBarcode: (val: string | null) => void;
   productPriceType: ProductPriceType[];
   setIsOpen: (val: boolean) => void;

@@ -143,6 +143,13 @@ export const getProductBarcodeApi = async (barcode: string | null): Promise<Prod
   });
 };
 
+export const getProductBarcodeProductApi = async (barcode: string | null): Promise<any> => {
+  return await apiRequest<any>({
+    url: `${pathServices.products.findByBarcodeProduct}${barcode}`,
+    method: "GET",
+  });
+};
+
 /* ------------------------------ UPDATE APIs ------------------------------ */
 
 export const updateTableSettingsApi = async (

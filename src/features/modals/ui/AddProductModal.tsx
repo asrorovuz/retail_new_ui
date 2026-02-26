@@ -13,6 +13,8 @@ const AddProductModal: FC<ProductModalProps> = ({
   pageType,
   setBarcode,
   barcode,
+  catalogCode,
+  setCatalogCode,
   productPriceType,
   setIsOpen,
   isOpen,
@@ -20,7 +22,7 @@ const AddProductModal: FC<ProductModalProps> = ({
   const [defaultValues, setDefaultValues] =
     useState<ProductDefaultValues | null>(null);
   const { data: catalogData, isLoading } = useCatalogSearchApi(
-    barcode || "",
+    (isOpen && (catalogCode || barcode)) || "",
     isOpen,
   );
 
@@ -39,7 +41,9 @@ const AddProductModal: FC<ProductModalProps> = ({
 
     setDefaultValues({
       name: "",
-      barcodes: [{ value: new Date().getTime().toString().slice(5, 13), count: 1 }],
+      barcodes: [
+        { value: new Date().getTime().toString().slice(5, 13), count: 1 },
+      ],
       catalog_code: null,
       catalog_name: null,
       package_code: null,
@@ -77,6 +81,8 @@ const AddProductModal: FC<ProductModalProps> = ({
           pageType={pageType}
           setIsOpen={setIsOpen}
           catalogLoading={isLoading}
+          catalogCode={catalogCode}
+          setCatalogCode={setCatalogCode}
           defaultValue={defaultValues!} // '!' bilan null bo'lmasligini bildiramiz
           barcode={barcode}
           setBarcode={setBarcode}

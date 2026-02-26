@@ -131,7 +131,7 @@ const FullKeyboard = ({ setSearch }: any) => {
   };
 
   return (
-    <div className="h-[31.88vh] shadow-lg">
+    <div className="h-[31.88vh] shadow-lg rounded-md bg-slate-200 p-1 relative z-50">
       <div
         className={classNames(
           "grid grid-rows-3 gap-1 mb-1",

@@ -24,6 +24,7 @@ const CatalogPackageSelector = ({
   options = [],
   ...props
 }: CatalogPackageSelectorProps) => {
+  const [selectedOption, setSelectedOption] = useState<any>(null);
   const selectOption = useMemo(() => {
     if (!Array.isArray(options)) return [];
     return options.map((item: any) => ({
@@ -32,8 +33,6 @@ const CatalogPackageSelector = ({
       ...item,
     }));
   }, [options]);
-
-  const [selectedOption, setSelectedOption] = useState<any>(null);
 
   // value yoki options yangilanishini kuzatib, selectedOptionni set qilish
   useEffect(() => {
@@ -51,7 +50,7 @@ const CatalogPackageSelector = ({
     // value code bo'lsa, option ichidan topamiz
     if (value) {
       const found = selectOption.find((opt) => opt.value === value);
-      setSelectedOption(found || null);
+      setSelectedOption(found || selectOption[0] || null);
       return;
     }
 
@@ -60,13 +59,15 @@ const CatalogPackageSelector = ({
   }, [value, selectOption]);
 
   const handleChange = (option: any) => {
-    setSelectedOption(option); // tanlangan optionni statega saqlaymiz
+    // setSelectedOption(option); // tanlangan optionni statega saqlaymiz
+    const selected = option || selectOption[0] || null; // 🔹 tanlanmasa default
+    setSelectedOption(selected);
 
     multiplay
-      ? setValue(`products.${index}.package`, option)
-      : setValue("package", option);
+      ? setValue(`products.${index}.package`, selected)
+      : setValue("package", selected);
 
-    onChange(option);
+    onChange(selected);
   };
 
   return (
@@ -76,12 +77,13 @@ const CatalogPackageSelector = ({
       isSearchable={false}
       options={selectOption}
       value={selectedOption}
-      isLoading={!selectOption.length}
+      // isLoading={!selectOption?.length}
       onChange={handleChange}
       getOptionLabel={(option: any) => option.label}
       getOptionValue={(option: any) => option.value}
       isClearable
       className={width}
+      size="sm"
       menuPortalTarget={document.body}
       menuPosition="fixed"
       styles={{

@@ -57,10 +57,17 @@ const CatalogSelector = ({
   // 🔹 Tanlovni o‘zgartirish
   const handleChange = (option: any) => {
     setSelected(option || null);
-    setPackageNames(option?.data?.package_names || []);
-    multiplay
-      ? setValue(`products.${index}.catalog`, option || null)
-      : setValue("catalog", option || null);
+    const packages = option?.data?.package_names || [];
+     const defaultPackage = packages[0] || null; 
+    setPackageNames(packages);
+    if (multiplay) {
+      setValue(`products.${index}.catalog`, option || null);
+      setValue(`products.${index}.package`, defaultPackage);
+    } else {
+      setValue("catalog", option || null);
+      setValue(`products.${index}.package`, defaultPackage);
+    }
+
     onChange(option || null);
   };
 
@@ -74,22 +81,35 @@ const CatalogSelector = ({
     if (value == null) {
       setSelected(null);
       setPackageNames([]);
+      if (multiplay) {
+        setValue(`products.${index}.package`, null);
+      } else {
+        setValue("package", null);
+      }
       return;
     }
 
-    // Edit rejimida value string (code) bo‘lishi mumkin
-    // yoki object bo‘lishi mumkin
     const valToFind = typeof value === "object" ? value.value : value;
-
-    // optionlar ichidan topamiz
     const found = options.find((opt) => opt.value === valToFind);
 
     if (found) {
-      setSelected(found); // 🔹 bu Select uchun to‘liq object
-      setPackageNames(found.data?.package_names || []);
+      setSelected(found);
+      const packages = found.data?.package_names || [];
+      setPackageNames(packages);
+      const defaultPackage = packages[0] || null;
+      if (multiplay) {
+        setValue(`products.${index}.package`, defaultPackage);
+      } else {
+        setValue("package", defaultPackage);
+      }
     } else {
       setSelected(null);
       setPackageNames([]);
+      if (multiplay) {
+        setValue(`products.${index}.package`, null);
+      } else {
+        setValue("package", null);
+      }
     }
   }, [value, options]);
 
@@ -100,6 +120,7 @@ const CatalogSelector = ({
       isLoading={isLoading}
       options={options}
       value={selected}
+      size="sm"
       inputValue={inputValue}
       onInputChange={handleInputChange}
       onChange={handleChange}

@@ -19,6 +19,7 @@ import {
   getCurrencyApi,
   getPriceTypeApi,
   getProductBarcodeApi,
+  getProductBarcodeProductApi,
   getProductByIdApi,
   getTableSettingsApi,
   updateAlertOnApi,
@@ -91,6 +92,15 @@ export const useFindBarcode = (barcode: string | null) => {
   return useQuery({
     queryKey: ["find-barcode", barcode],
     queryFn: () => getProductBarcodeApi(barcode),
+    enabled: !!barcode,
+    retry: false,
+  });
+};
+
+export const useFindBarcodeProduct = (barcode: string | null) => {
+  return useQuery({
+    queryKey: ["find-barcode-product", barcode],
+    queryFn: () => getProductBarcodeProductApi(barcode),
     enabled: !!barcode,
     retry: false,
   });

@@ -8,6 +8,8 @@ import {
   CurrencyRateUZS,
 } from "@/app/constants/paymentType";
 import { useCatalogSearchApi } from "@/entities/products/repository";
+import NavigateButton from "@/shared/ui/kit-pro/navigate-button/NavigateButton";
+import FullKeyboard from "@/widgets/ui/keyboard/FullKeyboard";
 
 const AddMoreProducts = ({
   productPriceType,
@@ -93,17 +95,22 @@ const AddMoreProducts = ({
   return (
     <>
       <Dialog
-        width="90vw"
-        height="90vh"
-        title="Добавление товаров"
+        width="100vw"
+        height="100vh"
+        className={""}
+        contentClassName="!my-0 !rounded-none"
+        closable={false}
         isOpen={isOpen}
-        onClose={() => {
-          setIsOpen(false);
-          setProducts([]);
-          setBarcode(null);
-        }}
       >
-        <div className="h-[calc(90vh-108px)] overflow-y-auto flex flex-col">
+        <NavigateButton
+          click={() => {
+            setIsOpen(false);
+            setProducts([]);
+            setBarcode(null);
+          }}
+          content="Добавить большое количество товаров"
+        />
+        <div className="mb-4">
           <ProductFormMultiple
             name="products"
             products={products}
@@ -116,6 +123,7 @@ const AddMoreProducts = ({
             createEmptyProduct={createEmptyProduct}
           />
         </div>
+        <FullKeyboard />
       </Dialog>
     </>
   );
