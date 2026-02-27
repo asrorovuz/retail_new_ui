@@ -1,9 +1,11 @@
-import { FormItem, Select } from "@/shared/ui/kit";
+import { Button, FormItem, Select } from "@/shared/ui/kit";
 import { useMemo, useState } from "react";
 import { Controller } from "react-hook-form";
 import ModalCategory from "./ModalCategory";
 import { showErrorLocalMessage } from "@/shared/lib/showMessage";
 import { useCategoryApi } from "@/entities/products/repository";
+import { FaPlus } from "react-icons/fa";
+import classNames from "@/shared/lib/classNames";
 
 type CategorySelectProps = {
   name: string;
@@ -11,6 +13,7 @@ type CategorySelectProps = {
   control: any;
   placeholder: string;
   width?: string;
+  multi?: boolean;
   onChange?: (option: { id: number; name: string } | null) => void;
 };
 
@@ -19,6 +22,7 @@ const CategorySelect = ({
   label,
   control,
   placeholder,
+  multi = false,
   width,
   onChange = () => {},
 }: CategorySelectProps) => {
@@ -79,57 +83,78 @@ const CategorySelect = ({
         control={control}
         render={({ field }) => (
           <FormItem
-            className="w-full !mb-0"
+            className={classNames("w-full !mb-0")}
             labelClass="flex justify-between items-center"
-            label={label}
+            label={!multi ? label : ""}
             extra={
-              <div
-                className="text-blue-500 active:text-blue-400"
-                onClick={() =>
-                  handleShowAdd({
-                    parent_id: null,
-                    parentName: null,
-                    type: "add",
-                    chainDepth: 1,
-                  })
-                }
-              >
-                Добавить категорию
-              </div>
+              !multi && (
+                <div
+                  className="text-blue-500 active:text-blue-400"
+                  onClick={() =>
+                    handleShowAdd({
+                      parent_id: null,
+                      parentName: null,
+                      type: "add",
+                      chainDepth: 1,
+                    })
+                  }
+                >
+                  Добавить категорию
+                </div>
+              )
             }
           >
-            <Select
-              {...field}
-              className={width ? width : "w-full"}
-              isClearable
-              hideSelectedOptions
-              size="sm"
-              options={categoryOptions}
-              value={
-                field?.value
-                  ? categoryOptions?.find(
-                      (opt) => opt.value === field.value.id,
-                    ) || null
-                  : null
-              }
-              onChange={(data) => {
-                const transformed = data
-                  ? { id: data.value, name: data.label }
-                  : null;
-                field.onChange(transformed);
-                onChange?.(transformed);
-              }}
-              placeholder={placeholder}
-              menuPortalTarget={document.body}
-              menuPosition="fixed"
-              styles={{
-                menuPortal: (base) => ({
-                  ...base,
-                  zIndex: 9999,
-                }),
-              }}
-            />
+            <div className="flex gap-x-2">
+              <Select
+                {...field}
+                className={width ? width : "w-full"}
+                isClearable
+                hideSelectedOptions
+                size="sm"
+                options={categoryOptions}
+                value={
+                  field?.value
+                    ? categoryOptions?.find(
+                        (opt) => opt.value === field.value.id,
+                      ) || null
+                    : null
+                }
+                onChange={(data) => {
+                  const transformed = data
+                    ? { id: data.value, name: data.label }
+                    : null;
+                  field.onChange(transformed);
+                  onChange?.(transformed);
+                }}
+                placeholder={placeholder}
+                menuPortalTarget={document.body}
+                menuPosition="fixed"
+                styles={{
+                  menuPortal: (base) => ({
+                    ...base,
+                    zIndex: 9999,
+                  }),
+                }}
+              />
 
+              {multi && (
+                <Button
+                  type="button"
+                  size="sm"
+                  className="w-14"
+                  icon={<FaPlus size={16} />}
+                  onClick={() =>
+                    handleShowAdd({
+                      parent_id: null,
+                      parentName: null,
+                      type: "add",
+                      chainDepth: 1,
+                    })
+                  }
+                  variant="default"
+                />
+              )}
+            </div>
             {modals?.map((m) => (
               <ModalCategory
                 key={m.id}

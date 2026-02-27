@@ -1,7 +1,14 @@
 import { Dialog } from "@/shared/ui/kit";
 import { Link, useLocation } from "react-router-dom";
-import { MdOutlineSettings } from "react-icons/md";
-import { SlBasket } from "react-icons/sl";
+import {
+  MdOutlineAssignmentReturn,
+  MdOutlineHistory,
+  MdOutlineInventory2,
+  MdOutlineSettings,
+  MdOutlineShoppingCart,
+  MdOutlineStarBorder,
+  MdOutlinePointOfSale,
+} from "react-icons/md";
 import { useEffect } from "react";
 
 const NavigateModal = ({ isOpenNavigate, setIsOpenNavigate }: any) => {
@@ -9,54 +16,59 @@ const NavigateModal = ({ isOpenNavigate, setIsOpenNavigate }: any) => {
   const onClose = () => setIsOpenNavigate(false);
 
   useEffect(() => {
-    if(isOpenNavigate){
-        setIsOpenNavigate(false);
+    if (isOpenNavigate) {
+      setIsOpenNavigate(false);
     }
   }, [location.pathname]);
 
+  const linkClass =
+    "text-sm font-medium py-4 flex justify-center items-center gap-x-2 bg-slate-200 hover:bg-slate-300 transition text-slate-800 rounded-lg";
+
   return (
     <Dialog width={"90vw"} isOpen={isOpenNavigate} onClose={onClose}>
-      <div className="grid grid-cols-5 gap-5">
-        <Link
-          className="text-sm font-medium py-4 flex justify-center items-center gap-x-1 bg-slate-200 text-slate-800 rounded-lg"
-          to={"/sales"}
-        >
-          <span>
-            <SlBasket size={20} />
-          </span>
-          Продажа
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+        <Link className={linkClass} to={"/sales"}>
+          <MdOutlinePointOfSale size={20} />
+          Продажи
         </Link>
-        <Link
-          className="text-sm font-medium py-4 flex justify-center items-center gap-x-1 bg-slate-200 text-slate-800 rounded-lg"
-          to={"/refund"}
-        >
-          Возврат
+
+        <Link className={linkClass} to={"/refund"}>
+          <MdOutlineAssignmentReturn size={20} />
+          Возвраты
         </Link>
-        <Link
-          className="text-sm font-medium py-4 flex justify-center items-center gap-x-1 bg-slate-200 text-slate-800 rounded-lg"
-          to={"/purchase"}
-        >
-          Приход
+
+        <Link className={linkClass} to={"/purchase"}>
+          <MdOutlineInventory2 size={20} />
+          Поступления
         </Link>
-        <Link
-          className="text-sm font-medium py-4 flex justify-center items-center gap-x-1 bg-slate-200 text-slate-800 rounded-lg"
-          to={"/products"}
-        >
+
+        <Link className={linkClass} to={"/products"}>
+          <MdOutlineShoppingCart size={20} />
           Товары
         </Link>
-        <Link
-          className="text-sm font-medium py-4 flex justify-center items-center gap-x-1 bg-slate-200 text-slate-800 rounded-lg"
-          to={"/favoutite-products"}
-        >
-          Фаворит товар
+
+        <Link className={linkClass} to={"/favoutite-products"}>
+          <MdOutlineStarBorder size={20} />
+          Избранные товары
         </Link>
-        <Link
-          className="text-sm font-medium py-4 flex justify-center items-center gap-x-1 bg-slate-200 text-slate-800 rounded-lg"
-          to={"/settings"}
-        >
-          <span>
-            <MdOutlineSettings size={20} />
-          </span>
+
+        <Link className={linkClass} to={"/sales-history"}>
+          <MdOutlineHistory size={20} />
+          История продаж
+        </Link>
+
+        <Link className={linkClass} to={"/purchase-history"}>
+          <MdOutlineHistory size={20} />
+          История поступлений
+        </Link>
+
+        <Link className={linkClass} to={"/refund-history"}>
+          <MdOutlineHistory size={20} />
+          История возвратов
+        </Link>
+
+        <Link className={linkClass} to={"/settings"}>
+          <MdOutlineSettings size={20} />
           Настройки
         </Link>
       </div>

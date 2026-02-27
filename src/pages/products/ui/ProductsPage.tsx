@@ -11,6 +11,7 @@ import {
   defaultParams,
   type FilterParams,
 } from "@/features/product/select-params";
+import UploadExcelFile from "@/features/upload-excel-file";
 import eventBus from "@/shared/lib/eventBus";
 import { handleBarcodeScanned } from "@/shared/lib/handleScannedBarcode";
 import { showErrorLocalMessage } from "@/shared/lib/showMessage";
@@ -135,12 +136,7 @@ const ProductsPage = () => {
           <FullKeyboard setSearch={setSearch} />
         </div>
       )}
-      {/* <div className="mb-3 flex items-center gap-x-2">
-      </div>
-      
       <UploadExcelFile isOpen={isOpenExcel} setIsOpen={setIsOpenExcel} />
-      
-       */}
       {isAddOpen && (
         <AddProductModal
           type={"add"}

@@ -57,7 +57,7 @@ const ModalCategory = ({
   const methods = useForm({
     defaultValues: {
       name: defaultName || "",
-      parent_id: chainDepth === 1 ? parent_id ?? null : null,
+      parent_id: chainDepth === 1 ? (parent_id ?? null) : null,
     },
   });
 
@@ -65,13 +65,13 @@ const ModalCategory = ({
   useEffect(() => {
     methods.reset({
       name: defaultName || "",
-      parent_id: chainDepth === 1 ? parent_id ?? null : null,
+      parent_id: chainDepth === 1 ? (parent_id ?? null) : null,
     });
   }, [defaultName, parent_id, chainDepth]);
 
   // 🔹 Rekursiv kategoriya flatten
   const flattenCategories = (
-    categories: any[] = []
+    categories: any[] = [],
   ): { label: string; value: number }[] => {
     const result: { label: string; value: number }[] = [];
     const traverse = (items: any[]) => {
@@ -86,7 +86,7 @@ const ModalCategory = ({
 
   const optionCategory = useMemo(
     () => flattenCategories(allCategory || []),
-    [allCategory]
+    [allCategory],
   );
 
   const isInitialCreate = type === "add" && chainDepth === 1;
@@ -112,7 +112,7 @@ const ModalCategory = ({
 
         showSuccessMessage(
           messages.uz.SUCCESS_MESSAGE,
-          messages.ru.SUCCESS_MESSAGE
+          messages.ru.SUCCESS_MESSAGE,
         );
         onSuccess();
       } else {
@@ -122,7 +122,7 @@ const ModalCategory = ({
         if (!idToUpdate) throw new Error("Update uchun ID topilmadi.");
 
         const parentToSend =
-          type === "edit" ? values?.parent_id ?? parent_id ?? null : null;
+          type === "edit" ? (values?.parent_id ?? parent_id ?? null) : null;
 
         await updateCategory({
           id: idToUpdate,
@@ -134,7 +134,7 @@ const ModalCategory = ({
 
         showSuccessMessage(
           messages.uz.SUCCESS_MESSAGE,
-          messages.ru.SUCCESS_MESSAGE
+          messages.ru.SUCCESS_MESSAGE,
         );
         onSuccess();
       }
@@ -188,7 +188,7 @@ const ModalCategory = ({
                         placeholder="Выбрать"
                         value={
                           optionCategory.find(
-                            (opt) => opt.value === field.value
+                            (opt) => opt.value === field.value,
                           ) || null
                         }
                         options={optionCategory}
@@ -217,7 +217,7 @@ const ModalCategory = ({
                       return;
                     }
                     const selectedOption = optionCategory.find(
-                      (o) => o.value === selectedId
+                      (o) => o.value === selectedId,
                     );
                     onAddSubCategory({
                       parent_id: null,

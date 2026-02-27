@@ -33,17 +33,17 @@
 
 /* Scroll fon qismi */
 ::-webkit-scrollbar-track {
-  background: #f0f0f0;
-  border-radius: 8px; /* bu joy yumaloqlik beradi */
+  background: #f1f5f9; /* slate-100 */
+  border-radius: 8px;
 }
 
-/* Scroll harakatlanuvchi “thumb” qismi */
+/* Scroll harakatlanuvchi thumb qismi */
 ::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 8px; /* bu joyda ham yumaloqlik */
+  background: #94a3b8; /* slate-400 */
+  border-radius: 8px;
 }
 
-/* Hover holatida thumb rangi o‘zgaradi */
+/* Hover holat */
 ::-webkit-scrollbar-thumb:hover {
-  background: #a1a1a1;
+  background: #64748b; /* slate-500 */
 }

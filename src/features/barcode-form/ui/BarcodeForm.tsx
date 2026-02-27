@@ -20,6 +20,7 @@ const BarcodeForm = ({
   control,
   getValues,
   setValue,
+  multiplay,
 }: BarcodeFormProps) => {
   const { t } = useTranslation();
   const countRefs = useRef<(HTMLInputElement | null)[]>([]);
@@ -78,18 +79,20 @@ const BarcodeForm = ({
   return (
     <div className="flex flex-col">
       {/* <div> */}
-      <div className="form-label flex justify-between mb-1 min-w-44">
-        <span className="whitespace-nowrap">Штрих-коды</span>
-        <Button
-          variant="plain"
-          type="button"
-          className="bg-transparent border-transparent py-0 h-auto text-blue-500"
-          size="sm"
-          onClick={addBarcode}
-        >
-          Добавить штрих-код
-        </Button>
-      </div>
+      {!multiplay && (
+        <div className="form-label flex justify-between mb-1 min-w-44">
+          <span className="whitespace-nowrap">Штрих-коды</span>
+          <Button
+            variant="plain"
+            type="button"
+            className="bg-transparent border-transparent py-0 h-auto text-blue-500"
+            size="sm"
+            onClick={addBarcode}
+          >
+            Добавить штрих-код
+          </Button>
+        </div>
+      )}
       <div className="flex flex-col gap-y-1">
         {fields?.map((fieldItem, index) => {
           return (
@@ -102,7 +105,8 @@ const BarcodeForm = ({
                   <Input
                     {...field}
                     type="text"
-                    className="min-w-max"
+                    className={multiplay ? "!w-[160px]" : "min-w-max"}
+                    size="sm"
                     placeholder={t("Введите код")}
                     onFocus={() => setFocusedIndex(index)}
                   />
@@ -118,27 +122,34 @@ const BarcodeForm = ({
                     {...field}
                     ref={(el: any) => (countRefs.current[index] = el)}
                     type="number"
+                    size="sm"
                     min={1}
                     onChange={(e) => field.onChange(+e.target.value)}
-                    className="!w-[100px]"
+                    className={multiplay ? "!w-[70px]" : "!w-[100px]"}
                   />
                 )}
               />
 
-              {fields.length > 1 ? (
-                <Button
-                  type="button"
-                  variant="default"
-                  className="px-3 text-red-500 hover:text-red-400 active:text-red-400"
-                  onClick={() => deleteBarcode(index)}
-                  icon={<IoMdClose size={20} />}
-                />
-              ) : (
-                ""
-              )}
+              <Button
+                type="button"
+                variant="default"
+                size="sm"
+                className="px-3 text-red-500 hover:text-red-400 active:text-red-400"
+                onClick={() => deleteBarcode(index)}
+                icon={<IoMdClose size={20} />}
+              />
             </div>
           );
         })}
+        <Button
+          variant="default"
+          type="button"
+          className="w-full"
+          size="sm"
+          onClick={addBarcode}
+        >
+          Добавить штрих-код
+        </Button>
       </div>
     </div>
   );

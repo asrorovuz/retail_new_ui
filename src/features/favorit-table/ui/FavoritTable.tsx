@@ -79,7 +79,7 @@ const FavoritTable = () => {
                 setConfirmProductId(productId);
                 setDeleteModalOpen(true);
               }}
-              className="w-full bg-transparent flex items-center gap-2 text-red-500 hover:bg-gray-100 hover:text-red-400 active:bg-gray-100 py-3 px-5 rounded-xl"
+              className="w-full bg-transparent flex items-center gap-2 text-red-500 hover:bg-slate-100 hover:text-red-400 active:bg-slate-100 py-3 px-5 rounded-xl"
             >
               <IoTrashOutline />
               Удалить
@@ -88,7 +88,7 @@ const FavoritTable = () => {
         },
       }),
     ],
-    []
+    [],
   );
 
   const onDeleteFavoritProduct = () => {
@@ -97,7 +97,7 @@ const FavoritTable = () => {
       onSuccess: () => {
         showSuccessMessage(
           messages.uz.SUCCESS_MESSAGE,
-          messages.ru.SUCCESS_MESSAGE
+          messages.ru.SUCCESS_MESSAGE,
         );
         setDeleteModalOpen(false);
         setConfirmProductId(null);
@@ -129,7 +129,7 @@ const FavoritTable = () => {
 
   return (
     <div className="h-[calc(100%-44px)] flex flex-col">
-      <div className="flex-1 mb-3 border border-gray-300 rounded-3xl overflow-y-auto">
+      <div className="flex-1 mb-3 border border-slate-300 rounded-2xl overflow-y-auto">
         {data && data.length > 0 && !isPending ? (
           <Table className="w-full">
             <THead className="bg-white sticky top-0 z-10">
@@ -137,10 +137,10 @@ const FavoritTable = () => {
                 <Tr key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
                     <Th style={{ width: header.getSize() }} key={header.id}>
-                      <div className="px-4 text-left font-medium text-sm text-gray-800">
+                      <div className="px-4 text-left font-medium text-sm text-slate-800">
                         {flexRender(
                           header.column.columnDef.header,
-                          header.getContext()
+                          header.getContext(),
                         )}
                       </div>
                     </Th>
@@ -153,15 +153,15 @@ const FavoritTable = () => {
                 <Tr
                   key={row.id}
                   className={`${
-                    index % 2 ? "bg-white" : "bg-gray-100"
-                  } hover:bg-gray-100 transition`}
+                    index % 2 ? "bg-white" : "bg-slate-100"
+                  } hover:bg-slate-100 transition`}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <Td style={{ width: cell.column.getSize() }} key={cell.id}>
-                      <div className="px-4 py-3 text-sm text-gray-800">
+                      <div className="px-4 py-3 text-sm text-slate-800">
                         {flexRender(
                           cell.column.columnDef.cell,
-                          cell.getContext()
+                          cell.getContext(),
                         )}
                       </div>
                     </Td>
@@ -190,7 +190,9 @@ const FavoritTable = () => {
         onRequestClose={onCloseDeleteProductDialog}
         onCancel={onCloseDeleteProductDialog}
       >
-        <p className="text-gray-600">Товар будет удалён из списка избранных.</p>
+        <p className="text-slate-600">
+          Товар будет удалён из списка избранных.
+        </p>
       </ConfirmDialog>
     </div>
   );

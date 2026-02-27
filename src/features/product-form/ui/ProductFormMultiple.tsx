@@ -1,14 +1,5 @@
 import { useEffect, useMemo, useState, type FC } from "react";
-import {
-  Button,
-  Form,
-  FormItem,
-  Input,
-  InputGroup,
-  Select,
-  Switcher,
-} from "@/shared/ui/kit";
-import { MdDelete } from "react-icons/md";
+import { Button, Form, Input, Select } from "@/shared/ui/kit";
 import {
   Controller,
   useFieldArray,
@@ -21,7 +12,6 @@ import BarcodeForm from "@/features/barcode-form";
 import {
   useCreateProduct,
   useCreateregister,
-  useCurrancyApi,
   useUpdateAlertOn,
 } from "@/entities/products/repository";
 import {
@@ -88,7 +78,6 @@ const ProductFormMultiple: FC<Props> = ({
     defaultValues: { products },
   });
 
-  const { data: currencies } = useCurrancyApi();
   const { mutate: createProduct } = useCreateProduct();
   const { mutate: alertOnUpdate } = useUpdateAlertOn();
   const { mutate: createRegister } = useCreateregister();
@@ -314,19 +303,6 @@ const ProductFormMultiple: FC<Props> = ({
             Сохранить
           </Button>
         </div>
-        {/* 
-         {fields.length > 1 && onRemove && (
-                    
-                  )}<Button
-                      type="button"
-                      variant="plain"
-                      className="bg-red-500 text-white hover:text-white hover:bg-red-400 active:bg-red-400 active:text-white"
-                      icon={<MdDelete />}
-                      onClick={() => {
-                        remove(index);
-                        onRemove(index);
-                      }}
-                    /> */}
         <div className="rounded-xl overflow-x-auto">
           <div className="w-max text-xs text-slate-700 font-semibold overflow-x-auto">
             <div className="sticky top-0 flex items-center">
@@ -357,10 +333,10 @@ const ProductFormMultiple: FC<Props> = ({
               <div className="p-2 text-nowrap w-[120px] border border-slate-300 border-l-0">
                 Ед. изм.
               </div>
-              <div className="p-2 text-nowrap w-[228px] border border-slate-300 border-l-0">
+              <div className="p-2 text-nowrap w-[280px] border border-slate-300 border-l-0">
                 Упаковка
               </div>
-              <div className="p-2 text-nowrap w-[170px] border border-slate-300 border-l-0">
+              <div className="p-2 text-nowrap w-[200px] border border-slate-300 border-l-0">
                 Категория
               </div>
               <div className="p-2 text-nowrap w-[100px] border border-slate-300 border-l-0">
@@ -369,7 +345,7 @@ const ProductFormMultiple: FC<Props> = ({
               <div className="p-2 text-nowrap w-[100px] border border-slate-300 border-l-0">
                 Код
               </div>
-              <div className="p-2 text-nowrap w-[260px] border border-slate-300 border-l-0">
+              <div className="p-2 text-nowrap w-[300px] border border-slate-300 border-l-0">
                 Штрих-код
               </div>
               <div className="p-2 text-nowrap w-[450px] border border-slate-300 border-l-0">
@@ -549,15 +525,15 @@ const ProductFormMultiple: FC<Props> = ({
                     </div>
 
                     {/* Упаковка */}
-                    <div className="p-2 w-[228px] border border-slate-300 border-t-0 border-l-0">
+                    <div className="p-2 w-[280px] border border-slate-300 border-t-0 border-l-0">
                       <div className="flex flex-col gap-2">
                         {(measurmentsPackages[index] || []).map((pkg, ind) => (
-                          <div key={pkg.id} className="grid grid-cols-5 gap-2 items-center">
+                          <div key={pkg.id} className="flex gap-2 items-center">
                             <Input
                               size="sm"
                               placeholder="Название"
                               value={pkg.name}
-                              className="col-span-2"
+                              className="!w-[100px]"
                               onChange={(e) =>
                                 updatePackage(
                                   index,
@@ -581,10 +557,10 @@ const ProductFormMultiple: FC<Props> = ({
                                   +e.target.value,
                                 )
                               }
-                              className="col-span-2"
+                              className="!w-[60px]"
                             />
 
-                            {!!ind ? (
+                            {measurmentsPackages[index]?.length > 1 && (
                               <Button
                                 type="button"
                                 size="sm"
@@ -592,11 +568,13 @@ const ProductFormMultiple: FC<Props> = ({
                                 icon={<IoClose size={18} />}
                                 onClick={() => removePackage(index, pkg.id)}
                               />
-                            ) : (
+                            )}
+
+                            {!ind && (
                               <Button
                                 type="button"
                                 size="sm"
-                                icon={<FaPlus size={16}/>}
+                                icon={<FaPlus size={16} />}
                                 onClick={() => addPackage(index)}
                                 variant="default"
                               />
@@ -607,12 +585,13 @@ const ProductFormMultiple: FC<Props> = ({
                     </div>
 
                     {/* Категория */}
-                    <div className="p-2 w-[170px] border border-slate-300 border-t-0 border-l-0">
+                    <div className="p-2 w-[200px] border border-slate-300 border-t-0 border-l-0">
                       <CategorySelect
                         name={`${name}.${index}.category` as any}
                         control={methods.control}
                         label="Категория"
                         width="w-full"
+                        multi={true}
                         placeholder="Категория"
                       />
                     </div>
@@ -653,7 +632,7 @@ const ProductFormMultiple: FC<Props> = ({
                     </div>
 
                     {/* Штрих-коды */}
-                    <div className="p-2 w-[260px] border border-slate-300 border-t-0 border-l-0">
+                    <div className="p-2 w-[300px] border border-slate-300 border-t-0 border-l-0">
                       <BarcodeForm
                         fieldName={`${name}.${index}.barcodes`}
                         barcode={barcode}
@@ -796,7 +775,12 @@ const ProductFormMultiple: FC<Props> = ({
                         type="button"
                         variant="default"
                         icon={<IoClose size={22} />}
-                        onClick={() => remove(index)}
+                        onClick={() => {
+                          remove(index);
+                          if (onRemove) {
+                            onRemove(index);
+                          }
+                        }}
                       />
                     </div>
                   </div>

@@ -15,7 +15,6 @@ import {
   PurchasePricePage,
   CashboxPage,
   CashboxOperations,
-  HistoryPage,
   HistorySalePage,
   HistoryRefundPage,
   HistoryPurchasePage,
@@ -63,14 +62,9 @@ export const AppRouter = () => (
               path="/cashbox/cash-operation"
               element={<CashboxOperations />}
             />
-            <Route path="/history" element={<HistoryPage />}>
-              <Route path="/history/sales" element={<HistorySalePage />} />
-              <Route path="/history/refund" element={<HistoryRefundPage />} />
-              <Route
-                path="/history/purchase"
-                element={<HistoryPurchasePage />}
-              />
-            </Route>
+            <Route path="/sales-history" element={<HistorySalePage />} />
+            <Route path="/refund-history" element={<HistoryRefundPage />} />
+            <Route path="/purchase-history" element={<HistoryPurchasePage />} />
           </Route>
         </Route>
 

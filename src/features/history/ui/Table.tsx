@@ -193,7 +193,7 @@ const TableHistory = ({
               className="cursor-pointer font-bold hover:text-primary"
               onClick={() => onSubmit(row.original)}
             >
-              #{number}
+              {number}
             </span>
           );
         },
@@ -413,9 +413,9 @@ const TableHistory = ({
         enableHiding: false,
         meta: {
           cellClassName:
-            "text-center sticky right-0 z-999 !bg-white dark:!bg-gray-800 hover:!bg-white dark:hover:!bg-gray-800 shadow-[inset_0_1px_0_#e5e7eb] dark:shadow-[inset_0_1px_0_#374151]",
+            "text-center sticky right-0 z-999 !bg-white dark:!bg-slate-800 hover:!bg-white dark:hover:!bg-slate-800 shadow-[inset_0_1px_0_#e5e7eb] dark:shadow-[inset_0_1px_0_#374151]",
           headerClassName:
-            "text-center sticky right-0 z-999 !bg-white dark:!bg-gray-800 hover:!bg-white dark:hover:!bg-gray-800 shadow-[inset_0_0_0_#e5e7eb] dark:shadow-[inset_0_0_0_#374151]",
+            "text-center sticky right-0 z-999 !bg-white dark:!bg-slate-800 hover:!bg-white dark:hover:!bg-slate-800 shadow-[inset_0_0_0_#e5e7eb] dark:shadow-[inset_0_0_0_#374151]",
         },
         header: () => {
           return "Действие";
@@ -537,7 +537,7 @@ const TableHistory = ({
   return (
     <div className={`${customHeiht} flex flex-col`}>
       <div
-        className={`flex-1 mb-3 border border-gray-200 rounded-3xl overflow-y-auto`}
+        className={`flex-1 mb-3 border border-slate-200 rounded-3xl overflow-y-auto`}
       >
         {data && data?.length > 0 && !loading ? (
           <Table className="w-full table-fixed">
@@ -548,7 +548,7 @@ const TableHistory = ({
                     <Th key={header.id}>
                       <div
                         className={classNames(
-                          "px-4 text-left font-medium text-xs xl:text-sm text-gray-800",
+                          "px-4 text-left font-medium text-xs xl:text-sm text-slate-800",
                           header.column.columnDef.meta?.headerClassName
                         )}
                       >
@@ -567,8 +567,8 @@ const TableHistory = ({
                 <Tr
                   key={row.id}
                   className={`${
-                    index % 2 ? "bg-white" : "bg-gray-100"
-                  } hover:bg-gray-100 transition`}
+                    index % 2 ? "bg-white" : "bg-slate-100"
+                  } hover:bg-slate-100 transition`}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <Td
@@ -591,7 +591,7 @@ const TableHistory = ({
               ))}
             </TBody>
             <TFoot className="sticky bottom-0 bg-white border-t">
-              <Tr className="font-bold bg-gray-50">
+              <Tr className="font-bold bg-slate-50">
                 {/* № */}
                 <Td>
                   <div className="px-4">Итого</div>

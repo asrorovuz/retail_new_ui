@@ -6,6 +6,7 @@ import {
 } from "@/entities/products/repository";
 import { showErrorMessage, showSuccessMessage } from "@/shared/lib/showMessage";
 import { Button, Dialog, Select } from "@/shared/ui/kit";
+import NavigateButton from "@/shared/ui/kit-pro/navigate-button/NavigateButton";
 import { useMemo, useState } from "react";
 
 const LikedProducts = () => {
@@ -37,7 +38,7 @@ const LikedProducts = () => {
 
   const handleClose = () => {
     setProduct({
-      product_id: null
+      product_id: null,
     });
     setOpenModal(false);
     setIsSearch("");
@@ -55,7 +56,7 @@ const LikedProducts = () => {
         onSuccess() {
           showSuccessMessage(
             messages.uz.SUCCESS_MESSAGE,
-            messages.ru.SUCCESS_MESSAGE
+            messages.ru.SUCCESS_MESSAGE,
           );
           handleClose();
         },
@@ -66,8 +67,9 @@ const LikedProducts = () => {
   };
 
   return (
-    <div>
-      <Button onClick={() => setOpenModal(true)} variant="solid">
+    <div className="flex justify-between w-full">
+      <NavigateButton content="Любимые товар" />
+      <Button size="sm" onClick={() => setOpenModal(true)} variant="default">
         Добавить любимые товар
       </Button>
 
@@ -88,18 +90,9 @@ const LikedProducts = () => {
               options={optionProduct || []}
             />
           </div>
-          {/* <div>
-            <Input
-              disabled={true}
-              value={showMeasurmentName(packageName || 0)}
-              placeholder="Единица измерения (автоматически)"
-            />
-          </div> */}
         </div>
         <div className="flex justify-end gap-x-2">
-          <Button onClick={handleClose}>
-            Отменить
-          </Button>
+          <Button onClick={handleClose}>Отменить</Button>
           <Button
             onClick={onSubmit}
             loading={addFavouritePending}
