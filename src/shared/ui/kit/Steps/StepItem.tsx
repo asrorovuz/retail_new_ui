@@ -64,7 +64,7 @@ const StepItem = (props: StepItemProps) => {
         status === COMPLETE && `bg-primary text-white`,
         status === ERROR && `step-item-icon-error`,
         status === IN_PROGRESS &&
-            `text-primary dark:text-gray-100 border-primary step-item-icon-current`,
+            `text-primary dark:text-slate-100 border-primary step-item-icon-current`,
     )
 
     const stepConnectClass = classNames(

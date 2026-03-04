@@ -62,7 +62,7 @@ const MainSettingsPage = () => {
               getOptionLabel={(o) => o.type}
               getOptionValue={(o) => o.value}
               placeholder="Выбрать"
-              className="border border-gray-300 rounded-xl text-sm"
+              className="border border-slate-300 rounded-xl text-sm"
               isLoading={loading ?? false}
             />
           </FormItem>
@@ -74,7 +74,7 @@ const MainSettingsPage = () => {
   function renderSwitch(name: keyof any, label: string, form: any) {
     return (
       <div className="flex items-center gap-x-2 py-2">
-        <label className="text-sm font-medium text-gray-700">{label}</label>
+        <label className="text-sm font-medium text-slate-700">{label}</label>
         <Controller
           name={name as any}
           control={form.control}
@@ -137,7 +137,7 @@ const MainSettingsPage = () => {
 
   return (
     <div className="p-6 rounded-3xl bg-white w-full">
-      <h2 className="text-lg font-semibold text-gray-800 mb-6 border-b pb-4">
+      <h2 className="text-lg font-semibold text-slate-800 mb-6 border-b pb-4">
         Общие настройки
       </h2>
 

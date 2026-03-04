@@ -487,7 +487,7 @@ const PrintCheckProduct = ({ item, isOpen, onClosePrintModal }: PropsType) => {
   }
 `}
           </style>
-          <div className="w-2/5 h-max p-2 bg-gray-100">
+          <div className="w-2/5 h-max p-2 bg-slate-100">
             <div id="printBarcode">
               {!isValid ? (
                 <p className="text-red-500">{t("Неправильный формат!")}</p>

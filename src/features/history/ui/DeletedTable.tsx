@@ -20,8 +20,8 @@ const DeletedTable = ({
           </h4>
         </div>
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-100">
+          <table className="min-w-full divide-y divide-slate-200">
+            <thead className="bg-slate-100">
               <tr>
                 {[
                   "#",
@@ -36,14 +36,14 @@ const DeletedTable = ({
                 ].map((h) => (
                   <th
                     key={h}
-                    className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
+                    className="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider"
                   >
                     {h}
                   </th>
                 ))}
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-white divide-y divide-slate-200">
               {items.map((item, i) => (
                 <TableRow
                   key={item?.id}
@@ -55,7 +55,7 @@ const DeletedTable = ({
             </tbody>
             <tfoot className="bg-red-50">
               <tr className="font-semibold">
-                <td colSpan={2} className="px-4 py-3 text-right text-gray-700">
+                <td colSpan={2} className="px-4 py-3 text-right text-slate-700">
                   Итого удалённых:
                 </td>
                 <td className="px-4 py-3 text-center text-red-700 font-bold">

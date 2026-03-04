@@ -277,7 +277,7 @@ const CashboxOperations = () => {
           className="bg-transparent"
           icon={<IoIosArrowRoundBack size={28} />}
         >
-          <h2 className="text-lg font-semibold text-gray-800 ">
+          <h2 className="text-lg font-semibold text-slate-800 ">
             {type === 1 && "Входящие"}
             {type === 2 && "Исходящие"}
             {type === 3 && "Расход"}
@@ -321,7 +321,7 @@ const CashboxOperations = () => {
         </div>
       </div>
 
-      <div className="flex-1 mb-3 border border-gray-300 rounded-3xl overflow-y-auto">
+      <div className="flex-1 mb-3 border border-slate-300 rounded-3xl overflow-y-auto">
         {selectedData && selectedData.length > 0 && !isPending ? (
           <Table className="w-full table-fixed">
             <THead className="bg-white sticky top-0 z-10">
@@ -331,7 +331,7 @@ const CashboxOperations = () => {
                     <Th key={header.id}>
                       <div
                         className={classNames(
-                          "px-4 text-left font-medium text-xs xl:text-sm text-gray-800",
+                          "px-4 text-left font-medium text-xs xl:text-sm text-slate-800",
                           header.column.columnDef.meta?.headerClassName
                         )}
                       >
@@ -350,8 +350,8 @@ const CashboxOperations = () => {
                 <Tr
                   key={row.id}
                   className={`${
-                    index % 2 ? "bg-white" : "bg-gray-100"
-                  } hover:bg-gray-100 transition`}
+                    index % 2 ? "bg-white" : "bg-slate-100"
+                  } hover:bg-slate-100 transition`}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <Td

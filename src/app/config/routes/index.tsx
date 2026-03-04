@@ -18,8 +18,11 @@ import {
   HistorySalePage,
   HistoryRefundPage,
   HistoryPurchasePage,
+  RevisyaPage,
+  RevisyaOperationPage,
 } from "./RoutePath";
 import { PrivateRoute, PublicRoute } from "./PrivateRoute";
+import Counterparty from "@/pages/counterparty";
 
 export const AppRouter = () => (
   <HashRouter>
@@ -65,6 +68,10 @@ export const AppRouter = () => (
             <Route path="/sales-history" element={<HistorySalePage />} />
             <Route path="/refund-history" element={<HistoryRefundPage />} />
             <Route path="/purchase-history" element={<HistoryPurchasePage />} />
+
+            <Route path="/counterparties" element={<Counterparty />}></Route>
+            <Route path="/revisiya" element={<RevisyaPage />} />
+            <Route path="/revisiya/operation" element={<RevisyaOperationPage />} />
           </Route>
         </Route>
 

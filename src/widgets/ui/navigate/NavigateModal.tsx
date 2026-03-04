@@ -8,6 +8,8 @@ import {
   MdOutlineShoppingCart,
   MdOutlineStarBorder,
   MdOutlinePointOfSale,
+  MdOutlinePeopleOutline,
+  MdAssignment,
 } from "react-icons/md";
 import { useEffect } from "react";
 
@@ -25,7 +27,12 @@ const NavigateModal = ({ isOpenNavigate, setIsOpenNavigate }: any) => {
     "text-sm font-medium py-4 flex justify-center items-center gap-x-2 bg-slate-200 hover:bg-slate-300 transition text-slate-800 rounded-lg";
 
   return (
-    <Dialog width={"90vw"} isOpen={isOpenNavigate} onClose={onClose}>
+    <Dialog
+      onRequestClose={onClose}
+      width={"90vw"}
+      isOpen={isOpenNavigate}
+      onClose={onClose}
+    >
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
         <Link className={linkClass} to={"/sales"}>
           <MdOutlinePointOfSale size={20} />
@@ -52,7 +59,7 @@ const NavigateModal = ({ isOpenNavigate, setIsOpenNavigate }: any) => {
           Избранные товары
         </Link>
 
-        <Link className={linkClass} to={"/sales-history"}>
+        {/* <Link className={linkClass} to={"/sales-history"}>
           <MdOutlineHistory size={20} />
           История продаж
         </Link>
@@ -65,6 +72,16 @@ const NavigateModal = ({ isOpenNavigate, setIsOpenNavigate }: any) => {
         <Link className={linkClass} to={"/refund-history"}>
           <MdOutlineHistory size={20} />
           История возвратов
+        </Link> */}
+
+        <Link className={linkClass} to={"/counterparties"}>
+          <MdOutlinePeopleOutline size={20} />
+          Контрагенты
+        </Link>
+
+        <Link className={linkClass} to={"/revisiya/operation"}>
+          <MdAssignment size={20} />
+          Ревизия
         </Link>
 
         <Link className={linkClass} to={"/settings"}>

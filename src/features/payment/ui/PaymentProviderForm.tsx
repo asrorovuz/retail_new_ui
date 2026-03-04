@@ -140,7 +140,7 @@ const PaymeForm = () => {
               {...field}
               placeholder="Введите ID кассы мерчанта"
               className={classNames(
-                "bg-white border-gray-300 font-medium rounded",
+                "bg-white border-slate-300 font-medium rounded",
                 errors?.payme?.merchantCashBoxId && "border-red-500"
               )}
             />
@@ -165,7 +165,7 @@ const PaymeForm = () => {
               {...field}
               placeholder="Введите ключ кассы мерчанта"
               className={classNames(
-                "bg-white border-gray-300 font-medium rounded",
+                "bg-white border-slate-300 font-medium rounded",
                 errors?.payme?.merchantCashBoxKey && "border-red-500"
               )}
             />
@@ -207,7 +207,7 @@ const ClickForm = () => {
               type="number"
               space={false}
               className={classNames(
-                "bg-white border-gray-300 font-medium rounded",
+                "bg-white border-slate-300 font-medium rounded",
                 errors?.click?.serviceId && "border-red-500"
               )}
             />
@@ -238,7 +238,7 @@ const ClickForm = () => {
               type="number"
               space={false}
               className={classNames(
-                "bg-white border-gray-300 font-medium rounded",
+                "bg-white border-slate-300 font-medium rounded",
                 errors?.click?.merchantId && "border-red-500"
               )}
             />
@@ -269,7 +269,7 @@ const ClickForm = () => {
               placeholder="Введите ID пользователя мерчанта"
               type="number"
               className={classNames(
-                "bg-white border-gray-300 font-medium rounded",
+                "bg-white border-slate-300 font-medium rounded",
                 errors?.click?.merchantUserId && "border-red-500"
               )}
             />
@@ -292,7 +292,7 @@ const ClickForm = () => {
               {...field}
               placeholder="Введите секретный ключ"
               className={classNames(
-                "bg-white border-gray-300 font-medium rounded",
+                "bg-white border-slate-300 font-medium rounded",
                 errors?.click?.secretKey && "border-red-500"
               )}
             />

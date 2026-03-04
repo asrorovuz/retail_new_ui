@@ -3,7 +3,7 @@ import {
   useEmployeeApi,
 } from "@/entities/history/repository";
 import { useWarehouseApi } from "@/entities/init/repository";
-import { Button, Drawer, Form, Select } from "@/shared/ui/kit";
+import { Button, Dialog, Form, Select } from "@/shared/ui/kit";
 import { useEffect, useMemo } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { FiSearch } from "react-icons/fi";
@@ -110,13 +110,16 @@ const Filter = ({
   }, [type, isOpenFilter]);
 
   return (
-    <Drawer
+    <Dialog
       title={"Фильтр"}
+      width={"80vw"}
       isOpen={isOpenFilter}
+      onRequestClose={() => setIsOpenFilter(false)}
+      overlayClassName={"bg-black/10 !backdrop-blur-0"}
       onClose={() => setIsOpenFilter(false)}
     >
       <Form onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex flex-col gap-y-5 mb-5">
+        <div className="grid grid-cols-3 gap-5 mb-5">
           <Controller
             name="is_approved"
             control={control}
@@ -207,7 +210,7 @@ const Filter = ({
           </Button>
         </div>
       </Form>
-    </Drawer>
+    </Dialog>
   );
 };
 

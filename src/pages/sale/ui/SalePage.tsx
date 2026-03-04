@@ -20,22 +20,19 @@ import eventBus from "@/shared/lib/eventBus";
 import { handleBarcodeScanned } from "@/shared/lib/handleScannedBarcode";
 import { handleScannedProduct } from "@/shared/lib/handleScannedProduct";
 import { showErrorLocalMessage } from "@/shared/lib/showMessage";
-import { useSettingsStore } from "@/app/store/useSettingsStore";
 import OrderActions from "@/features/order-actions";
-// import ViewMark from "@/features/viewMark";
 import FormattedNumber from "@/shared/ui/kit-pro/numeric-format/NumericFormat";
 import classNames from "@/shared/lib/classNames";
-import Alert from "@/shared/ui/kit-pro/alert/Alert";
-import { useAuthContext } from "@/app/providers/AuthProvider";
-import { useOutletContext } from "react-router-dom";
 import Footer from "@/widgets/ui/footer/Footer";
+import { Button } from "@/shared/ui/kit";
+import { useNavigate } from "react-router-dom";
+import ViewMark from "@/features/viewMark";
 
 const SalePage = () => {
   const [search, setSearch] = useState<string>("");
   const debouncedSearch = useDebounce(search ?? "", 500);
   const [barcode, setBarcode] = useState<string | null>(null);
   const [barcodeMark, setBarcodeMark] = useState("");
-  const [isOpenAddProduct, setIsOpenAddProduct] = useState(false);
   const [expandedRow, setExpandedRow] = useState<string | null>(null);
   const [expendedId, setExpandedId] = useState<number | null>(null);
   const [value, setValue] = useState<string>("0");
@@ -44,17 +41,16 @@ const SalePage = () => {
   const [payModal, setPayModal] = useState(false);
   const [activeSelectPaymetype, setActivePaymentSelectType] =
     useState<number>(1);
-  const [showAlert, setShowAlert] = useState(false);
-  const [activeType, setActiveType] = useState<"numeric" | "qwerty" | "fullkey">("numeric");
 
-  const setIsOpenNavigate =
-    useOutletContext<React.Dispatch<React.SetStateAction<boolean>>>();
+  const navigate = useNavigate();
+
+  const [activeType, setActiveType] = useState<
+    "numeric" | "qwerty" | "fullkey"
+  >("numeric");
 
   const { draftSales, addDraftSale, activateDraftSale } = useDraftSaleStore(
     (store) => store,
   );
-
-  const { logout } = useAuthContext();
 
   const { data } = useAllProductApi(50, 1, debouncedSearch || "");
   const {
@@ -63,9 +59,7 @@ const SalePage = () => {
     isError,
     isFetching,
   } = useFindBarcode(barcode);
-  // const { data: productPriceType } = usePriceTypeApi();
 
-  const { settings } = useSettingsStore((s) => s);
   const deleteDraftSale = useDraftSaleStore((store) => store.deleteDraftSale);
   const deleteDraftSaleItem = useDraftSaleStore(
     (store) => store.deleteDraftSaleItem,
@@ -88,9 +82,9 @@ const SalePage = () => {
   const completeActiveDraftSale = useDraftSaleStore(
     (store) => store.completeActiveDraftSale,
   );
-  // const deleteDraftSaleMark = useDraftSaleStore(
-  //   (store) => store.deleteDraftSaleMark,
-  // );
+  const deleteDraftSaleMark = useDraftSaleStore(
+    (store) => store.deleteDraftSaleMark,
+  );
 
   const activeDraft: DraftSaleSchema =
     draftSales?.find((s) => s.isActive) ?? draftSales[0];
@@ -132,13 +126,8 @@ const SalePage = () => {
 
   useEffect(() => {
     if (!isError || payModal) return;
-    if (settings?.enable_create_unknown_product) {
-      setBarcode(barcode);
-      setIsOpenAddProduct(true);
-    } else {
-      showErrorLocalMessage("Товар не найден");
-      setBarcode(null);
-    }
+    showErrorLocalMessage("Товар не найден");
+    setBarcode(null);
   }, [isError]);
 
   return (
@@ -173,14 +162,11 @@ const SalePage = () => {
           setExpandedRow={setExpandedRow}
           setExpandedId={setExpandedId}
         />
-        <Footer
-          setIsOpenNavigate={setIsOpenNavigate}
-          setShowAlert={setShowAlert}
-        />
+        <Footer />
       </div>
       <div className="bg-white rounded-2xl p-3">
         <div className="rounded-2xl mb-3 bg-slate-200 p-1">
-          <SearchProduct pageType="sale" search={search} setActiveType={setActiveType} />
+          <SearchProduct search={search} setActiveType={setActiveType} />
           {activeType === "qwerty" && (
             <>
               <SearchProductTable
@@ -195,7 +181,7 @@ const SalePage = () => {
           )}
         </div>
         {activeType === "numeric" && (
-          <div className="rounded-2xl bg-slate-200 mb-3 p-1">
+          <div className="rounded-2xl bg-slate-200 mb-1 p-1">
             <>
               <PaymeTypeCards
                 type={"sale"}
@@ -203,6 +189,39 @@ const SalePage = () => {
                 activeSelectPaymetype={activeSelectPaymetype}
                 setActivePaymentSelectType={setActivePaymentSelectType}
               />
+            </>
+          </div>
+        )}
+        {activeType === "numeric" && (
+          <div className="rounded-2xl bg-slate-200 mb-3 p-1 flex gap-x-1">
+            <>
+              <Button
+                onClick={() => navigate("/sales-history")}
+                size="sm"
+                className={classNames(
+                  "flex flex-col justify-center items-center overflow-hidden",
+                )}
+              >
+                История
+              </Button>
+              <Button
+                onClick={() => navigate("/products")}
+                size="sm"
+                className={classNames(
+                  "flex flex-col justify-center items-center overflow-hidden",
+                )}
+              >
+                Товары
+              </Button>
+              <Button
+                onClick={() => navigate("/refund")}
+                size="sm"
+                className={classNames(
+                  "flex flex-col justify-center items-center overflow-hidden",
+                )}
+              >
+                Возвраты
+              </Button>
             </>
           </div>
         )}
@@ -302,42 +321,15 @@ const SalePage = () => {
           />
         </div>
       </div>
-      {showAlert && (
-        <Alert
-          type="warning"
-          title="Выход из системы"
-          content="Вы действительно хотите выйти из системы?"
-          onCancel={() => setShowAlert(false)}
-          onConfirm={() => {
-            logout();
-            setShowAlert(false);
-          }}
+      {mark ? (
+        <ViewMark
+          item={mark}
+          onClose={() => setMark(null)}
+          activeDraft={activeDraft}
+          deleteDraftMark={deleteDraftSaleMark}
         />
-      )}
+      ) : null}
     </div>
-    // <div className="flex justify-between gap-x-2 h-[calc(100vh-90px)]">
-
-    //   <div className="bg-white p-3 rounded-2xl w-[320px]">
-
-    //     <AddProductModal
-    //       type={"add"}
-    //       setBarcode={setBarcode}
-    //       barcode={barcode}
-    //       isOpen={isOpenAddProduct}
-    //       setIsOpen={setIsOpenAddProduct}
-    //       productPriceType={productPriceType!}
-    //     />
-
-    //     {mark ? (
-    //       <ViewMark
-    //         item={mark}
-    //         onClose={() => setMark(null)}
-    //         activeDraft={activeDraft}
-    //         deleteDraftMark={deleteDraftSaleMark}
-    //       />
-    //     ) : null}
-    //   </div>
-    // </div>
   );
 };
 

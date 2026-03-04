@@ -323,7 +323,7 @@ const UpdateShiftDialog = ({ isOpen, onClose }: PropsType) => {
                   ? "text-red-600"
                   : isOverpayment
                   ? "text-green-600"
-                  : "text-gray-600"
+                  : "text-slate-600"
               }`}
             >
               <FormattedNumber value={difference - Number(factosValue)} />
@@ -398,21 +398,21 @@ const UpdateShiftDialog = ({ isOpen, onClose }: PropsType) => {
             </div>
           )}
           {!activeShift && (
-            <div className="py-24 text-center text-gray-500">
+            <div className="py-24 text-center text-slate-500">
               Нет активной смены
             </div>
           )}
 
           {activeShift && (
             <div className="flex gap-4 mb-4">
-              <div className="w-3/5 border border-gray-200 rounded-2xl p-4 grid grid-cols-2 gap-6">
+              <div className="w-3/5 border border-slate-200 rounded-2xl p-4 grid grid-cols-2 gap-6">
                 <div className="flex gap-x-4">
                   <div className="h-14 w-14 rounded-full bg-primary flex items-center justify-center text-white">
                     <MdDiscount size={22} />
                   </div>
                   <div className="flex flex-col gap-y-1">
                     <p>Чеки</p>
-                    <p className="font-medium text-xl text-gray-800">
+                    <p className="font-medium text-xl text-slate-800">
                       {shiftOperations?.sale_count ?? 0}
                     </p>
                   </div>
@@ -426,7 +426,7 @@ const UpdateShiftDialog = ({ isOpen, onClose }: PropsType) => {
                   </div>
                   <div className="flex flex-col gap-y-1">
                     <p>Продажа</p>
-                    <p className="font-medium text-xl text-gray-800">
+                    <p className="font-medium text-xl text-slate-800">
                       <FormattedNumber
                         value={
                           shiftOperations?.sale_price?.[0]?.amount.toFixed(2) ??
@@ -445,7 +445,7 @@ const UpdateShiftDialog = ({ isOpen, onClose }: PropsType) => {
                   </div>
                   <div className="flex flex-col gap-y-1">
                     <p>В долг</p>
-                    <p className="font-medium text-xl text-gray-800">
+                    <p className="font-medium text-xl text-slate-800">
                       <FormattedNumber
                         value={
                           shiftOperations?.sale_debts?.[0]?.amount.toFixed(2) ??
@@ -464,7 +464,7 @@ const UpdateShiftDialog = ({ isOpen, onClose }: PropsType) => {
                   </div>
                   <div className="flex flex-col gap-y-1">
                     <p>Средний чек</p>
-                    <p className="font-medium text-xl text-gray-800">
+                    <p className="font-medium text-xl text-slate-800">
                       <FormattedNumber
                         value={
                           shiftOperations?.average_check?.amount?.toFixed(2) ??
@@ -479,7 +479,7 @@ const UpdateShiftDialog = ({ isOpen, onClose }: PropsType) => {
               <div className="w-2/5 flex justify-between flex-col gap-y-4">
                 <div className="w-full flex flex-col items-center justify-center py-4 bg-blue-50 rounded-2xl">
                   <p>Приход</p>
-                  <p className="font-medium text-xl text-gray-800">
+                  <p className="font-medium text-xl text-slate-800">
                     <FormattedNumber
                       value={
                         shiftOperations?.shift_contract.cashboxes_in_balance.total?.[0]?.amount.toFixed(
@@ -491,7 +491,7 @@ const UpdateShiftDialog = ({ isOpen, onClose }: PropsType) => {
                 </div>
                 <div className="w-full flex flex-col items-center justify-center py-4 bg-blue-50 rounded-2xl">
                   <p>Расход</p>
-                  <p className="font-medium text-xl text-gray-800 mt-1">
+                  <p className="font-medium text-xl text-slate-800 mt-1">
                     <FormattedNumber
                       value={
                         shiftOperations?.shift_contract?.cashboxes_out_balance?.total?.[0]?.amount.toFixed(
@@ -507,7 +507,7 @@ const UpdateShiftDialog = ({ isOpen, onClose }: PropsType) => {
 
           <form className="mb-4 relative" onSubmit={handleSubmit(onSubmit)}>
             {activeShift && (
-              <div className="flex-1 h-[36vh] overflow-auto border border-gray-200 rounded-2xl">
+              <div className="flex-1 h-[36vh] overflow-auto border border-slate-200 rounded-2xl">
                 <Table overflow={false} compact={true}>
                   <THead className="sticky top-0">
                     {table.getHeaderGroups().map((headerGroup) => (
@@ -540,7 +540,7 @@ const UpdateShiftDialog = ({ isOpen, onClose }: PropsType) => {
                         >
                           <div className="flex justify-center items-center flex-col">
                             <FileNotFoundSvg />
-                            <p className="text-gray-500 mt-2">
+                            <p className="text-slate-500 mt-2">
                               Операций не было.
                             </p>
                           </div>
@@ -548,7 +548,7 @@ const UpdateShiftDialog = ({ isOpen, onClose }: PropsType) => {
                       </Tr>
                     ) : (
                       table.getRowModel().rows.map((row) => (
-                        <Tr key={row.id} className="hover:bg-gray-100">
+                        <Tr key={row.id} className="hover:bg-slate-100">
                           {row.getVisibleCells().map((cell) => (
                             <Td key={cell.id} className="py-2 px-4">
                               {flexRender(

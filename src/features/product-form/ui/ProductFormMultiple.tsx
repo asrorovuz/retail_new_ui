@@ -11,7 +11,6 @@ import ImageForm from "@/features/image-form";
 import BarcodeForm from "@/features/barcode-form";
 import {
   useCreateProduct,
-  useCreateregister,
   useUpdateAlertOn,
 } from "@/entities/products/repository";
 import {
@@ -27,6 +26,7 @@ import Empty from "@/shared/ui/kit-pro/empty/Empty";
 import { FiPlusCircle } from "react-icons/fi";
 import { FaPlus } from "react-icons/fa";
 import { IoClose } from "react-icons/io5";
+import { useCreateregister } from "@/entities/revision/repository";
 
 type MeasurementPackage = {
   id: number;

@@ -61,14 +61,14 @@ const ProductSelectionTable = ({
           const product = row.original;
           return (
             <div className="flex flex-col gap-1">
-              <div className="text-gray-800 font-semibold">{product.name}</div>
+              <div className="text-slate-800 font-semibold">{product.name}</div>
               <div className="flex space-x-2 text-xs">
                 {product?.category && (
                   <span className="text-blue-600 px-2 py-0.5 rounded-md bg-blue-600/20 uppercase font-semibold">
                     {product?.category?.name}
                   </span>
                 )}
-                <span className="text-gray-500 bg-gray-200 px-2 py-0.5 rounded-md font-semibold">
+                <span className="text-slate-500 bg-slate-200 px-2 py-0.5 rounded-md font-semibold">
                   {product?.barcodes?.[0]?.value}
                 </span>
               </div>
@@ -192,7 +192,7 @@ const ProductSelectionTable = ({
   return (
     <>
       <div className="p-5 pt-0 border-b space-y-2">
-        <label className="block text-sm font-medium text-gray-700">
+        <label className="block text-sm font-medium text-slate-700">
           Название
         </label>
         <div className="flex items-center justify-between gap-4">
@@ -208,14 +208,14 @@ const ProductSelectionTable = ({
       </div>
 
       <div className="flex-1 h-[calc(90vh_-_240px)] overflow-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50 sticky top-0 z-10 shadow-sm">
+        <table className="min-w-full divide-y divide-slate-200">
+          <thead className="bg-slate-50 sticky top-0 z-10 shadow-sm">
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
                   <th
                     key={header.id}
-                    className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider"
+                    className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider"
                   >
                     {flexRender(
                       header.column.columnDef.header,
@@ -233,7 +233,7 @@ const ProductSelectionTable = ({
                   {columns.map((_, colIndex) => (
                     <td
                       key={colIndex}
-                      className="px-5 py-3 border border-gray-200 text-center"
+                      className="px-5 py-3 border border-slate-200 text-center"
                     >
                       <Skeleton className="h-5 w-full mx-auto" />
                     </td>
@@ -245,7 +245,7 @@ const ProductSelectionTable = ({
               <tr>
                 <td
                   colSpan={columns?.length}
-                  className="py-6 text-center text-gray-500"
+                  className="py-6 text-center text-slate-500"
                 >
                   <div className="w-full flex flex-col items-center justify-center">
                     <FileNotFoundSvg />
@@ -256,7 +256,7 @@ const ProductSelectionTable = ({
             )}
 
             {table.getRowModel().rows.map((row) => (
-              <tr key={row.id} className="border-b hover:bg-gray-50 text-sm">
+              <tr key={row.id} className="border-b hover:bg-slate-50 text-sm">
                 {row.getVisibleCells().map((cell) => (
                   <td key={cell.id} className="px-4 py-2">
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}

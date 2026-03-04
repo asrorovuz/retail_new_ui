@@ -1,8 +1,17 @@
+import { useAuthContext } from "@/app/providers/AuthProvider";
 import { Button } from "@/shared/ui/kit";
+import Alert from "@/shared/ui/kit-pro/alert/Alert";
 import { LogoutSvg } from "@/shared/ui/svg/LogoutSvg";
+import { useState } from "react";
 import { TfiReload } from "react-icons/tfi";
+import { useOutletContext } from "react-router-dom";
 
-const Footer = ({setShowAlert, setIsOpenNavigate}: any) => {
+const Footer = () => {
+  const [showAlert, setShowAlert] = useState(false);
+  const { logout } = useAuthContext();
+  const setIsOpenNavigate =
+    useOutletContext<React.Dispatch<React.SetStateAction<boolean>>>();
+
   return (
     <div className="flex justify-between items-center">
       <div className="flex items-center gap-x-2">
@@ -43,6 +52,18 @@ const Footer = ({setShowAlert, setIsOpenNavigate}: any) => {
           Смена
         </Button>
       </div>
+      {showAlert && (
+        <Alert
+          type="warning"
+          title="Выход из системы"
+          content="Вы действительно хотите выйти из системы?"
+          onCancel={() => setShowAlert(false)}
+          onConfirm={() => {
+            logout();
+            setShowAlert(false);
+          }}
+        />
+      )}
     </div>
   );
 };

@@ -48,7 +48,7 @@ const TotalsBlock = ({ data, payKey }: { data: any, payKey: any }) => {
   return (
     <div className="mb-6">
       <Card className="p-6 shadow-md">
-        <h4 className="text-lg font-semibold text-gray-700 mb-4 flex items-center gap-2">
+        <h4 className="text-lg font-semibold text-slate-700 mb-4 flex items-center gap-2">
           <span className="text-2xl">🧮</span>
           Финансовая сводка
         </h4>

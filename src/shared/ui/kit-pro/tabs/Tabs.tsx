@@ -1,25 +1,20 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, type FC } from "react";
 import { FaPlus } from "react-icons/fa";
 import Button from "../../kit/Button";
 import type { DraftSaleSchema } from "@/@types/sale";
 import type { DraftRefundSchema } from "@/@types/refund";
+import type { DraftPurchaseSchema } from "@/@types/purchase";
+import type { RevisionDraft } from "@/app/store/useRevision";
+import type { CashboxPropsType } from "@/features/cashbox/model";
 import { PaymentTypes } from "@/app/constants/payment.types";
 import classNames from "@/shared/lib/classNames";
-import type { DraftPurchaseSchema } from "@/@types/purchase";
 
-type TabsType = {
-  type: "sale" | "refund" | "purchase";
-  drafts: DraftSaleSchema[] | DraftRefundSchema[];
-  addNewDraft: (payload: DraftSaleSchema) => void;
-  activateDraft: (index: number) => void;
-};
-
-export default function Tabs({
+const Tabs: FC<CashboxPropsType> = ({
   type,
   drafts,
   activateDraft,
   addNewDraft,
-}: TabsType) {
+}) => {
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const btnRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
@@ -28,22 +23,46 @@ export default function Tabs({
   let scrollLeft = 0;
 
   const addDrafts = () => {
-    const newDraftSale:
-      | DraftSaleSchema
-      | DraftRefundSchema
-      | DraftPurchaseSchema = {
-      items: [],
-      isActive: true,
-      discountAmount: 0,
-      [type === "sale" ? "payment" : "payout"]: {
-        amounts: PaymentTypes?.map((paymentType) => ({
-          amount: 0,
-          paymentType: paymentType?.type,
-        })),
-      },
-    };
-
-    addNewDraft(newDraftSale);
+    // 🔹 Type-safe yangi draft yaratish
+    if (type === "sale") {
+      addNewDraft({
+        items: [],
+        isActive: true,
+        discountAmount: "0",
+        payment: {
+          amounts: PaymentTypes.map((p) => ({
+            amount: "0",
+            paymentType: p.type,
+          })),
+        },
+      } as DraftSaleSchema);
+    }
+    if (type === "refund") {
+      addNewDraft({
+        items: [],
+        isActive: true,
+        discountAmount: "0",
+        payout: {
+          amounts: PaymentTypes.map((p) => ({
+            amount: "0",
+            paymentType: p.type,
+          })),
+        },
+      } as DraftRefundSchema);
+    }
+    if (type === "purchase") {
+      addNewDraft({
+        items: [],
+        isActive: true,
+        discountAmount: "0",
+        payout: {
+          amounts: PaymentTypes.map((p) => ({
+            amount: "0",
+            paymentType: p.type,
+          })),
+        },
+      } as DraftPurchaseSchema);
+    }
   };
 
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -51,15 +70,8 @@ export default function Tabs({
     startX = e.pageX - (scrollRef.current?.offsetLeft || 0);
     scrollLeft = scrollRef.current?.scrollLeft || 0;
   };
-
-  const handleMouseLeave = () => {
-    isDown = false;
-  };
-
-  const handleMouseUp = () => {
-    isDown = false;
-  };
-
+  const handleMouseLeave = () => (isDown = false);
+  const handleMouseUp = () => (isDown = false);
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!isDown) return;
     e.preventDefault();
@@ -78,7 +90,7 @@ export default function Tabs({
         block: "nearest",
       });
     }
-  }, [drafts]); // drafts o‘zgarganda ishlaydi
+  }, [drafts]);
 
   return (
     <div className="w-full max-w-[calc(100%-110px)] flex items-center gap-x-2">
@@ -91,7 +103,7 @@ export default function Tabs({
         onMouseMove={handleMouseMove}
         className="w-full flex gap-2 overflow-x-auto no-scrollbar cursor-grab active:cursor-grabbing select-none"
       >
-        {drafts?.map((draft, index) => (
+        {drafts.map((draft, index) => (
           <Button
             key={index}
             size="sm"
@@ -102,7 +114,12 @@ export default function Tabs({
             onClick={() => activateDraft(index)}
             className={classNames(
               "px-2 h-8 text-xs font-medium rounded-lg transition-colors bg-transparent",
-              draft?.isActive ? "!text-primary bg-white" : "text-slate-500"
+              draft.isActive && type === "sale" && "!text-primary bg-white",
+              draft.isActive && type === "refund" && "!text-red-500 bg-white",
+              draft.isActive &&
+                type === "purchase" &&
+                "!text-green-500 bg-white",
+              !draft.isActive && "text-slate-600",
             )}
           >
             <span className="mr-1">Окно</span>
@@ -123,4 +140,6 @@ export default function Tabs({
       </Button>
     </div>
   );
-}
+};
+
+export default Tabs;

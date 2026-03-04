@@ -18,7 +18,7 @@ const UpdateVersion = () => {
     <>
       <Button
         variant="plain"
-        className="border-0 bg-gray-100 relative px-3"
+        className="border-0 bg-slate-100 relative px-3"
         onClick={() => setUpdateDialogOpen(true)}
       >
         <span className="text-xl">
@@ -50,7 +50,7 @@ const UpdateVersion = () => {
             updates?.map((u, i) => (
               <div
                 className={`${
-                  i >= 1 ? "border-t border-gray-300 pb-2" : "border-none"
+                  i >= 1 ? "border-t border-slate-300 pb-2" : "border-none"
                 }`}
               >
                 <b className="text-blue-400">

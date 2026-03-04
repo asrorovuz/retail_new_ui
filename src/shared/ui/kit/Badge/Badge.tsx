@@ -29,7 +29,7 @@ const Badge = (props: BadgeProps) => {
 
     const badgeClass = classNames(
         dot
-            ? 'badge-dot w-3 h-3 border border-white dark:border-gray-900'
+            ? 'badge-dot w-3 h-3 border border-white dark:border-slate-900'
             : 'badge px-2 py-1 min-w-6',
         badgeBaseClass,
         innerClass,

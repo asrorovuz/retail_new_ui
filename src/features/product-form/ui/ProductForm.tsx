@@ -18,7 +18,7 @@ import type {
 } from "@/features/modals/model";
 import {
   useCreateProduct,
-  useCreateregister,
+  // useCreateregister,
   useUpdateAlertOn,
   useUpdateProduct,
 } from "@/entities/products/repository";
@@ -39,6 +39,7 @@ import { useUpdatePurchasedPriceApi } from "@/entities/purchase/repository";
 import FullKeyboard from "@/widgets/ui/keyboard/FullKeyboard";
 import NavigateButton from "@/shared/ui/kit-pro/navigate-button/NavigateButton";
 import { IoMdClose } from "react-icons/io";
+import { useCreateregister } from "@/entities/revision/repository";
 
 type MeasurementPackage = {
   id: number;

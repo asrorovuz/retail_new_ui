@@ -32,7 +32,7 @@ const FiscalizedModal = ({
       isOpen={isOpen}
       title={"Отправить продажу в налоговую?"}
     >
-      <div className="bg-gray-100 rounded-2xl p-3 mb-6 flex flex-col gap-y-4">
+      <div className="bg-slate-100 rounded-2xl p-3 mb-6 flex flex-col gap-y-4">
         {filterData?.length ? (
           filterData?.map((item) => {
             const isSelected =
@@ -52,7 +52,7 @@ const FiscalizedModal = ({
                       />
                     </div>
                   )}
-                  <span className="text-gray-800 font-medium">
+                  <span className="text-slate-800 font-medium">
                     {item?.name}
                   </span>
                 </div>
@@ -71,7 +71,7 @@ const FiscalizedModal = ({
           })
         ) : (
           <div className="mt-4">
-            <span className="text-gray-500">Нет доступных POS-терминалов</span>
+            <span className="text-slate-500">Нет доступных POS-терминалов</span>
           </div>
         )}
       </div>

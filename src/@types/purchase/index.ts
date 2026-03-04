@@ -3,7 +3,7 @@ export type DraftPurchaseSchema = {
   isActive: boolean;
   items: DraftPurchaseItemSchema[];
   payout?: DraftPurchasePayoutSchema;
-  discountAmount?: number;
+  discountAmount?: string;
   is_fiscalized?: boolean;
 };
 
@@ -28,7 +28,7 @@ export type DraftPurchasePayoutSchema = {
 };
 
 export type DraftPurchasePayoutAmountSchema = {
-  amount: number;
+  amount: string;
   paymentType: number;
 };
 
@@ -36,33 +36,33 @@ export interface PurchaseStoreActions {
   addDraftPurchase: (payload: DraftPurchaseSchema) => void;
   activateDraftPurchase: (index: number) => void;
   updateDraftPurchaseItem: (payload: DraftPurchaseItemSchema) => void;
-  updateDraftPurchaseDiscount: (discountAmount: number) => void;
+  updateDraftPurchaseDiscount: (discountAmount: string) => void;
   deleteDraftPurchase: (draftPurchaseIndex: number) => void;
   deleteDraftPurchaseItem: (draftPurchaseItemIndex: number) => void;
   completeActiveDraftPurchase: () => void;
   //   //   resetActiveDraftPurchase: () => void;
   //   //   addDraftPurchasePaymentAmount: (payload: DraftPurchasePayoutAmountSchema) => void;
-  //   updateDraftPurchasePaymentAmounts: (
-  //     paymentAmounts: DraftPurchasePayoutAmountSchema[]
-  //   ) => void;
+  updateDraftPurchasePaymentAmounts: (
+    paymentAmounts: DraftPurchasePayoutAmountSchema[],
+  ) => void;
   addDraftPurchaseItem: (payload: DraftPurchaseItemSchema) => void;
   //   //   incrementDraftPurchaseItemQuantity: (draftPurchaseItemIndex: number) => void;
   //   //   decrementDraftPurchaseItemQuantity: (draftPurchaseItemIndex: number) => void;
   updateDraftPurchaseItemQuantity: (
     draftPurchaseItemIndex: number,
-    quantity: number
+    quantity: number,
   ) => void;
   updateDraftPurchaseItemPrice: (
     draftPurchaseItemIndex: number,
-    priceAmount: number
+    priceAmount: number,
   ) => void;
   updateDraftPurchaseItemTotalPrice: (
     draftPurchaseItemIndex: number,
-    totalPrice: number
+    totalPrice: number,
   ) => void;
 
   updateDraftPurchasePayout: (
-    payout: DraftPurchasePayoutAmountSchema[]
+    payout: DraftPurchasePayoutAmountSchema[],
   ) => void;
   deleteDraftPurchaseMark: (item: { productId: number; index: number }) => void;
 }

@@ -23,7 +23,6 @@ import type { DraftPurchaseSchema } from "@/@types/purchase";
 import { getActivePrice } from "@/shared/lib/getActivatePrice";
 import { components } from "react-select";
 import { BsChevronDown } from "react-icons/bs";
-import { useKeyboard } from "@/app/providers/KeyboardProvider";
 
 type PropsType = {
   type: "sale" | "refund" | "purchase";

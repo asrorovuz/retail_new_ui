@@ -1,9 +1,31 @@
+import type { DraftPurchaseSchema } from "@/@types/purchase";
 import type { DraftRefundSchema } from "@/@types/refund";
 import type { DraftSaleSchema } from "@/@types/sale";
+import type { RevisionDraft } from "@/app/store/useRevision";
 
-export type CashboxPropsType = {
-  type: "sale" | "refund" | "purchase";
-  drafts: DraftSaleSchema[] | DraftRefundSchema[];
-  addNewDraft: (payload: DraftSaleSchema | DraftRefundSchema) => void;
+type BaseProps = {
   activateDraft: (index: number) => void;
 };
+
+export type CashboxPropsType =
+  | ({
+      type: "sale";
+      drafts: DraftSaleSchema[];
+      addNewDraft: (payload: DraftSaleSchema) => void;
+    } & BaseProps)
+  | ({
+      type: "refund";
+      drafts: DraftRefundSchema[];
+      addNewDraft: (payload: DraftRefundSchema) => void;
+    } & BaseProps)
+  | ({
+      type: "purchase";
+      drafts: DraftPurchaseSchema[];
+      addNewDraft: (payload: DraftPurchaseSchema) => void;
+    } & BaseProps);
+
+export type CashboxRevisionPropsType = {
+  type: "revision";
+  drafts: RevisionDraft[];
+  addNewDraft: (payload: RevisionDraft) => void;
+} & BaseProps;

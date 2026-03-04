@@ -91,7 +91,6 @@ export const pathServices = {
     // CREATE
     createProductPath: "/api/product/create",
     createFavouriteProductPath: "/api/favorite-product/add",
-    createRegister: "/api/revision/register",
     createExcelFileProduct: `/api/excel/parse`,
     exportExcelFileProduct: `/api/excel/products`,
 
@@ -105,6 +104,7 @@ export const pathServices = {
     register: "/api/sale/register",
     getFiscaldevice: "/api/fiscal-device/get",
     getPaymentPath: "/api/payment-provider/get",
+    getContractorPath: "/api/contractor/get",
     updateSellPath: "/api/sale/update/",
 
     // CREATE
@@ -173,4 +173,11 @@ export const pathServices = {
     deleteRefundPath: "/api/refund/delete/",
     deletePurchasePath: "/api/purchase/delete/",
   },
+
+  revisions: {
+    getRevisionPath: "/api/revision/get",
+    getRevisionCountPath: "/api/revision/get/count",
+    createRegister: "/api/revision/register",
+    deleteRevisionPath: "/api/revision/delete"
+  }
 };

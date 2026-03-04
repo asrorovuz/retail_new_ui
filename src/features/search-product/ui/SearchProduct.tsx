@@ -2,7 +2,6 @@ import { Input } from "@/shared/ui/kit";
 
 interface SearchProductProps {
   search: string;
-  pageType: string;
   setActiveType: (type: "numeric" | "qwerty" | "fullkey") => void;
   setSearchFocus?: (val: boolean) => void;
 }

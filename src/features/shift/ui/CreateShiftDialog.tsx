@@ -120,7 +120,7 @@ const CreateShiftDialog = ({ isOpen, onClose }: PropsType) => {
       title={"Открыть смену"}
     >
       <div className="flex flex-col h-full max-h-[70vh]">
-        {/* <p className="text-sm text-gray-500">Остатки с последней смены</p> */}
+        {/* <p className="text-sm text-slate-500">Остатки с последней смены</p> */}
         <div className="flex-1 overflow-hidden">
           {isPending ? (
             <div className="flex items-center justify-center py-16">
@@ -128,7 +128,7 @@ const CreateShiftDialog = ({ isOpen, onClose }: PropsType) => {
             </div>
           ) : null}
           {!isPending && !cashboxs?.[0]?.amounts?.length ? (
-            <div className="border border-gray-200 rounded-2xl">
+            <div className="border border-slate-200 rounded-2xl">
               <div className="grid grid-cols-2 py-2 px-3 border-b">
                 <p>ТИП ПЛАТЕЖИ</p>
                 <p>СУММА</p>
@@ -149,7 +149,7 @@ const CreateShiftDialog = ({ isOpen, onClose }: PropsType) => {
 
           {!isPending && cashboxs?.[0]?.amounts?.length ? (
             <div className="h-full overflow-auto">
-              <div className="bg-white border border-gray-200 rounded-t-2xl overflow-hidden">
+              <div className="bg-white border border-slate-200 rounded-t-2xl overflow-hidden">
                 <Table className="w-full">
                   <THead className="bg-white">
                     {shiftTable?.getHeaderGroups().map((headerGroup) => (
@@ -169,7 +169,7 @@ const CreateShiftDialog = ({ isOpen, onClose }: PropsType) => {
                     {shiftTable?.getRowModel().rows.map((row, ind) => (
                       <Tr
                         key={row.id}
-                        className={classNames(!(ind % 2) && "bg-gray-100")}
+                        className={classNames(!(ind % 2) && "bg-slate-100")}
                       >
                         {row.getVisibleCells().map((cell) => (
                           <Td key={cell.id} className="px-3 py-2 text-center">
@@ -185,7 +185,7 @@ const CreateShiftDialog = ({ isOpen, onClose }: PropsType) => {
                 </Table>
               </div>
 
-              <div className="p-3 bg-white border border-gray-200 rounded-b-2xl">
+              <div className="p-3 bg-white border border-slate-200 rounded-b-2xl">
                 <div className="flex justify-between items-center">
                   <span className="text-base font-medium">Общая сумма:</span>
                   <span className="font-medium text-primary flex gap-x-1">

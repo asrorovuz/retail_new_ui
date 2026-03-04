@@ -507,10 +507,10 @@ const UploadExcelFile = ({isOpen, setIsOpen}: any) => {
       >
         <div>
           {!file ? (
-            <div className="relative border border-dashed border-gray-300 bg-gray-100 px-8 py-12 rounded-lg text-center mb-10">
+            <div className="relative border border-dashed border-slate-300 bg-slate-100 px-8 py-12 rounded-lg text-center mb-10">
               <label
                 htmlFor="fileInput"
-                className="cursor-pointer flex flex-col items-center text-gray-600"
+                className="cursor-pointer flex flex-col items-center text-slate-600"
               >
                 <div className="flex items-center gap-x-2 mb-3">
                   <span>
@@ -519,7 +519,7 @@ const UploadExcelFile = ({isOpen, setIsOpen}: any) => {
                   <span className="font-semibold text-lg">Выберите файл</span>
                 </div>
                 <span
-                  className={`${file ? "text-gray-600" : "text-orange-600"}`}
+                  className={`${file ? "text-slate-600" : "text-orange-600"}`}
                 >
                   {/* {file
                     ? file?.name
@@ -629,7 +629,7 @@ const ProductHeader = ({
   return (
     <div className="mb-5">
       <div className="flex justify-between items-center mb-5 px-0.5">
-        <h4 className="text-gray-700">
+        <h4 className="text-slate-700">
           Товары{" "}
           <span className="bg-orange-400 text-orange-900 p-1 text-[16px] rounded">
             {count}
@@ -637,7 +637,7 @@ const ProductHeader = ({
         </h4>
         <label
           htmlFor="edit"
-          className="flex gap-x-2 items-center cursor-pointer hover:text-gray-600 font-semibold"
+          className="flex gap-x-2 items-center cursor-pointer hover:text-slate-600 font-semibold"
         >
           <Switcher
             id="edit"
@@ -889,7 +889,7 @@ const RenderTable = ({
             return (
               <Tr
                 key={`row-${globalIndex}`}
-                className={`h-14 ${highlight ? "bg-gray-200" : "bg-white"}`}
+                className={`h-14 ${highlight ? "bg-slate-200" : "bg-white"}`}
               >
                 <Td>
                   <div className="w-max px-3">{globalIndex}</div>

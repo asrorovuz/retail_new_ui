@@ -244,6 +244,18 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
       );
     }
 
+    if (error.warehouse_not_found) {
+      return toast.error(
+        lang === "ru" ? "Склад не найден" : "Ombor topilmadi",
+        {
+          position: "bottom-left",
+          autoClose: false,
+          closeOnClick: true,
+          draggable: true,
+        },
+      );
+    }
+
     if (error.shift_disabled) {
       return toast.error(
         lang === "ru"

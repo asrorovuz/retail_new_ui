@@ -19,7 +19,7 @@
 }
 
 .timeline-item-media-default {
-  @apply rounded-full bg-gray-200 dark:bg-gray-600 h-4 w-4;
+  @apply rounded-full bg-slate-200 dark:bg-slate-600 h-4 w-4;
 }
 
 .timeline-item-wrapper {
@@ -35,5 +35,5 @@
 }
 
 .timeline-connect {
-  @apply h-full w-[2px] bg-gray-200 dark:bg-gray-600 flex-grow;
+  @apply h-full w-[2px] bg-slate-200 dark:bg-slate-600 flex-grow;
 }

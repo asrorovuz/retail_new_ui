@@ -124,7 +124,7 @@ const FiscalizationSettings = () => {
   return (
     <>
       <Card className="p-6 rounded-lg bg-white w-full select-none">
-        <h2 className="text-lg font-semibold text-gray-800 mb-6 border-b pb-4">
+        <h2 className="text-lg font-semibold text-slate-800 mb-6 border-b pb-4">
           Настройки фискализации
         </h2>
 
@@ -135,7 +135,7 @@ const FiscalizationSettings = () => {
                 checked={fiscalizeOnlyLegal}
                 onChange={(v) => setValue("fiscalize_only_legal_items", v)}
               />
-              <label className="text-base text-gray-700 select-none">
+              <label className="text-base text-slate-700 select-none">
                 Фискализировать только белых товаров
               </label>
             </div>
@@ -145,7 +145,7 @@ const FiscalizationSettings = () => {
                 checked={defaultProductSwitcher}
                 onChange={(v) => setValue("fiscalize_only_default_item", v)}
               />
-              <label className="text-base text-gray-700 select-none">
+              <label className="text-base text-slate-700 select-none">
                 Фискализировать только продукт по умолчанию
               </label>
             </div>
@@ -159,7 +159,7 @@ const FiscalizationSettings = () => {
           >
             <label
               htmlFor="product-name"
-              className="text-gray-700 font-medium text-sm pt-2"
+              className="text-slate-700 font-medium text-sm pt-2"
             >
               Название
             </label>
@@ -192,7 +192,7 @@ const FiscalizationSettings = () => {
 
             <label
               htmlFor="catalog-code"
-              className="text-gray-700 font-medium text-sm pt-2"
+              className="text-slate-700 font-medium text-sm pt-2"
             >
               ИКПУ-код
             </label>
@@ -218,7 +218,7 @@ const FiscalizationSettings = () => {
 
             <label
               htmlFor="package-code"
-              className="text-gray-700 font-medium text-sm pt-2"
+              className="text-slate-700 font-medium text-sm pt-2"
             >
               Код упаковки
             </label>
@@ -241,7 +241,7 @@ const FiscalizationSettings = () => {
 
             <label
               htmlFor="nds-rate"
-              className="text-gray-700 font-medium text-sm pt-2"
+              className="text-slate-700 font-medium text-sm pt-2"
             >
               НДС ставка
             </label>

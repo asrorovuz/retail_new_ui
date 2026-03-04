@@ -1,5 +1,5 @@
 .date-picker {
-  @apply z-40 max-w-xs shadow-xl dark:shadow-2xl bg-white dark:bg-gray-800 rounded-xl p-4;
+  @apply z-40 max-w-xs shadow-xl dark:shadow-2xl bg-white dark:bg-slate-800 rounded-xl p-4;
 }
 
 .date-picker-panel {
@@ -7,14 +7,14 @@
 }
 
 .date-picker-header-label {
-  @apply cursor-pointer mx-0.5 select-none text-gray-900 dark:text-gray-100;
+  @apply cursor-pointer mx-0.5 select-none text-slate-900 dark:text-slate-100;
 }
 .date-picker-current-month {
-  @apply text-gray-700 dark:text-gray-100;
+  @apply text-slate-700 dark:text-slate-100;
 }
 
 .date-picker-other-month {
-  @apply text-gray-400 dark:text-gray-600;
+  @apply text-slate-400 dark:text-slate-600;
 }
 
 .date-picker-selected-date {
@@ -34,7 +34,7 @@
 }
 
 .date-picker-month-cell-disabled {
-  @apply opacity-30 bg-gray-300 cursor-not-allowed;
+  @apply opacity-30 bg-slate-300 cursor-not-allowed;
 }
 
 .date-picker-month-cell-inner {
@@ -50,7 +50,7 @@
 }
 
 .date-picker-year-cell-disabled {
-  @apply opacity-30 bg-gray-300 cursor-not-allowed;
+  @apply opacity-30 bg-slate-300 cursor-not-allowed;
 }
 
 .picker {
@@ -58,7 +58,7 @@
 }
 
 .picker-panel {
-  @apply shadow-xl dark:shadow-2xl bg-white dark:bg-gray-900 rounded-2xl p-4 dark:border-2 dark:border-gray-700;
+  @apply shadow-xl dark:shadow-2xl bg-white dark:bg-slate-900 rounded-2xl p-4 dark:border-2 dark:border-slate-700;
 }
 
 .picker-view {
@@ -74,11 +74,11 @@
 }
 
 .picker-direction-button {
-  @apply text-2xl rounded-full h-10 w-10 flex items-center justify-center hover:text-gray-800 hover:dark:text-gray-100 hover:bg-gray-100 hover:dark:bg-gray-700;
+  @apply text-2xl rounded-full h-10 w-10 flex items-center justify-center hover:text-slate-800 hover:dark:text-slate-100 hover:bg-slate-100 hover:dark:bg-slate-700;
 }
 
 .picker-header-label {
-  @apply cursor-pointer mx-0.5 select-none text-gray-900 dark:text-gray-100 text-lg font-semibold;
+  @apply cursor-pointer mx-0.5 select-none text-slate-900 dark:text-slate-100 text-lg font-semibold;
 }
 
 .year-table,
@@ -91,7 +91,7 @@
 }
 
 .date-picker-cell-selected {
-  @apply text-gray-100;
+  @apply text-slate-100;
 }
 
 .date-picker-cell-selected-start {
@@ -111,15 +111,15 @@
 }
 
 .date-picker-cell-current-month {
-  @apply text-gray-700 dark:text-gray-400;
+  @apply text-slate-700 dark:text-slate-400;
 }
 
 .date-picker-cell-hoverable {
-  @apply hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-gray-300;
+  @apply hover:bg-slate-100 dark:hover:bg-slate-600 dark:hover:text-slate-300;
 }
 
 .date-picker-cell-disabled {
-  @apply opacity-30 bg-gray-300 cursor-not-allowed;
+  @apply opacity-30 bg-slate-300 cursor-not-allowed;
 }
 
 .date-picker-week-cell {
@@ -142,7 +142,7 @@
 
 .month-picker-cell,
 .year-picker-cell {
-  @apply text-center py-2 rounded-lg font-semibold text-gray-800;
+  @apply text-center py-2 rounded-lg font-semibold text-slate-800;
 }
 
 .month-picker-cell-active,
@@ -152,6 +152,6 @@
 
 .month-picker-cell-disabled,
 .year-picker-cell-disabled {
-  @apply opacity-30 bg-gray-300 cursor-not-allowed;
+  @apply opacity-30 bg-slate-300 cursor-not-allowed;
 }
 

@@ -133,11 +133,11 @@ const ProductHeader = ({
         <DownloadFileForScales />
 
         <Dropdown
-          toggleClassName="text-base text-gray-600 flex justify-center"
+          toggleClassName="text-base text-slate-600 flex justify-center"
           renderTitle={<Button size="sm">Добавить</Button>}
         >
           <DropdownItem onClick={() => setIsAddOpen(true)} className="h-auto!">
-            <div className="w-full flex items-center gap-2 text-gray-700 py-3 px-5 rounded-xl">
+            <div className="w-full flex items-center gap-2 text-slate-700 py-3 px-5 rounded-xl">
               <span className="text-green-700">
                 <CiSquarePlus size={20} />
               </span>{" "}
@@ -184,7 +184,7 @@ const ProductHeader = ({
       >
         <div className="flex flex-col gap-4 mb-5">
           <div className="flex flex-col gap-1">
-            <label className="text-sm text-gray-600">Товар</label>
+            <label className="text-sm text-slate-600">Товар</label>
             <Select
               options={isLegalOptions}
               value={isLegalOptions.find(
@@ -204,7 +204,7 @@ const ProductHeader = ({
           </div>
           {/* Категория */}
           <div className="flex flex-col gap-1">
-            <label className="text-sm text-gray-600">Категория</label>
+            <label className="text-sm text-slate-600">Категория</label>
             <Select
               options={categoryOptions}
               placeholder="Выберите"
@@ -226,7 +226,7 @@ const ProductHeader = ({
 
           {/* Категория товара */}
           <div className="flex flex-col gap-1">
-            <label className="text-sm text-gray-600">Категория товара</label>
+            <label className="text-sm text-slate-600">Категория товара</label>
             <Select
               options={categoryItemOptions}
               placeholder="Выберите категорию"
@@ -250,7 +250,7 @@ const ProductHeader = ({
 
           {/* Единица измерения */}
           <div className="flex flex-col gap-1">
-            <label className="text-sm text-gray-600">Единица измерения</label>
+            <label className="text-sm text-slate-600">Единица измерения</label>
             <Select
               options={measurmentOptions}
               placeholder="Выберите"
@@ -277,7 +277,7 @@ const ProductHeader = ({
 
           {/* Артикул */}
           <div className="flex flex-col gap-1">
-            <label className="text-sm text-gray-600">Артикул</label>
+            <label className="text-sm text-slate-600">Артикул</label>
             <Select
               options={artiklOptions}
               placeholder="Выберите"
@@ -298,7 +298,7 @@ const ProductHeader = ({
 
           {/* Штрих-код */}
           <div className="flex flex-col gap-1">
-            <label className="text-sm text-gray-600">Штрих-код</label>
+            <label className="text-sm text-slate-600">Штрих-код</label>
 
             <Select
               options={barcodeOptions}
@@ -323,7 +323,7 @@ const ProductHeader = ({
 
           {/* МХИК */}
           <div className="flex flex-col gap-1">
-            <label className="text-sm text-gray-600">Код МХИК</label>
+            <label className="text-sm text-slate-600">Код МХИК</label>
 
             <Select
               options={mxikOptions}
@@ -348,7 +348,7 @@ const ProductHeader = ({
 
           {/* Код упаковки */}
           <div className="flex flex-col gap-1">
-            <label className="text-sm text-gray-600">Код упаковки</label>
+            <label className="text-sm text-slate-600">Код упаковки</label>
 
             <Select
               options={packageCodeOptions}
@@ -372,7 +372,7 @@ const ProductHeader = ({
 
           {/* Saralash */}
           <div className="flex flex-col gap-1">
-            <label className="text-sm text-gray-600">Сортировка</label>
+            <label className="text-sm text-slate-600">Сортировка</label>
 
             <Select
               options={sortOptions}
@@ -394,7 +394,7 @@ const ProductHeader = ({
 
           {/* Кирим нархи сотув нархидан каттами */}
           <div className="flex flex-col gap-1">
-            <label className="text-sm text-gray-600">
+            <label className="text-sm text-slate-600">
               Закупочная цена выше продажной
             </label>
 

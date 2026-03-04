@@ -4,7 +4,6 @@ import {
   createFavouriteProductApi,
   createProductApi,
   createProductWithExcel,
-  createRegisterApi,
   deleteFavoritProductApi,
   deleteProductApi,
   exportProductScaleApi,
@@ -31,7 +30,6 @@ import type {
   AlertOntype,
   CategoryTypeModal,
   ProductColumnVisibility,
-  RegisterType,
 } from "@/@types/products";
 import type { FavouriteProduct } from "@/features/modals/model";
 
@@ -168,16 +166,6 @@ export const useUpdateAlertOn = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data: AlertOntype) => updateAlertOnApi(data),
-    onSuccess() {
-      queryClient.invalidateQueries({ queryKey: ["all-products"] });
-    },
-  });
-};
-
-export const useCreateregister = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: (data: RegisterType) => createRegisterApi(data),
     onSuccess() {
       queryClient.invalidateQueries({ queryKey: ["all-products"] });
     },

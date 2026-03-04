@@ -1,4 +1,4 @@
-import { Button, Dialog } from "@/shared/ui/kit";
+import { Button } from "@/shared/ui/kit";
 import type {
   DraftSalePaymentAmountSchema,
   DraftSaleSchema,
@@ -45,7 +45,6 @@ import type {
   RegisterPurchaseModel,
 } from "@/@types/purchase";
 import { PaymentTypes } from "@/app/constants/payment.types";
-import Alert from "@/shared/ui/kit-pro/alert/Alert";
 import SellDebetModal from "@/widgets/ui/sellDebet/SellDebetModal";
 
 type OrderActionType = {
@@ -77,7 +76,7 @@ const OrderActions = ({
   const [saleId, setSaleId] = useState<number | null>(null);
   const [fiscalizedModal, setFiscalizedModal] = useState(false);
   const [printSelect, setPrintSelect] = useState<boolean>(false);
-  const { settings, activeShift } = useSettingsStore();
+  const { settings } = useSettingsStore();
   const [selectFiscalized, setSelectFiscalized] =
     useState<FizcalResponsetype | null>(null);
   const [sellDebit, setSellDebit] = useState(false);
@@ -109,7 +108,7 @@ const OrderActions = ({
       | DraftPurchaseSchema = {
       items: [],
       isActive: true,
-      discountAmount: 0,
+      discountAmount: "0",
       [type === "sale" ? "payment" : "payout"]: {
         amounts: PaymentTypes?.map((paymentType) => ({
           amount: 0,
@@ -222,6 +221,7 @@ const OrderActions = ({
       RegisterPurchaseModel = {
       is_approved: true,
       exact_discount: [],
+      contractor_id: activeDraft?.contractor_id ?? undefined,
       items: [],
       cash_box_id: cashboxData?.length ? cashboxData[0]?.id : null,
     };
@@ -432,12 +432,30 @@ const OrderActions = ({
     }
   };
 
-  const onSubmitDebit = () => {
+  const onSubmitDebit = (contragentData: {
+    contractor_id: number;
+    content: string;
+  }) => {
     const debit =
       totalAmount -
         Number(activeDraft?.discountAmount ?? 0) -
         totalPaymentAmount || 0;
+
+    console.log(debit, activeDraft);
+
     if (debit > 0) {
+      if (activeDraft) {
+        // 🟢 copy qilib yangilaymiz
+        const updatedDraft = {
+          ...activeDraft,
+          contractor_id: contragentData.contractor_id,
+          comment: contragentData.content,
+        };
+
+        // 🔹 draft update qilish uchun addNewDraft yoki setActiveDraft funksiyasini chaqirish kerak
+        addNewDraft(updatedDraft); // yoki sizning state update funksiyangiz
+      }
+
       setIsOpenPayment(true);
       setSellDebit(false);
     }
@@ -451,15 +469,17 @@ const OrderActions = ({
 
   return (
     <div className="flex gap-x-1">
-      {type === "sale" && <Button
-        size="sm"
-        onClick={() => setSellDebit(true)}
-        variant="plain"
-        disabled={!activeDraft?.items?.length}
-        className="w-full text-base font-medium text-slate-800 bg-white"
-      >
-        В долг
-      </Button>}
+      {type === "sale" && (
+        <Button
+          size="sm"
+          onClick={() => setSellDebit(true)}
+          variant="plain"
+          disabled={!activeDraft?.items?.length}
+          className="w-full text-base font-medium text-slate-800 bg-white"
+        >
+          В долг
+        </Button>
+      )}
       <Button
         size="sm"
         onClick={onSubmit}
@@ -474,6 +494,7 @@ const OrderActions = ({
         <SellDebetModal
           onCancel={() => setSellDebit(false)}
           onSubmit={onSubmitDebit}
+          isOpen={sellDebit}
         />
         // <Alert
         //   type="warning"

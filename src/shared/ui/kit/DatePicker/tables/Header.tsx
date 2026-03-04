@@ -52,7 +52,7 @@ const Header = (props: HeaderProps) => {
     return (
         <div
             className={classNames(
-                'picker-header flex items-center justify-between mb-2 border-b border-gray-200 dark:border-gray-700 pb-2',
+                'picker-header flex items-center justify-between mb-2 border-b border-slate-200 dark:border-slate-700 pb-2',
                 className,
             )}
             {...rest}

@@ -14,6 +14,8 @@ const initialState: SaleStoreInitialState = {
       items: [],
       isActive: true,
       discountAmount: "0",
+      contractor_id: null,
+      comment: "",
       payment: {
         amounts: PaymentTypes.map((paymentType) => {
           return { amount: "0", paymentType: paymentType.type };
@@ -72,6 +74,8 @@ export const useDraftSaleStore = create<
             items: [],
             isActive: true,
             discountAmount: "0",
+            contractor_id: null,
+            comment: "",
             payment: {
               amounts: PaymentTypes.map((paymentType) => {
                 return { amount: "0", paymentType: paymentType.type };
@@ -199,6 +203,8 @@ export const useDraftSaleStore = create<
                 items: [],
                 isActive: true,
                 discountAmount: "0",
+                contractor_id: null,
+                comment: "",
                 payment: {
                   amounts: PaymentTypes.map((paymentType) => {
                     return { amount: "0", paymentType: paymentType.type };

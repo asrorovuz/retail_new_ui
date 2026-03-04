@@ -228,7 +228,7 @@ const TransactionModal = ({ data, payKey, type, viewModal }: any) => {
                 </Button>
               }
             >
-              <div className="px-3 py-1 text-sm font-semibold text-gray-500 ml-1.5">
+              <div className="px-3 py-1 text-sm font-semibold text-slate-500 ml-1.5">
                 Накладной распечатка
               </div>
               <Dropdown.Item
@@ -238,7 +238,7 @@ const TransactionModal = ({ data, payKey, type, viewModal }: any) => {
                 Распечатать накладную
               </Dropdown.Item>
 
-              <div className="px-3 py-1 text-sm font-semibold text-gray-500 border-t mt-1 ml-1.5">
+              <div className="px-3 py-1 text-sm font-semibold text-slate-500 border-t mt-1 ml-1.5">
                 Чек распечатка
               </div>
 

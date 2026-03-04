@@ -1,6 +1,7 @@
 import type { Product } from "@/@types/products";
 import { useDraftPurchaseStore } from "@/app/store/usePurchaseDraftStore";
 import { useDraftRefundStore } from "@/app/store/useRefundDraftStore";
+import { useRevisionStore } from "@/app/store/useRevision";
 import { useDraftSaleStore } from "@/app/store/useSaleDraftStore";
 import classNames from "@/shared/lib/classNames";
 import { highlightText } from "@/shared/lib/hightLightText";
@@ -10,7 +11,7 @@ import type { PriceType } from "@/widgets/ui/favourite-card/FavouriteCard";
 
 type PropsType = {
   data: Product[] | [];
-  type?: "sale" | "refund" | "purchase";
+  type?: "sale" | "refund" | "purchase" | "revision";
   debouncedSearch: string;
   selectedRows?: any;
   setExpandedRow?: React.Dispatch<React.SetStateAction<string | null>>;
@@ -28,6 +29,7 @@ const SearchProductTable = ({
   const { updateDraftSaleItem, draftSales } = useDraftSaleStore();
   const { updateDraftRefundItem, draftRefunds } = useDraftRefundStore();
   const { updateDraftPurchaseItem, draftPurchases } = useDraftPurchaseStore();
+  const { updateDraftRevisionItem, draftRevisions } = useRevisionStore();
 
   const activeDraftSale = draftSales?.find((s) => s.isActive);
   const activeDraftRefund = draftRefunds?.find((s) => s.isActive);
@@ -40,6 +42,8 @@ const SearchProductTable = ({
       return { active: activeDraftRefund, update: updateDraftRefundItem };
     if (type === "purchase")
       return { active: activeDraftPurchase, update: updateDraftPurchaseItem };
+    if (type === "revision")
+      return { active: draftRevisions[0], update: updateDraftRevisionItem };
     return { active: null, update: () => {} };
   };
 
@@ -55,7 +59,8 @@ const SearchProductTable = ({
   const onChange = (item: any) => {
     const operationItem = active?.items?.find((p) => p.productId === item?.id);
 
-    const isSelectedBulk = selectedRows && type === "sale" ? !!selectedRows[item.id] : false;;
+    const isSelectedBulk =
+      selectedRows && type === "sale" ? !!selectedRows[item.id] : false;
 
     const packagePrice =
       type === "purchase"
@@ -68,21 +73,36 @@ const SearchProductTable = ({
       item.prices[1];
     const quantity = operationItem?.quantity ?? 0;
 
-    const newItem = {
-      productId: item?.id,
-      productName: item?.name,
-      productPackageName: showMeasurmentName(item?.measurement_code),
-      priceTypeId:
-        type === "purchase" ? 0 : packagePrice?.product_price_type?.id,
-      priceAmount: packagePrice?.amount,
-      priceAmoutBulk: packagePriceBulk?.amount,
-      quantity: quantity + 1,
-      totalAmount:
-        (quantity + 1) *
-        (isSelectedBulk && type === "sale" ? packagePriceBulk?.amount : packagePrice?.amount),
-      catalogCode: item?.catalog_code,
-      catalogName: item?.catalog_name,
-    };
+    let newItem: any; // 🔹 let bilan tashqarida e'lon qilamiz
+
+    if (type === "revision") {
+      newItem = {
+        productId: item?.id,
+        productName: item?.name,
+        productPackageName: showMeasurmentName(item?.measurement_code),
+        priceAmount: packagePrice?.amount,
+        priceAmoutBulk: packagePriceBulk?.amount,
+        quantity: quantity + 1,
+      };
+    } else {
+      newItem = {
+        productId: item?.id,
+        productName: item?.name,
+        productPackageName: showMeasurmentName(item?.measurement_code),
+        priceTypeId:
+          type === "purchase" ? 0 : packagePrice?.product_price_type?.id,
+        priceAmount: packagePrice?.amount,
+        priceAmoutBulk: packagePriceBulk?.amount,
+        quantity: quantity + 1,
+        totalAmount:
+          (quantity + 1) *
+          (isSelectedBulk && type === "sale"
+            ? packagePriceBulk?.amount
+            : packagePrice?.amount),
+        catalogCode: item?.catalog_code,
+        catalogName: item?.catalog_name,
+      };
+    }
 
     update(newItem);
     setExpandedRow?.(null);

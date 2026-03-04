@@ -33,7 +33,7 @@ const InfoGrid = ({ data }: { data: any }) => {
   return (
     <div className="mb-6">
       <Card className="p-6 shadow-md hover:shadow-lg transition-shadow">
-        <h4 className="text-lg font-semibold text-gray-700 mb-4 flex items-center gap-2">
+        <h4 className="text-lg font-semibold text-slate-700 mb-4 flex items-center gap-2">
           <span className="text-2xl">ℹ️</span>
           Информация о продаже
         </h4>
@@ -41,14 +41,14 @@ const InfoGrid = ({ data }: { data: any }) => {
           {infoItems?.map((item, index) => (
             <div
               key={index}
-              className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg"
+              className="flex items-start gap-3 p-3 bg-slate-50 rounded-lg"
             >
               <span className="text-2xl">{item.icon}</span>
               <div className="flex-1">
-                <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                <span className="text-xs font-medium text-slate-500 uppercase tracking-wide">
                   {item.label}
                 </span>
-                <p className="text-base font-semibold text-gray-800 mt-1">
+                <p className="text-base font-semibold text-slate-800 mt-1">
                   {item.value}
                 </p>
               </div>

@@ -152,7 +152,7 @@ function Select<
           placeholder: () =>
             cn(
               "select-placeholder",
-              isSelectInvalid ? "text-error" : "text-gray-400"
+              isSelectInvalid ? "text-error" : "text-slate-400"
             ),
           indicatorsContainer: () => "select-indicators-container",
           singleValue: () => "select-single-value",

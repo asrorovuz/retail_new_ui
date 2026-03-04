@@ -20,24 +20,24 @@ const TableRow = ({
     <tr
       className={classNames(
         "transition-colors",
-        isDeleted ? "bg-red-50 hover:bg-red-100" : "hover:bg-gray-50"
+        isDeleted ? "bg-red-50 hover:bg-red-100" : "hover:bg-slate-50"
       )}
     >
-      <td className="px-4 py-3 text-center text-sm text-gray-600 ">
+      <td className="px-4 py-3 text-center text-sm text-slate-600 ">
         {index + 1}
       </td>
-      <td className="px-4 py-3 text-sm font-medium text-gray-900">
+      <td className="px-4 py-3 text-sm font-medium text-slate-900">
         {productPackage?.name ?? "-"}
       </td>
-      <td className="px-4 py-3 text-center text-sm font-semibold text-gray-700">
+      <td className="px-4 py-3 text-center text-sm font-semibold text-slate-700">
         <div className="w-[100px]">{item?.quantity ?? 0}</div>
       </td>
-      <td className="px-4 py-3 text-center text-sm text-gray-600">
+      <td className="px-4 py-3 text-center text-sm text-slate-600">
         <div className="w-[80px]">
           {showMeasurmentName(productPackage?.measurement_code) ?? "-"}
         </div>
       </td>
-      <td className="px-4 py-3 text-center text-sm font-medium text-gray-900">
+      <td className="px-4 py-3 text-center text-sm font-medium text-slate-900">
         <div className="flex items-center gap-x-1 w-[150px]">
           <FormattedNumber value={item?.price_amount ?? 0} />
           <CurrencyName currency={item?.price_currency} />
@@ -68,7 +68,7 @@ const TableRow = ({
         </div>
       </td>
       <td>
-        <div className="w-[100px] text-center py-3 text-sm text-gray-600">
+        <div className="w-[100px] text-center py-3 text-sm text-slate-600">
           {item?.warehouse_operation_from?.warehouse?.name ?? "-"}
         </div>
       </td>

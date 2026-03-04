@@ -146,7 +146,7 @@ const PaymeWhithQR = ({
       title={"Хотите совершить QR-платеж "}
       isOpen={isOpen}
     >
-      <div className="bg-gray-100 rounded-2xl p-3 flex flex-col gap-y-3 mb-6">
+      <div className="bg-slate-100 rounded-2xl p-3 flex flex-col gap-y-3 mb-6">
         <div className="h-[222px] w-[222px] flex items-center justify-center mx-auto">
           {qrCode ? (
             <img
@@ -155,7 +155,7 @@ const PaymeWhithQR = ({
               alt="QR Code"
             />
           ) : (
-            <h6 className="text-center text-gray-800">
+            <h6 className="text-center text-slate-800">
               Выберите тип оплаты и отсканируйте QR-код
             </h6>
           )}

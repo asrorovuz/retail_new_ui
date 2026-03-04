@@ -37,7 +37,7 @@ const CategoryForm = ({ checkedId }: { checkedId?: number | null }) => {
           <Input
             placeholder="Введите название"
             size="sm"
-            className="bg-white border-gray-300 font-medium rounded"
+            className="bg-white border-slate-300 font-medium rounded"
             {...form.register("name", {
               required: "Обязательное поле",
             })}

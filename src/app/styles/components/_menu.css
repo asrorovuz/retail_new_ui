@@ -2,15 +2,15 @@
   @apply uppercase font-semibold px-3 mt-4 mb-2;
 
   &.menu-title-light {
-    @apply text-gray-500;
+    @apply text-slate-500;
   }
 
   &.menu-title-dark {
-    @apply text-gray-300;
+    @apply text-slate-300;
   }
 
   &.menu-title-themed {
-    @apply text-gray-100 text-opacity-50;
+    @apply text-slate-100 text-opacity-50;
   }
 }
 
@@ -19,7 +19,7 @@
 }
 
 .menu-dark {
-  @apply bg-gray-800;
+  @apply bg-slate-800;
 }
 
 .menu-transparent {

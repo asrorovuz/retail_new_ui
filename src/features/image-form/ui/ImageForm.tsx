@@ -67,7 +67,7 @@ const ImageList = ({
       {imgList.map((img) => (
         <div
           key={img.id || img.name}
-          className="group h-[100px] relative rounded-xl border border-gray-200 dark:border-gray-600 p-2 flex"
+          className="group h-[100px] relative rounded-xl border border-slate-200 dark:border-slate-600 p-2 flex"
         >
           <img
             className="rounded-lg max-h-[140px] mx-auto max-w-full dark:bg-transparent"
@@ -77,13 +77,13 @@ const ImageList = ({
           {extra && (
             <div className="absolute inset-2 bg-[#000000ba] group-hover:flex hidden text-xl items-center justify-center">
               <span
-                className="text-gray-100 hover:text-gray-300 cursor-pointer p-1.5"
+                className="text-slate-100 hover:text-slate-300 cursor-pointer p-1.5"
                 onClick={() => onViewOpen(img)}
               >
                 <HiEye />
               </span>
               <span
-                className="text-gray-100 hover:text-gray-300 cursor-pointer p-1.5"
+                className="text-slate-100 hover:text-slate-300 cursor-pointer p-1.5"
                 onClick={() => onDeleteConfirmation(img)}
               >
                 <HiTrash />

@@ -113,6 +113,8 @@ const TableHistory = ({
       };
     });
 
+    console.log(items, "kkk");
+    
     const payload = {
       id: data?.id,
       items: items,

@@ -181,7 +181,7 @@ const FiscalizedSection = ({show, handleShow}: {show: boolean, handleShow: (val:
               </Td>
             </Tr>
             {getCashRegisterData.map((item: any) => (
-              <Tr className="w-full text-gray-800" key={item.id}>
+              <Tr className="w-full text-slate-800" key={item.id}>
                 <Td>
                   <span className="px-5">{item.name}</span>
                 </Td>

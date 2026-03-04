@@ -137,7 +137,7 @@ const CashRegisterForm = () => {
                   {...field}
                   placeholder="Введите название"
                   className={classNames(
-                    "bg-white border-gray-300 font-normal rounded",
+                    "bg-white border-slate-300 font-normal rounded",
                     {
                       "border-red-500": form.formState.errors?.arca?.username,
                     }
@@ -199,7 +199,7 @@ const ArcaForm = () => {
                 {...field}
                 placeholder="Введите адрес"
                 className={classNames(
-                  "bg-white border-gray-300 font-medium rounded",
+                  "bg-white border-slate-300 font-medium rounded",
                   { "border-red-500": errors?.arca?.address }
                 )}
               />
@@ -226,7 +226,7 @@ const ArcaForm = () => {
                 {...field}
                 placeholder="Введите логин"
                 className={classNames(
-                  "bg-white border-gray-300 font-medium rounded",
+                  "bg-white border-slate-300 font-medium rounded",
                   { "border-red-500": errors?.arca?.username }
                 )}
               />
@@ -260,7 +260,7 @@ const ArcaForm = () => {
                 type="password"
                 placeholder="Введите пароль"
                 className={classNames(
-                  "bg-white border-gray-300 font-medium rounded",
+                  "bg-white border-slate-300 font-medium rounded",
                   { "border-red-500": errors?.arca?.password }
                 )}
               />
@@ -305,7 +305,7 @@ const SimurgForm = () => {
                 space={false}
                 placeholder="Введите номер COM-порта"
                 className={classNames(
-                  "bg-white border-gray-300 font-medium rounded",
+                  "bg-white border-slate-300 font-medium rounded",
                   { "border-red-500": errors?.simurg?.comPortNumber }
                 )}
               />
@@ -337,7 +337,7 @@ const SimurgForm = () => {
                 type="password"
                 placeholder="Введите пароль кассира"
                 className={classNames(
-                  "bg-white border-gray-300 font-medium rounded",
+                  "bg-white border-slate-300 font-medium rounded",
                   { "border-red-500": errors?.simurg?.cashierPassword }
                 )}
               />
@@ -373,7 +373,7 @@ const HippoPosForm = () => {
                 {...field}
                 placeholder="Введите название организации"
                 className={classNames(
-                  "bg-white border-gray-300 font-medium rounded",
+                  "bg-white border-slate-300 font-medium rounded",
                   { "border-red-500": errors?.hippopos?.companyName }
                 )}
               />
@@ -398,7 +398,7 @@ const HippoPosForm = () => {
                 {...field}
                 placeholder="Введите адрес организации"
                 className={classNames(
-                  "bg-white border-gray-300 font-medium rounded",
+                  "bg-white border-slate-300 font-medium rounded",
                   { "border-red-500": errors?.hippopos?.companyAddress }
                 )}
               />
@@ -433,7 +433,7 @@ const HippoPosForm = () => {
                 {...field}
                 placeholder="Введите инн организации"
                 className={classNames(
-                  "bg-white border-gray-300 font-medium rounded",
+                  "bg-white border-slate-300 font-medium rounded",
                   { "border-red-500": errors?.hippopos?.companyInn }
                 )}
               />
@@ -458,7 +458,7 @@ const HippoPosForm = () => {
                 <Select
                   placeholder="Введите размер печатаемого чека"
                   className={classNames(
-                    "bg-white border-gray-300 font-medium rounded",
+                    "bg-white border-slate-300 font-medium rounded",
                     { "border-red-500": errors?.hippopos?.printerSize }
                   )}
                   options={printerSizeOptions}
@@ -509,7 +509,7 @@ const EPosForm = () => {
                 {...field}
                 placeholder="Введите название организации"
                 className={classNames(
-                  "bg-white border-gray-300 font-medium rounded",
+                  "bg-white border-slate-300 font-medium rounded",
                   { "border-red-500": errors?.epos?.companyName }
                 )}
               />
@@ -534,7 +534,7 @@ const EPosForm = () => {
                 {...field}
                 placeholder="Введите адрес организации"
                 className={classNames(
-                  "bg-white border-gray-300 font-medium rounded",
+                  "bg-white border-slate-300 font-medium rounded",
                   { "border-red-500": errors?.epos?.companyAddress }
                 )}
               />
@@ -569,7 +569,7 @@ const EPosForm = () => {
                 {...field}
                 placeholder="Введите инн организации"
                 className={classNames(
-                  "bg-white border-gray-300 font-medium rounded",
+                  "bg-white border-slate-300 font-medium rounded",
                   { "border-red-500": errors?.epos?.companyInn }
                 )}
               />
@@ -594,7 +594,7 @@ const EPosForm = () => {
                 <Select
                   placeholder="Введите размер печатаемого чека"
                   className={classNames(
-                    "bg-white border-gray-300 font-medium rounded",
+                    "bg-white border-slate-300 font-medium rounded",
                     { "border-red-500": errors?.epos?.printerSize }
                   )}
                   options={printerSizeOptions}

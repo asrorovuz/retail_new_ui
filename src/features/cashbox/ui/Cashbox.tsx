@@ -4,12 +4,8 @@ import type { CashboxPropsType } from "../model";
 import { BsChevronLeft, BsChevronRight } from "react-icons/bs";
 import Tabs from "@/shared/ui/kit-pro/tabs/Tabs";
 
-const Cashbox: FC<CashboxPropsType> = ({
-  type,
-  drafts,
-  addNewDraft,
-  activateDraft,
-}) => {
+const Cashbox: FC<CashboxPropsType> = (props) => {
+  const { drafts, activateDraft } = props;
   const activeIndex = drafts?.findIndex((item) => item?.isActive);
 
   return (
@@ -23,12 +19,7 @@ const Cashbox: FC<CashboxPropsType> = ({
         onClick={() => activateDraft(activeIndex - 1)}
       />
 
-      <Tabs
-        type={type}
-        drafts={drafts}
-        addNewDraft={addNewDraft}
-        activateDraft={activateDraft}
-      />
+      <Tabs {...props} />
 
       <Button
         size="sm"

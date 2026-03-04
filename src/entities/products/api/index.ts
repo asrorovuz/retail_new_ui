@@ -8,7 +8,6 @@ import type {
   Product,
   ProductColumnVisibility,
   ProductPriceType,
-  RegisterType,
 } from "@/@types/products";
 import type { FavouriteProduct } from "@/features/modals/model";
 import type { ProductFormType } from "@/features/product-form/model";
@@ -201,16 +200,6 @@ export const createFavouriteProductApi = async (
 ): Promise<FavouriteProduct> => {
   return await apiRequest<FavouriteProduct>({
     url: pathServices.products.createFavouriteProductPath,
-    method: "POST",
-    data: payload,
-  });
-};
-
-export const createRegisterApi = async (
-  payload: RegisterType
-): Promise<any> => {
-  return await apiRequest<any>({
-    url: pathServices.products.createRegister,
     method: "POST",
     data: payload,
   });

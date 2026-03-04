@@ -20,7 +20,7 @@
 
 .upload-draggable {
   min-height: 7rem;
-  @apply border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer flex items-center justify-center;
+  @apply border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-lg cursor-pointer flex items-center justify-center;
 }
 
 .upload-file-list {
@@ -33,7 +33,7 @@
 }
 
 .upload-file {
-  @apply flex items-center bg-gray-100 dark:bg-gray-700 rounded-lg mb-2 justify-between;
+  @apply flex items-center bg-slate-100 dark:bg-slate-700 rounded-lg mb-2 justify-between;
 }
 
 .upload-file-thumbnail {

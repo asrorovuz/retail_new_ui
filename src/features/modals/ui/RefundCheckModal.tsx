@@ -127,7 +127,7 @@ const RefundCheckModal = ({
       isOpen={isOpen}
       onClose={() => setRefundCheckModal({ isOpen: false, ids: [] })}
     >
-      <div className="overflow-auto h-[56vh] border border-gray-200 rounded-2xl mb-6">
+      <div className="overflow-auto h-[56vh] border border-slate-200 rounded-2xl mb-6">
         {loading ? (
           <div className="flex items-center justify-center h-full">
             Загрузка данных...
@@ -141,7 +141,7 @@ const RefundCheckModal = ({
                     {headerGroup.headers.map((header) => (
                       <Th
                         key={header.id}
-                        className="p-2 text-left border-b border-gray-200"
+                        className="p-2 text-left border-b border-slate-200"
                         style={{ width: header.getSize() }}
                       >
                         {flexRender(
@@ -158,14 +158,14 @@ const RefundCheckModal = ({
                   table.getRowModel().rows.map((row, index) => (
                     <Tr
                       key={row.id}
-                      className="border-b hover:bg-gray-100 transition-colors"
+                      className="border-b hover:bg-slate-100 transition-colors"
                     >
                       {row.getVisibleCells().map((cell) => (
                         <Td
                           key={cell.id}
                           className={classNames(
                             "p-2",
-                            index % 2 && "bg-gray-100"
+                            index % 2 && "bg-slate-100"
                           )}
                         >
                           {flexRender(

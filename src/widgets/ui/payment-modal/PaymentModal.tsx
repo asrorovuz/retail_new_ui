@@ -105,7 +105,7 @@ const PaymentModal = ({
             <span>Оплаченная сумма:</span>
             <FormattedNumber value={totalPaymentAmount ?? 0} />
           </div>
-          {type === "sale" && (
+          {type !== "refund" && (
             <div className="flex justify-between border-b border-dashed">
               <span>Долг:</span>
               <FormattedNumber
@@ -137,7 +137,7 @@ const PaymentModal = ({
             <span>Общая сумма:</span>
             <FormattedNumber value={totalAmount ?? 0} />
           </div>
-          {type === "sale" && (
+          {type !== "refund" && (
             <>
               <div className="flex justify-between border-b border-dashed">
                 <span>Итого со скидкой:</span>
@@ -162,7 +162,7 @@ const PaymentModal = ({
         >
           Чек
         </Button>
-        {type === "sale" && <Button
+        {type !== "refund" && <Button
           // loading={loading}
           // onClick={onSubmitPayment}
           disabled={true}

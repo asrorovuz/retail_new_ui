@@ -1,5 +1,5 @@
 .avatar {
-  @apply inline-block relative bg-gray-400 dark:bg-gray-600 text-gray-100;
+  @apply inline-block relative bg-slate-400 dark:bg-slate-600 text-slate-100;
 }
 
 .avatar-sm {

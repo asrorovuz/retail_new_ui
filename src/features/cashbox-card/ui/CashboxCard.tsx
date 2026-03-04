@@ -71,7 +71,7 @@ const CashboxCard = ({
                       return (
                         <div key={moneyType}>
                           <div className="ml-4 flex gap-5">
-                            <span className="text-sm text-gray-500">
+                            <span className="text-sm text-slate-500">
                               {paymentTypes[Number(moneyType)]}:
                             </span>
 

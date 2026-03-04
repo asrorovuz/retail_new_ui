@@ -13,14 +13,14 @@ export function Accordion({title = 'Test', children}: AccordionProps) {
     return (
         <Card bodyClass={"p-0"}>
             <button
-                className="flex items-center justify-between w-full text-left font-medium text-gray-100 p-3 hover:bg-gray-600 rounded-lg"
+                className="flex items-center justify-between w-full text-left font-medium text-slate-100 p-3 hover:bg-slate-600 rounded-lg"
                 onClick={() => setIsOpen(!isOpen)}
             >
                 <span className="flex items-center">
                     {isOpen ? (
-                        <FiChevronDown size={20} className="text-gray-100" />
+                        <FiChevronDown size={20} className="text-slate-100" />
                     ) : (
-                        <FiChevronRight size={20} className="text-gray-100" />
+                        <FiChevronRight size={20} className="text-slate-100" />
                     )}
 
                     <h6 className="ml-2 font-bold">
@@ -29,7 +29,7 @@ export function Accordion({title = 'Test', children}: AccordionProps) {
                 </span>
             </button>
             {isOpen && (
-                <div className="p-3 mt-2 text-gray-600">
+                <div className="p-3 mt-2 text-slate-600">
                     {children}
                 </div>
             )}

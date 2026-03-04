@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { createFiscalizedApi, fiscalDeviceApi, paymentProviderApi, registerSaleApi, updateSellApi } from "../api";
+import { createFiscalizedApi, fiscalDeviceApi, getAllContractorApi, paymentProviderApi, registerSaleApi, updateSellApi } from "../api";
 import type { RegisterSaleModel } from "@/@types/sale";
 
 export const useRegisterSellApi = () => {
@@ -20,6 +20,14 @@ export const usePaymentProviderApi = () => {
   return useQuery({
     queryKey: ["payment-provider"],
     queryFn: paymentProviderApi,
+  });
+};
+
+export const useContractorApi = (isOpen: boolean) => {
+  return useQuery({
+    queryKey: ["contractor-all", isOpen],
+    queryFn: getAllContractorApi,
+    enabled: !!isOpen
   });
 };
 

@@ -18,6 +18,13 @@ export const fiscalDeviceApi = async (): Promise<FizcalResponsetype[]> => {
   });
 };
 
+export const getAllContractorApi = async (): Promise<FizcalResponsetype[]> => {
+  return await apiRequest({
+    url: pathServices.sale.getContractorPath,
+    method: "GET",
+  });
+};
+
 export const paymentProviderApi = async (): Promise<PaymeProviderType[]> => {
   return await apiRequest({
     url: pathServices.sale.getPaymentPath,

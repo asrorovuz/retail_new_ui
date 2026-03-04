@@ -14,11 +14,11 @@
     duration-100;
 
   &:not(.segment-item-active):not(.segment-item-disabled) {
-    @apply hover:text-gray-800 hover:dark:text-gray-100
+    @apply hover:text-slate-800 hover:dark:text-slate-100
   }
 
   &.segment-item-active {
-    @apply bg-white text-gray-800 dark:bg-gray-800 dark:text-gray-100 shadow-sm;
+    @apply bg-white text-slate-800 dark:bg-slate-800 dark:text-slate-100 shadow-sm;
   }
 
   &.segment-item-disabled {

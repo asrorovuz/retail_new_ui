@@ -79,11 +79,11 @@ const ConfirmDialog = (props: ConfirmDialogProps) => {
       <div className="flex items-start gap-4 mb-5">
         <StatusIcon status={type} />
         <div className="flex-1">
-          {/* <h4 className="text-lg font-semibold text-gray-900 mb-1">{title}</h4> */}
+          {/* <h4 className="text-lg font-semibold text-slate-900 mb-1">{title}</h4> */}
           {description && (
-            <p className="text-[16px] text-gray-600 leading-snug">{description}</p>
+            <p className="text-[16px] text-slate-600 leading-snug">{description}</p>
           )}
-          {children && <div className="mt-3 text-sm text-gray-700">{children}</div>}
+          {children && <div className="mt-3 text-sm text-slate-700">{children}</div>}
         </div>
       </div>
 

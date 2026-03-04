@@ -170,7 +170,7 @@ const ModalCategory = ({
                   render={({ field }) => (
                     <Input
                       placeholder="Введите название"
-                      className="bg-white border-gray-300 font-medium rounded"
+                      className="bg-white border-slate-300 font-medium rounded"
                       {...field}
                     />
                   )}

@@ -41,8 +41,8 @@ const Tooltip = (props: TooltipProps) => {
     const [tooltipOpen, setTooltipOpen] = useState<boolean>(isOpen)
 
     const tooltipColor = {
-        background: 'bg-gray-800 dark:bg-black',
-        arrow: 'text-gray-800 dark:text-black',
+        background: 'bg-slate-800 dark:bg-black',
+        arrow: 'text-slate-800 dark:text-black',
     }
 
     const defaultTooltipClass = `tooltip ${tooltipColor.background}`

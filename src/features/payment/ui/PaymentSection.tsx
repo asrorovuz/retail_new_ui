@@ -30,7 +30,7 @@ const PaymentSection = () => {
 
   return (
     <Card className="p-6 rounded-lg bg-white w-full select-none">
-      <h2 className="text-lg font-semibold text-gray-800 mb-6 border-b pb-4">
+      <h2 className="text-lg font-semibold text-slate-800 mb-6 border-b pb-4">
         Платёжные системы
       </h2>
 
@@ -80,7 +80,7 @@ const PaymentSection = () => {
                     </Tag>
                   )}
                 </Td>
-                <Td className="py-2 px-4 text-sm text-gray-700">
+                <Td className="py-2 px-4 text-sm text-slate-700">
                   {provider.details || "-"}
                 </Td>
                 <Td>

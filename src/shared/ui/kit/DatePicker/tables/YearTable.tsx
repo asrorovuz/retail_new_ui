@@ -42,8 +42,8 @@ const YearTable = (props: YearTableProps) => {
                     'year-picker-cell',
                     active && !disabled
                         ? 'year-picker-cell-active bg-primary'
-                        : 'text-gray-800 dark:text-gray-100',
-                    !active && !disabled && 'hover:bg-gray-100',
+                        : 'text-slate-800 dark:text-slate-100',
+                    !active && !disabled && 'hover:bg-slate-100',
                     disabled && 'year-picker-cell-disabled',
                 )}
                 type="button"
