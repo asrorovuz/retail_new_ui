@@ -42,9 +42,9 @@ export interface PurchaseStoreActions {
   completeActiveDraftPurchase: () => void;
   //   //   resetActiveDraftPurchase: () => void;
   //   //   addDraftPurchasePaymentAmount: (payload: DraftPurchasePayoutAmountSchema) => void;
-  updateDraftPurchasePaymentAmounts: (
-    paymentAmounts: DraftPurchasePayoutAmountSchema[],
-  ) => void;
+  // updateDraftPurchasePaymentAmounts: (
+  //   paymentAmounts: DraftPurchasePayoutAmountSchema[],
+  // ) => void;
   addDraftPurchaseItem: (payload: DraftPurchaseItemSchema) => void;
   //   //   incrementDraftPurchaseItemQuantity: (draftPurchaseItemIndex: number) => void;
   //   //   decrementDraftPurchaseItemQuantity: (draftPurchaseItemIndex: number) => void;

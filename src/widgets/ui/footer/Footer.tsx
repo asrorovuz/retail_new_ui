@@ -6,11 +6,16 @@ import { useState } from "react";
 import { TfiReload } from "react-icons/tfi";
 import { useOutletContext } from "react-router-dom";
 
-const Footer = () => {
+const Footer = ({ deleteDraft, draft }: any) => {
   const [showAlert, setShowAlert] = useState(false);
   const { logout } = useAuthContext();
   const setIsOpenNavigate =
     useOutletContext<React.Dispatch<React.SetStateAction<boolean>>>();
+
+  const onDeleteActivedraft = () => {
+    const findIndex = draft?.findIndex((item: any) => item?.isActive);
+    deleteDraft(findIndex);
+  };
 
   return (
     <div className="flex justify-between items-center">
@@ -28,6 +33,7 @@ const Footer = () => {
           variant="default"
           type="button"
           size="sm"
+          onClick={onDeleteActivedraft}
           className="!text-red-500 h-8 py-0 ring-0 hover:ring-0 active:ring-0 hover:border-red-500 active:border-red-500 active:text-red-600"
         >
           Удалить окно

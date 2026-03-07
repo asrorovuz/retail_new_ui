@@ -2,17 +2,13 @@ import type {
   DraftPurchasePayoutAmountSchema,
   DraftPurchaseSchema,
 } from "@/@types/purchase";
-import { useAuthContext } from "@/app/providers/AuthProvider";
 import { useDraftPurchaseStore } from "@/app/store/usePurchaseDraftStore";
-import { useSettingsStore } from "@/app/store/useSettingsStore";
 import {
   useAllProductApi,
   useFindBarcode,
-  usePriceTypeApi,
 } from "@/entities/products/repository";
 import Cashbox from "@/features/cashbox";
 import FavouriteProduct from "@/features/favourite-product";
-import { AddProductModal } from "@/features/modals";
 import OrderActions from "@/features/order-actions";
 import PaymeTypeCards from "@/features/payme-type-cards";
 import PaymentSection from "@/features/payment-section";
@@ -26,40 +22,30 @@ import { handleBarcodeScanned } from "@/shared/lib/handleScannedBarcode";
 import { handleScannedProduct } from "@/shared/lib/handleScannedProduct";
 import { showErrorLocalMessage } from "@/shared/lib/showMessage";
 import { useDebounce } from "@/shared/lib/useDebounce";
-import Alert from "@/shared/ui/kit-pro/alert/Alert";
+import { Button } from "@/shared/ui/kit";
 import FormattedNumber from "@/shared/ui/kit-pro/numeric-format/NumericFormat";
 import Footer from "@/widgets/ui/footer/Footer";
 import { useEffect, useState } from "react";
-import { useOutletContext } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const PurchasePrice = () => {
   const [expandedRow, setExpandedRow] = useState<string | null>(null);
   const [expendedId, setExpandedId] = useState<number | null>(null);
   const [barcode, setBarcode] = useState<string | null>(null);
   const [barcodeMark, setBarcodeMark] = useState("");
-  const [isOpenAddProduct, setIsOpenAddProduct] = useState(false);
   const [selectedRows, setSelectedRows] = useState<Record<number, boolean>>({});
   const [value, setValue] = useState<string>("0");
   const [payModal, setPayModal] = useState(false);
   const [mark, setMark] = useState<number | null>(null);
-  const [showAlert, setShowAlert] = useState(false);
   const [activeType, setActiveType] = useState<
     "numeric" | "qwerty" | "fullkey"
   >("numeric");
-  const [activeOnlyType, setActiveOnlyType] = useState({
-    isOpen: false,
-    ind: -1,
-  });
   const [activeSelectPaymetype, setActivePaymentSelectType] =
     useState<number>(1);
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebounce(search, 500);
+  const navigate = useNavigate();
 
-  const setIsOpenNavigate =
-    useOutletContext<React.Dispatch<React.SetStateAction<boolean>>>();
-  const { logout } = useAuthContext();
-
-  const { settings } = useSettingsStore((s) => s);
   const { draftPurchases, addDraftPurchase, activateDraftPurchase } =
     useDraftPurchaseStore((store) => store);
   const deleteDraftPurchaseItem = useDraftPurchaseStore(
@@ -90,14 +76,13 @@ const PurchasePrice = () => {
     (store) => store.deleteDraftPurchaseMark,
   );
 
-  const { data, isPending } = useAllProductApi(50, 1, debouncedSearch || "");
+  const { data } = useAllProductApi(50, 1, debouncedSearch || "");
   const {
     data: findBarcodeData,
     isSuccess,
     isError,
     isFetching,
   } = useFindBarcode(barcode);
-  const { data: productPriceType } = usePriceTypeApi();
 
   const activeDraft: DraftPurchaseSchema =
     draftPurchases?.find((s) => s.isActive) ?? draftPurchases[0];
@@ -129,6 +114,7 @@ const PurchasePrice = () => {
           findBarcodeData,
           "purchase",
           setExpandedId,
+          selectedRows,
           barcodeMark,
         );
         setBarcode(null); // qayta so‘rov yubormaslik uchun tozalaymiz
@@ -137,15 +123,9 @@ const PurchasePrice = () => {
   }, [isSuccess, findBarcodeData, isFetching]);
 
   useEffect(() => {
-    if (isError && !payModal) {
-      if (settings?.enable_create_unknown_product) {
-        setBarcode(barcode);
-        setIsOpenAddProduct(true);
-      } else {
-        showErrorLocalMessage("Товар не найден");
-        setBarcode(null);
-      }
-    }
+    if (!isError && payModal) return;
+    showErrorLocalMessage("Товар не найден");
+    setBarcode(null);
   }, [isError]);
 
   return (
@@ -180,18 +160,11 @@ const PurchasePrice = () => {
           setExpandedRow={setExpandedRow}
           setExpandedId={setExpandedId}
         />
-        <Footer
-          setIsOpenNavigate={setIsOpenNavigate}
-          setShowAlert={setShowAlert}
-        />
+        <Footer deleteDraft={deleteDraftPurchase} draft={draftPurchases} />
       </div>
       <div className="bg-white rounded-2xl p-3">
         <div className="rounded-2xl mb-3 bg-slate-200 p-1">
-          <SearchProduct
-            pageType="purchase"
-            search={search}
-            setActiveType={setActiveType}
-          />
+          <SearchProduct search={search} setActiveType={setActiveType} />
           {activeType === "qwerty" && (
             <>
               <SearchProductTable
@@ -199,6 +172,7 @@ const PurchasePrice = () => {
                 debouncedSearch={debouncedSearch}
                 selectedRows={selectedRows}
                 data={data ?? []}
+                setActiveType={setActiveType}
                 setExpandedRow={setExpandedRow}
                 setExpandedId={setExpandedId}
               />
@@ -214,6 +188,30 @@ const PurchasePrice = () => {
                 activeSelectPaymetype={activeSelectPaymetype}
                 setActivePaymentSelectType={setActivePaymentSelectType}
               />
+            </>
+          </div>
+        )}
+        {activeType === "numeric" && (
+          <div className="rounded-2xl bg-slate-200 mb-3 p-1 flex gap-x-1">
+            <>
+              <Button
+                onClick={() => navigate("/purchase-history")}
+                size="sm"
+                className={classNames(
+                  "flex flex-col justify-center items-center overflow-hidden",
+                )}
+              >
+                История
+              </Button>
+              <Button
+                onClick={() => navigate("/products")}
+                size="sm"
+                className={classNames(
+                  "flex flex-col justify-center items-center overflow-hidden",
+                )}
+              >
+                Товары
+              </Button>
             </>
           </div>
         )}
@@ -305,46 +303,20 @@ const PurchasePrice = () => {
             selectedRows={selectedRows}
             addNewDraft={addDraftPurchase}
             setPayModal={setPayModal}
-            deleteDraft={deleteDraftPurchase}
             activeSelectPaymetype={activeSelectPaymetype}
             setActivePaymentSelectType={setActivePaymentSelectType}
             complateActiveDraft={completeActiveDraftPurchase}
           />
         </div>
       </div>
-      {showAlert && (
-        <Alert
-          type="warning"
-          title="Выход из системы"
-          content="Вы действительно хотите выйти из системы?"
-          onCancel={() => setShowAlert(false)}
-          onConfirm={() => {
-            logout();
-            setShowAlert(false);
-          }}
+      {mark ? (
+        <ViewMark
+          item={mark}
+          onClose={() => setMark(null)}
+          activeDraft={activeDraft}
+          deleteDraftMark={deleteDraftPurchaseMark}
         />
-      )}
-      {/* <div className="bg-white p-3 rounded-2xl w-[320px]">
-
-
-        <AddProductModal
-          type={"add"}
-          setBarcode={setBarcode}
-          barcode={barcode}
-          isOpen={isOpenAddProduct}
-          setIsOpen={setIsOpenAddProduct}
-          productPriceType={productPriceType!}
-        />
-
-        {mark ? (
-          <ViewMark
-            item={mark}
-            onClose={() => setMark(null)}
-            activeDraft={activeDraft}
-            deleteDraftMark={deleteDraftPurchaseMark}
-          />
-        ) : null}
-      </div> */}
+      ) : null}
     </div>
   );
 };

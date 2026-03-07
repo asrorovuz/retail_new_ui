@@ -4,6 +4,9 @@ export const pathServices = {
     login: "/public/auth/login",
     globalLogin: "/public/auth/global-login",
     register: "/public/auth/register",
+    contractor: "/api/contractor/create",
+    deleteContractor: "/api/contractor/delete/",
+    updateContractor: "/api/contractor/update/"
   },
 
   init: {
@@ -106,6 +109,7 @@ export const pathServices = {
     getPaymentPath: "/api/payment-provider/get",
     getContractorPath: "/api/contractor/get",
     updateSellPath: "/api/sale/update/",
+    getPaymentDebts: "/api/payment/register",
 
     // CREATE
     createFiscalized: "/api/fiscalization/sale/register",

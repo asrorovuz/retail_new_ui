@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { createFiscalizedApi, fiscalDeviceApi, getAllContractorApi, paymentProviderApi, registerSaleApi, updateSellApi } from "../api";
+import { createFiscalizedApi, fiscalDeviceApi, getAllContractorApi, paymentDebtsApi, paymentProviderApi, registerSaleApi, updateSellApi } from "../api";
 import type { RegisterSaleModel } from "@/@types/sale";
 
 export const useRegisterSellApi = () => {
@@ -23,10 +23,10 @@ export const usePaymentProviderApi = () => {
   });
 };
 
-export const useContractorApi = (isOpen: boolean) => {
+export const useContractorApi = (isOpen: boolean, search: string) => {
   return useQuery({
-    queryKey: ["contractor-all", isOpen],
-    queryFn: getAllContractorApi,
+    queryKey: ["contractor-all", isOpen, search],
+    queryFn: () => getAllContractorApi(search),
     enabled: !!isOpen
   });
 };
@@ -34,6 +34,12 @@ export const useContractorApi = (isOpen: boolean) => {
 export const useCreateFiscalizedApi = () => {
   return useMutation({
     mutationFn: (data: any) => createFiscalizedApi(data),
+  });
+};
+
+export const usePaymentDebtsApi = () => {
+  return useMutation({
+    mutationFn: (data: any) => paymentDebtsApi(data),
   });
 };
 

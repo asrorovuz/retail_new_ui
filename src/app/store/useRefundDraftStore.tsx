@@ -14,10 +14,10 @@ const initialState = {
     {
       isActive: true,
       items: [],
-      discountAmount: 0,
+      discountAmount: "0",
       payout: {
         amounts: PaymentTypes.map((paymentType) => {
-          return { amount: 0, paymentType: paymentType.type };
+          return { amount: "0", paymentType: paymentType.type };
         }),
       },
     },
@@ -70,10 +70,10 @@ export const useDraftRefundStore = create<
           const newDraftRefund: DraftRefundSchema = {
             items: [],
             isActive: true,
-            discountAmount: 0,
+            discountAmount: "0",
             payout: {
               amounts: PaymentTypes?.map((paymentType) => {
-                return { amount: 0, paymentType: paymentType.type };
+                return { amount: "0", paymentType: paymentType.type };
               }),
             },
           };
@@ -126,7 +126,7 @@ export const useDraftRefundStore = create<
           }
         }
       }),
-    updateDraftRefundDiscount: (discountAmount: number) =>
+    updateDraftRefundDiscount: (discountAmount: string) =>
       set((state) => {
         const activeRefund = state.draftRefunds.find((s) => s.isActive);
         if (activeRefund) {
@@ -152,19 +152,19 @@ export const useDraftRefundStore = create<
               const newDraftRefund: DraftRefundSchema = {
                 items: [],
                 isActive: true,
-                discountAmount: 0,
+                discountAmount: "0",
                 payout: {
                   amounts: PaymentTypes.map((paymentType) => {
-                    return { amount: 0, paymentType: paymentType.type };
+                    return { amount: "0", paymentType: paymentType.type };
                   }),
                 },
               };
               state.draftRefunds = [newDraftRefund];
             } else {
               activeRefund.items = [];
-              activeRefund.discountAmount = 0;
+              activeRefund.discountAmount = "0";
               if (activeRefund.payout) {
-                activeRefund.payout.amounts.forEach((a) => (a.amount = 0));
+                activeRefund.payout.amounts.forEach((a) => (a.amount = "0"));
               }
             }
           }

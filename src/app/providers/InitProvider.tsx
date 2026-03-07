@@ -15,7 +15,7 @@ import { useCurrencyStore } from "../store/useCurrencyStore";
 import { useVersionStore } from "../store/useVersionStore";
 
 export const InitProvider = ({ children }: { children: ReactNode }) => {
-  const { setSettings, setTableSettings, setWareHouseId } =
+  const { setSettings, setTableSettings, setWareHouseId, setWareHouse } =
     useSettingsStore();
   const { setNationalCurrency, setCurrencies } = useCurrencyStore();
   const setVersions = useVersionStore((store) => store.setVersions);
@@ -25,7 +25,6 @@ export const InitProvider = ({ children }: { children: ReactNode }) => {
   const { data: wareHouseData } = useWarehouseApi();
   const { data: currency } = useCurrancyApi();
   const { data: versions } = useVersionApi();
-  
 
   // 📦 Ilova versiyalarini o‘rnatish
   useEffect(() => {
@@ -38,6 +37,7 @@ export const InitProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     if (wareHouseData && wareHouseData.length > 0) {
       setWareHouseId(wareHouseData[0].id);
+      setWareHouse(wareHouseData[0]);
     }
   }, [wareHouseData, setWareHouseId]);
 

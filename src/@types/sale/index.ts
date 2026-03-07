@@ -173,6 +173,7 @@ export type RegisterSaleModel = {
   date?: string;
   is_approved: boolean;
   contractor_id?: number;
+  comment: string;
   employee_id?: number;
   cash_box_id?: number | null;
   payment?: SalePaymentModel;

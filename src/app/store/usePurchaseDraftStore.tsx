@@ -13,10 +13,10 @@ const initialState = {
     {
       isActive: true,
       items: [],
-      discountAmount: 0,
+      discountAmount: "0",
       payout: {
         amounts: PaymentTypes.map((paymentType) => {
-          return { amount: 0, paymentType: paymentType.type };
+          return { amount: "0", paymentType: paymentType.type };
         }),
       },
     },
@@ -79,10 +79,10 @@ export const useDraftPurchaseStore = create<
           const newDraftPurchase: DraftPurchaseSchema = {
             items: [],
             isActive: true,
-            discountAmount: 0,
+            discountAmount: "0",
             payout: {
               amounts: PaymentTypes.map((paymentType) => {
-                return { amount: 0, paymentType: paymentType.type };
+                return { amount: "0", paymentType: paymentType.type };
               }),
             },
           };
@@ -167,7 +167,7 @@ export const useDraftPurchaseStore = create<
           activePurchase.payout = { amounts: payment };
         }
       }),
-    updateDraftPurchaseDiscount: (discountAmount: number) =>
+    updateDraftPurchaseDiscount: (discountAmount: string) =>
       set((state) => {
         const activePurchase = state.draftPurchases.find((s) => s.isActive);
         if (activePurchase) {
@@ -192,19 +192,19 @@ export const useDraftPurchaseStore = create<
               const newDraftPurchase: DraftPurchaseSchema = {
                 items: [],
                 isActive: true,
-                discountAmount: 0,
+                discountAmount: "0",
                 payout: {
                   amounts: PaymentTypes.map((paymentType) => {
-                    return { amount: 0, paymentType: paymentType.type };
+                    return { amount: "0", paymentType: paymentType.type };
                   }),
                 },
               };
               state.draftPurchases = [newDraftPurchase];
             } else {
               activePurchase.items = [];
-              activePurchase.discountAmount = 0;
+              activePurchase.discountAmount = "0";
               if (activePurchase.payout) {
-                activePurchase.payout.amounts.forEach((a) => (a.amount = 0));
+                activePurchase.payout.amounts.forEach((a) => (a.amount = "0"));
               }
             }
           }

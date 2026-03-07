@@ -110,8 +110,9 @@ const RevisyaOperation = () => {
             <>
               <SearchProductTable
                 type="revision"
-                debouncedSearch={debouncedSearch}
                 data={data ?? []}
+                setActiveType={setActiveType}
+                debouncedSearch={debouncedSearch}
                 setExpandedRow={setExpandedRow}
                 setExpandedId={setExpandedId}
               />

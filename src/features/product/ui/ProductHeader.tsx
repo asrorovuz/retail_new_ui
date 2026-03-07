@@ -79,7 +79,6 @@ const ProductHeader = ({
     <div className="mb-3 flex items-center justify-between">
       <div className="w-[433px] flex items-center gap-x-2">
         <SearchProduct
-          pageType="product"
           search={search}
           setActiveType={setActiveType}
           setSearchFocus={setSearchFocus}

@@ -64,10 +64,8 @@ const PaymeTypeCards = ({
 
   return (
     <div className="flex gap-1 overflow-x-auto">
-      {count >= 4 && (
-        <Button onClick={onBackType} icon={<IoIosArrowBack />} />
-      )}
-      {paymentSource.amounts.slice(count, count + 4)?.map((payment) => {
+      {count >= 4 && <Button onClick={onBackType} icon={<IoIosArrowBack />} />}
+      {paymentSource.amounts.slice(count, count + 4)?.map((payment, index) => {
         if (payment?.paymentType === 0) return null;
 
         const isActive =
@@ -76,7 +74,7 @@ const PaymeTypeCards = ({
         return (
           <Button
             key={payment.paymentType}
-            disabled={type === "revision"}
+            disabled={type === "revision" || (type === "refund" && index > 0)}
             onClick={() => onSetType(payment.paymentType)}
             className={classNames(
               "flex flex-col justify-center items-center overflow-hidden h-[50px]",
@@ -94,6 +92,7 @@ const PaymeTypeCards = ({
       {count < 4 && (
         <Button
           onClick={onShowOtherType}
+          disabled={type === "revision" || type === "refund"}
           className={classNames(
             "flex flex-col justify-center items-center overflow-hidden h-[50px]",
           )}

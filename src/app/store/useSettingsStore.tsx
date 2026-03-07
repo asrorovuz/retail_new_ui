@@ -20,6 +20,7 @@ const initialState: SettingsStoreInitialState = {
     { key: "code", visible: true, color: "" },
   ],
   wareHouseId: null,
+  warhouse: null
 };
 
 export const useSettingsStore = create<SettingsStoreInitialState & SettingsStoreActions>(
@@ -29,6 +30,7 @@ export const useSettingsStore = create<SettingsStoreInitialState & SettingsStore
     setTableSettings: (payload: TableColumnSetting[]) =>
       set(() => ({ tableSettings: payload })),
     setWareHouseId: (payload: number) => set({wareHouseId: payload}),
+    setWareHouse: (payload: number) => set({warhouse: payload}),
     setActiveShift: (payload: Shift | null) =>
         set(() => ({ activeShift: payload }))
   })

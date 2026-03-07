@@ -1,11 +1,11 @@
-import { useAuthContext } from "@/app/providers/AuthProvider";
+// import { useAuthContext } from "@/app/providers/AuthProvider";
 import { useSettingsStore } from "@/app/store/useSettingsStore";
 import { useVersionStore } from "@/app/store/useVersionStore";
 import { useShiftApi } from "@/entities/init/repository";
 import { CreateShiftDialog, UpdateShiftDialog } from "@/features/shift";
 import UpdateVersion from "@/features/update";
 import { Button, Dropdown } from "@/shared/ui/kit";
-import Alert from "@/shared/ui/kit-pro/alert/Alert";
+// import Alert from "@/shared/ui/kit-pro/alert/Alert";
 import Menu from "@/shared/ui/kit/Menu/Menu";
 import MenuItem from "@/shared/ui/kit/Menu/MenuItem";
 import { LogoutSvg } from "@/shared/ui/svg/LogoutSvg";
@@ -26,7 +26,7 @@ const Header = () => {
   const version = useVersionStore((store) => store.versions);
 
   const activeKey = location.pathname.replace("/", "") || "sales";
-  const { logout } = useAuthContext();
+  // const { logout } = useAuthContext();
 
   const handleSelect = (eventKey: string) => {
     navigate(eventKey);
@@ -189,7 +189,6 @@ const Header = () => {
           )}
         </div>
         <Button
-          onClick={() => setShowAlert(true)}
           className="bg-red-100 text-red-500 text-[14px] xl:text-base font-semibold active:bg-red-200 active:text-red-500 hover:text-red-500 transition duration-300"
           variant="plain"
           icon={<LogoutSvg height={20} width={20} />}
@@ -197,19 +196,6 @@ const Header = () => {
           Выход
         </Button>
       </div>
-
-      {showAlert && (
-        <Alert
-          type="warning"
-          title="Выход из системы"
-          content="Вы действительно хотите выйти из системы?"
-          onCancel={() => setShowAlert(false)}
-          onConfirm={() => {
-            logout();
-            setShowAlert(false);
-          }}
-        />
-      )}
 
       <CreateShiftDialog
         isOpen={shiftAddModal}

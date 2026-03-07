@@ -46,6 +46,7 @@ import type {
 } from "@/@types/purchase";
 import { PaymentTypes } from "@/app/constants/payment.types";
 import SellDebetModal from "@/widgets/ui/sellDebet/SellDebetModal";
+import ContragentModal from "@/features/modals/ui/ContragentModal";
 
 type OrderActionType = {
   type: "sale" | "refund" | "purchase";
@@ -56,7 +57,6 @@ type OrderActionType = {
   addNewDraft: any;
   selectedRows?: any;
   setPayModal: (open: boolean) => void;
-  deleteDraft: (ind: number) => void;
   setActivePaymentSelectType: (val: number) => void;
   complateActiveDraft: () => void;
 };
@@ -80,8 +80,10 @@ const OrderActions = ({
   const [selectFiscalized, setSelectFiscalized] =
     useState<FizcalResponsetype | null>(null);
   const [sellDebit, setSellDebit] = useState(false);
+  const [contractorId, setContractorId] = useState<number | null>(null);
 
   const [paymeType, setPaymeType] = useState<number[]>([]);
+  const [openContragentModal, setOpenContragentModal] = useState(false);
 
   const nationalCurrency = useCurrencyStore((store) => store.nationalCurrency);
   const warehouseId = useSettingsStore((s) => s.wareHouseId);
@@ -222,6 +224,7 @@ const OrderActions = ({
       is_approved: true,
       exact_discount: [],
       contractor_id: activeDraft?.contractor_id ?? undefined,
+      comment: activeDraft?.comment ?? "",
       items: [],
       cash_box_id: cashboxData?.length ? cashboxData[0]?.id : null,
     };
@@ -434,14 +437,12 @@ const OrderActions = ({
 
   const onSubmitDebit = (contragentData: {
     contractor_id: number;
-    content: string;
+    comment: string;
   }) => {
     const debit =
       totalAmount -
         Number(activeDraft?.discountAmount ?? 0) -
         totalPaymentAmount || 0;
-
-    console.log(debit, activeDraft);
 
     if (debit > 0) {
       if (activeDraft) {
@@ -449,7 +450,7 @@ const OrderActions = ({
         const updatedDraft = {
           ...activeDraft,
           contractor_id: contragentData.contractor_id,
-          comment: contragentData.content,
+          comment: contragentData.comment,
         };
 
         // 🔹 draft update qilish uchun addNewDraft yoki setActiveDraft funksiyasini chaqirish kerak
@@ -492,17 +493,25 @@ const OrderActions = ({
 
       {sellDebit && (
         <SellDebetModal
-          onCancel={() => setSellDebit(false)}
+          onCancel={() => {
+            setSellDebit(false);
+            setContractorId(null);
+          }}
           onSubmit={onSubmitDebit}
           isOpen={sellDebit}
+          setOpenContragentModal={setOpenContragentModal}
+          contractorId={contractorId}
+          setContractorId={setContractorId}
         />
-        // <Alert
-        //   type="warning"
-        //   content="Оформляется продажа в долг. Оплата будет принята позже. Подтверждаете?"
-        //   title="Продажа в долг"
-        //   onCancel={() => setSellDebit(false)}
-        //   onConfirm={onSubmitDebit}
-        // />
+      )}
+
+      {sellDebit && (
+        <ContragentModal
+          type="add"
+          isOpen={openContragentModal}
+          setIsOpen={setOpenContragentModal}
+          setContractorId={setContractorId}
+        />
       )}
 
       <PaymentModal

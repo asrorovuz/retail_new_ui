@@ -27,6 +27,7 @@ import Footer from "@/widgets/ui/footer/Footer";
 import { Button } from "@/shared/ui/kit";
 import { useNavigate } from "react-router-dom";
 import ViewMark from "@/features/viewMark";
+import PaymentDebtsModal from "@/features/modals/ui/PaymentDebtsModal";
 
 const SalePage = () => {
   const [search, setSearch] = useState<string>("");
@@ -41,6 +42,7 @@ const SalePage = () => {
   const [payModal, setPayModal] = useState(false);
   const [activeSelectPaymetype, setActivePaymentSelectType] =
     useState<number>(1);
+  const [dobtModal, setDebtModal] = useState(false);
 
   const navigate = useNavigate();
 
@@ -162,7 +164,7 @@ const SalePage = () => {
           setExpandedRow={setExpandedRow}
           setExpandedId={setExpandedId}
         />
-        <Footer />
+        <Footer deleteDraft={deleteDraftSale} draft={draftSales} />
       </div>
       <div className="bg-white rounded-2xl p-3">
         <div className="rounded-2xl mb-3 bg-slate-200 p-1">
@@ -174,6 +176,7 @@ const SalePage = () => {
                 debouncedSearch={debouncedSearch}
                 selectedRows={selectedRows}
                 data={data ?? []}
+                setActiveType={setActiveType}
                 setExpandedRow={setExpandedRow}
                 setExpandedId={setExpandedId}
               />
@@ -221,6 +224,15 @@ const SalePage = () => {
                 )}
               >
                 Возвраты
+              </Button>
+              <Button
+                onClick={() => setDebtModal(true)}
+                size="sm"
+                className={classNames(
+                  "flex flex-col justify-center items-center overflow-hidden",
+                )}
+              >
+                Оплатить долг
               </Button>
             </>
           </div>
@@ -314,7 +326,6 @@ const SalePage = () => {
             selectedRows={selectedRows}
             addNewDraft={addDraftSale}
             setPayModal={setPayModal}
-            deleteDraft={deleteDraftSale}
             activeSelectPaymetype={activeSelectPaymetype}
             setActivePaymentSelectType={setActivePaymentSelectType}
             complateActiveDraft={completeActiveDraftSale}
@@ -329,6 +340,8 @@ const SalePage = () => {
           deleteDraftMark={deleteDraftSaleMark}
         />
       ) : null}
+
+      <PaymentDebtsModal dobtModal={dobtModal} setDebitModal={setDebtModal} />
     </div>
   );
 };

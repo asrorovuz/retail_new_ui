@@ -47,3 +47,33 @@ export const register = async (
     data: payload,
   });
 };
+
+export const createContractorApi = async (
+  payload: any,
+): Promise<any> => {
+  return await apiRequest<any>({
+    url: pathServices.auth.contractor,
+    method: "POST",
+    data: payload,
+  });
+};
+
+export const updateContractorApi = async (
+  payload: any,
+  id: number
+): Promise<any> => {
+  return await apiRequest<any>({
+    url: pathServices.auth.updateContractor+id,
+    method: "POST",
+    data: payload,
+  });
+};
+
+export const deleteContractorApi = async (
+  id: number
+): Promise<any> => {
+  return await apiRequest<any>({
+    url: pathServices.auth.deleteContractor+id,
+    method: "POST",
+  });
+};

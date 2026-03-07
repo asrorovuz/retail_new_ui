@@ -14,6 +14,9 @@ type PropsType = {
   type?: "sale" | "refund" | "purchase" | "revision";
   debouncedSearch: string;
   selectedRows?: any;
+  setActiveType: React.Dispatch<
+    React.SetStateAction<"numeric" | "qwerty" | "fullkey">
+  >;
   setExpandedRow?: React.Dispatch<React.SetStateAction<string | null>>;
   setExpandedId?: React.Dispatch<React.SetStateAction<number | null>>;
 };
@@ -23,6 +26,7 @@ const SearchProductTable = ({
   data,
   debouncedSearch,
   selectedRows,
+  setActiveType,
   setExpandedRow,
   setExpandedId,
 }: PropsType) => {
@@ -107,6 +111,7 @@ const SearchProductTable = ({
     update(newItem);
     setExpandedRow?.(null);
     setExpandedId?.(newItem?.productId!);
+    setActiveType("numeric");
   };
 
   return (

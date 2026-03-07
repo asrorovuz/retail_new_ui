@@ -36,15 +36,15 @@ export interface RefundStoreActions {
   addDraftRefund: (payload: DraftRefundSchema) => void;
   activateDraftRefund: (index: number) => void;
   updateDraftRefundItem: (payload: DraftRefundItemSchema) => void;
-  updateDraftRefundDiscount: (discountAmount: number) => void;
+  updateDraftRefundDiscount: (discountAmount: string) => void;
   deleteDraftRefund: (draftRefundIndex: number) => void;
   deleteDraftRefundItem: (draftRefundItemIndex: number) => void;
   completeActiveDraftRefund: () => void;
   //   resetActiveDraftRefund: () => void;
   //   addDraftRefundPaymentAmount: (payload: DraftRefundPayoutAmountSchema) => void;
-  updateDraftRefundPaymentAmounts: (
-    paymentAmounts: DraftRefundPayoutAmountSchema[]
-  ) => void;
+  // updateDraftRefundPaymentAmounts: (
+  //   paymentAmounts: DraftRefundPayoutAmountSchema[]
+  // ) => void;
   addDraftRefundItem: (payload: DraftRefundItemSchema) => void;
   //   incrementDraftRefundItemQuantity: (draftRefundItemIndex: number) => void;
   //   decrementDraftRefundItemQuantity: (draftRefundItemIndex: number) => void;

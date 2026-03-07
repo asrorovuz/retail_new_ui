@@ -112,8 +112,6 @@ const TableHistory = ({
         amount: founded ? founded.amount : 0,
       };
     });
-
-    console.log(items, "kkk");
     
     const payload = {
       id: data?.id,
@@ -407,6 +405,22 @@ const TableHistory = ({
         cell: ({ row }) => {
           const date = row?.original?.date;
           return <div>{new Date(date).toLocaleString()}</div>;
+        },
+      },
+      {
+        id: "comment",
+        accessorKey: "comment",
+        enableSorting: false,
+        enableHiding: false,
+        meta: {
+          cellClassName: "font-bold truncate text-center",
+        },
+        header: () => {
+          return "Комментарий";
+        },
+        cell: ({ row }) => {
+          const comment = row?.original?.comment;
+          return <div className="line-clamp-2 text-ellipsis w-[250px]">{comment}</div>;
         },
       },
       {

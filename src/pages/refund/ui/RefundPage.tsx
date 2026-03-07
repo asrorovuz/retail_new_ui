@@ -3,36 +3,33 @@ import type {
   DraftRefundSchema,
 } from "@/@types/refund";
 import { PaymentTypes } from "@/app/constants/payment.types";
-import { useAuthContext } from "@/app/providers/AuthProvider";
 import { useDraftRefundStore } from "@/app/store/useRefundDraftStore";
-import { useSettingsStore } from "@/app/store/useSettingsStore";
 import {
   useAllProductApi,
   useFindBarcode,
-  // usePriceTypeApi,
 } from "@/entities/products/repository";
 import { useCheckRefundApi } from "@/entities/refund/repository";
 import Cashbox from "@/features/cashbox";
 import FavouriteProduct from "@/features/favourite-product";
-// import { AddProductModal, RefundCheckModal } from "@/features/modals";
+import { RefundCheckModal } from "@/features/modals";
 import OrderActions from "@/features/order-actions";
 import PaymeTypeCards from "@/features/payme-type-cards";
 import PaymentSection from "@/features/payment-section";
 import SaleAndRefunTable from "@/features/sale-refund-table";
 import SearchProduct from "@/features/search-product";
 import SearchProductTable from "@/features/search-product-table";
-// import ViewMark from "@/features/viewMark";
+import ViewMark from "@/features/viewMark";
 import classNames from "@/shared/lib/classNames";
 import eventBus from "@/shared/lib/eventBus";
 import { handleBarcodeScanned } from "@/shared/lib/handleScannedBarcode";
 import { handleScannedProduct } from "@/shared/lib/handleScannedProduct";
 import { showErrorLocalMessage } from "@/shared/lib/showMessage";
 import { useDebounce } from "@/shared/lib/useDebounce";
-import Alert from "@/shared/ui/kit-pro/alert/Alert";
+import { Button } from "@/shared/ui/kit";
 import FormattedNumber from "@/shared/ui/kit-pro/numeric-format/NumericFormat";
 import Footer from "@/widgets/ui/footer/Footer";
 import { useEffect, useState } from "react";
-import { useOutletContext } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const RefundPage = () => {
   const [expandedRow, setExpandedRow] = useState<string | null>(null);
@@ -42,7 +39,6 @@ const RefundPage = () => {
   const [barcode, setBarcode] = useState<string | null>(null);
   const [barcodeMark, setBarcodeMark] = useState("");
   const [mark, setMark] = useState<number | null>(null);
-  const [isOpenAddProduct, setIsOpenAddProduct] = useState(false);
   const [search, setSearch] = useState("");
   const [value, setValue] = useState<string>("0");
   const [payModal, setPayModal] = useState(false);
@@ -56,16 +52,13 @@ const RefundPage = () => {
     isOpen: false,
     ids: [],
   });
-  const [showAlert, setShowAlert] = useState(false);
-  const [activeType, setActiveType] = useState<"numeric" | "qwerty" | "fullkey">("numeric");
+  const [activeType, setActiveType] = useState<
+    "numeric" | "qwerty" | "fullkey"
+  >("numeric");
   const debouncedSearch = useDebounce(search, 500);
-
-  const setIsOpenNavigate =
-    useOutletContext<React.Dispatch<React.SetStateAction<boolean>>>();
-  const { logout } = useAuthContext();
+  const navigate = useNavigate();
 
   const { data } = useAllProductApi(50, 1, debouncedSearch || "");
-  // const { data: productPriceType } = usePriceTypeApi();
   const {
     data: findBarcodeData,
     isSuccess,
@@ -96,13 +89,9 @@ const RefundPage = () => {
   const updateDraftRefundPayout = useDraftRefundStore(
     (store) => store.updateDraftRefundPayout,
   );
-  const updateDraftRefundDiscount = useDraftRefundStore(
-    (store) => store.updateDraftRefundDiscount,
-  );
   const completeActiveDraftRefund = useDraftRefundStore(
     (store) => store.completeActiveDraftRefund,
   );
-  const { settings } = useSettingsStore((s) => s);
   const deleteDraftRefundMark = useDraftRefundStore(
     (store) => store.deleteDraftRefundMark,
   );
@@ -112,7 +101,6 @@ const RefundPage = () => {
 
   const handleRefundCheckInputItem = (selectedIds: number[]) => {
     if (!refundCheckData?.items?.length) return;
-    // 1️⃣ Eski refundni tozalaymiz (faqat yangi boshlangan refund uchun)
     const newDraftRefund: DraftRefundSchema = {
       items: [],
       isActive: true,
@@ -160,12 +148,6 @@ const RefundPage = () => {
   };
 
   useEffect(() => {
-    if (activeSelectPaymetype === 0) {
-      setValue(activeDraft?.discountAmount?.toString() || "0");
-    }
-  }, [activeSelectPaymetype, activeDraft?.discountAmount]);
-
-  useEffect(() => {
     if (!payModal) {
       const onScan = eventBus.on("BARCODE_SCANNED", (code) => {
         if (code && code?.trim().startsWith("*")) {
@@ -186,12 +168,13 @@ const RefundPage = () => {
   }, []);
 
   useEffect(() => {
-    if (isSuccess && !isFetching) {
+    if (isSuccess && !isFetching && !payModal) {
       if (findBarcodeData) {
         handleScannedProduct(
           findBarcodeData,
           "refund",
           setExpandedId,
+          selectedRows,
           barcodeMark,
         );
         setBarcode(null);
@@ -200,15 +183,9 @@ const RefundPage = () => {
   }, [isSuccess, findBarcodeData, isFetching]);
 
   useEffect(() => {
-    if (isError) {
-      if (settings?.enable_create_unknown_product) {
-        setBarcode(barcode);
-        setIsOpenAddProduct(true);
-      } else {
-        showErrorLocalMessage("Товар не найден");
-        setBarcode(null);
-      }
-    }
+    if (!isError || payModal) return;
+    showErrorLocalMessage("Товар не найден");
+    setBarcode(null);
   }, [isError]);
 
   useEffect(() => {
@@ -235,6 +212,7 @@ const RefundPage = () => {
           expendedId={expendedId}
           setActiveTypeKeyboard={setActiveType}
           setExpandedRow={setExpandedRow}
+          setSelectedRows={setSelectedRows}
           setExpandedId={setExpandedId}
           deleteDraftItem={deleteDraftRefundItem}
           updateDraftItemPrice={updateDraftDraftItemPrice}
@@ -247,21 +225,19 @@ const RefundPage = () => {
           setExpandedRow={setExpandedRow}
           setExpandedId={setExpandedId}
         />
-        <Footer
-          setIsOpenNavigate={setIsOpenNavigate}
-          setShowAlert={setShowAlert}
-        />
+        <Footer deleteDraft={deleteDraftRefund} draft={draftRefunds} />
       </div>
       <div className="bg-white rounded-2xl p-3">
         <div className="rounded-2xl mb-3 bg-slate-200 p-1">
-          <SearchProduct pageType="refund" search={search} setActiveType={setActiveType} />
+          <SearchProduct search={search} setActiveType={setActiveType} />
           {activeType === "qwerty" && (
             <>
               <SearchProductTable
-                type="sale"
+                type="refund"
                 debouncedSearch={debouncedSearch}
                 selectedRows={selectedRows}
                 data={data ?? []}
+                setActiveType={setActiveType}
                 setExpandedRow={setExpandedRow}
                 setExpandedId={setExpandedId}
               />
@@ -277,6 +253,39 @@ const RefundPage = () => {
                 activeSelectPaymetype={activeSelectPaymetype}
                 setActivePaymentSelectType={setActivePaymentSelectType}
               />
+            </>
+          </div>
+        )}
+        {activeType === "numeric" && (
+          <div className="rounded-2xl bg-slate-200 mb-3 p-1 flex gap-x-1">
+            <>
+              <Button
+                onClick={() => navigate("/refund-history")}
+                size="sm"
+                className={classNames(
+                  "flex flex-col justify-center items-center overflow-hidden",
+                )}
+              >
+                История
+              </Button>
+              <Button
+                onClick={() => navigate("/products")}
+                size="sm"
+                className={classNames(
+                  "flex flex-col justify-center items-center overflow-hidden",
+                )}
+              >
+                Товары
+              </Button>
+              <Button
+                onClick={() => navigate("/sales")}
+                size="sm"
+                className={classNames(
+                  "flex flex-col justify-center items-center overflow-hidden",
+                )}
+              >
+                Продажи
+              </Button>
             </>
           </div>
         )}
@@ -368,77 +377,11 @@ const RefundPage = () => {
             selectedRows={selectedRows}
             addNewDraft={addDraftRefund}
             setPayModal={setPayModal}
-            deleteDraft={deleteDraftRefund}
             activeSelectPaymetype={activeSelectPaymetype}
             setActivePaymentSelectType={setActivePaymentSelectType}
             complateActiveDraft={completeActiveDraftRefund}
           />
         </div>
-      </div>
-      {showAlert && (
-        <Alert
-          type="warning"
-          title="Выход из системы"
-          content="Вы действительно хотите выйти из системы?"
-          onCancel={() => setShowAlert(false)}
-          onConfirm={() => {
-            logout();
-            setShowAlert(false);
-          }}
-        />
-      )}
-      {/* <div className="bg-white p-3 rounded-2xl w-[320px]">
-        <div className="rounded-2xl mb-2">
-          <SearchProduct search={search} setSearch={setSearch} />
-        </div>
-
-        {!search && !isPending && (
-          <>
-            <PaymeTypeCards
-              type={"refund"}
-              activeDraft={activeDraft}
-              activeSelectPaymetype={activeSelectPaymetype}
-              setActivePaymentSelectType={setActivePaymentSelectType}
-              updateDraftPayment={updateDraftRefundPayout}
-              activeOnlyType={activeOnlyType}
-              setActiveOnlyType={setActiveOnlyType}
-            />
-            <PaymentSection
-              type={"refund"}
-              activeDraft={activeDraft}
-              activeSelectPaymetype={activeSelectPaymetype}
-              value={value}
-              setValue={setValue}
-              updateDraftDiscount={updateDraftRefundDiscount}
-              updateDraftPayment={updateDraftRefundPayout}
-            />
-            <OrderActions
-              type={"refund"}
-              draft={draftRefunds}
-              activeDraft={activeDraft}
-              payModal={payModal}
-              addNewDraft={addDraftRefund}
-              setPayModal={setPayModal}
-              deleteDraft={deleteDraftRefund}
-              updateDraftDiscount={updateDraftRefundDiscount}
-              activeSelectPaymetype={activeSelectPaymetype}
-              setActivePaymentSelectType={setActivePaymentSelectType}
-              complateActiveDraft={completeActiveDraftRefund}
-            />
-          </>
-        )}
-
-        {search && !isPending && (
-          <>
-            <SearchProductTable
-              type="refund"
-              debouncedSearch={debouncedSearch}
-              data={data ?? []}
-              setExpandedRow={setExpandedRow}
-              setExpandedId={setExpandedId}
-            />
-          </>
-        )}
 
         <RefundCheckModal
           loading={isCheckPending}
@@ -446,15 +389,6 @@ const RefundPage = () => {
           setRefundCheckModal={setRefundCheckModal}
           handleRefundCheckInputItem={handleRefundCheckInputItem}
           items={refundCheckData?.items || []}
-        />
-
-        <AddProductModal
-          type={"add"}
-          setBarcode={setBarcode}
-          barcode={barcode}
-          isOpen={isOpenAddProduct}
-          setIsOpen={setIsOpenAddProduct}
-          productPriceType={productPriceType!}
         />
 
         {mark ? (
@@ -465,7 +399,7 @@ const RefundPage = () => {
             deleteDraftMark={deleteDraftRefundMark}
           />
         ) : null}
-      </div> */}
+      </div>
     </div>
   );
 };

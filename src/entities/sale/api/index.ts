@@ -18,10 +18,13 @@ export const fiscalDeviceApi = async (): Promise<FizcalResponsetype[]> => {
   });
 };
 
-export const getAllContractorApi = async (): Promise<FizcalResponsetype[]> => {
+export const getAllContractorApi = async (search: string): Promise<any> => {
   return await apiRequest({
     url: pathServices.sale.getContractorPath,
     method: "GET",
+    params: {
+      name: search
+    }
   });
 };
 
@@ -35,6 +38,14 @@ export const paymentProviderApi = async (): Promise<PaymeProviderType[]> => {
 export const createFiscalizedApi = async (payload: any) => {
   return await apiRequest({
     url: pathServices.sale.createFiscalized,
+    method: "POST",
+    data: payload,
+  });
+};
+
+export const paymentDebtsApi = async (payload: any) => {
+  return await apiRequest({
+    url: pathServices.sale.getPaymentDebts,
     method: "POST",
     data: payload,
   });

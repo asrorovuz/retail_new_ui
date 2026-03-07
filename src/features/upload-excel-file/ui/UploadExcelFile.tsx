@@ -4,7 +4,6 @@ import {
   useCategoryApi,
   useCreateProduct,
   useCreateProductWithExcel,
-  useCreateregister,
   useCurrancyApi,
   useUpdateProduct,
 } from "@/entities/products/repository";
@@ -41,6 +40,7 @@ import { exportToExcel } from "@/shared/lib/arrayToExcelConvert";
 import { handleError } from "@/shared/lib/handleErrorExcel";
 import Empty from "@/shared/ui/kit-pro/empty/Empty";
 import { showMeasurmentName } from "@/shared/lib/showMeausermentName";
+import { useCreateregister } from "@/entities/revision/repository";
 
 interface InitialState {
   rowsCount: number;

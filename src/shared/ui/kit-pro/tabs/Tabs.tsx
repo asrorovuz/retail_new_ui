@@ -4,7 +4,6 @@ import Button from "../../kit/Button";
 import type { DraftSaleSchema } from "@/@types/sale";
 import type { DraftRefundSchema } from "@/@types/refund";
 import type { DraftPurchaseSchema } from "@/@types/purchase";
-import type { RevisionDraft } from "@/app/store/useRevision";
 import type { CashboxPropsType } from "@/features/cashbox/model";
 import { PaymentTypes } from "@/app/constants/payment.types";
 import classNames from "@/shared/lib/classNames";

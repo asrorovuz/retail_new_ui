@@ -28,12 +28,14 @@ export type SettingsStoreInitialState = {
   tableSettings: TableColumnSetting[];
   wareHouseId: null | number;
   activeShift: Shift | null;
+  warhouse: any;
 };
 
 export type SettingsStoreActions = {
   setSettings: (payload: SettingsType | null) => void;
   setTableSettings: (payload: TableColumnSetting[]) => void;
   setWareHouseId: (payload: number) => void;
+  setWareHouse: (payload: any) => void;
   setActiveShift: (payload: Shift | null) => void;
 };
 

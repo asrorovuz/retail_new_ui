@@ -5,8 +5,8 @@ export type ProductFormType = {
   type: "add" | "edit" | "print";
   productId?: number | null;
   isOpen: boolean;
-  catalogCode: string | null;
-  setCatalogCode: (val: string | null) => void;
+  catalogCode?: string | null;
+  setCatalogCode?: (val: string | null) => void;
   pageType?: string | undefined;
   catalogLoading?: boolean;
   setIsOpen: (val: boolean) => void;

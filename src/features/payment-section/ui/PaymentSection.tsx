@@ -207,6 +207,7 @@ const PaymentSection = ({
               size="sm"
               type="button"
               variant="plain"
+              disabled={!["sale"].includes(type)}
               onClick={() => setActivePaymentSelectType(0)}
               className={classNames("w-full", activeSelectPaymetype ? "bg-slate-300 text-slate-700" : "bg-blue-400 !text-white")}
             >

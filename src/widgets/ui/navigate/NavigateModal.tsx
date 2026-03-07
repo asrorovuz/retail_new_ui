@@ -2,7 +2,6 @@ import { Dialog } from "@/shared/ui/kit";
 import { Link, useLocation } from "react-router-dom";
 import {
   MdOutlineAssignmentReturn,
-  MdOutlineHistory,
   MdOutlineInventory2,
   MdOutlineSettings,
   MdOutlineShoppingCart,
