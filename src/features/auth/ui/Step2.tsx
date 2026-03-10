@@ -1,10 +1,18 @@
 import { Controller, useFormContext } from "react-hook-form";
 import { Button, Dialog, FormItem, Input, Select } from "@/shared/ui/kit";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRegisterOrg } from "@/entities/auth/repository";
 import { storeTypeOptions } from "../options";
 
-const Step2 = ({ item, response, nextStep }: { item: any[], response: any, nextStep: any }) => {
+const Step2 = ({
+  item,
+  response,
+  nextStep,
+}: {
+  item: any[];
+  response: any;
+  nextStep: any;
+}) => {
   const { control } = useFormContext();
 
   const [isOpen, setIsOpen] = useState(false);
@@ -35,6 +43,12 @@ const Step2 = ({ item, response, nextStep }: { item: any[], response: any, nextS
       },
     );
   };
+
+  useEffect(() => {
+    if (!item || item.length === 0) {
+      setIsOpen(true);
+    }
+  }, [item]);
 
   return (
     <>
@@ -70,7 +84,12 @@ const Step2 = ({ item, response, nextStep }: { item: any[], response: any, nextS
         + Создать организацию
       </Button>
 
-      <Dialog title={"Создать организацию"} onClose={onClose} isOpen={isOpen}>
+      <Dialog
+        width={"60vw"}
+        title={"Создать организацию"}
+        onClose={onClose}
+        isOpen={isOpen}
+      >
         <FormItem label="Название организации" asterisk>
           <Input
             value={newOrgName}

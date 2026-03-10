@@ -115,6 +115,7 @@ const ProductsPage = () => {
         setFilterParams={setFilterParams}
         setIsAddOpen={setIsAddOpen}
         setIsOpen={setIsOpen}
+        setSearch={setSearch}
         setIsOpenExcel={setIsOpenExcel}
       />
       <ProductTable

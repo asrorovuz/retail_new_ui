@@ -1,5 +1,5 @@
 import SearchProduct from "@/features/search-product";
-import { Button, Drawer, Dropdown, Select } from "@/shared/ui/kit";
+import { Button, Dialog, Dropdown, Select } from "@/shared/ui/kit";
 import {
   artiklOptions,
   barcodeOptions,
@@ -38,6 +38,7 @@ const ProductHeader = ({
   filterParams,
   setActiveType,
   setSearchFocus,
+  setSearch,
   setFilterParams,
   setIsAddOpen,
   setIsOpen,
@@ -80,7 +81,9 @@ const ProductHeader = ({
       <div className="w-[433px] flex items-center gap-x-2">
         <SearchProduct
           search={search}
+          activeType="fullkey"
           setActiveType={setActiveType}
+          setSearch={setSearch}
           setSearchFocus={setSearchFocus}
         />
         {/* Остаток */}
@@ -176,13 +179,16 @@ const ProductHeader = ({
         infoData={infoData}
       />
 
-      <Drawer
+      <Dialog
         onClose={() => setOpenFilter(false)}
         isOpen={openFilter}
+        width={"80vw"}
+        overlayClassName={"!backdrop-filter-none"}
+        onRequestClose={() => setOpenFilter(false)}
         title={"Фильтр"}
       >
-        <div className="flex flex-col gap-4 mb-5">
-          <div className="flex flex-col gap-1">
+        <div className="grid grid-cols-4 gap-4 mb-5">
+          <div className="flex flex-col col-span-1 gap-1">
             <label className="text-sm text-slate-600">Товар</label>
             <Select
               options={isLegalOptions}
@@ -202,7 +208,7 @@ const ProductHeader = ({
             />
           </div>
           {/* Категория */}
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col col-span-1 gap-1">
             <label className="text-sm text-slate-600">Категория</label>
             <Select
               options={categoryOptions}
@@ -224,7 +230,7 @@ const ProductHeader = ({
           </div>
 
           {/* Категория товара */}
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col col-span-2 gap-1">
             <label className="text-sm text-slate-600">Категория товара</label>
             <Select
               options={categoryItemOptions}
@@ -370,7 +376,7 @@ const ProductHeader = ({
           </div>
 
           {/* Saralash */}
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col col-span-2 gap-1">
             <label className="text-sm text-slate-600">Сортировка</label>
 
             <Select
@@ -393,7 +399,10 @@ const ProductHeader = ({
 
           {/* Кирим нархи сотув нархидан каттами */}
           <div className="flex flex-col gap-1">
-            <label className="text-sm text-slate-600">
+            <label
+              title="Закупочная цена выше продажной"
+              className="text-sm text-ellipsis line-clamp-1 text-slate-600"
+            >
               Закупочная цена выше продажной
             </label>
 
@@ -417,15 +426,18 @@ const ProductHeader = ({
               styles={selectStyles}
             />
           </div>
-          <Button
-            size="sm"
-            type="button"
-            onClick={() => setFilterParams(defaultParams)}
-          >
-            Сбросить
-          </Button>
+          <div className="grid col-span-4">
+            <Button
+              size="sm"
+              type="button"
+              variant="solid"
+              onClick={() => setFilterParams(defaultParams)}
+            >
+              Сбросить
+            </Button>
+          </div>
         </div>
-      </Drawer>
+      </Dialog>
     </div>
   );
 };

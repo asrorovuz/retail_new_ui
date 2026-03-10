@@ -52,7 +52,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setIsAuthenticated(true);
       } catch (err) {
         const error = err as AxiosError;
-        console.error("❌ Login error:", error.message);
+        console.log("❌ Login error:", err);
         throw error;
       }
     },

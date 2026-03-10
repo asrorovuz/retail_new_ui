@@ -209,7 +209,12 @@ const PaymentSection = ({
               variant="plain"
               disabled={!["sale"].includes(type)}
               onClick={() => setActivePaymentSelectType(0)}
-              className={classNames("w-full", activeSelectPaymetype ? "bg-slate-300 text-slate-700" : "bg-blue-400 !text-white")}
+              className={classNames(
+                "w-full",
+                activeSelectPaymetype
+                  ? "bg-slate-300 text-slate-700"
+                  : "bg-blue-400 !text-white",
+              )}
             >
               Скидка
             </Button>
@@ -233,7 +238,12 @@ const PaymentSection = ({
           </div>
         </div>
       )}
-      <KeyboardSwitcher onClickNumber={onClickNumber} activeType={activeType} setActiveType={setActiveType} setSearch={setSearch}/>
+      <KeyboardSwitcher
+        onClickNumber={onClickNumber}
+        activeType={activeType}
+        setActiveType={setActiveType}
+        setSearch={setSearch}
+      />
     </>
   );
 };

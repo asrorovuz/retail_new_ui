@@ -1,6 +1,7 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { createContractorApi, deleteContractorApi, fetchAuthStatus, fetchConfirmCode, globalLogin, login, register, registeration, registerOrg, updateContractorApi } from "../api"
 import type { GlobalLogin, LoginPayload, LoginResponse, Organizationtype } from "@/@types/auth/login";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { createContractorApi, deleteContractorApi, fetchAuthStatus, fetchConfirmCode, globalLogin, login, register, registeration, registerOrg, updateContractorApi } from "../api";
+
 
 export const useLogin = () => {
   return useMutation<LoginResponse, Error, LoginPayload>({

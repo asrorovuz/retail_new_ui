@@ -27,6 +27,7 @@ const PaymentDebtsModal = ({
     amount: 0,
     contractor_id: null,
   });
+  const [debts, setDebts] = useState(0);
 
   const { data, isPending } = useContractorApi(dobtModal, "");
   const { mutate, isPending: mutPending } = usePaymentDebtsApi();
@@ -38,6 +39,7 @@ const PaymentDebtsModal = ({
       data?.map((item: any) => ({
         label: item?.name,
         value: item?.id,
+        item: item,
       })) ?? []
     );
   }, [data]);
@@ -49,6 +51,7 @@ const PaymentDebtsModal = ({
       amount: 0,
       contractor_id: null,
     });
+    setDebts(0);
     if (setContragentId) {
       setContragentId(null);
     }
@@ -91,10 +94,22 @@ const PaymentDebtsModal = ({
 
   useEffect(() => {
     if (contractorId) {
+      const selectedContractor = contractorOptions.find(
+        (opt: any) => opt.value === contractorId,
+      )?.item;
+
+      const debts = selectedContractor?.debts
+        ? selectedContractor.debts.reduce(
+            (acc: number, d: any) => acc + (d.amount ?? 0),
+            0,
+          )
+        : 0;
+
       setDebitData((prev: any) => ({
         ...prev,
         contractor_id: contractorId,
       }));
+      setDebts(debts);
     }
   }, [contractorId]);
 
@@ -109,7 +124,7 @@ const PaymentDebtsModal = ({
       <div className="flex flex-col gap-4">
         {/* Qarz miqdori */}
         <div className="text-xl text-slate-800 font-semibold">
-          Долг: <FormattedNumber value={debitData?.amount || 0} scale={2} />
+          Долг: <FormattedNumber value={debts || 0} scale={2} />
         </div>
 
         <FormItem labelClass="mb-1" className="!mb-3" label="Клиент">
@@ -119,17 +134,26 @@ const PaymentDebtsModal = ({
             isLoading={isPending}
             className="w-full bg-white"
             placeholder="Клиент"
+            isDisabled={!!contractorId}
             getOptionLabel={(option) => option?.label || ""}
             getOptionValue={(option) => String(option?.value)}
             value={contractorOptions.find(
               (opt: any) => opt.value === debitData.contractor_id,
             )}
-            onChange={(val) =>
+            onChange={(val) => {
+              const debts = val?.item?.debts
+                ? val.item.debts.reduce(
+                    (acc: number, d: any) => acc + (d.amount ?? 0),
+                    0,
+                  )
+                : 0;
+
               setDebitData((prev) => ({
                 ...prev,
                 contractor_id: val?.value ?? null,
-              }))
-            }
+              }));
+              setDebts(debts);
+            }}
           />
         </FormItem>
 

@@ -19,15 +19,7 @@ AxiosBase.interceptors.request.use(
     }
     return config;
   },
-  (error) => {
-    if (error.response?.status === 401) {
-      sessionStorage.removeItem(TOKEN);
-
-      // login sahifaga redirect
-      window.location.href = "/login";
-    }
-    Promise.reject(error);
-  },
+  (error) => Promise.reject(error),
 );
 
 // IPC wrapper

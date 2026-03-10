@@ -5,7 +5,7 @@ import { Register } from "@/features/auth";
 
 export const PrivateRoute = () => {
   const { isAuthenticated, loading } = useAuthContext();
-
+  
   if (loading) return <Loading />;
 
   // ✅ TO'G'RI: Faqat authentication tekshirish

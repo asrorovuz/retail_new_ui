@@ -5,7 +5,7 @@ import { AiOutlineEnter } from "react-icons/ai";
 import { LuArrowBigUp } from "react-icons/lu";
 import { RiDeleteBack2Line, RiSpace } from "react-icons/ri";
 
-const QuertyKeyboard = ({ setActiveType, setSearch }: any) => {
+const QuertyKeyboard = ({ setActiveType, activeType, setSearch }: any) => {
   const [upperLater, setUpperLater] = useState(false);
   const [lang, setLang] = useState("en");
 
@@ -100,6 +100,8 @@ const QuertyKeyboard = ({ setActiveType, setSearch }: any) => {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      if (activeType !== "querty") return;
+
       // Enter
       if (e.key === "Enter") {
         setActiveType("numeric");
@@ -127,10 +129,10 @@ const QuertyKeyboard = ({ setActiveType, setSearch }: any) => {
 
     window.addEventListener("keydown", handleKeyDown);
 
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [setSearch, setActiveType]);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [activeType]);
+
+  
 
   return (
     <div className="h-[28vh]">

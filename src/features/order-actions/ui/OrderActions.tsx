@@ -511,7 +511,7 @@ const OrderActions = ({
 
   return (
     <div className="flex gap-x-1">
-      {type === "sale" && (
+      {(type === "sale" || type === "purchase") && (
         <Button
           size="sm"
           onClick={() => checkShiftAndRun(() => setSellDebit(true))}

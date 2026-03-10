@@ -1,4 +1,3 @@
-import React from "react";
 import NumericKeyboard from "./NumericKeyboard";
 import QuertyKeyboard from "./QuertyKeyboard";
 import FullKeyboard from "./FullKeyboard";
@@ -25,15 +24,10 @@ export const KeyboardSwitcher: React.FC<KeyboardSwitcherProps> = ({
       )}
 
       {activeType === "qwerty" && (
-        <QuertyKeyboard
-          setActiveType={setActiveType}
-          setSearch={setSearch}
-        />
+        <QuertyKeyboard setActiveType={setActiveType} setSearch={setSearch} />
       )}
 
-      {activeType === "fullkey" && (
-        <FullKeyboard setSearch={setSearch}/>
-      )}
+      {activeType === "fullkey" && <FullKeyboard setSearch={setSearch} />}
     </>
   );
 };

@@ -105,7 +105,7 @@ const RevisyaOperation = () => {
       </div>
       <div className="bg-white rounded-2xl p-3">
         <div className="rounded-2xl mb-3 bg-slate-200 p-1">
-          <SearchProduct search={search} setActiveType={setActiveType} />
+          <SearchProduct search={search} activeType={activeType} setSearch={setSearch} setActiveType={setActiveType} />
           {activeType === "qwerty" && (
             <>
               <SearchProductTable

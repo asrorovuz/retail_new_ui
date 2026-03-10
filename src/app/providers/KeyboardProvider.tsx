@@ -32,11 +32,10 @@ export const KeyboardProvider: React.FC<{ children: React.ReactNode }> = ({
 
   // ✅ Правильный вариант
   const unregisterField = (field?: ActiveField) => {
-    if (!field) return;
-    const inputRef = field.ref;
-    // теперь inputRef можно использовать
-    if (inputRef.current) {
-      // какие-то действия с inputRef.current
+    if (!activeFieldRef.current) return;
+
+    if (!field || activeFieldRef.current.ref === field.ref) {
+      activeFieldRef.current = null;
     }
   };
 
@@ -101,9 +100,12 @@ export const KeyboardProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const blurActiveField = () => {
     const activeField = activeFieldRef.current;
+
     if (activeField?.ref?.current) {
       activeField.ref.current.blur();
     }
+
+    activeFieldRef.current = null;
   };
 
   return (

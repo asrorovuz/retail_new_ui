@@ -11,6 +11,7 @@ import { useOutletContext } from "react-router-dom";
 
 const Footer = ({ deleteDraft, draft }: any) => {
   const [showAlert, setShowAlert] = useState(false);
+   const [showWindow, setShowWindow] = useState(false);
   const [shiftAddModal, setShiftAddModal] = useState(false);
   const [shiftUpdateModal, setShiftUpdateModal] = useState(false);
   const { data, error } = useShiftApi(shiftAddModal || shiftUpdateModal);
@@ -23,6 +24,7 @@ const Footer = ({ deleteDraft, draft }: any) => {
   const onDeleteActivedraft = () => {
     const findIndex = draft?.findIndex((item: any) => item?.isActive);
     deleteDraft(findIndex);
+    setShowWindow(false)
   };
 
   useEffect(() => {
@@ -47,7 +49,7 @@ const Footer = ({ deleteDraft, draft }: any) => {
           variant="default"
           type="button"
           size="sm"
-          onClick={onDeleteActivedraft}
+          onClick={() => setShowWindow(true)}
           className="!text-red-500 h-8 py-0 ring-0 hover:ring-0 active:ring-0 hover:border-red-500 active:border-red-500 active:text-red-600"
         >
           Удалить окно
@@ -90,6 +92,16 @@ const Footer = ({ deleteDraft, draft }: any) => {
             logout();
             setShowAlert(false);
           }}
+        />
+      )}
+
+      {showWindow && (
+        <Alert
+          type="warning"
+          title="Окно кассы"
+          content="Вы действительно хотите закрыть это окно?"
+          onCancel={() => setShowWindow(false)} // Кнопка "Отмена" просто закрывает окно
+          onConfirm={onDeleteActivedraft} // Кнопка "Подтвердить" тоже только закрывает окно
         />
       )}
 
