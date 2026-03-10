@@ -1,9 +1,9 @@
 import { messages } from "@/app/constants/message.request";
 import { useRevisionStore } from "@/app/store/useRevision";
 import {
-  useDeleteRevision,
-  useRevision,
-  useRevisionCount,
+  useDeleteWriteoff,
+  useWriteoff,
+  useWriteoffCount,
 } from "@/entities/revision/repository";
 import classNames from "@/shared/lib/classNames";
 import { showErrorMessage, showSuccessMessage } from "@/shared/lib/showMessage";
@@ -37,7 +37,7 @@ import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { IoTrashOutline } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 
-const RevisiyaPage = () => {
+const WriteOffPage = () => {
   const [pagination, setPagination] = useState({
     pageIndex: 1,
     pageSize: 20,
@@ -48,7 +48,7 @@ const RevisiyaPage = () => {
   const navigate = useNavigate();
 
   const { mutate: deleteMutate, isPending: deletePending } =
-    useDeleteRevision();
+    useDeleteWriteoff();
 
   const { clearDraftRevision } = useRevisionStore((s) => s);
 
@@ -59,12 +59,12 @@ const RevisiyaPage = () => {
     },
   });
 
-  const { data, isPending } = useRevision(
+  const { data, isPending } = useWriteoff(
     pagination.pageSize,
     pagination.pageIndex,
     params,
   );
-  const { data: count } = useRevisionCount(
+  const { data: count } = useWriteoffCount(
     pagination.pageSize,
     pagination.pageIndex,
     params,
@@ -73,7 +73,7 @@ const RevisiyaPage = () => {
   const dateStart = watch("date_start");
   const dateEnd = watch("date_end");
 
-  const onDeleteRevision = () => {
+  const onDeleteWriteoff = () => {
     deleteMutate(itemId, {
       onSuccess() {
         showSuccessMessage(
@@ -137,6 +137,7 @@ const RevisiyaPage = () => {
       {
         accessorKey: "seller",
         header: "Продавец",
+        cell: ({row}) => row.original.employee || "-"
       },
       {
         accessorKey: "employee",
@@ -204,7 +205,7 @@ const RevisiyaPage = () => {
   return (
     <div className="bg-white h-full rounded-2xl p-3">
       <div className="flex justify-between mb-4 items-center">
-        <NavigateButton content="Ревизия" />
+        <NavigateButton content="Списать товар" />
         <div className="flex gap-x-2">
           <Controller
             name="date_start"
@@ -252,7 +253,7 @@ const RevisiyaPage = () => {
             size="sm"
             onClick={() => {
               clearDraftRevision();
-              navigate("/revisiya/operation");
+              navigate("/writeoff/operation");
             }}
           >
             Добавить
@@ -332,7 +333,7 @@ const RevisiyaPage = () => {
         isOpen={isOpenDeleteModal}
         confirmButtonProps={{
           loading: deletePending,
-          onClick: onDeleteRevision,
+          onClick: onDeleteWriteoff,
         }}
         cancelText="Отмена"
         confirmText="Удалить"
@@ -348,4 +349,4 @@ const RevisiyaPage = () => {
   );
 };
 
-export default RevisiyaPage;
+export default WriteOffPage;

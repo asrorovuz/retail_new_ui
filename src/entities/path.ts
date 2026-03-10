@@ -126,6 +126,7 @@ export const pathServices = {
     register: "/api/purchase/register",
     updatePurchasePath: "/api/purchase/update/",
     updatePurchasePricePath: "/api/warehouse-item/update-purchase-price",
+    updateOtherPurchasePricePath: "/api/product/price/update/",
   },
 
   versions: {
@@ -182,6 +183,10 @@ export const pathServices = {
     getRevisionPath: "/api/revision/get",
     getRevisionCountPath: "/api/revision/get/count",
     createRegister: "/api/revision/register",
-    deleteRevisionPath: "/api/revision/delete"
+    deleteRevisionPath: "/api/revision/delete",
+    getWriteoffPath: "/api/write-off/get",
+    getWriteoffCountPath: "/api/write-off/get/count",
+    createWriteoff: "/api/write-off/register",
+    deleteWriteoffPath: "/api/write-off/delete"
   }
 };

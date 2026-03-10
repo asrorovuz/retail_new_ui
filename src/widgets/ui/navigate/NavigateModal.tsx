@@ -83,6 +83,11 @@ const NavigateModal = ({ isOpenNavigate, setIsOpenNavigate }: any) => {
           Ревизия
         </Link>
 
+        <Link className={linkClass} to={"/writeoff/operation"}>
+          <MdAssignment size={20} />
+          Списать товар
+        </Link>
+
         <Link className={linkClass} to={"/settings"}>
           <MdOutlineSettings size={20} />
           Настройки

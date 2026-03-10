@@ -13,6 +13,7 @@ import {
   Select,
   Switcher,
 } from "@/shared/ui/kit";
+import NavigateButton from "@/shared/ui/kit-pro/navigate-button/NavigateButton";
 import { useEffect } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 
@@ -137,9 +138,7 @@ const MainSettingsPage = () => {
 
   return (
     <div className="p-6 rounded-3xl bg-white w-full">
-      <h2 className="text-lg font-semibold text-slate-800 mb-6 border-b pb-4">
-        Общие настройки
-      </h2>
+      <NavigateButton content="Общие настройки" />
 
       <FormProvider {...form}>
         <Form onSubmit={form.handleSubmit(onSubmit)}>

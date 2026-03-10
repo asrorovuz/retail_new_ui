@@ -53,3 +53,55 @@ export const deleteRevisionApi = async (id: number | null): Promise<any> => {
     method: "POST",
   });
 };
+
+export const getWriteoffApi = async (
+  size?: number,
+  index?: number,
+  filterParams?: any,
+): Promise<any> => {
+  const skip = index && size ? (index - 1) * size : 0;
+  return await apiRequest<any>({
+    url: pathServices.revisions.getWriteoffPath,
+    method: "GET",
+    params: {
+      limit: size ?? 20,
+      skip,
+      ...filterParams,
+    },
+  });
+};
+
+export const getWriteoffCountApi = async (
+  size?: number,
+  index?: number,
+  filterParams?: any,
+): Promise<any> => {
+  const skip = index && size ? (index - 1) * size : 0;
+  return await apiRequest<any>({
+    url: pathServices.revisions.getWriteoffCountPath,
+    method: "GET",
+    params: {
+      limit: size ?? 20,
+      skip,
+      ...filterParams,
+    },
+  });
+};
+
+export const createWriteoffApi = async (
+  payload: RegisterType,
+): Promise<any> => {
+  return await apiRequest<any>({
+    url: pathServices.revisions.createWriteoff,
+    method: "POST",
+    data: payload,
+  });
+};
+
+
+export const deleteWriteoffApi = async (id: number | null): Promise<any> => {
+  return await apiRequest<any>({
+    url: `${pathServices.revisions.deleteWriteoffPath}/${id}`,
+    method: "POST",
+  });
+};

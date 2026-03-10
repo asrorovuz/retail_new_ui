@@ -8,11 +8,10 @@ import {
   useFindBarcode,
 } from "@/entities/products/repository";
 import Cashbox from "@/features/cashbox";
-import FavouriteProduct from "@/features/favourite-product";
 import OrderActions from "@/features/order-actions";
 import PaymeTypeCards from "@/features/payme-type-cards";
 import PaymentSection from "@/features/payment-section";
-import SaleAndRefunTable from "@/features/sale-refund-table";
+import PurchaseTable from "@/features/sale-refund-table/ui/PurchaseTable";
 import SearchProduct from "@/features/search-product";
 import SearchProductTable from "@/features/search-product-table";
 import ViewMark from "@/features/viewMark";
@@ -43,6 +42,7 @@ const PurchasePrice = () => {
   const [activeSelectPaymetype, setActivePaymentSelectType] =
     useState<number>(1);
   const [search, setSearch] = useState("");
+  
   const debouncedSearch = useDebounce(search, 500);
   const navigate = useNavigate();
 
@@ -123,7 +123,7 @@ const PurchasePrice = () => {
   }, [isSuccess, findBarcodeData, isFetching]);
 
   useEffect(() => {
-    if (!isError && payModal) return;
+    if (!isError || payModal) return;
     showErrorLocalMessage("Товар не найден");
     setBarcode(null);
   }, [isError]);
@@ -137,7 +137,7 @@ const PurchasePrice = () => {
           addNewDraft={addDraftPurchase}
           activateDraft={activateDraftPurchase}
         />
-        <SaleAndRefunTable
+        <PurchaseTable
           type="purchase"
           setMark={setMark}
           draft={draftPurchases}
@@ -153,12 +153,6 @@ const PurchasePrice = () => {
           updateDraftItemPrice={updateDraftPurchaseItemPrice}
           updateDraftItemTotalPrice={updateDraftPurchaseItemTotalPrice}
           updateDraftItemQuantity={updateDraftPurchaseItemQuantity}
-        />
-        <FavouriteProduct
-          type="purchase"
-          selectedRows={selectedRows}
-          setExpandedRow={setExpandedRow}
-          setExpandedId={setExpandedId}
         />
         <Footer deleteDraft={deleteDraftPurchase} draft={draftPurchases} />
       </div>

@@ -11,7 +11,11 @@ import { useSettingsStore } from "@/app/store/useSettingsStore";
 import { PaymentModal, PrinterModal } from "@/widgets";
 import { useCurrencyStore } from "@/app/store/useCurrencyStore";
 import type { PaymentAmount } from "@/@types/common";
-import { useCashboxApi, useCreatePrintApi } from "@/entities/init/repository";
+import {
+  useCashboxApi,
+  useCreatePrintApi,
+  useCreateShiftApi,
+} from "@/entities/init/repository";
 import {
   useCreateFiscalizedApi,
   useFescalDeviceApi,
@@ -47,6 +51,7 @@ import type {
 import { PaymentTypes } from "@/app/constants/payment.types";
 import SellDebetModal from "@/widgets/ui/sellDebet/SellDebetModal";
 import ContragentModal from "@/features/modals/ui/ContragentModal";
+import Alert from "@/shared/ui/kit-pro/alert/Alert";
 
 type OrderActionType = {
   type: "sale" | "refund" | "purchase";
@@ -81,12 +86,14 @@ const OrderActions = ({
     useState<FizcalResponsetype | null>(null);
   const [sellDebit, setSellDebit] = useState(false);
   const [contractorId, setContractorId] = useState<number | null>(null);
-
+  const [shiftAlert, setShiftAlert] = useState(false);
+  const [pendingAction, setPendingAction] = useState<(() => void) | null>(null);
   const [paymeType, setPaymeType] = useState<number[]>([]);
   const [openContragentModal, setOpenContragentModal] = useState(false);
 
   const nationalCurrency = useCurrencyStore((store) => store.nationalCurrency);
   const warehouseId = useSettingsStore((s) => s.wareHouseId);
+  const { activeShift, setActiveShift } = useSettingsStore();
 
   const { data: cashboxData } = useCashboxApi();
   const { data: paymentData = [] } = usePaymentProviderApi();
@@ -102,6 +109,7 @@ const OrderActions = ({
   const { mutate: updatePurchase } = useUpdatePurchasedApi();
   const { mutate: updateRefund } = useUpdateRefundApi();
   const { mutate: updateSale } = useUpdateSellApi();
+  const { mutate: createShiftMutate } = useCreateShiftApi();
 
   const addDrafts = () => {
     const newDraftSale:
@@ -120,6 +128,39 @@ const OrderActions = ({
     };
 
     addNewDraft(newDraftSale);
+  };
+
+  const checkShiftAndRun = (callback: () => void) => {
+    if (activeShift) {
+      callback();
+      return;
+    }
+
+    setPendingAction(() => callback);
+    setShiftAlert(true);
+  };
+
+  const handleConfirmShift = () => {
+    setShiftAlert(false);
+
+    createShiftMutate(cashboxData?.[0]?.id ?? null, {
+      onSuccess: (res) => {
+        setActiveShift(res);
+
+        showSuccessMessage(
+          messages.uz.SUCCESS_CREATE_SHIFT,
+          messages.ru.SUCCESS_CREATE_SHIFT,
+        );
+
+        if (pendingAction) {
+          pendingAction(); // oldingi action davom etadi
+          setPendingAction(null);
+        }
+      },
+      onError: (error) => {
+        showErrorMessage(error);
+      },
+    });
   };
 
   const netPrice = useMemo<number>(() => {
@@ -473,7 +514,7 @@ const OrderActions = ({
       {type === "sale" && (
         <Button
           size="sm"
-          onClick={() => setSellDebit(true)}
+          onClick={() => checkShiftAndRun(() => setSellDebit(true))}
           variant="plain"
           disabled={!activeDraft?.items?.length}
           className="w-full text-base font-medium text-slate-800 bg-white"
@@ -483,7 +524,7 @@ const OrderActions = ({
       )}
       <Button
         size="sm"
-        onClick={onSubmit}
+        onClick={() => checkShiftAndRun(onSubmit)}
         variant="solid"
         disabled={!activeDraft?.items?.length}
         className="w-full text-base font-medium"
@@ -558,6 +599,19 @@ const OrderActions = ({
         handleCancelFiscalization={handleCancelFiscalization}
         handleCancelPayment={handleCancelPayment}
       />
+
+      {shiftAlert && (
+        <Alert
+          type="info"
+          title="Смена закрыта"
+          content="Для совершения продажи необходимо открыть смену. Открыть сейчас?"
+          onCancel={() => {
+            setShiftAlert(false);
+            setPendingAction(null);
+          }}
+          onConfirm={handleConfirmShift}
+        />
+      )}
     </div>
   );
 };

@@ -21,6 +21,7 @@ const initialState = {
       },
     },
   ],
+  products: [],
 };
 
 export const useDraftPurchaseStore = create<
@@ -31,7 +32,7 @@ export const useDraftPurchaseStore = create<
     addDraftPurchase: (draftPurchase) =>
       set((state) => {
         const activePurchase = state.draftPurchases.find(
-          (s: DraftPurchaseSchema) => s.isActive
+          (s: DraftPurchaseSchema) => s.isActive,
         );
         if (activePurchase) {
           activePurchase.isActive = false;
@@ -41,7 +42,7 @@ export const useDraftPurchaseStore = create<
 
         if (draftPurchase.id) {
           const existIndex = state.draftPurchases.findIndex(
-            (s: DraftPurchaseSchema) => s.id === draftPurchase.id
+            (s: DraftPurchaseSchema) => s.id === draftPurchase.id,
           );
           if (existIndex !== -1) {
             state.draftPurchases[existIndex].isActive = true;
@@ -89,7 +90,7 @@ export const useDraftPurchaseStore = create<
           state.draftPurchases = [newDraftPurchase];
         } else {
           let items = state.draftPurchases.filter(
-            (_, index) => index !== draftPurchaseIndex
+            (_, index) => index !== draftPurchaseIndex,
           );
           if (draftPurchaseIndex === 0) items[0].isActive = true;
           else items[draftPurchaseIndex - 1].isActive = true;
@@ -112,7 +113,7 @@ export const useDraftPurchaseStore = create<
               const draftPurchaseItemIndex = activePurchase.items.findIndex(
                 (i) => {
                   return i.productId === draftItem.productId;
-                }
+                },
               );
               if (draftPurchaseItemIndex >= 0) {
                 activePurchase.items.splice(draftPurchaseItemIndex, 1);
@@ -131,7 +132,7 @@ export const useDraftPurchaseStore = create<
       }),
     updateDraftPurchaseItemQuantity: (
       draftPurchaseItemIndex: number,
-      quantity: number
+      quantity: number,
     ) =>
       set((state) => {
         const activePurchase = state.draftPurchases.find((s) => s.isActive);
@@ -141,7 +142,7 @@ export const useDraftPurchaseStore = create<
       }),
     updateDraftPurchaseItemPrice: (
       draftPurchaseItemIndex: number,
-      priceAmount: number
+      priceAmount: number,
     ) =>
       set((state) => {
         const activePurchase = state.draftPurchases.find((s) => s.isActive);
@@ -152,7 +153,7 @@ export const useDraftPurchaseStore = create<
       }),
     updateDraftPurchaseItemTotalPrice: (
       draftPurchaseItemIndex: number,
-      totalPrice: number
+      totalPrice: number,
     ) =>
       set((state) => {
         const activePurchase = state.draftPurchases.find((s) => s.isActive);
@@ -177,7 +178,7 @@ export const useDraftPurchaseStore = create<
     completeActiveDraftPurchase: () =>
       set((state) => {
         const activePurchaseIndex = state.draftPurchases.findIndex(
-          (s) => s.isActive
+          (s) => s.isActive,
         );
 
         if (state.draftPurchases.length > 1) {
@@ -237,7 +238,7 @@ export const useDraftPurchaseStore = create<
               existPurchaseItem.marks ??= [];
 
               const isExist = existPurchaseItem.marks.some(
-                (existing) => existing === mark
+                (existing) => existing === mark,
               );
 
               if (!isExist) {
@@ -262,5 +263,36 @@ export const useDraftPurchaseStore = create<
           }
         }
       }),
-  }))
+    addProducts: (product: any) =>
+      set((state: any) => {
+        const exist = state.products.some(
+          (p: any) => p.productId === product.id,
+        );
+
+        if (exist) return;
+
+        state.products.push({
+          productId: product.id,
+          prices: product.prices?.map((el: any) => {
+            return {
+              ...el,
+              amount: String(el?.amount),
+            };
+          }),
+        });
+      }),
+    updatePrices: (product: any, amount: string) =>
+      set((state: any) => ({
+        products: state.products.map((p: any) => {
+          if (p.productId !== product.id) return p;
+
+          return {
+            ...p,
+            prices: p.prices.map((price: any) =>
+              price.id === product.price_id ? { ...price, amount } : price,
+            ),
+          };
+        }),
+      })),
+  })),
 );

@@ -26,3 +26,11 @@ export const updatePurchasePriceApi = async (payload: any) => {
     data: payload,
   });
 };
+
+export const updateOtherPurchasePriceApi = async (payload: any, id: number) => {
+  return await apiRequest({
+    url: pathServices.purchase.updateOtherPurchasePricePath + id,
+    method: "POST",
+    data: payload,
+  });
+};

@@ -65,10 +65,13 @@ export interface PurchaseStoreActions {
     payout: DraftPurchasePayoutAmountSchema[],
   ) => void;
   deleteDraftPurchaseMark: (item: { productId: number; index: number }) => void;
+  addProducts: (product: any) => void;
+  updatePrices: (product: any, amount: string) => void;
 }
 
 export interface PurchaseStoreInitialState {
   draftPurchases: DraftPurchaseSchema[];
+  products: any[];
 }
 
 type PurchasePaymentModel = {

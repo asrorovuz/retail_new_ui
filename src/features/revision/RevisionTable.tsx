@@ -34,6 +34,7 @@ type PropsType = {
 };
 
 const RevisionTable = ({
+  type,
   activeDraft,
   expendedId,
   setExpandedId,
@@ -204,6 +205,7 @@ const RevisionTable = ({
                   <Select
                     size="sm"
                     className="h-8 w-[71px] text-xs"
+                    isDisabled={type === "writeof"}
                     options={[
                       { value: false, label: "Розн. цена" },
                       { value: true, label: "Опт. цена" },

@@ -2,7 +2,9 @@ import type { PaymentAmount } from "@/@types/common";
 import type { DraftRefundSchema } from "@/@types/refund";
 import type { DraftSaleSchema } from "@/@types/sale";
 import { GetPaymentLabel } from "@/app/constants/payment.types";
+import { useDraftPurchaseStore } from "@/app/store/usePurchaseDraftStore";
 import { useSettingsStore } from "@/app/store/useSettingsStore";
+import { useOtherUpdatePurchasedPriceApi } from "@/entities/purchase/repository";
 import { Button, Dialog } from "@/shared/ui/kit";
 import FormattedNumber from "@/shared/ui/kit-pro/numeric-format/NumericFormat";
 import SuccessSvg from "@/shared/ui/svg/SuccessSvg";
@@ -38,6 +40,41 @@ const PaymentModal = ({
   const [loading, setIsLoading] = useState(false);
   const [loadingChek, setIsLoadingChek] = useState(false);
   const { settings } = useSettingsStore((s) => s);
+  const products = useDraftPurchaseStore((s) => s.products);
+
+  const { mutateAsync: mutateUpdatePrice } = useOtherUpdatePurchasedPriceApi();
+
+  const updateProductPriceData = async () => {
+    try {
+      setIsLoading(true);
+
+      const requests: Promise<any>[] = [];
+
+      products?.forEach((item: any) => {
+        item?.prices?.forEach((price: any) => {
+          const payload = {
+            amount: Number(price?.amount ?? 0),
+            currency_code: price?.currency?.code,
+            price_id: price?.id,
+            price_type_id: price?.product_price_type?.id,
+          };
+
+          requests.push(
+            mutateUpdatePrice({
+              payload,
+              id: item?.productId,
+            }),
+          );
+        });
+      });
+
+      await Promise.all(requests);
+    } catch (error) {
+      console.error("Price update error:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const onSubmitPayment = (typeButton: boolean): void => {
     if (typeButton) {
@@ -65,6 +102,9 @@ const PaymentModal = ({
         setIsLoadingChek(false);
         setIsLoading(false);
         setActivePaymentSelectType(1);
+        if (type === "purchase") {
+          updateProductPriceData();
+        }
         if (success) {
           if (type === "sale") {
             setIsOpenPayment(false);
@@ -162,15 +202,17 @@ const PaymentModal = ({
         >
           Чек
         </Button>
-        {type !== "refund" && <Button
-          // loading={loading}
-          // onClick={onSubmitPayment}
-          disabled={true}
-          variant="default"
-          className="w-full"
-        >
-          Кэшбэк
-        </Button>}
+        {type !== "refund" && (
+          <Button
+            // loading={loading}
+            // onClick={onSubmitPayment}
+            disabled={true}
+            variant="default"
+            className="w-full"
+          >
+            Кэшбэк
+          </Button>
+        )}
       </div>
       <Button
         loading={loading}

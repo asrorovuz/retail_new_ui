@@ -1,5 +1,10 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { registerPurchaseApi, updatePurchaseApi, updatePurchasePriceApi } from "../api";
+import {
+  registerPurchaseApi,
+  updateOtherPurchasePriceApi,
+  updatePurchaseApi,
+  updatePurchasePriceApi,
+} from "../api";
 import type { RegisterPurchaseModel } from "@/@types/purchase";
 
 export const useRegisterPurchaseApi = () => {
@@ -10,16 +15,27 @@ export const useRegisterPurchaseApi = () => {
 
 export const useUpdatePurchasedApi = () => {
   return useMutation({
-    mutationFn: ({id, payload}: any) => updatePurchaseApi(id, payload),
+    mutationFn: ({ id, payload }: any) => updatePurchaseApi(id, payload),
   });
 };
 
 export const useUpdatePurchasedPriceApi = () => {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (payload: any) => updatePurchasePriceApi(payload),
     onSuccess: () => {
-      queryClient.invalidateQueries({queryKey: ["all-products"]})
-    }
+      queryClient.invalidateQueries({ queryKey: ["all-products"] });
+    },
+  });
+};
+
+export const useOtherUpdatePurchasedPriceApi = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ payload, id }: { payload: any; id: number }) =>
+      updateOtherPurchasePriceApi(payload, id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["all-products"] });
+    },
   });
 };

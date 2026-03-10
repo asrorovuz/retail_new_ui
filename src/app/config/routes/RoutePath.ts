@@ -31,3 +31,9 @@ export const RevisyaPage = lazy(() => import("@/pages/revisiya"));
 export const RevisyaOperationPage = lazy(
   () => import("@/pages/revisiya/ui/RevisyaOperation"),
 );
+export const WriteOffPage = lazy(
+  () => import("@/pages/write-off/WriteOffPage"),
+);
+export const WriteOffOperationPage = lazy(
+  () => import("@/pages/write-off/WriteOffOperation"),
+);

@@ -3,6 +3,7 @@ import { useDraftPurchaseStore } from "@/app/store/usePurchaseDraftStore";
 import { useDraftRefundStore } from "@/app/store/useRefundDraftStore";
 import { useRevisionStore } from "@/app/store/useRevision";
 import { useDraftSaleStore } from "@/app/store/useSaleDraftStore";
+import { useWriteOfStore } from "@/app/store/useWriteofStroe";
 import classNames from "@/shared/lib/classNames";
 import { highlightText } from "@/shared/lib/hightLightText";
 import { showMeasurmentName } from "@/shared/lib/showMeausermentName";
@@ -11,7 +12,7 @@ import type { PriceType } from "@/widgets/ui/favourite-card/FavouriteCard";
 
 type PropsType = {
   data: Product[] | [];
-  type?: "sale" | "refund" | "purchase" | "revision";
+  type?: "sale" | "refund" | "purchase" | "revision" | "writeof";
   debouncedSearch: string;
   selectedRows?: any;
   setActiveType: React.Dispatch<
@@ -32,8 +33,9 @@ const SearchProductTable = ({
 }: PropsType) => {
   const { updateDraftSaleItem, draftSales } = useDraftSaleStore();
   const { updateDraftRefundItem, draftRefunds } = useDraftRefundStore();
-  const { updateDraftPurchaseItem, draftPurchases } = useDraftPurchaseStore();
+  const { updateDraftPurchaseItem, draftPurchases, addProducts } = useDraftPurchaseStore();
   const { updateDraftRevisionItem, draftRevisions } = useRevisionStore();
+  const { updateDraftWriteOfItem, draftWriteOfs } = useWriteOfStore()
 
   const activeDraftSale = draftSales?.find((s) => s.isActive);
   const activeDraftRefund = draftRefunds?.find((s) => s.isActive);
@@ -48,6 +50,8 @@ const SearchProductTable = ({
       return { active: activeDraftPurchase, update: updateDraftPurchaseItem };
     if (type === "revision")
       return { active: draftRevisions[0], update: updateDraftRevisionItem };
+    if(type === "writeof")
+      return {active: draftWriteOfs[0], update: updateDraftWriteOfItem}
     return { active: null, update: () => {} };
   };
 
@@ -79,7 +83,11 @@ const SearchProductTable = ({
 
     let newItem: any; // 🔹 let bilan tashqarida e'lon qilamiz
 
-    if (type === "revision") {
+    if(type === "purchase"){
+      addProducts(item)
+    }
+
+    if (type === "revision" || type === "writeof") {
       newItem = {
         productId: item?.id,
         productName: item?.name,
