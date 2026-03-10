@@ -19,7 +19,15 @@ AxiosBase.interceptors.request.use(
     }
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => {
+    if (error.response?.status === 401) {
+      sessionStorage.removeItem(TOKEN);
+
+      // login sahifaga redirect
+      window.location.href = "/login";
+    }
+    Promise.reject(error);
+  },
 );
 
 // IPC wrapper
@@ -37,20 +45,6 @@ export const ipcFetch = async <T>(request: {
     throw new Error("Astilectron is not available");
   }
   const token = sessionStorage.getItem(TOKEN) || "";
-
-  // let url = request.url;
-  // if (request.params && Object.keys(request.params).length) {
-  //   const query = new URLSearchParams(
-  //     Object.entries(request.params)
-  //       .filter(([_, v]) => v !== undefined && v !== null && v !== "")
-  //       .reduce((acc, [k, v]) => {
-  //         acc[k] = String(v);
-  //         return acc;
-  //       }, {} as Record<string, string>)
-  //   ).toString();
-
-  //   url += `?${query}`;
-  // }
 
   return new Promise<T>((resolve, reject) => {
     window?.astilectron!.sendMessage!(
@@ -82,6 +76,13 @@ export const ipcFetch = async <T>(request: {
               result = data; // fallback
             }
           }
+
+          if (status_code === 401) {
+            sessionStorage.removeItem(TOKEN);
+            window.location.href = "/login";
+            return reject("Unauthorized");
+          }
+
           if (status_code >= 400) {
             return reject(result || "Unknown error");
           }
@@ -89,7 +90,7 @@ export const ipcFetch = async <T>(request: {
         } catch (err) {
           reject(err);
         }
-      }
+      },
     );
   });
 };

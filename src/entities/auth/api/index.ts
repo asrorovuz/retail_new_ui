@@ -16,6 +16,17 @@ export const fetchAuthStatus = async (): Promise<StatusResponse> => {
   });
 };
 
+export const fetchConfirmCode = async (code: string): Promise<any> => {
+  return await apiRequest<any>({
+    url: pathServices.auth.confirmCode,
+    data: {
+      username: code
+    },
+    method: "POST",
+  });
+};
+
+
 // 🔹 Login
 export const login = async (payload: LoginPayload): Promise<LoginResponse> => {
   return await apiRequest<LoginResponse>({
@@ -75,5 +86,34 @@ export const deleteContractorApi = async (
   return await apiRequest<any>({
     url: pathServices.auth.deleteContractor+id,
     method: "POST",
+  });
+};
+export const registeration = async (
+  payload: any
+): Promise<any> => {
+  return await apiRequest<any>({
+    url: pathServices.auth.registeration,
+    method: "POST",
+    data: payload,
+  });
+};
+
+export const registerOrg = async (
+  payload: any
+): Promise<any> => {
+  return await apiRequest<any>({
+    url: pathServices.auth.registerOrgPath,
+    method: "POST",
+    data: payload,
+  });
+};
+
+export const registerOrgLocal = async (
+  payload: any
+): Promise<any> => {
+  return await apiRequest<any>({
+    url: pathServices.auth.registerOrgLocalPath,
+    method: "POST",
+    data: payload,
   });
 };

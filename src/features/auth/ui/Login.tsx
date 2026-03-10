@@ -7,6 +7,7 @@ import type { LoginPayload } from "@/@types/auth/login";
 import { useState, useEffect, useRef } from "react";
 import { showErrorMessage, showSuccessMessage } from "@/shared/lib/showMessage";
 import { messages } from "@/app/constants/message.request";
+import PhoneInput from "@/shared/ui/kit-pro/phone-input/PhoneInput";
 
 type OutletContextType = {
   refetch: any;
@@ -29,7 +30,7 @@ const Login = () => {
       await login(formData);
       showSuccessMessage(
         messages.uz.SUCCESS_MESSAGE,
-        messages.ru.SUCCESS_MESSAGE
+        messages.ru.SUCCESS_MESSAGE,
       );
       navigate("/sales");
     } catch (err: any) {
@@ -78,17 +79,27 @@ const Login = () => {
             <Controller
               name="username"
               control={form.control}
-              rules={{ required: "Введите имя пользователя" }}
+              rules={{
+                required: "Поле телефона обязательно",
+                minLength: {
+                  value: 12,
+                  message: "Введите полный номер телефона",
+                },
+              }}
               render={({ field, fieldState }) => (
                 <FormItem
-                  label="Имя"
+                  label="Телефон"
                   labelClass="text-gray-700 text-base font-medium"
                   className="mb-6"
                   errorClassName="text-red-500"
                   invalid={!!fieldState.error}
                   errorMessage={fieldState.error?.message}
                 >
-                  <Input {...field} placeholder="Имя пользовательства" />
+                  <PhoneInput
+                    {...field}
+                    phone
+                    placeholder="+998 90 123 45 67"
+                  />
                 </FormItem>
               )}
             />
