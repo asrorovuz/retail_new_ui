@@ -47,6 +47,7 @@ interface SearchProductProps {
   setSearch: (val: string) => void;
   setActiveType: (type: "numeric" | "qwerty" | "fullkey") => void;
   setSearchFocus?: (val: boolean) => void;
+  placeholder?: string;
 }
 
 const SearchProduct = ({
@@ -55,6 +56,7 @@ const SearchProduct = ({
   setSearch,
   setActiveType,
   setSearchFocus,
+  placeholder
 }: SearchProductProps) => {
   const { registerField, unregisterField } = useKeyboard();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -92,7 +94,7 @@ const SearchProduct = ({
       size="sm"
       onFocus={onFocusedSearch}
       onBlur={onBlurSearch}
-      placeholder="Поиск по любому товару"
+      placeholder={placeholder ?? "Поиск по любому товару"}
     />
   );
 };

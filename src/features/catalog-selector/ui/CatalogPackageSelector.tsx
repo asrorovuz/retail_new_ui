@@ -49,7 +49,7 @@ const CatalogPackageSelector = ({
 
     // value code bo'lsa, option ichidan topamiz
     if (value) {
-      const found = selectOption.find((opt) => opt.value === value);
+      const found = selectOption.find((opt) => +opt.value === +value);
       setSelectedOption(found || selectOption[0] || null);
       return;
     }
@@ -81,7 +81,6 @@ const CatalogPackageSelector = ({
       onChange={handleChange}
       getOptionLabel={(option: any) => option.label}
       getOptionValue={(option: any) => option.value}
-      isClearable
       className={width}
       size="sm"
       menuPortalTarget={document.body}

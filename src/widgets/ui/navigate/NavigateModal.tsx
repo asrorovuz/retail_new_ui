@@ -9,6 +9,7 @@ import {
   MdOutlinePointOfSale,
   MdOutlinePeopleOutline,
   MdAssignment,
+  MdBarChart,
 } from "react-icons/md";
 import { useEffect } from "react";
 
@@ -83,9 +84,9 @@ const NavigateModal = ({ isOpenNavigate, setIsOpenNavigate }: any) => {
           Ревизия
         </Link>
 
-        <Link className={linkClass} to={"/writeoff/operation"}>
-          <MdAssignment size={20} />
-          Списать товар
+        <Link className={linkClass} to={"/report"}>
+          <MdBarChart size={20} />
+          Отчёт
         </Link>
 
         <Link className={linkClass} to={"/settings"}>

@@ -106,6 +106,6 @@ export const apiRequest = async <T>(request: {
     data: request.data,
     responseType: request.responseType || "json",
   });
-
+  
   return response.data;
 };

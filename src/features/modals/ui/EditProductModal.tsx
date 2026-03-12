@@ -23,7 +23,6 @@ const EditProductModal: FC<ProductTableProps & EXtraPropsType> = ({
   barcode,
   productPriceType,
   setIsOpen,
-  
   isOpen,
   productId,
   setProductId,

@@ -22,6 +22,7 @@ import {
   RevisyaOperationPage,
   WriteOffPage,
   WriteOffOperationPage,
+  ReportPage,
 } from "./RoutePath";
 import { PrivateRoute, PublicRoute } from "./PrivateRoute";
 import Counterparty from "@/pages/counterparty";
@@ -82,6 +83,7 @@ export const AppRouter = () => (
               path="/writeoff/operation"
               element={<WriteOffOperationPage />}
             />
+            <Route path="/report" element={<ReportPage />} />
           </Route>
         </Route>
 

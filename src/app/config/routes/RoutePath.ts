@@ -37,3 +37,4 @@ export const WriteOffPage = lazy(
 export const WriteOffOperationPage = lazy(
   () => import("@/pages/write-off/WriteOffOperation"),
 );
+export const ReportPage = lazy(() => import("@/pages/report"));

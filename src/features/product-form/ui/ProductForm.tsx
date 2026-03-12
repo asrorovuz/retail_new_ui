@@ -112,8 +112,8 @@ const ProductForm: FC<ProductFormType> = ({
     if (setProductId) {
       setProductId(null);
     }
-    if(setCatalogCode){
-      setCatalogCode(null)
+    if (setCatalogCode) {
+      setCatalogCode(null);
     }
   };
 
@@ -376,11 +376,18 @@ const ProductForm: FC<ProductFormType> = ({
       data: catalogItem,
     });
 
+    
     // PACKAGE ni ham set qilish
     if (catalogItem?.packages?.length) {
       setPackageNames(catalogItem.packages); // state ga packageNames set qilinadi
-      setValue("package_code", catalogItem.packages[0]?.code || null);
-      setValue("package", catalogItem.packages[0] || null);
+
+      const selectedPackage =
+        catalogItem.package_names.find(
+          (p: any) => p.code === defaultValue?.package_code,
+        ) || catalogItem.packages[0];
+
+      setValue("package_code", selectedPackage?.code || null);
+      setValue("package", selectedPackage || null);
     }
 
     isCatalogApplied.current = true;

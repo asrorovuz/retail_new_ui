@@ -91,6 +91,8 @@ const CatalogSelector = ({
 
     const valToFind = typeof value === "object" ? value.value : value;
     const found = options.find((opt) => opt.value === valToFind);
+    console.log(typeof value, typeof value?.value, options);
+    
 
     if (found) {
       setSelected(found);
