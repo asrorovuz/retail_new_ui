@@ -80,10 +80,6 @@ const AddMoreProducts = ({
     }
   }, [isOpen]);
 
-  const addProduct = (append: any) => {
-    append(createEmptyProduct());
-  };
-
   const removeProduct = (index: number) => {
     setProducts((prev) =>
       prev.length === 1
@@ -118,7 +114,7 @@ const AddMoreProducts = ({
             setBarcode={setBarcode}
             catalogData={catalogData}
             onRemove={removeProduct}
-            addProduct={addProduct}
+            // addProduct={addProduct}
             setProducts={setProducts}
             createEmptyProduct={createEmptyProduct}
           />
