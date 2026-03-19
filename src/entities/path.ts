@@ -168,6 +168,7 @@ export const pathServices = {
   },
 
   history: {
+    sellTransferPath: "/api/report/period/get",
     getEmployePath: "/api/employee/get",
     getContragentPath: "/api/contractor/get",
     getSellPath: "/api/sale/get",

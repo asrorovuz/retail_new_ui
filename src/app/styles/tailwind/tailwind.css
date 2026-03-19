@@ -59,45 +59,45 @@
 
 
 	body {
-		@apply text-gray-500 text-sm dark:text-gray-400 bg-gray-100 dark:bg-gray-950 leading-normal font-medium;
+		@apply text-slate-500 text-sm dark:text-slate-400 bg-slate-100 dark:bg-slate-950 leading-normal font-medium;
 		-webkit-font-smoothing: antialiased;
 	}
 
 	h1,
 	.h1 {
-		@apply text-4xl font-bold text-gray-900 dark:text-gray-100;
+		@apply text-4xl font-bold text-slate-900 dark:text-slate-100;
 	}
 
 	h2,
 	.h2 {
-		@apply text-3xl font-bold text-gray-900 dark:text-gray-100;
+		@apply text-3xl font-bold text-slate-900 dark:text-slate-100;
 	}
 
 	h3,
 	.h3 {
-		@apply text-2xl font-bold text-gray-900 dark:text-gray-100;
+		@apply text-2xl font-bold text-slate-900 dark:text-slate-100;
 	}
 
 	h4,
 	.h4 {
-		@apply text-xl font-bold text-gray-900 dark:text-gray-100;
+		@apply text-xl font-bold text-slate-900 dark:text-slate-100;
 	}
 
 	h5,
 	.h5 {
-		@apply text-lg font-bold text-gray-900 dark:text-gray-100;
+		@apply text-lg font-bold text-slate-900 dark:text-slate-100;
 	}
 
 	h6,
 	.h6 {
-		@apply text-base font-semibold text-gray-900 dark:text-gray-100;
+		@apply text-base font-semibold text-slate-900 dark:text-slate-100;
 	}
 
 	hr {
-		@apply border-gray-200 dark:border-gray-600;
+		@apply border-slate-200 dark:border-slate-600;
 	}
 
 	.heading-text {
-		@apply text-gray-900 dark:text-gray-100;
+		@apply text-slate-900 dark:text-slate-100;
 	}
 }

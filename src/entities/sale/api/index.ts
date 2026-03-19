@@ -28,6 +28,14 @@ export const getAllContractorApi = async (search: string): Promise<any> => {
   });
 };
 
+export const getTransferApi = async (params: any): Promise<any> => {
+  return await apiRequest({
+    url: pathServices.history.sellTransferPath,
+    method: "GET",
+    params
+  });
+};
+
 export const paymentProviderApi = async (): Promise<PaymeProviderType[]> => {
   return await apiRequest({
     url: pathServices.sale.getPaymentPath,

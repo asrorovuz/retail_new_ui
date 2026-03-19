@@ -89,6 +89,11 @@ const NavigateModal = ({ isOpenNavigate, setIsOpenNavigate }: any) => {
           Отчёт
         </Link>
 
+        <Link className={linkClass} to={"/period-report"}>
+          <MdBarChart size={20} />
+          Отчет за период
+        </Link>
+
         <Link className={linkClass} to={"/settings"}>
           <MdOutlineSettings size={20} />
           Настройки

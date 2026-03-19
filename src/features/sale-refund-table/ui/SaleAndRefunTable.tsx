@@ -308,6 +308,7 @@ const SaleAndRefunTable = ({
                   type="number"
                   space={false}
                   autoFocus={true}
+                  readOnly
                   numberMode={
                     currentItem?.productPackageName === "шт" ? "int" : "float"
                   }
@@ -469,6 +470,7 @@ const SaleAndRefunTable = ({
                     size="md"
                     type="number"
                     className="!w-[125px] h-8"
+                    readOnly
                     autoFocus={true}
                     space={false}
                     numberMode={
@@ -528,6 +530,7 @@ const SaleAndRefunTable = ({
                   size="sm"
                   type="number"
                   space={false}
+                  readOnly
                   autoFocus
                   className="!w-[145px] h-8"
                   value={currentItem?.totalAmount}

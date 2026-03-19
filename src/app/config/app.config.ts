@@ -9,18 +9,18 @@ export const queryConfig = {
       retry: 2,                           // errorRetryCount
       retryDelay: () => 5000, // errorRetryInterval
       onError: (error: any) => {
-        console.log(error, "hierror");
+        // console.log(error, "hierror");
         
         if (error?.response?.status === 401 || error?.code === 401) {
           sessionStorage.removeItem("token"); 
           window.location.href = "/register"; 
         }
-        console.error("React Query Error:", error);
+        // console.error("React Query Error:", error);
       },
     },
     mutations: {
       onError: (error: any) => {
-        console.error("Mutation Error:", error);
+        // console.error("Mutation Error:", error);
         if (error?.response?.status === 401 || error?.code === 401) {
           sessionStorage.removeItem("token");
           window.location.href = "/register";

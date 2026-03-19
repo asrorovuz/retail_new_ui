@@ -92,6 +92,7 @@ const SearchProduct = ({
       ref={inputRef}
       value={search ?? ""}
       size="sm"
+      readOnly
       onFocus={onFocusedSearch}
       onBlur={onBlurSearch}
       placeholder={placeholder ?? "Поиск по любому товару"}

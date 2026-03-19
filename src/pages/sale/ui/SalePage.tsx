@@ -327,6 +327,7 @@ const SalePage = () => {
             addNewDraft={addDraftSale}
             setPayModal={setPayModal}
             activeSelectPaymetype={activeSelectPaymetype}
+            updateDraftSaleDiscount={updateDraftSaleDiscount}
             setActivePaymentSelectType={setActivePaymentSelectType}
             complateActiveDraft={completeActiveDraftSale}
           />

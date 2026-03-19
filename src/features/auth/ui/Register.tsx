@@ -36,10 +36,6 @@ const Register = () => {
   const { mutate: registerOrgLocalMutate, isPending: localOrgPending } =
     useRegisterOrgLocal();
 
-  // const { mutate: globalLogin, isPending: globalLoginPending } =
-  //   useGlobalLogin();
-  // const { mutate: register, isPending: registerLoading } = useRegister();
-
   const form = useForm({
     defaultValues: {
       name: "",
@@ -151,78 +147,6 @@ const Register = () => {
       navigate("/login");
     }
   };
-  // const onSubmit = (values: any) => {
-  //   if (step === 1) {
-  //     if (timeoutRef.current) {
-  //       clearTimeout(timeoutRef.current);
-  //     }
-
-  //     timeoutRef.current = setTimeout(() => {
-  //       onErrors({ error_timeout: true });
-  //     }, 90_000); // 1.5 min
-
-  //     confirmCode(values?.username, {
-  //       onSuccess(res: any) {
-  //         setIsOpenCode(true);
-  //         registerationMutate(
-  //           {
-  //             name: values?.name,
-  //             username: values?.username,
-  //             password: values?.password,
-  //             referral_agent_code: values?.referral_agent_code,
-  //             region_code: values?.region_code,
-  //             district_code: values?.district_code,
-  //             confirm_ticket: res?.confirm_ticket,
-  //             confirm_code: code,
-  //           },
-  //           {
-  //             onSuccess(res) {
-  //               if (timeoutRef.current) {
-  //                 clearTimeout(timeoutRef.current);
-  //                 timeoutRef.current = null;
-  //               }
-  //               if (!res?.token) {
-  //                 onErrors({ error_timeout: true });
-  //                 return;
-  //               }
-  //               setResponse(res);
-  //               nextStep();
-  //             },
-  //             onError(err) {
-  //               if (timeoutRef.current) {
-  //                 clearTimeout(timeoutRef.current);
-  //                 timeoutRef.current = null;
-  //               }
-  //               onErrors(err);
-  //             },
-  //           },
-  //         );
-  //       },
-  //       onError(error) {
-  //         showErrorMessage(error);
-  //       },
-  //     });
-  //   }
-
-  //   if (step === 2) {
-  //     register(
-  //       { ...values, token: response?.token },
-  //       {
-  //         onSuccess() {
-  //           nextStep();
-  //         },
-  //         onError(err) {
-  //           onErrors(err);
-  //         },
-  //       },
-  //     );
-  //   }
-
-  //   if (step === 3) {
-  //     refetch();
-  //     navigate("/login");
-  //   }
-  // };
 
   return (
     <div className="w-full max-w-lg bg-white rounded-lg p-6 shadow-sm">
