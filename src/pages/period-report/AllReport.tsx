@@ -15,9 +15,6 @@ import Empty from "@/shared/ui/kit-pro/empty/Empty";
 import { useColumns } from "./table/table";
 
 const AllReport = ({ data }: { data: any }) => {
-    const reduceSum = (items?: { amount: number }[]) =>
-        items?.reduce((acc, item) => acc + (item?.amount || 0), 0) || 0;
-
     const table1 = useReactTable({
         data: data?.overall_period_report?.sales_items_summary || [],
         columns: useColumns(1),
@@ -59,10 +56,11 @@ const AllReport = ({ data }: { data: any }) => {
                                 <span className="text-xs">Прибыль</span>
                                 <span className="text-base font-medium text-slate-800">
                                     <FormattedNumber
-                                        value={reduceSum(
+                                        value={
                                             data?.overall_period_report
-                                                .sales_profit_by_purchase_price,
-                                        )}
+                                                ?.sales_profit_by_purchase_price?.[0]
+                                                ?.amount ?? 0
+                                        }
                                     />
                                 </span>
                             </div>
@@ -70,10 +68,11 @@ const AllReport = ({ data }: { data: any }) => {
                                 <span className="text-xs">Долг</span>
                                 <span className="text-base font-medium text-slate-800">
                                     <FormattedNumber
-                                        value={reduceSum(
+                                        value={
                                             data?.overall_period_report
-                                                .sales_net_price,
-                                        )}
+                                                ?.debts_net_price?.[0].amount ??
+                                            0
+                                        }
                                     />
                                 </span>
                             </div>
@@ -81,10 +80,11 @@ const AllReport = ({ data }: { data: any }) => {
                                 <span className="text-xs">Продажи</span>
                                 <span className="text-base font-medium text-slate-800">
                                     <FormattedNumber
-                                        value={reduceSum(
+                                        value={
                                             data?.overall_period_report
-                                                .debts_net_price,
-                                        )}
+                                                ?.sales_net_price?.[0].amount ??
+                                            0
+                                        }
                                     />
                                 </span>
                             </div>
@@ -92,10 +92,11 @@ const AllReport = ({ data }: { data: any }) => {
                                 <span className="text-xs">Скидка</span>
                                 <span className="text-base font-medium text-slate-800">
                                     <FormattedNumber
-                                        value={reduceSum(
+                                        value={
                                             data?.overall_period_report
-                                                .overall_discounts,
-                                        )}
+                                                ?.overall_discounts?.[0]
+                                                .amount ?? 0
+                                        }
                                     />
                                 </span>
                             </div>
@@ -110,23 +111,23 @@ const AllReport = ({ data }: { data: any }) => {
                                 <span className="text-xs">Приходы</span>
                                 <span className="text-base font-medium text-slate-800">
                                     <FormattedNumber
-                                        value={reduceSum(
+                                        value={
                                             data?.overall_period_report
-                                                .purchases_net_price,
-                                        )}
+                                                ?.purchases_net_price?.[0]
+                                                ?.amount ?? 0
+                                        }
                                     />
                                 </span>
                             </div>
                             <div className="p-4 bg-slate-200 rounded-md flex flex-col gap-y-0.5">
-                                <span className="text-xs">
-                                    Возврат от клиента
-                                </span>
+                                <span className="text-xs">Возврат</span>
                                 <span className="text-base font-medium text-slate-800">
                                     <FormattedNumber
-                                        value={reduceSum(
+                                        value={
                                             data?.overall_period_report
-                                                .refunds_net_price,
-                                        )}
+                                                ?.refunds_net_price?.[0]
+                                                .amount ?? 0
+                                        }
                                     />
                                 </span>
                             </div>
@@ -136,10 +137,11 @@ const AllReport = ({ data }: { data: any }) => {
                                 </span>
                                 <span className="text-base font-medium text-slate-800">
                                     <FormattedNumber
-                                        value={reduceSum(
+                                        value={
                                             data?.overall_period_report
-                                                .return_purchases_net_price,
-                                        )}
+                                                ?.return_purchases_net_price?.[0]
+                                                .amount ?? 0
+                                        }
                                     />
                                 </span>
                             </div>
@@ -154,23 +156,23 @@ const AllReport = ({ data }: { data: any }) => {
                                 <span className="text-xs">Оплата</span>
                                 <span className="text-base font-medium text-slate-800">
                                     <FormattedNumber
-                                        value={reduceSum(
+                                        value={
                                             data?.overall_period_report
-                                                .payments_net_price,
-                                        )}
+                                                ?.payments_net_price?.[0]
+                                                ?.amount ?? 0
+                                        }
                                     />
                                 </span>
                             </div>
                             <div className="p-4 bg-slate-200 rounded-md flex flex-col gap-y-0.5">
-                                <span className="text-xs">
-                                    Расходный платеж
-                                </span>
+                                <span className="text-xs">Выплата</span>
                                 <span className="text-base font-medium text-slate-800">
                                     <FormattedNumber
-                                        value={reduceSum(
+                                        value={
                                             data?.overall_period_report
-                                                .payouts_net_price,
-                                        )}
+                                                ?.payouts_net_price?.[0]
+                                                .amount ?? 0
+                                        }
                                     />
                                 </span>
                             </div>
@@ -178,9 +180,10 @@ const AllReport = ({ data }: { data: any }) => {
                                 <span className="text-xs">Общие расходы</span>
                                 <span className="text-base font-medium text-slate-800">
                                     <FormattedNumber
-                                        value={reduceSum(
-                                            data?.cash_box_expenses,
-                                        )}
+                                        value={
+                                            data?.cash_box_expenses?.[0]
+                                                ?.amount ?? 0
+                                        }
                                     />
                                 </span>
                             </div>
@@ -297,7 +300,8 @@ const AllReport = ({ data }: { data: any }) => {
                                             <Td
                                                 className="!py-20"
                                                 colSpan={
-                                                    table1.getAllColumns().length
+                                                    table1.getAllColumns()
+                                                        .length
                                                 }
                                             >
                                                 <Empty
@@ -343,9 +347,6 @@ const AllReport = ({ data }: { data: any }) => {
                                                                         .columnDef
                                                                         .meta
                                                                         ?.headerClassName,
-                                                                    // ind
-                                                                    //     ? "text-right"
-                                                                    //     : "text-left",
                                                                 )}
                                                             >
                                                                 {flexRender(
@@ -377,10 +378,6 @@ const AllReport = ({ data }: { data: any }) => {
                                                             oddEven
                                                                 ? "bg-slate-200"
                                                                 : "bg-white",
-                                                            // expandedRow?.toString() ===
-                                                            //     row.id &&
-                                                            //     "text-slate-900",
-                                                            // "!h-max cursor-pointer",
                                                         )}
                                                     >
                                                         {row
@@ -419,7 +416,8 @@ const AllReport = ({ data }: { data: any }) => {
                                             <Td
                                                 className="!py-20"
                                                 colSpan={
-                                                    table2.getAllColumns().length
+                                                    table2.getAllColumns()
+                                                        .length
                                                 }
                                             >
                                                 <Empty
@@ -541,7 +539,8 @@ const AllReport = ({ data }: { data: any }) => {
                                             <Td
                                                 className="!py-20"
                                                 colSpan={
-                                                    table3.getAllColumns().length
+                                                    table3.getAllColumns()
+                                                        .length
                                                 }
                                             >
                                                 <Empty
@@ -663,7 +662,8 @@ const AllReport = ({ data }: { data: any }) => {
                                             <Td
                                                 className="!py-20"
                                                 colSpan={
-                                                    table4.getAllColumns().length
+                                                    table4.getAllColumns()
+                                                        .length
                                                 }
                                             >
                                                 <Empty

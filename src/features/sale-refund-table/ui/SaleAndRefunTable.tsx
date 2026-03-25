@@ -266,7 +266,7 @@ const SaleAndRefunTable = ({
                 ""
               )}
 
-              {type === "sale" && activeDraft?.discountAmount ? (
+              {type === "sale" && Number(activeDraft?.discountAmount) ? (
                 <div className="flex justify-end gap-x-2 items-center px-2 py-2.5">
                   <div className="text-sm font-medium text-slate-500">
                     Со скидкой:{" "}
@@ -297,7 +297,7 @@ const SaleAndRefunTable = ({
             <div
               className={classNames(
                 expandedRow && activeDraft?.items?.length
-                  ? "flex items-center justify-between gap-x-2"
+                  ? "flex items-center justify-between gap-x-1"
                   : "hidden",
                 `py-2 px-1 bg-slate-200 border-t border-slate-200`,
               )}
@@ -308,7 +308,6 @@ const SaleAndRefunTable = ({
                   type="number"
                   space={false}
                   autoFocus={true}
-                  readOnly
                   numberMode={
                     currentItem?.productPackageName === "шт" ? "int" : "float"
                   }
@@ -446,7 +445,7 @@ const SaleAndRefunTable = ({
                     const minusButton = (
                       <Button
                         variant="solid"
-                        className="w-8 h-8 p-2 flex items-center justify-center !bg-white hover:bg-slate-100 rounded-lg active:!bg-slate-200 text-slate-800"
+                        className="w-10 h-8 flex items-center justify-center !bg-white hover:bg-slate-100 rounded-lg active:!bg-slate-200 text-slate-800"
                         onClick={decrease}
                       >
                         -
@@ -470,7 +469,7 @@ const SaleAndRefunTable = ({
                     size="md"
                     type="number"
                     className="!w-[125px] h-8"
-                    readOnly
+                
                     autoFocus={true}
                     space={false}
                     numberMode={
@@ -516,7 +515,7 @@ const SaleAndRefunTable = ({
                   <Button
                     variant="solid"
                     className={classNames(
-                      "w-8 h-8 p-2 flex items-center justify-center !bg-white hover:bg-slate-100 rounded-lg active:!bg-slate-200 text-slate-800",
+                      "w-10 h-8 flex items-center justify-center !bg-white hover:bg-slate-100 rounded-lg active:!bg-slate-200 text-slate-800",
                     )}
                     onClick={increase}
                   >
@@ -530,7 +529,7 @@ const SaleAndRefunTable = ({
                   size="sm"
                   type="number"
                   space={false}
-                  readOnly
+                  
                   autoFocus
                   className="!w-[145px] h-8"
                   value={currentItem?.totalAmount}

@@ -349,13 +349,13 @@ const OrderActions = ({
 
                         // Debt
                         paymentObject.debt_states.push({
-                            amount: saleAndRefundPayment.amount,
+                            amount: Number(saleAndRefundPayment.amount),
                             currency_code: nationalCurrency?.code,
                         });
 
                         // Cash-box
                         paymentObject.cash_box_states.push({
-                            amount: saleAndRefundPayment.amount,
+                            amount: Number(saleAndRefundPayment.amount),
                             currency_code: nationalCurrency?.code,
                             type: saleAndRefundPayment.paymentType,
                         });

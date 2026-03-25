@@ -71,6 +71,7 @@ const SellDebetModal = ({
           <Select
             options={contractorOptions}
             size="sm"
+            isSearchable={false}
             isLoading={isPending}
             className="w-full bg-white"
             placeholder="Клиент"

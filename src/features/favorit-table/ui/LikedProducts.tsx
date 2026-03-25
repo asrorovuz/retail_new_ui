@@ -82,7 +82,7 @@ const LikedProducts = () => {
         <div className="mb-5">
           <div className="mb-3">
             <Select
-              isSearchable={true}
+              isSearchable={false}
               isLoading={isPending}
               isClearable={true}
               placeholder="Выберите товар из списка"

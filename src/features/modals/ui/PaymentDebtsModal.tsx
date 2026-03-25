@@ -8,6 +8,7 @@ import {
 import { showErrorMessage, showSuccessMessage } from "@/shared/lib/showMessage";
 import { Button, Dialog, FormItem, Input, Select } from "@/shared/ui/kit";
 import FormattedNumber from "@/shared/ui/kit-pro/numeric-format/NumericFormat";
+import FullKeyboard from "@/widgets/ui/keyboard/FullKeyboard";
 import dayjs from "dayjs";
 import { useEffect, useMemo, useState } from "react";
 
@@ -118,10 +119,10 @@ const PaymentDebtsModal = ({
       onRequestClose={onCloseDebitModal}
       onClose={onCloseDebitModal}
       isOpen={dobtModal}
-      width={"40vw"}
+      width={"60vw"}
       title={"Погасить долг"}
     >
-      <div className="flex flex-col gap-4">
+      <div className="flex h-[40vh] flex-col gap-4 overflow-y-auto">
         {/* Qarz miqdori */}
         <div className="text-xl text-slate-800 font-semibold">
           Долг: <FormattedNumber value={debts || 0} scale={2} />
@@ -134,6 +135,7 @@ const PaymentDebtsModal = ({
             isLoading={isPending}
             className="w-full bg-white"
             placeholder="Клиент"
+            isSearchable={false}
             isDisabled={!!contractorId}
             getOptionLabel={(option) => option?.label || ""}
             getOptionValue={(option) => String(option?.value)}
@@ -162,6 +164,8 @@ const PaymentDebtsModal = ({
             type="number"
             value={debitData.amount}
             size="sm"
+            space={false}
+            inputMode="none"
             onChange={(e) =>
               setDebitData((prev) => ({
                 ...prev,
@@ -178,6 +182,7 @@ const PaymentDebtsModal = ({
             placeholder="Скоро будет доступно"
             // placeholder="Введите комментарий"
             disabled
+            inputMode="none"
             className="w-full h-[80px] border border-slate-300 rounded-lg p-1 outline-blue-400 resize-none"
             onChange={(e) =>
               setDebitData((prev) => ({ ...prev, notes: e.target.value }))
@@ -186,6 +191,7 @@ const PaymentDebtsModal = ({
         </FormItem>
 
         {/* Tugmalar */}
+      </div>
         <div className="flex justify-end gap-2 mt-4">
           <Button
             type="button"
@@ -205,7 +211,7 @@ const PaymentDebtsModal = ({
             Оплатить
           </Button>
         </div>
-      </div>
+      <FullKeyboard/>
     </Dialog>
   );
 };

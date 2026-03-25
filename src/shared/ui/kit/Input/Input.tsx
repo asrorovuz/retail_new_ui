@@ -278,7 +278,7 @@ const Input = (props: InputProps) => {
     onFocus: handleFocus,
     onBlur: handleBlur,
     autoFocus,
-    inputMode: type === "number" ? "decimal" : undefined,
+    inputMode: "none",
     ...rest,
   };
 

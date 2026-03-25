@@ -234,6 +234,7 @@ const Counterparty = () => {
         <Input
           value={search ?? ""}
           size="sm"
+          inputMode="none"
           className="max-w-[332px]"
           onFocus={() => setSearchFocus(true)}
           onBlur={() => setSearchFocus(false)}

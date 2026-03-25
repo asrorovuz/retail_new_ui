@@ -1,4 +1,5 @@
 import classNames from "@/shared/lib/classNames";
+import { truncateText } from "@/shared/lib/truncateText";
 import { Table } from "@/shared/ui/kit";
 import FormattedNumber from "@/shared/ui/kit-pro/numeric-format/NumericFormat";
 import TBody from "@/shared/ui/kit/Table/TBody";
@@ -13,62 +14,60 @@ import {
     type ColumnDef,
 } from "@tanstack/react-table";
 
-const reduceSum = (items?: { amount: number }[]) =>
-    items?.reduce((acc, item) => acc + (item?.amount || 0), 0) || 0;
-
 const columns: ColumnDef<any>[] = [
     {
-        header: "№",
-        accessorFn: (_row: any, index: number) => index + 1,
-        meta: {
-            headerClassName: "text-center w-12",
-            bodyCellClassName: "text-center",
-        },
+        accessorKey: "index",
+        header: () => (
+            <div className="text-xs text-left font-medium text-slate-900">
+                №
+            </div>
+        ),
+        cell: ({ row }) => <div>{row.index + 1}</div>,
     },
     {
-        header: "Наименование продукта",
-        accessorKey: "mahsulot",
-        meta: {
-            headerClassName: "text-left pl-4 font-medium",
-            bodyCellClassName: "text-left pl-4",
-        },
-        cell: ({ row }) => row?.original?.name,
+        header: () => (
+            <div className="text-xs text-left font-medium text-slate-900">
+                Название продукта
+            </div>
+        ),
+        accessorKey: "name",
+        cell: ({ row }) => (
+            <span>{truncateText(row.original.name, 20, 20)}</span>
+        ),
     },
     {
         header: "Продажа",
         columns: [
             {
-                header: "Количество",
-                accessorKey: "soni",
-                meta: {
-                    headerClassName: "text-center min-w-[90px]",
-                    bodyCellClassName: "text-center",
-                },
+                header: () => (
+                    <div className="text-xs text-left font-medium text-slate-900">
+                        Количество
+                    </div>
+                ),
+                accessorKey: "quantity",
                 cell: ({ row }) => (
                     <FormattedNumber value={row?.original?.quantity} />
                 ),
             },
             {
-                header: "Цена",
-                accessorKey: "narxi",
-                meta: {
-                    headerClassName: "text-right min-w-[110px]",
-                    bodyCellClassName: "text-right pr-4",
-                },
+                header: () => (
+                    <div className="text-xs text-left font-medium text-slate-900">
+                        Цена
+                    </div>
+                ),
+                accessorKey: "price",
                 cell: ({ row }) => (
-                    <FormattedNumber value={row?.original?.net_price} />
+                    <FormattedNumber
+                        value={row?.original?.net_price?.[0]?.amount || 0}
+                    />
                 ),
             },
             {
                 header: "Сумма",
                 accessorKey: "summasi",
-                meta: {
-                    headerClassName: "text-right min-w-[140px]",
-                    bodyCellClassName: "text-right pr-4 font-medium",
-                },
                 cell: ({ row }) => (
                     <FormattedNumber
-                        value={reduceSum(row?.original?.net_price)}
+                        value={row?.original?.net_price?.[0]?.amount || 0}
                     />
                 ),
             },
@@ -79,23 +78,25 @@ const columns: ColumnDef<any>[] = [
         columns: [
             {
                 header: "Цена",
-                accessorKey: "kirimNarxi",
-                cell: ({ getValue }) =>
-                    (getValue() as number)?.toLocaleString("ru-RU"),
-                meta: {
-                    headerClassName: "text-right min-w-[110px]",
-                    bodyCellClassName: "text-right pr-4",
-                },
+                accessorKey: "receiptSum",
+                cell: ({ row }) => (
+                    <FormattedNumber
+                        value={
+                            row?.original?.purchase_net_price?.[0]?.amount || 0
+                        }
+                    />
+                ),
             },
             {
                 header: "Сумма",
                 accessorKey: "kirimSummasi",
-                cell: ({ getValue }) =>
-                    (getValue() as number)?.toLocaleString("ru-RU"),
-                meta: {
-                    headerClassName: "text-right min-w-[140px]",
-                    bodyCellClassName: "text-right pr-4 font-medium",
-                },
+                cell: ({ row }) => (
+                    <FormattedNumber
+                        value={
+                            row?.original?.purchase_net_price?.[0]?.amount || 0
+                        }
+                    />
+                ),
             },
         ],
     },
@@ -105,40 +106,43 @@ const columns: ColumnDef<any>[] = [
             {
                 header: "С единицы",
                 accessorKey: "foydaBittadan",
-                cell: ({ getValue }) =>
-                    (getValue() as number)?.toLocaleString("ru-RU"),
-                meta: {
-                    headerClassName: "text-right min-w-[110px]",
-                    bodyCellClassName: "text-right pr-4",
-                },
+                cell: ({ row }) => (
+                    <FormattedNumber
+                        value={
+                            row?.original?.purchase_net_price?.[0]?.amount || 0
+                        }
+                    />
+                ),
             },
             {
                 header: "Общая",
                 accessorKey: "foydaUmumiy",
-                cell: ({ getValue }) =>
-                    (getValue() as number)?.toLocaleString("ru-RU"),
-                meta: {
-                    headerClassName: "text-right min-w-[140px]",
-                    bodyCellClassName:
-                        "text-right pr-4 font-medium text-green-700",
-                },
+                cell: ({ row }) => (
+                    <FormattedNumber
+                        value={
+                            row?.original?.purchase_net_price?.[0]?.amount || 0
+                        }
+                    />
+                ),
             },
         ],
     },
     {
         header: "Остаток",
         accessorKey: "qoldiq",
-        cell: ({ getValue }) => (getValue() as number)?.toLocaleString("ru-RU"),
-        meta: {
-            headerClassName: "text-center min-w-[100px]",
-            bodyCellClassName: "text-center font-medium",
-        },
+        cell: ({ row }) => (
+            <FormattedNumber
+                value={row?.original?.purchase_net_price?.[0]?.amount || 0}
+            />
+        ),
     },
 ];
 
 export default function ProductReport({ data }: any) {
+    const salesItemsSummary = data?.overall_period_report?.sales_items_summary;
+
     const table = useReactTable({
-        data: data?.overall_period_report?.sales_items_summary || [],
+        data: salesItemsSummary || [],
         columns,
         getCoreRowModel: getCoreRowModel(),
     });

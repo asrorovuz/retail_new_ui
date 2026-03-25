@@ -74,11 +74,13 @@ const PaymeTypeCards = ({
         return (
           <Button
             key={payment.paymentType}
+            variant="plain"
             disabled={type === "revision" || (type === "refund" && index > 0)}
             onClick={() => onSetType(payment.paymentType)}
             className={classNames(
-              "flex flex-col justify-center items-center overflow-hidden h-[50px]",
+              "flex flex-col justify-center items-center overflow-hidden h-[50px] bg-white",
               isActive && "bg-blue-50",
+              +payment?.amount > 0 && !isActive && "bg-green-100"
             )}
           >
             <img

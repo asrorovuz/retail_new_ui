@@ -5,29 +5,26 @@ import { useMemo } from "react";
 
 // columns funksiyasi, tashqaridan num qiymati qabul qiladi
 export const useColumns = (num: number) => {
-    const reduceSum = (original: any) =>
-        original?.reduce(
-            (acc: number, item: any) => acc + (item?.amount || 0),
-            0,
-        ) || 0;
-
     const columns = useMemo<ColumnDef<any>[]>(() => {
         const baseColumns: ColumnDef<any>[] = [
             {
                 id: "index",
+                size: 60, // 🔥 MUHIM
+                minSize: 60,
+                maxSize: 60,
                 header: () => (
-                    <div className="text-xs font-medium text-slate-900 w-10">
+                    <div className="text-xs text-left font-medium text-slate-900">
                         №
                     </div>
                 ),
-                cell: ({ row }) => <div className="w-10">{row.index + 1}</div>,
+                cell: ({ row }) => <div>{row.index + 1}</div>,
             },
         ];
 
         if (num === 1) {
             baseColumns.push({
                 header: () => (
-                    <div className="text-xs font-medium text-slate-900">
+                    <div className="text-xs text-left font-medium text-slate-900">
                         Название продукта
                     </div>
                 ),
@@ -39,24 +36,29 @@ export const useColumns = (num: number) => {
             });
             baseColumns.push({
                 header: () => (
-                    <div className="text-xs font-medium text-slate-900">
-                        Сумма
+                    <div className="text-xs text-left font-medium text-slate-900">
+                        Прибыль
                     </div>
                 ),
                 accessorKey: "amount",
-                cell: ({ row }) => (
-                    <FormattedNumber
-                        value={reduceSum(row.original?.profit_by_purchase_price?.[0]?.amount)}
-                        scale={2}
-                    />
-                ),
+                cell: ({ row }) => {
+                    return (
+                        <FormattedNumber
+                            value={
+                                row?.original?.profit_by_purchase_price?.[0]
+                                    ?.amount ?? 0
+                            }
+                            scale={2}
+                        />
+                    );
+                },
             });
         }
 
         if (num === 2) {
             baseColumns.push({
                 header: () => (
-                    <div className="text-xs font-medium text-slate-900">
+                    <div className="text-xs text-left font-medium text-slate-900">
                         Название продукта
                     </div>
                 ),
@@ -68,7 +70,7 @@ export const useColumns = (num: number) => {
             });
             baseColumns.push({
                 header: () => (
-                    <div className="text-xs font-medium text-slate-900">
+                    <div className="text-xs text-left font-medium text-slate-900">
                         Количество
                     </div>
                 ),
@@ -85,7 +87,7 @@ export const useColumns = (num: number) => {
         if (num === 3) {
             baseColumns.push({
                 header: () => (
-                    <div className="text-xs font-medium text-slate-900">
+                    <div className="text-xs text-left font-medium text-slate-900">
                         Название продукта
                     </div>
                 ),
@@ -104,10 +106,11 @@ export const useColumns = (num: number) => {
                 accessorKey: "amount",
                 cell: ({ row }) => (
                     <FormattedNumber
-                        value={reduceSum(
-                            row?.original?.contractor_period_report
-                                ?.sales_profit_by_purchase_price,
-                        )}
+                        value={
+                            row.original?.contractor_period_report
+                                ?.sales_profit_by_purchase_price?.[0]?.amount ??
+                            0
+                        }
                         scale={2}
                     />
                 ),
@@ -117,8 +120,8 @@ export const useColumns = (num: number) => {
         if (num === 4) {
             baseColumns.push({
                 header: () => (
-                    <div className="text-xs font-medium text-slate-900">
-                        Название продукта
+                    <div className="text-xs text-left font-medium text-slate-900">
+                        Клиент
                     </div>
                 ),
                 accessorKey: "productName",
@@ -129,20 +132,24 @@ export const useColumns = (num: number) => {
             });
             baseColumns.push({
                 header: () => (
-                    <div className="text-xs font-medium text-slate-900">
-                        Общая сумма
+                    <div className="text-xs text-left font-medium text-slate-900">
+                        Сумма покупок
                     </div>
                 ),
                 accessorKey: "amount",
-                cell: ({ row }) => (
-                    <FormattedNumber
-                        value={reduceSum(
-                            row?.original?.contractor_period_report
-                                ?.sales_net_price,
-                        )}
-                        scale={2}
-                    />
-                ),
+                cell: ({ row }) => {
+                    console.log(row?.original?.contractor_period_report);
+
+                    return (
+                        <FormattedNumber
+                            value={
+                                row.original?.contractor_period_report
+                                    ?.sales_net_price?.[0]?.amount ?? 0
+                            }
+                            scale={2}
+                        />
+                    );
+                },
             });
         }
 

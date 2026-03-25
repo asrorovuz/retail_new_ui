@@ -191,11 +191,20 @@ const PaymentSection = ({
                                     {value ? value : "0"}
                                 </span>
                             </div>
-                            <div className="border-t text-sm border-slate-400 text-slate-600 flex justify-between pt-1">
-                                <span>Сдача</span>
-                                <span>
-                                    {cashBackAmount.toLocaleString("ru-RU")}
-                                </span>
+                            <div className="grid grid-cols-2 gap-x-2">
+                                <div className="text-sm bg-white px-1 rounded-[4px] text-slate-600 flex justify-between pt-1">
+                                    <span>Сумма</span>
+                                    <span>
+                                        {totalPaymentAmount.toLocaleString("ru-RU")}
+                                    </span>
+                                </div>
+
+                                <div className="text-sm bg-white px-1 rounded-[4px] text-slate-600 flex justify-between pt-1">
+                                    <span>Сдача</span>
+                                    <span>
+                                        {cashBackAmount.toLocaleString("ru-RU")}
+                                    </span>
+                                </div>
                             </div>
                         </div>
                         <Button
@@ -220,7 +229,11 @@ const PaymentSection = ({
                             type="button"
                             variant="plain"
                             disabled={!["sale"].includes(type)}
-                            onClick={() => setActivePaymentSelectType(0)}
+                            onClick={() =>
+                                setActivePaymentSelectType(
+                                    activeSelectPaymetype === 0 ? 1 : 0,
+                                )
+                            }
                             className={classNames(
                                 "w-full",
                                 activeSelectPaymetype

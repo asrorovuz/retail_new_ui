@@ -240,7 +240,7 @@ const SalePage = () => {
         <div className="rounded-2xl bg-slate-200 mb-3 p-1">
           <>
             {activeType === "numeric" && (
-              <div className="flex items-center gap-1 mb-1">
+              <div className="grid grid-cols-4 gap-1 mb-1">
                 {["20000", "50000", "100000", "200000"].map((amountStr) => (
                   <div
                     key={amountStr}
@@ -288,7 +288,7 @@ const SalePage = () => {
                       updateDraftSalePayment(updatedAmounts);
                     }}
                     className={classNames(
-                      "h-9 px-4 text-sm flex items-center cursor-pointer rounded-lg bg-white font-medium transition-all",
+                      "h-9 px-4 text-sm flex items-center justify-center cursor-pointer rounded-lg bg-white font-medium transition-all",
                       activeDraft?.payment?.amounts.find(
                         (p) => p.paymentType === 1 && p.amount === amountStr,
                       )
