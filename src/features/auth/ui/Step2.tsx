@@ -1,123 +1,169 @@
-import { Controller, useFormContext } from "react-hook-form";
-import { Button, Dialog, FormItem, Input, Select } from "@/shared/ui/kit";
+import {
+    Controller,
+    FormProvider,
+    useForm,
+    useFormContext,
+} from "react-hook-form";
+import { Button, Dialog, Form, FormItem, Input, Select } from "@/shared/ui/kit";
 import { useEffect, useState } from "react";
 import { useRegisterOrg } from "@/entities/auth/repository";
 import { storeTypeOptions } from "../options";
 
 const Step2 = ({
-  item,
-  response,
-  nextStep,
+    item,
+    response,
+    nextStep,
 }: {
-  item: any[];
-  response: any;
-  nextStep: any;
+    item: any[];
+    response: any;
+    nextStep: any;
 }) => {
-  const { control } = useFormContext();
+    const { control } = useFormContext();
 
-  const [isOpen, setIsOpen] = useState(false);
-  const [type, setType] = useState<number | null>(null);
-  const [newOrgName, setNewOrgName] = useState("");
+    const [isOpen, setIsOpen] = useState(false);
 
-  const { mutate: registerOrgMutate, isPending: regOrgPending } =
-    useRegisterOrg();
+    const { mutate: registerOrgMutate, isPending: regOrgPending } =
+        useRegisterOrg();
 
-  const onClose = () => {
-    setIsOpen(false);
-    setType(null);
-    setNewOrgName("");
-  };
-
-  const createOrg = () => {
-    registerOrgMutate(
-      {
-        name: newOrgName,
-        owner_account_id: response?.id,
-        referral_agent_code: response?.referral_agent_code,
-        store_type: type,
-      },
-      {
-        onSuccess() {
-          nextStep();
+    const methods = useForm({
+        defaultValues: {
+            name: "",
+            store_type: null,
         },
-      },
-    );
-  };
+    });
 
-  useEffect(() => {
-    if (!item || item.length === 0) {
-      setIsOpen(true);
-    }
-  }, [item]);
+    const onClose = () => {
+        setIsOpen(false);
+        methods.reset();
+    };
 
-  return (
-    <>
-      {/* Organization */}
-      <Controller
-        name="organization"
-        control={control}
-        rules={{ required: "Выберите организацию" }}
-        render={({ field, fieldState }) => (
-          <FormItem
-            label="Организация"
-            invalid={!!fieldState?.error}
-            errorMessage={fieldState?.error?.message}
-          >
-            <Select
-              {...field}
-              options={item || []}
-              getOptionLabel={(option) => option?.name}
-              // value={item?.find((i) => i?.id === field?.value) || null}
-              placeholder="Введите название организации."
-              onChange={(opt) => field.onChange(opt)}
+    const createOrg = (data: any) => {
+        registerOrgMutate(
+            {
+                name: data?.name,
+                owner_account_id: response?.id,
+                referral_agent_code: response?.referral_agent_code,
+                store_type: data?.store_type,
+            },
+            {
+                onSuccess() {
+                    onClose();
+                    nextStep();
+                },
+            },
+        );
+    };
+
+    useEffect(() => {
+        if (!item || item.length === 0) {
+            setIsOpen(true);
+        }
+    }, [item]);
+
+    return (
+        <>
+            {/* Organization */}
+            <Controller
+                name="organization"
+                control={control}
+                rules={{ required: "Выберите организацию" }}
+                render={({ field, fieldState }) => (
+                    <FormItem
+                        label="Организация"
+                        invalid={!!fieldState?.error}
+                        errorMessage={fieldState?.error?.message}
+                    >
+                        <Select
+                            {...field}
+                            options={item || []}
+                            isSearchable={false}
+                            getOptionLabel={(option) => option?.name}
+                            // value={item?.find((i) => i?.id === field?.value) || null}
+                            placeholder="Введите название организации."
+                            onChange={(opt) => field.onChange(opt)}
+                        />
+                    </FormItem>
+                )}
             />
-          </FormItem>
-        )}
-      />
 
-      <Button
-        type="button"
-        onClick={() => setIsOpen(true)}
-        className="w-full"
-        variant="solid"
-      >
-        + Создать организацию
-      </Button>
+            <Button
+                type="button"
+                onClick={() => setIsOpen(true)}
+                className="w-full"
+                variant="solid"
+            >
+                + Создать организацию
+            </Button>
 
-      <Dialog
-        width={"60vw"}
-        title={"Создать организацию"}
-        onClose={onClose}
-        isOpen={isOpen}
-      >
-        <FormItem label="Название организации" asterisk>
-          <Input
-            value={newOrgName}
-            onChange={(e) => setNewOrgName(e.target.value)}
-            placeholder="Введите название организации"
-          />
-        </FormItem>
-        <FormItem label="Организация">
-          <Select
-            options={storeTypeOptions}
-            placeholder="Введите название организации."
-            value={storeTypeOptions.find((o) => o.value === type) || null}
-            onChange={(opt) => setType(opt?.value || null)}
-          />
-        </FormItem>
-        <Button
-          type="button"
-          onClick={createOrg}
-          loading={regOrgPending}
-          className="w-full"
-          variant="solid"
-          disabled={!newOrgName}
-        >
-          Сохранить
-        </Button>
-      </Dialog>
-    </>
-  );
+            <Dialog
+                width={"60vw"}
+                title={"Создать организацию"}
+                onClose={onClose}
+                isOpen={isOpen}
+            >
+                <FormProvider {...methods}>
+                    <Form
+                        onSubmit={(e) => {
+                            e.stopPropagation();
+                            methods.handleSubmit(createOrg)(e);
+                        }}
+                    >
+                        <FormItem label="Название организации" asterisk>
+                            <Controller
+                                name="name"
+                                control={methods.control}
+                                rules={{ required: "Введите название" }}
+                                render={({ field }) => (
+                                    <Input
+                                        {...field}
+                                        placeholder="Введите название организации"
+                                    />
+                                )}
+                            />
+                        </FormItem>
+                        <FormItem label="Тип организации">
+                            <Controller
+                                name="store_type"
+                                control={methods.control}
+                                render={({ field }) => (
+                                    <Select
+                                        {...field}
+                                        options={storeTypeOptions}
+                                        isSearchable={false}
+                                        isClearable
+                                        value={
+                                            storeTypeOptions.find(
+                                                (o) => o.value === field.value,
+                                            ) || null
+                                        }
+                                        onChange={(opt) =>
+                                            field.onChange(opt?.value || null)
+                                        }
+                                        menuPortalTarget={document.body}
+                                        menuPosition="fixed"
+                                        styles={{
+                                            menuPortal: (base) => ({
+                                                ...base,
+                                                zIndex: 9999,
+                                            }),
+                                        }}
+                                    />
+                                )}
+                            />
+                        </FormItem>
+                        <Button
+                            type="submit"
+                            loading={regOrgPending}
+                            className="w-full"
+                            variant="solid"
+                        >
+                            Сохранить
+                        </Button>
+                    </Form>
+                </FormProvider>
+            </Dialog>
+        </>
+    );
 };
 
 export default Step2;

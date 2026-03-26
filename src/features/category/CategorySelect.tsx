@@ -110,6 +110,7 @@ const CategorySelect = ({
                 className={width ? width : "w-full"}
                 isClearable
                 hideSelectedOptions
+                isSearchable={false}
                 size="sm"
                 options={categoryOptions}
                 value={
@@ -183,6 +184,7 @@ const CategorySelect = ({
           </FormItem>
         )}
       />
+      
     </div>
   );
 };

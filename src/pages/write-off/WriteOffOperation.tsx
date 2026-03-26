@@ -18,212 +18,221 @@ import { LuDelete } from "react-icons/lu";
 import { useNavigate } from "react-router-dom";
 
 const WriteOffOperation = () => {
-  const [expandedRow, setExpandedRow] = useState<string | null>(null);
-  const [expendedId, setExpandedId] = useState<number | null>(null);
-  const [activeType, setActiveType] = useState<
-    "numeric" | "qwerty" | "fullkey"
-  >("numeric");
-  const [search, setSearch] = useState<string>("");
+    const [expandedRow, setExpandedRow] = useState<string | null>(null);
+    const [expendedId, setExpandedId] = useState<number | null>(null);
+    const [activeType, setActiveType] = useState<
+        "numeric" | "qwerty" | "fullkey"
+    >("numeric");
+    const [search, setSearch] = useState<string>("");
 
-  const { mutate: createMutate, isPending: createLoading } =
-    useCreateWriteoff();
+    const { mutate: createMutate, isPending: createLoading } =
+        useCreateWriteoff();
 
-  const navigate = useNavigate();
+    const navigate = useNavigate();
 
-  const { draftWriteOfs, updateDraftWriteOfItemQuantity, clearDraftWriteOf } =
-    useWriteOfStore();
-  const deleteDraftWriteOfItem = useWriteOfStore(
-    (store) => store.deleteDraftWriteOfItem,
-  );
-  const warhouseId = useSettingsStore((s) => s.wareHouseId);
+    const { draftWriteOfs, updateDraftWriteOfItemQuantity, clearDraftWriteOf } =
+        useWriteOfStore();
+    const deleteDraftWriteOfItem = useWriteOfStore(
+        (store) => store.deleteDraftWriteOfItem,
+    );
+    const warhouseId = useSettingsStore((s) => s.wareHouseId);
 
-  const debouncedSearch = useDebounce(search ?? "", 500);
-  const { data } = useAllProductApi(50, 1, debouncedSearch || "");
+    const debouncedSearch = useDebounce(search ?? "", 500);
+    const { data } = useAllProductApi(50, 1, debouncedSearch || "");
 
-  const onSubmit = () => {
-    const items = draftWriteOfs[0]?.items?.map((el) => {
-      return {
-        product_id: el?.productId,
-        quantity: el?.quantity,
-        warehouse_id: warhouseId ?? el?.warehouseId,
-      };
-    });
+    const onSubmit = () => {
+        const items = draftWriteOfs[0]?.items?.map((el) => {
+            return {
+                product_id: el?.productId,
+                quantity: el?.quantity,
+                warehouse_id: warhouseId ?? el?.warehouseId,
+            };
+        });
 
-    const data = {
-      is_approved: true,
-      items: items,
+        const data = {
+            is_approved: true,
+            items: items,
+        };
+
+        createMutate(data, {
+            onSuccess() {
+                showSuccessMessage(
+                    messages.uz.SUCCESS_MESSAGE,
+                    messages.ru.SUCCESS_MESSAGE,
+                );
+                clearDraftWriteOf();
+            },
+            onError(error) {
+                showErrorMessage(error);
+            },
+        });
     };
 
-    createMutate(data, {
-      onSuccess() {
-        showSuccessMessage(
-          messages.uz.SUCCESS_MESSAGE,
-          messages.ru.SUCCESS_MESSAGE,
-        );
-        clearDraftWriteOf();
-      },
-      onError(error) {
-        showErrorMessage(error);
-      },
-    });
-  };
+    return (
+        <div className="grid grid-cols-2 gap-x-3">
+            <div className="bg-white rounded-2xl p-3">
+                <div className="flex p-1 h-9 bg-slate-200 text-slate-800 justify-between rounded-lg mb-3">
+                    <span className="bg-white flex items-center p-2 rounded-md">
+                        Окно
+                    </span>
+                    <span>Списать товар</span>
+                </div>
+                <RevisionTable
+                    type="writeof"
+                    activeDraft={draftWriteOfs[0]}
+                    expandedRow={expandedRow}
+                    expendedId={expendedId}
+                    setActiveTypeKeyboard={setActiveType}
+                    setExpandedRow={setExpandedRow}
+                    setExpandedId={setExpandedId}
+                    deleteDraftItem={deleteDraftWriteOfItem}
+                    updateDraftItemQuantity={updateDraftWriteOfItemQuantity}
+                />
+                <div className="h-[27vh] bg-slate-200 rounded-2xl p-1 mb-3 flex items-center justify-center">
+                    <textarea
+                        placeholder="Добавить комментарий для ревизии"
+                        disabled
+                        className="w-full h-full rounded-2xl p-1 text-xl"
+                    />
+                </div>
+                <Footer />
+            </div>
+            <div className="bg-white rounded-2xl p-3">
+                <div className="rounded-2xl mb-3 bg-slate-200 p-1">
+                    <SearchProduct
+                        search={search}
+                        activeType={activeType}
+                        setSearch={setSearch}
+                        setActiveType={setActiveType}
+                    />
+                    {activeType === "qwerty" && (
+                        <>
+                            <SearchProductTable
+                                type="writeof"
+                                data={data ?? []}
+                                setActiveType={setActiveType}
+                                debouncedSearch={debouncedSearch}
+                                setExpandedRow={setExpandedRow}
+                                setExpandedId={setExpandedId}
+                            />
+                        </>
+                    )}
+                </div>
+                {activeType === "numeric" && (
+                    <div className="rounded-2xl bg-slate-200 mb-3 p-1">
+                        <>
+                            <PaymeTypeCards
+                                type={"revision"}
+                                activeDraft={draftWriteOfs[0]}
+                                activeSelectPaymetype={1}
+                                setActivePaymentSelectType={() => {}}
+                            />
+                        </>
+                    </div>
+                )}
+                {activeType === "numeric" && (
+                    <div className="rounded-2xl bg-slate-200 mb-3 p-1 flex gap-x-1">
+                        <>
+                            <Button
+                                onClick={() => navigate("/writeoff")}
+                                className={classNames(
+                                    "flex flex-col justify-center items-center overflow-hidden h-[50px]",
+                                )}
+                            >
+                                История
+                            </Button>
+                            <Button
+                                onClick={() => navigate("/products")}
+                                className={classNames(
+                                    "flex flex-col justify-center items-center overflow-hidden h-[50px]",
+                                )}
+                            >
+                                Товары
+                            </Button>
+                            <Button
+                                onClick={() => navigate("/sales")}
+                                className={classNames(
+                                    "flex flex-col justify-center items-center overflow-hidden h-[50px]",
+                                )}
+                            >
+                                Продажи
+                            </Button>
+                        </>
+                    </div>
+                )}
+                <div className="rounded-2xl bg-slate-200 mb-3 p-1">
+                    <>
+                        {activeType === "numeric" && (
+                            <div className="h-[14.6vh] flex items-center text-xl justify-center text-gray-700">
+                                Остаток в системе: {0}
+                            </div>
+                        )}
+                        {activeType === "numeric" && (
+                            <div className="grid grid-cols-4 gap-1 mb-1">
+                                <Button
+                                    size="sm"
+                                    type="button"
+                                    variant="plain"
+                                    onClick={() => setActiveType("qwerty")}
+                                    className="w-full bg-slate-300 text-slate-700"
+                                >
+                                    ABC
+                                </Button>
+                                <Button
+                                    size="sm"
+                                    type="button"
+                                    disabled={true}
+                                    variant="plain"
+                                    className={classNames(
+                                        "w-full bg-slate-300 text-slate-700",
+                                    )}
+                                >
+                                    Скидка
+                                </Button>
+                                <Button
+                                    size="sm"
+                                    type="button"
+                                    variant="plain"
+                                    disabled={true}
+                                    className="w-full bg-slate-300 text-slate-700"
+                                >
+                                    Oчистить
+                                </Button>
+                                <Button
+                                    size="sm"
+                                    type="button"
+                                    variant="plain"
+                                    disabled={true}
+                                    className="w-full bg-slate-300 text-slate-700"
+                                    icon={<LuDelete />}
+                                ></Button>
+                            </div>
+                        )}
+                        <KeyboardSwitcher
+                            activeType={activeType}
+                            setActiveType={setActiveType}
+                            setSearch={setSearch}
+                        />
+                    </>
+                </div>
 
-  return (
-    <div className="grid grid-cols-2 gap-x-3">
-      <div className="bg-white rounded-2xl p-3">
-        <div className="flex p-1 h-9 bg-slate-200 text-slate-800 justify-between rounded-lg mb-3">
-          <span className="bg-white flex items-center p-2 rounded-md">
-            Окно
-          </span>
-          <span>Списать товар</span>
-        </div>
-        <RevisionTable
-          type="writeof"
-          activeDraft={draftWriteOfs[0]}
-          expandedRow={expandedRow}
-          expendedId={expendedId}
-          setActiveTypeKeyboard={setActiveType}
-          setExpandedRow={setExpandedRow}
-          setExpandedId={setExpandedId}
-          deleteDraftItem={deleteDraftWriteOfItem}
-          updateDraftItemQuantity={updateDraftWriteOfItemQuantity}
-        />
-        <div className="h-[27vh] bg-slate-200 rounded-2xl p-1 mb-3 flex items-center justify-center">
-          <textarea
-            placeholder="Добавить комментарий для ревизии"
-            disabled
-            className="w-full h-full rounded-2xl p-1 text-xl"
-          />
-        </div>
-        <Footer />
-      </div>
-      <div className="bg-white rounded-2xl p-3">
-        <div className="rounded-2xl mb-3 bg-slate-200 p-1">
-          <SearchProduct search={search} activeType={activeType} setSearch={setSearch} setActiveType={setActiveType} />
-          {activeType === "qwerty" && (
-            <>
-              <SearchProductTable
-                type="writeof"
-                data={data ?? []}
-                setActiveType={setActiveType}
-                debouncedSearch={debouncedSearch}
-                setExpandedRow={setExpandedRow}
-                setExpandedId={setExpandedId}
-              />
-            </>
-          )}
-        </div>
-        {activeType === "numeric" && (
-          <div className="rounded-2xl bg-slate-200 mb-3 p-1">
-            <>
-              <PaymeTypeCards
-                type={"revision"}
-                activeDraft={draftWriteOfs[0]}
-                activeSelectPaymetype={1}
-                setActivePaymentSelectType={() => {}}
-              />
-            </>
-          </div>
-        )}
-        {activeType === "numeric" && (
-          <div className="rounded-2xl bg-slate-200 mb-3 p-1 flex gap-x-1">
-            <>
-              <Button
-                onClick={() => navigate("/writeoff")}
-                className={classNames(
-                  "flex flex-col justify-center items-center overflow-hidden h-[50px]",
+                {activeType === "numeric" && (
+                    <div className="rounded-2xl bg-slate-200 p-1">
+                        <Button
+                            size="sm"
+                            onClick={onSubmit}
+                            loading={createLoading}
+                            variant="solid"
+                            disabled={!draftWriteOfs[0]?.items?.length}
+                            className="w-full text-base font-medium"
+                        >
+                            Оформить
+                        </Button>
+                    </div>
                 )}
-              >
-                История
-              </Button>
-              <Button
-                onClick={() => navigate("/products")}
-                className={classNames(
-                  "flex flex-col justify-center items-center overflow-hidden h-[50px]",
-                )}
-              >
-                Товары
-              </Button>
-              <Button
-                onClick={() => navigate("/sales")}
-                className={classNames(
-                  "flex flex-col justify-center items-center overflow-hidden h-[50px]",
-                )}
-              >
-                Продажи
-              </Button>
-            </>
-          </div>
-        )}
-        <div className="rounded-2xl bg-slate-200 mb-3 p-1">
-          <>
-            {activeType === "numeric" && (
-              <div className="h-[14.6vh] flex items-center text-xl justify-center text-gray-700">
-                Остаток в системе: {0}
-              </div>
-            )}
-            {activeType === "numeric" && (
-              <div className="grid grid-cols-4 gap-1 mb-1">
-                <Button
-                  size="sm"
-                  type="button"
-                  variant="plain"
-                  onClick={() => setActiveType("qwerty")}
-                  className="w-full bg-slate-300 text-slate-700"
-                >
-                  ABC
-                </Button>
-                <Button
-                  size="sm"
-                  type="button"
-                  disabled={true}
-                  variant="plain"
-                  className={classNames("w-full bg-slate-300 text-slate-700")}
-                >
-                  Скидка
-                </Button>
-                <Button
-                  size="sm"
-                  type="button"
-                  variant="plain"
-                  disabled={true}
-                  className="w-full bg-slate-300 text-slate-700"
-                >
-                  Oчистить
-                </Button>
-                <Button
-                  size="sm"
-                  type="button"
-                  variant="plain"
-                  disabled={true}
-                  className="w-full bg-slate-300 text-slate-700"
-                  icon={<LuDelete />}
-                ></Button>
-              </div>
-            )}
-            <KeyboardSwitcher
-              activeType={activeType}
-              setActiveType={setActiveType}
-              setSearch={setSearch}
-            />
-          </>
+            </div>
         </div>
-
-        <div className="rounded-2xl bg-slate-200 p-1">
-          <Button
-            size="sm"
-            onClick={onSubmit}
-            loading={createLoading}
-            variant="solid"
-            disabled={!draftWriteOfs[0]?.items?.length}
-            className="w-full text-base font-medium"
-          >
-            Оформить
-          </Button>
-        </div>
-      </div>
-    </div>
-  );
+    );
 };
 
 export default WriteOffOperation;

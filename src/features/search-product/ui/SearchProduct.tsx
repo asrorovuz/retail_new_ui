@@ -9,6 +9,7 @@ interface SearchProductProps {
     setActiveType: (type: "numeric" | "qwerty" | "fullkey") => void;
     setSearchFocus?: (val: boolean) => void;
     placeholder?: string;
+    pageType?: boolean;
 }
 
 const SearchProduct = ({
@@ -18,6 +19,7 @@ const SearchProduct = ({
     setActiveType,
     setSearchFocus,
     placeholder,
+    pageType = true,
 }: SearchProductProps) => {
     const { registerField, unregisterField } = useKeyboard();
     const inputRef = useRef<HTMLInputElement>(null);
@@ -63,9 +65,11 @@ const SearchProduct = ({
                 onBlur={onBlurSearch}
                 placeholder={placeholder ?? "Поиск по любому товару"}
             />
-            <Button onClick={buttonABC} size="sm">
-                ABC
-            </Button>
+            {pageType && (
+                <Button onClick={buttonABC} size="sm">
+                    ABC
+                </Button>
+            )}
         </div>
     );
 };

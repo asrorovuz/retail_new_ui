@@ -215,7 +215,7 @@ const RevisyaOperation = () => {
           </>
         </div>
 
-        <div className="rounded-2xl bg-slate-200 p-1">
+        {activeType === "numeric" && <div className="rounded-2xl bg-slate-200 p-1">
           <Button
             size="sm"
             onClick={onSubmit}
@@ -226,7 +226,7 @@ const RevisyaOperation = () => {
           >
             Оформить
           </Button>
-        </div>
+        </div>}
       </div>
     </div>
   );

@@ -51,6 +51,7 @@ import Alert from "@/shared/ui/kit-pro/alert/Alert";
 
 type OrderActionType = {
     type: "sale" | "refund" | "purchase";
+    keyType: "numeric" | "qwerty" | "fullkey";
     draft: DraftSaleSchema[] & DraftRefundSchema[];
     activeDraft: DraftSaleSchema & DraftRefundSchema;
     activeSelectPaymetype: number;
@@ -65,6 +66,7 @@ type OrderActionType = {
 
 const OrderActions = ({
     type,
+    keyType,
     activeDraft,
     activeSelectPaymetype,
     payModal,
@@ -556,139 +558,145 @@ const OrderActions = ({
         }
     }, [filterDataFiscal]);
 
-    return (
-        <div className="flex gap-x-1">
-            {(type === "sale" || type === "purchase") && (
+    return keyType === "numeric" ? (
+        <div className="rounded-2xl bg-slate-200 p-1">
+            <div className="flex gap-x-1">
+                {(type === "sale" || type === "purchase") && (
+                    <Button
+                        size="sm"
+                        onClick={() =>
+                            checkShiftAndRun(() => setSellDebit(true))
+                        }
+                        variant="plain"
+                        disabled={!activeDraft?.items?.length}
+                        className="w-full text-base font-medium text-slate-800 bg-white"
+                    >
+                        В долг
+                    </Button>
+                )}
                 <Button
                     size="sm"
-                    onClick={() => checkShiftAndRun(() => setSellDebit(true))}
-                    variant="plain"
+                    onClick={() => checkShiftAndRun(onSubmit)}
+                    variant="solid"
                     disabled={!activeDraft?.items?.length}
-                    className="w-full text-base font-medium text-slate-800 bg-white"
+                    className="w-full text-base font-medium"
                 >
-                    В долг
+                    Оформить
                 </Button>
-            )}
-            <Button
-                size="sm"
-                onClick={() => checkShiftAndRun(onSubmit)}
-                variant="solid"
-                disabled={!activeDraft?.items?.length}
-                className="w-full text-base font-medium"
-            >
-                Оформить
-            </Button>
 
-            {sellDebit && (
-                <SellDebetModal
-                    onCancel={() => {
-                        setSellDebit(false);
-                        setContractorId(null);
-                    }}
-                    onSubmit={onSubmitDebit}
-                    isOpen={sellDebit}
-                    setOpenContragentModal={setOpenContragentModal}
-                    contractorId={contractorId}
-                    setContractorId={setContractorId}
-                />
-            )}
-
-            {sellDebit && (
-                <ContragentModal
-                    type="add"
-                    isOpen={openContragentModal}
-                    setIsOpen={setOpenContragentModal}
-                    setContractorId={setContractorId}
-                />
-            )}
-
-            <PaymentModal
-                type={type}
-                totalAmount={totalAmount}
-                cashBackAmount={cashBackAmount}
-                totalPaymentAmount={totalPaymentAmount}
-                setActivePaymentSelectType={setActivePaymentSelectType}
-                onSubmitPaymentHandler={onSubmitPaymentHandler}
-                activeDraft={activeDraft}
-                isOpen={ipOpenPayment}
-                setIsOpenPayment={setIsOpenPayment}
-            />
-
-            <PrinterModal
-                type={type}
-                isOpen={!!saleId && printSelect}
-                size={settings?.receipt_size ?? "80"}
-                saleId={saleId}
-                defaultName={settings?.printer_name ?? null}
-                handleCancelPrint={handleCancelPrint}
-            />
-
-            <FiscalizedModal
-                isOpen={!!saleId && fiscalizedModal}
-                filterData={filterDataFiscal}
-                saleId={saleId}
-                selectFiscalized={selectFiscalized}
-                handleCancel={handleCancelFiscalization}
-                setSelectFiscalized={setSelectFiscalized}
-                setIsOpen={setFiscalizedModal}
-                fiscalPending={fiscalPending}
-                handleApproveFiscalization={handleApproveFiscalization}
-            />
-
-            <PaymeWhithQR
-                isOpen={payModal && paymentData?.length > 0}
-                saleId={saleId}
-                paymentData={paymentData}
-                selectFiscalized={selectFiscalized}
-                activeDraftPaymeTypes={paymeType}
-                setPaymeType={setPaymeType}
-                selectedPaymentType={activeSelectPaymetype}
-                handleCancelFiscalization={handleCancelFiscalization}
-                handleCancelPayment={handleCancelPayment}
-            />
-
-            {shiftAlert && (
-                <Alert
-                    type="info"
-                    title="Смена закрыта"
-                    content="Для совершения продажи необходимо открыть смену. Открыть сейчас?"
-                    onCancel={() => {
-                        setShiftAlert(false);
-                        setPendingAction(null);
-                    }}
-                    onConfirm={handleConfirmShift}
-                />
-            )}
-
-            <Dialog
-                isOpen={sellModal}
-                width={"320px"}
-                onClose={() => setSellModal(false)}
-                onRequestClose={() => setSellModal(false)}
-                title="Недостаточно оплаты"
-            >
-                <p>
-                    Сумма оплаты меньше суммы продажи. Как вы хотите завершить
-                    продажу?
-                </p>
-
-                <div className="flex flex-col gap-2 mt-4">
-                    <Button
-                        onClick={() => {
-                            checkShiftAndRun(() => setSellDebit(true));
-                            setSellModal(false);
+                {sellDebit && (
+                    <SellDebetModal
+                        onCancel={() => {
+                            setSellDebit(false);
+                            setContractorId(null);
                         }}
-                        size="sm"
-                    >
-                        Оформить в долг
-                    </Button>
+                        onSubmit={onSubmitDebit}
+                        isOpen={sellDebit}
+                        setOpenContragentModal={setOpenContragentModal}
+                        contractorId={contractorId}
+                        setContractorId={setContractorId}
+                    />
+                )}
 
-                    <Button onClick={registerSubmit} size="sm">
-                        Списать остаток как скидку
-                    </Button>
-                </div>
-            </Dialog>
+                {sellDebit && (
+                    <ContragentModal
+                        type="add"
+                        isOpen={openContragentModal}
+                        setIsOpen={setOpenContragentModal}
+                        setContractorId={setContractorId}
+                    />
+                )}
+
+                <PaymentModal
+                    type={type}
+                    totalAmount={totalAmount}
+                    cashBackAmount={cashBackAmount}
+                    totalPaymentAmount={totalPaymentAmount}
+                    setActivePaymentSelectType={setActivePaymentSelectType}
+                    onSubmitPaymentHandler={onSubmitPaymentHandler}
+                    activeDraft={activeDraft}
+                    isOpen={ipOpenPayment}
+                    setIsOpenPayment={setIsOpenPayment}
+                />
+
+                <PrinterModal
+                    type={type}
+                    isOpen={!!saleId && printSelect}
+                    size={settings?.receipt_size ?? "80"}
+                    saleId={saleId}
+                    defaultName={settings?.printer_name ?? null}
+                    handleCancelPrint={handleCancelPrint}
+                />
+
+                <FiscalizedModal
+                    isOpen={!!saleId && fiscalizedModal}
+                    filterData={filterDataFiscal}
+                    saleId={saleId}
+                    selectFiscalized={selectFiscalized}
+                    handleCancel={handleCancelFiscalization}
+                    setSelectFiscalized={setSelectFiscalized}
+                    setIsOpen={setFiscalizedModal}
+                    fiscalPending={fiscalPending}
+                    handleApproveFiscalization={handleApproveFiscalization}
+                />
+
+                <PaymeWhithQR
+                    isOpen={payModal && paymentData?.length > 0}
+                    saleId={saleId}
+                    paymentData={paymentData}
+                    selectFiscalized={selectFiscalized}
+                    activeDraftPaymeTypes={paymeType}
+                    setPaymeType={setPaymeType}
+                    selectedPaymentType={activeSelectPaymetype}
+                    handleCancelFiscalization={handleCancelFiscalization}
+                    handleCancelPayment={handleCancelPayment}
+                />
+
+                {shiftAlert && (
+                    <Alert
+                        type="info"
+                        title="Смена закрыта"
+                        content="Для совершения продажи необходимо открыть смену. Открыть сейчас?"
+                        onCancel={() => {
+                            setShiftAlert(false);
+                            setPendingAction(null);
+                        }}
+                        onConfirm={handleConfirmShift}
+                    />
+                )}
+
+                <Dialog
+                    isOpen={sellModal}
+                    width={"320px"}
+                    onClose={() => setSellModal(false)}
+                    onRequestClose={() => setSellModal(false)}
+                    title="Недостаточно оплаты"
+                >
+                    <p>
+                        Сумма оплаты меньше суммы продажи. Как вы хотите
+                        завершить продажу?
+                    </p>
+
+                    <div className="flex flex-col gap-2 mt-4">
+                        <Button
+                            onClick={() => {
+                                checkShiftAndRun(() => setSellDebit(true));
+                                setSellModal(false);
+                            }}
+                            size="sm"
+                        >
+                            Оформить в долг
+                        </Button>
+
+                        <Button onClick={registerSubmit} size="sm">
+                            Списать остаток как скидку
+                        </Button>
+                    </div>
+                </Dialog>
+            </div>
         </div>
+    ) : (
+        ""
     );
 };
 

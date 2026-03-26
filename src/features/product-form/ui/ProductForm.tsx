@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState, type FC } from "react";
 import type { ProductFormType } from "../model";
 import {
   Button,
-  Checkbox,
+  // Checkbox,
   Dialog,
   Form,
   FormItem,
@@ -63,13 +63,13 @@ const ProductForm: FC<ProductFormType> = ({
   catalogData,
   setDefaultValues,
 }) => {
-  const { handleSubmit, control, getValues, setValue, reset, watch } =
+  const { handleSubmit, control, getValues, setValue, reset } =
     useForm();
   const lastAddedBarcodeIndex = useRef<number | null>(null);
   const isCatalogApplied = useRef(false);
   const [remainder, setRemainder] = useState<number>(defaultValue?.state || 0);
   const [alertOn, setAlertOn] = useState<string | number>(0);
-  const [isShow, setIsShow] = useState(true);
+  // const [isShow, setIsShow] = useState(false);
   const [packageNames, setPackageNames] = useState<Package[] | []>();
   const [measurmentsPackages, setMeasurmentPackages] = useState<
     MeasurementPackage[]
@@ -104,7 +104,7 @@ const ProductForm: FC<ProductFormType> = ({
     setBarcode(null);
     setAlertOn(0);
     setRemainder(0);
-    setIsShow(false);
+    // setIsShow(false);
     setIsOpen(false);
     setDefaultValues(null);
     setPackageNames([]);
@@ -117,9 +117,9 @@ const ProductForm: FC<ProductFormType> = ({
     }
   };
 
-  const handleClick = (value: boolean) => {
-    setIsShow(value);
-  };
+  // const handleClick = (value: boolean) => {
+  //   setIsShow(value);
+  // };
 
   const options = useMemo<VatRateSelectorOption[]>(
     () => [
@@ -347,13 +347,13 @@ const ProductForm: FC<ProductFormType> = ({
     }
   }, [defaultValue?.warehouse_items, isOpen]);
 
-  useEffect(() => {
-    const catalog = getValues(`catalog`);
-    const packages = getValues(`package`);
-    const vat_rate = getValues(`vat_rate`);
-    const shouldShow = !!catalog || !!packages || !!vat_rate;
-    setIsShow(shouldShow);
-  }, [watch(`catalog`), watch(`package`), watch(`vat_rate`), isOpen]);
+  // useEffect(() => {
+  //   const catalog = getValues(`catalog`);
+  //   const packages = getValues(`package`);
+  //   const vat_rate = getValues(`vat_rate`);
+  //   const shouldShow = !!catalog || !!packages || !!vat_rate;
+  //   setIsShow(shouldShow);
+  // }, [isOpen]);
 
   useEffect(() => {
     setRemainder(defaultValue?.state || 0);
@@ -574,6 +574,7 @@ const ProductForm: FC<ProductFormType> = ({
                   <Select
                     {...field}
                     options={optionMeasurement}
+                    isSearchable={false}
                     className="w-full"
                     size="sm"
                     hideDropdownIndicator={true}
@@ -705,15 +706,14 @@ const ProductForm: FC<ProductFormType> = ({
             </div>
           </div>
           <div className="grid grid-cols-12 items-end gap-x-3 mb-4">
-            <Checkbox
+            {/* <Checkbox
               className="text-nowrap text-slate-800 col-span-2 mb-3"
               checked={isShow}
               onChange={handleClick}
             >
+            </Checkbox> */}
               {/* Идентификаторы и измерения в GN */}
-              Интергация с ОФД
-            </Checkbox>
-            {isShow ? (
+              <span className="text-nowrap text-slate-800 col-span-2 mb-3">Интергация с ОФД</span>
               <>
                 <Controller
                   name={`catalog_code`}
@@ -789,9 +789,6 @@ const ProductForm: FC<ProductFormType> = ({
                   )}
                 />
               </>
-            ) : (
-              <></>
-            )}
             <div className="w-full flex gap-x-2 text-nowrap grid-cols-2 mb-3">
               <Controller
                 name="is_legal"

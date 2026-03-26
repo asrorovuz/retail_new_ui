@@ -52,38 +52,25 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
 
     // 2️⃣ - API dan kelgan javob
     if (typeof error === "object" && error !== null) {
+        console.log(error, "ssskwkdnkwndkwkndkwnfknw");
+        
         if (error.invalid_username_or_password) {
             return toast.error(
                 lang === "ru"
                     ? "Неверный логин или пароль"
                     : "Login yoki parol noto‘g‘ri",
-                {
-                    position: "bottom-left",
-                    closeOnClick: true,
-                    draggable: true,
-                },
             );
         }
 
         if (error.currency_not_found) {
             return toast.error(
                 lang === "ru" ? "Валюта не найдена" : "Valyuta topilmadi",
-                {
-                    position: "bottom-left",
-                    closeOnClick: true,
-                    draggable: true,
-                },
             );
         }
 
         if (error.sale_not_found) {
             return toast.error(
                 lang === "ru" ? "Продажа не найдена" : "Sotuv topilmadi",
-                {
-                    position: "bottom-left",
-                    closeOnClick: true,
-                    draggable: true,
-                },
             );
         }
 
@@ -92,11 +79,6 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
                 lang === "ru"
                     ? "Такое название товара уже существует"
                     : "Bunday mahsulot nomi allaqachon mavjud",
-                {
-                    position: "bottom-left",
-                    closeOnClick: true,
-                    draggable: true,
-                },
             );
         }
 
@@ -105,11 +87,6 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
                 lang === "ru"
                     ? "Активная смена не найдена"
                     : "Faol smena topilmadi",
-                {
-                    position: "bottom-left",
-                    closeOnClick: true,
-                    draggable: true,
-                },
             );
         }
 
@@ -118,22 +95,12 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
                 lang === "ru"
                     ? "Товар с таким названием уже существует"
                     : "Bu nomdagi mahsulot allaqachon mavjud",
-                {
-                    position: "bottom-left",
-                    closeOnClick: true,
-                    draggable: true,
-                },
             );
         }
 
         if (error.bot_exists) {
             return toast.error(
                 lang === "ru" ? "Есть такой токен" : "Bunday token mavjud.",
-                {
-                    position: "bottom-left",
-                    closeOnClick: true,
-                    draggable: true,
-                },
             );
         }
 
@@ -142,11 +109,6 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
                 lang === "ru"
                     ? "Бота с таким токеном не найдено"
                     : "Bunday tokenga bog'langan bot mavjud emas.",
-                {
-                    position: "bottom-left",
-                    closeOnClick: true,
-                    draggable: true,
-                },
             );
         }
 
@@ -155,11 +117,6 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
                 lang === "ru"
                     ? "Логин или пароль неверный."
                     : "Login yoki parol noto‘g‘ri.",
-                {
-                    position: "bottom-left",
-                    closeOnClick: true,
-                    draggable: true,
-                },
             );
         }
 
@@ -168,11 +125,6 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
                 lang === "ru"
                     ? "Организация с таким наименованием уже существует!"
                     : "",
-                {
-                    position: "bottom-left",
-                    closeOnClick: true,
-                    draggable: true,
-                },
             );
         }
 
@@ -181,11 +133,6 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
                 lang === "ru"
                     ? "Товар с таким штрих-кодом уже существует"
                     : "Bu shtrix-kodli mahsulot allaqachon mavjud",
-                {
-                    position: "bottom-left",
-                    closeOnClick: true,
-                    draggable: true,
-                },
             );
         }
 
@@ -196,11 +143,6 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
                     : lang === "en"
                       ? "A product with this barcode already exists"
                       : "Bu shtrix-kodli mahsulot allaqachon mavjud",
-                {
-                    position: "bottom-left",
-                    closeOnClick: true,
-                    draggable: true,
-                },
             );
         }
 
@@ -209,11 +151,6 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
                 lang === "ru"
                     ? "Такой артикул уже существует"
                     : "Bunday artikul allaqachon mavjud",
-                {
-                    position: "bottom-left",
-                    closeOnClick: true,
-                    draggable: true,
-                },
             );
         }
 
@@ -222,11 +159,6 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
                 lang === "ru"
                     ? "Такой артикул уже существует"
                     : "Bunday kod allaqachon mavjud",
-                {
-                    position: "bottom-left",
-                    closeOnClick: true,
-                    draggable: true,
-                },
             );
         }
 
@@ -235,22 +167,12 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
                 lang === "ru"
                     ? "Единица измерения не найдена"
                     : "Bunday o‘lchov birligi (package) topilmadi",
-                {
-                    position: "bottom-left",
-                    closeOnClick: true,
-                    draggable: true,
-                },
             );
         }
 
         if (error.warehouse_not_found) {
             return toast.error(
                 lang === "ru" ? "Склад не найден" : "Ombor topilmadi",
-                {
-                    position: "bottom-left",
-                    closeOnClick: true,
-                    draggable: true,
-                },
             );
         }
 
@@ -259,11 +181,6 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
                 lang === "ru"
                     ? "Доступ ограничен. Смотрите «Настройки»."
                     : "Shift ochishga ruxsat yo‘q",
-                {
-                    position: "bottom-left",
-                    closeOnClick: true,
-                    draggable: true,
-                },
             );
         }
 
@@ -287,11 +204,6 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
                 lang === "ru"
                     ? `Ошибка: ${error.message}`
                     : `Xatolik: ${error.message}`,
-                {
-                    position: "bottom-left",
-                    closeOnClick: true,
-                    draggable: true,
-                },
             );
         }
 
@@ -300,11 +212,6 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
                 lang === "ru"
                     ? `Ошибка: ${error.error}`
                     : `Xatolik: ${error.error}`,
-                {
-                    position: "bottom-left",
-                    closeOnClick: true,
-                    draggable: true,
-                },
             );
         }
     }

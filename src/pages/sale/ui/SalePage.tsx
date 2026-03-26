@@ -317,9 +317,10 @@ const SalePage = () => {
           </>
         </div>
 
-        <div className="rounded-2xl bg-slate-200 p-1">
+        
           <OrderActions
             type={"sale"}
+            keyType={activeType}
             draft={draftSales}
             activeDraft={activeDraft}
             payModal={payModal}
@@ -331,7 +332,6 @@ const SalePage = () => {
             setActivePaymentSelectType={setActivePaymentSelectType}
             complateActiveDraft={completeActiveDraftSale}
           />
-        </div>
       </div>
       {mark ? (
         <ViewMark

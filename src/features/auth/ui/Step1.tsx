@@ -58,7 +58,7 @@ const Step1Phone = () => {
             errorMessage={fieldState.error?.message}
             asterisk
           >
-            <PhoneInput {...field} phone placeholder="+998 90 123 45 67" />
+            <PhoneInput {...field} inputMode="none" />
           </FormItem>
         )}
       />
@@ -123,6 +123,7 @@ const Step1Phone = () => {
               getOptionValue={(option: any) => option?.id}
               value={REGIONS?.find((i) => i?.id === field?.value) || null}
               placeholder="Выберите регион"
+              isSearchable={false}
               onChange={(opt) => {
                 field.onChange(opt?.id);
                 setValue("district_code", null); // 🔥 region o‘zgarsa district reset
@@ -153,6 +154,7 @@ const Step1Phone = () => {
               options={DISTRICTS?.[regionCode] || []}
               getOptionLabel={(option) => option?.name}
               getOptionValue={(option: any) => option?.value}
+              isSearchable={false}
               value={
                 DISTRICTS?.[regionCode]?.find((i) => i?.id === field?.value) ||
                 null
