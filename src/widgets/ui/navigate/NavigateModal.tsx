@@ -72,6 +72,11 @@ const NavigateModal = ({ isOpenNavigate, setIsOpenNavigate }: any) => {
           История возвратов
         </Link> */}
 
+                <NavItem className={linkClass} to={"/cashbox"}>
+                    <MdOutlinePointOfSale size={20} />
+                    Касса
+                </NavItem>
+
                 <NavItem className={linkClass} to={"/counterparties"}>
                     <MdOutlinePeopleOutline size={20} />
                     Контрагенты

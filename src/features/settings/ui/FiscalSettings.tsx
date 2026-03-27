@@ -253,6 +253,7 @@ const FiscalizationSettings = () => {
                   <Select
                     id="nds-rate"
                     placeholder="Выберите ставку"
+                    isSearchable={false}
                     options={[
                       { label: "Без НДС", value: null },
                       { label: "0%", value: 0 },

@@ -1,38 +1,45 @@
 import { useCashboxApi } from "@/entities/init/repository";
 import CashboxCard from "@/features/cashbox-card";
 import CashboxFormModal from "@/features/cashbox-form";
+import NavigateButton from "@/shared/ui/kit-pro/navigate-button/NavigateButton";
 import { useState } from "react";
+import CashboxPaymentCard from "./CashboxPaymentCard";
+import { Button } from "@/shared/ui/kit";
 
 const Cashbox = () => {
-  const [type, setType] = useState<number>(0);
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-  const { data } = useCashboxApi();
+    const [type, setType] = useState<number>(0);
+    const [isOpen, setIsOpen] = useState<boolean>(false);
+    const { data } = useCashboxApi();
 
-  const onCloseModal = () => {
-    setIsOpen(false);
-    setType(0);
-  };
+    const onCloseModal = () => {
+        setIsOpen(false);
+        setType(0);
+    };
 
-  const onOpenModal = (ind: number) => {
-    setIsOpen(true);
-    setType(ind);
-  };
+    const onOpenModal = (ind: number) => {
+        setIsOpen(true);
+        setType(ind);
+    };
 
-  return (
-    <div className="bg-white rounded-3xl p-6 h-[calc(100vh_-_100px)]">
-      <h2 className="text-lg font-semibold text-slate-800 mb-6 border-b pb-4">
-        Касса
-      </h2>
+    console.log(data, "data");
 
-      <CashboxCard data={data} onOpenModal={onOpenModal} />
-      <CashboxFormModal
-        isOpen={isOpen}
-        type={type}
-        onCloseModal={onCloseModal}
-        cashbox={data || []}
-      />
-    </div>
-  );
+    return (
+        <div className="bg-white h-full rounded-2xl p-4">
+            <div className="flex justify-between items-center mb-4">
+                <NavigateButton content={"Касса"} />
+                <Button disabled variant="solid" size="sm">Создать кассу</Button>
+            </div>
+
+            <CashboxPaymentCard data={data} />
+            <CashboxCard data={data} onOpenModal={onOpenModal} />
+            <CashboxFormModal
+                isOpen={isOpen}
+                type={type}
+                onCloseModal={onCloseModal}
+                cashbox={data || []}
+            />
+        </div>
+    );
 };
 
 export default Cashbox;
