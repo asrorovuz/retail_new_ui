@@ -32,6 +32,8 @@ import DownloadFileForScales from "@/features/download-scale/DownloadFileForScal
 import DropdownItem from "@/shared/ui/kit/Dropdown/DropdownItem";
 import { CiSquarePlus } from "react-icons/ci";
 import { PiMicrosoftExcelLogo } from "react-icons/pi";
+import UpdateCatalogCode from "@/features/update-catalog-code/ui/UpdateCatalogCode";
+import { FiRefreshCw } from "react-icons/fi";
 
 const ProductHeader = ({
     search,
@@ -46,6 +48,7 @@ const ProductHeader = ({
 }: any) => {
     const [openFilter, setOpenFilter] = useState(false);
     const [showInformation, setShowInformation] = useState(false);
+    const [isUpdateCatalogCodeOpen, setIsUpdateCatalogCodeOpen] = useState(false);
 
     const { data: categoryData } = useCategoryApi();
     const { data: infoData } = useAllInfoProductApi(
@@ -177,6 +180,18 @@ const ProductHeader = ({
                             Импорт из Excel
                         </div>
                     </DropdownItem>
+
+                    <DropdownItem
+                        onClick={() => setIsUpdateCatalogCodeOpen(true)}
+                        className="h-auto!"
+                    >
+                        <div className="w-full flex items-center gap-2  py-3 px-5 rounded-xl">
+                            <span className="text-orange-700">
+                                <FiRefreshCw size={20} />
+                            </span>{" "}
+                            Обновить код ИКПУ
+                        </div>
+                    </DropdownItem>
                 </Dropdown>
             </div>
 
@@ -185,6 +200,8 @@ const ProductHeader = ({
                 setIsOpen={setShowInformation}
                 infoData={infoData}
             />
+
+            <UpdateCatalogCode isOpen={isUpdateCatalogCodeOpen} setIsOpen={setIsUpdateCatalogCodeOpen} />
 
             <Dialog
                 onClose={() => setOpenFilter(false)}

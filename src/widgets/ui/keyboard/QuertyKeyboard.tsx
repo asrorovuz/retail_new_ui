@@ -1,11 +1,11 @@
 import classNames from "@/shared/lib/classNames";
 import { Button } from "@/shared/ui/kit";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { AiOutlineEnter } from "react-icons/ai";
 import { LuArrowBigUp } from "react-icons/lu";
 import { RiDeleteBack2Line, RiSpace } from "react-icons/ri";
 
-const QuertyKeyboard = ({ setActiveType, activeType, setSearch }: any) => {
+const QuertyKeyboard = ({ setActiveType, setSearch }: any) => {
     const [upperLater, setUpperLater] = useState(false);
     const [lang, setLang] = useState("en");
 
@@ -98,37 +98,37 @@ const QuertyKeyboard = ({ setActiveType, activeType, setSearch }: any) => {
         setSearch((prev: string) => prev + sym);
     };
 
-    useEffect(() => {
-        const handleKeyDown = (e: KeyboardEvent) => {
-            if (activeType !== "querty") return;
+    // useEffect(() => {
+    //     const handleKeyDown = (e: KeyboardEvent) => {
+    //         if (activeType !== "querty") return;
 
-            if (e.key === "Enter") {
-                setActiveType("numeric");
-                setSearch("");
-                return;
-            }
-            if (e.key === "Backspace") {
-                onBackSpace();
-                return;
-            }
-            if (e.key === " ") {
-                onWriteSymbol(" ");
-                return;
-            }
-            if (e.key === "Shift") {
-                setUpperLater((prev) => !prev);
-                return;
-            }
+    //         if (e.key === "Enter") {
+    //             setActiveType("numeric");
+    //             setSearch("");
+    //             return;
+    //         }
+    //         if (e.key === "Backspace") {
+    //             onBackSpace();
+    //             return;
+    //         }
+    //         if (e.key === " ") {
+    //             onWriteSymbol(" ");
+    //             return;
+    //         }
+    //         if (e.key === "Shift") {
+    //             setUpperLater((prev) => !prev);
+    //             return;
+    //         }
 
-            if (e.key.length === 1) {
-                const char = upperLater ? e.key.toUpperCase() : e.key;
-                onWriteSymbol(char);
-            }
-        };
+    //         if (e.key.length === 1) {
+    //             const char = upperLater ? e.key.toUpperCase() : e.key;
+    //             onWriteSymbol(char);
+    //         }
+    //     };
 
-        window.addEventListener("keyup", handleKeyDown);
-        return () => window.removeEventListener("keydown", handleKeyDown);
-    }, [activeType, upperLater, onWriteSymbol, onBackSpace]);
+    //     window.addEventListener("keyup", handleKeyDown);
+    //     return () => window.removeEventListener("keydown", handleKeyDown);
+    // }, [activeType, upperLater, onWriteSymbol, onBackSpace]);
 
     return (
         <div className="h-[28vh]">

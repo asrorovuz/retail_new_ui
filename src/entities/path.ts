@@ -88,6 +88,7 @@ export const pathServices = {
     findByBarcode: `/api/product/find-by-barcode/`,
     findByBarcodeProduct: "/api/product/product-dictionary/find-by-barcode/",
     exportProductScale: `/api/product-export`,
+    updateProductCatalogCode: "/api/product/catalog/update",
 
     //UPDATE
     updateTableSettingsPath:

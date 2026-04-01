@@ -9,6 +9,7 @@ import {
     MdOutlinePointOfSale,
     MdOutlinePeopleOutline,
     MdAssignment,
+    MdBarChart,
 } from "react-icons/md";
 
 const NavigateModal = ({ isOpenNavigate, setIsOpenNavigate }: any) => {
@@ -92,10 +93,10 @@ const NavigateModal = ({ isOpenNavigate, setIsOpenNavigate }: any) => {
           Отчёт
         </NavItem> */}
 
-                {/* <NavItem className={linkClass} to={"/period-report"}>
-          <MdBarChart size={20} />
-          Отчет за период
-        </NavItem> */}
+                <NavItem className={linkClass} to={"/period-report"}>
+                    <MdBarChart size={20} />
+                    Отчет за период
+                </NavItem>
 
                 <NavItem className={linkClass} to={"/settings"}>
                     <MdOutlineSettings size={20} />

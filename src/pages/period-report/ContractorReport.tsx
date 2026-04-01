@@ -12,127 +12,162 @@ import {
     useReactTable,
     type ColumnDef,
 } from "@tanstack/react-table";
+import { useMemo } from "react";
 
-const reduceSum = (items?: { amount: number }[]) =>
-    items?.reduce((acc, item) => acc + (item?.amount || 0), 0) || 0;
+const safeAmount = (arr?: any[]) => arr?.[0]?.amount ?? 0;
 
 const columns: ColumnDef<any>[] = [
     {
         header: "№",
-        accessorFn: (_row: any, index: number) => index + 1,
+        cell: ({ row }) => row.index + 1,
         meta: {
             headerClassName: "text-center w-12",
             bodyCellClassName: "text-center",
         },
     },
     {
-        header: "Наименование продукта",
-        accessorKey: "mahsulot",
+        header: "Контрагент",
         meta: {
             headerClassName: "text-left pl-4 font-medium",
             bodyCellClassName: "text-left pl-4",
         },
-        cell: ({ row }) => row?.original?.name,
+        cell: ({ row }) => row?.original?.contractor?.name || "-",
     },
+
     {
-        header: "Продажа",
-        columns: [
-            {
-                header: "Наличные",
-                accessorKey: "soni",
-                meta: {
-                    headerClassName: "text-center min-w-[90px]",
-                    bodyCellClassName: "text-center",
-                },
-                cell: ({ row }) => (
-                    <FormattedNumber value={row?.original?.quantity} />
-                ),
-            },
-            {
-                header: "Uzcard",
-                accessorKey: "narxi",
-                meta: {
-                    headerClassName: "text-right min-w-[110px]",
-                    bodyCellClassName: "text-right pr-4",
-                },
-                cell: ({ row }) => (
-                    <FormattedNumber value={row?.original?.net_price} />
-                ),
-            },
-            {
-                header: "Humo",
-                accessorKey: "summasi",
-                meta: {
-                    headerClassName: "text-right min-w-[140px]",
-                    bodyCellClassName: "text-right pr-4 font-medium",
-                },
-                cell: ({ row }) => (
-                    <FormattedNumber
-                        value={reduceSum(row?.original?.net_price)}
-                    />
-                ),
-            },
-        ],
-    },
-    {
-        header: "Погашенный долг",
-        accessorKey: "soni",
+        header: "Прибыль",
         meta: {
-            headerClassName: "text-center min-w-[90px]",
+            headerClassName: "text-center min-w-[120px]",
             bodyCellClassName: "text-center",
         },
-        cell: ({ row }) => <FormattedNumber value={row?.original?.quantity} />,
+        cell: ({ row }) => (
+            <FormattedNumber
+                value={safeAmount(
+                    row?.original?.contractor_period_report
+                        ?.sales_profit_by_purchase_price,
+                )}
+            />
+        ),
     },
+
     {
-        header: "Источник поступления",
-        accessorKey: "soni",
+        header: "Количество проданных товаров",
         meta: {
-            headerClassName: "text-center min-w-[90px]",
+            headerClassName: "text-center min-w-[150px]",
             bodyCellClassName: "text-center",
         },
-        cell: ({ row }) => <FormattedNumber value={row?.original?.quantity} />,
-    },
-    {
-        header: "Пользователь",
-        accessorKey: "soni",
-        meta: {
-            headerClassName: "text-center min-w-[90px]",
-            bodyCellClassName: "text-center",
+        cell: ({ row }) => {
+            const items =
+                row?.original?.contractor_period_report?.sales_items_summary ||
+                [];
+
+            const quantity = items.reduce(
+                (acc: number, item: any) => acc + (item?.quantity || 0),
+                0,
+            );
+
+            return <FormattedNumber value={quantity} />;
         },
-        cell: ({ row }) => <FormattedNumber value={row?.original?.quantity} />,
     },
+
     {
-        header: "Касса",
-        accessorKey: "soni",
-        meta: {
-            headerClassName: "text-center min-w-[90px]",
-            bodyCellClassName: "text-center",
-        },
-        cell: ({ row }) => <FormattedNumber value={row?.original?.quantity} />,
+        header: "Сумма продаж",
+        cell: ({ row }) => (
+            <FormattedNumber
+                value={safeAmount(
+                    row?.original?.contractor_period_report?.sales_net_price,
+                )}
+            />
+        ),
     },
+
     {
-        header: "Информация",
-        accessorKey: "soni",
-        meta: {
-            headerClassName: "text-center min-w-[90px]",
-            bodyCellClassName: "text-center",
-        },
-        cell: ({ row }) => <FormattedNumber value={row?.original?.quantity} />,
+        header: "Сумма поступления",
+        cell: ({ row }) => (
+            <FormattedNumber
+                value={safeAmount(
+                    row?.original?.contractor_period_report
+                        ?.purchases_net_price,
+                )}
+            />
+        ),
+    },
+
+    {
+        header: "Сумма возврата от клиента",
+        cell: ({ row }) => (
+            <FormattedNumber
+                value={safeAmount(
+                    row?.original?.contractor_period_report?.refunds_net_price,
+                )}
+            />
+        ),
+    },
+
+    {
+        header: "Сумма возврата поставщику",
+        cell: ({ row }) => (
+            <FormattedNumber
+                value={safeAmount(
+                    row?.original?.contractor_period_report?.returns_net_price,
+                )}
+            />
+        ),
+    },
+
+    {
+        header: "Сумма оплаты от клиента",
+        cell: ({ row }) => (
+            <FormattedNumber
+                value={safeAmount(
+                    row?.original?.contractor_period_report?.payments_net_price,
+                )}
+            />
+        ),
+    },
+
+    {
+        header: "Сумма оплаты поставщику",
+        cell: ({ row }) => (
+            <FormattedNumber
+                value={safeAmount(
+                    row?.original?.contractor_period_report?.payouts_net_price,
+                )}
+            />
+        ),
+    },
+
+    {
+        header: "Старый долг",
+        cell: ({ row }) => (
+            <FormattedNumber
+                value={safeAmount(row?.original?.contractor?.before_debts)}
+            />
+        ),
+    },
+
+    {
+        header: "Текущий долг",
+        cell: ({ row }) => (
+            <FormattedNumber
+                value={safeAmount(row?.original?.contractor?.debts_net_price)}
+            />
+        ),
     },
 ];
 
 const ContractorReport = ({ data }: any) => {
     const table = useReactTable({
-        data: data?.overall_period_report?.sales_items_summary || [],
+        data: useMemo(() => data?.contractors_period_report || [], [data]),
         columns,
         getCoreRowModel: getCoreRowModel(),
     });
 
     return (
         <div className="border border-slate-200 rounded-xl overflow-hidden">
-            <div className="overflow-x-auto h-[78vh]">
+            <div className="overflow-x-auto max-h-[78vh]">
                 <Table className="table-fixed w-full border-separate border-spacing-0">
-                    <THead className="sticky top-0 bg-white z-10 shadow-sm">
+                    <THead className="sticky top-0 bg-white z-20">
                         {table.getHeaderGroups().map((headerGroup) => (
                             <Tr key={headerGroup.id}>
                                 {headerGroup.headers.map((header) => {
@@ -151,13 +186,10 @@ const ContractorReport = ({ data }: any) => {
                                                     "text-center bg-slate-50",
                                             )}
                                         >
-                                            {header.isPlaceholder
-                                                ? null
-                                                : flexRender(
-                                                      header.column.columnDef
-                                                          .header,
-                                                      header.getContext(),
-                                                  )}
+                                            {flexRender(
+                                                header.column.columnDef.header,
+                                                header.getContext(),
+                                            )}
                                         </Th>
                                     );
                                 })}
@@ -165,7 +197,7 @@ const ContractorReport = ({ data }: any) => {
                         ))}
                     </THead>
 
-                    <TBody className="w-full h-[78vh]">
+                    <TBody>
                         {table.getRowModel().rows.map((row, rowIndex) => {
                             const isEven = rowIndex % 2 === 0;
                             return (
@@ -176,11 +208,12 @@ const ContractorReport = ({ data }: any) => {
                                         "hover:bg-slate-100 transition-colors",
                                     )}
                                 >
-                                    {row.getVisibleCells().map((cell) => (
+                                    {row.getVisibleCells().map((cell, index) => (
                                         <Td
                                             key={cell.id}
                                             className={classNames(
-                                                "border-b border-slate-100 px-2 py-2.5 text-sm text-slate-700",
+                                                "border border-slate-300 px-2 py-2.5 text-sm text-slate-700",
+                                                index === 0 ? "text-center" : index === 1 ? "text-left" : "text-right",
                                                 cell.column.columnDef.meta
                                                     ?.bodyCellClassName,
                                             )}

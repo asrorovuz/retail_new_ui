@@ -12,6 +12,7 @@ import {
   getAllInfoProductApi,
   getAllProductApi,
   getAllProductCountApi,
+  getAllProductIKPUApi,
   getCatalogSearchApi,
   getCatalogSearchFiscalApi,
   getCategoryApi,
@@ -24,6 +25,7 @@ import {
   updateAlertOnApi,
   updateCategoryApi,
   updateProductApi,
+  updateProductCatalogCodeApi,
   updateTableSettingsApi,
 } from "../api";
 import type {
@@ -43,6 +45,16 @@ export const useAllProductApi = (
   return useQuery({
     queryKey: ["all-products", pageSize, pageIndex, search, filterParams],
     queryFn: () => getAllProductApi(pageSize, pageIndex, search, filterParams),
+  });
+};
+
+export const useAllProductIKPUApi = (
+  isOpen: boolean,
+) => {
+  return useQuery({
+    queryKey: ["all-products-ikpu", isOpen],
+    queryFn: () => getAllProductIKPUApi(),
+    enabled: !!isOpen,
   });
 };
 
@@ -158,6 +170,17 @@ export const useUpdateTableSettings = () => {
     mutationFn: (data: ProductColumnVisibility) => updateTableSettingsApi(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["product-table-settings"] });
+    },
+  });
+};
+
+export const useUpdateProductCatalogCode = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: { id: number }) => updateProductCatalogCodeApi(data?.id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["product-catalog-update"] });
     },
   });
 };
