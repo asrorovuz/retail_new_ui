@@ -6,7 +6,7 @@ interface KeyboardSwitcherProps {
   onClickNumber?: (num: string) => void;
   activeType?: "numeric" | "qwerty" | "fullkey" | null;
   setActiveType?: (type: "numeric" | "qwerty" | "fullkey") => void;
-  setSearch?: (value: string | ((prev: string) => string)) => void;
+  setSearch?: any;
 }
 
 export const KeyboardSwitcher: React.FC<KeyboardSwitcherProps> = ({
