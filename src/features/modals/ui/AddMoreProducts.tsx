@@ -3,126 +3,132 @@ import { useEffect, useState } from "react";
 import type { ProductDefaultValues, ProductPriceType } from "../model";
 import { ProductFormMultiple } from "@/features/product-form";
 import {
-  CurrencyCodeUZS,
-  CurrencyCodeUZSText,
-  CurrencyRateUZS,
+    CurrencyCodeUZS,
+    CurrencyCodeUZSText,
+    CurrencyRateUZS,
 } from "@/app/constants/paymentType";
 import { useCatalogSearchApi } from "@/entities/products/repository";
 import NavigateButton from "@/shared/ui/kit-pro/navigate-button/NavigateButton";
 import FullKeyboard from "@/widgets/ui/keyboard/FullKeyboard";
 
 const AddMoreProducts = ({
-  productPriceType,
-  barcode,
-  setBarcode,
-  isOpen,
-  setIsOpen,
+    productPriceType,
+    barcode,
+    setBarcode,
+    isOpen,
+    setIsOpen,
+    catalogCode,
 }: {
-  productPriceType: ProductPriceType[] | undefined;
-  isOpen: boolean;
-  setIsOpen: (val: boolean) => void;
-  barcode: string | null;
-  setBarcode: (val: string | null) => void;
+    productPriceType: ProductPriceType[] | undefined;
+    isOpen: boolean;
+    setIsOpen: (val: boolean) => void;
+    barcode: string | null;
+    setBarcode: (val: string | null) => void;
+    catalogCode: string | null;
 }) => {
-  const [products, setProducts] = useState<ProductDefaultValues[]>([]);
+    const [products, setProducts] = useState<ProductDefaultValues[]>([]);
 
-  const { data: catalogData } = useCatalogSearchApi(barcode || "", !!barcode);
-
-  /* 🔹 default product */
-  const createEmptyProduct = (barcode?: string): ProductDefaultValues => {
-    return {
-      name: "",
-      barcodes: [
-        {
-          value: barcode || new Date().getTime().toString().slice(5, 13),
-          count: 1,
-        },
-      ],
-      catalog_code: null,
-      catalog_name: null,
-      package_code: null,
-      package_name: null,
-      purchase_price: {
-        amount: null,
-        currency: {
-          code: CurrencyCodeUZS,
-          name: CurrencyCodeUZSText,
-          rate: CurrencyRateUZS,
-        },
-      },
-      is_legal: true,
-      images: [],
-      category: null,
-      isActive: true,
-      sku: null,
-      code: null,
-      measurement_name: "Штук",
-      vat_rate: null,
-      prices: productPriceType?.map((p, i) => ({
-        amount: i ? 0 : null,
-        price_type: p,
-        currency: {
-          code: CurrencyCodeUZS,
-          name: CurrencyCodeUZSText,
-          rate: CurrencyRateUZS,
-        },
-      })),
-      count: 1,
-      catalog: null,
-      is_default: true,
-    };
-  };
-
-  /* 🔹 modal ochilganda 1 ta product */
-  useEffect(() => {
-    if (isOpen && !barcode) {
-      setProducts([createEmptyProduct()]);
-    }
-  }, [isOpen]);
-
-  const removeProduct = (index: number) => {
-    setProducts((prev) =>
-      prev.length === 1
-        ? [createEmptyProduct()] // ❗ o‘chirish emas, tozalash
-        : prev.filter((_, i) => i !== index),
+    const { data: catalogData } = useCatalogSearchApi(
+        (isOpen && (catalogCode || barcode)) || "",
+        isOpen,
     );
-  };
 
-  return (
-    <>
-      <Dialog
-        width="100vw"
-        height="100vh"
-        className={""}
-        contentClassName="!my-0 !rounded-none"
-        closable={false}
-        isOpen={isOpen}
-      >
-        <NavigateButton
-          click={() => {
-            setIsOpen(false);
-            setProducts([]);
-            setBarcode(null);
-          }}
-          content="Добавить большое количество товаров"
-        />
-        <div className="mb-4">
-          <ProductFormMultiple
-            name="products"
-            products={products}
-            barcode={barcode}
-            setBarcode={setBarcode}
-            catalogData={catalogData}
-            onRemove={removeProduct}
-            // addProduct={addProduct}
-            setProducts={setProducts}
-            createEmptyProduct={createEmptyProduct}
-          />
-        </div>
-        <FullKeyboard />
-      </Dialog>
-    </>
-  );
+    /* 🔹 default product */
+    const createEmptyProduct = (barcode?: string): ProductDefaultValues => {
+        return {
+            name: "",
+            barcodes: [
+                {
+                    value:
+                        barcode || new Date().getTime().toString().slice(5, 13),
+                    count: 1,
+                },
+            ],
+            catalog_code: null,
+            catalog_name: null,
+            package_code: null,
+            package_name: null,
+            purchase_price: {
+                amount: null,
+                currency: {
+                    code: CurrencyCodeUZS,
+                    name: CurrencyCodeUZSText,
+                    rate: CurrencyRateUZS,
+                },
+            },
+            is_legal: true,
+            images: [],
+            category: null,
+            isActive: true,
+            sku: null,
+            code: null,
+            measurement_name: "Штук",
+            vat_rate: null,
+            prices: productPriceType?.map((p, i) => ({
+                amount: i ? 0 : null,
+                price_type: p,
+                currency: {
+                    code: CurrencyCodeUZS,
+                    name: CurrencyCodeUZSText,
+                    rate: CurrencyRateUZS,
+                },
+            })),
+            count: 1,
+            catalog: null,
+            is_default: true,
+        };
+    };
+
+    /* 🔹 modal ochilganda 1 ta product */
+    useEffect(() => {
+        if (isOpen && !barcode) {
+            setProducts([createEmptyProduct()]);
+        }
+    }, [isOpen]);
+
+    const removeProduct = (index: number) => {
+        setProducts((prev) =>
+            prev.length === 1
+                ? [createEmptyProduct()] // ❗ o‘chirish emas, tozalash
+                : prev.filter((_, i) => i !== index),
+        );
+    };
+
+    return (
+        <>
+            <Dialog
+                width="100vw"
+                height="100vh"
+                className={""}
+                contentClassName="!my-0 !rounded-none"
+                closable={false}
+                isOpen={isOpen}
+            >
+                <NavigateButton
+                    click={() => {
+                        setIsOpen(false);
+                        setProducts([]);
+                        setBarcode(null);
+                    }}
+                    content="Добавить большое количество товаров"
+                />
+                <div className="mb-4">
+                    <ProductFormMultiple
+                        name="products"
+                        products={products}
+                        barcode={barcode}
+                        setBarcode={setBarcode}
+                        catalogData={catalogData}
+                        onRemove={removeProduct}
+                        // addProduct={addProduct}
+                        setProducts={setProducts}
+                        createEmptyProduct={createEmptyProduct}
+                    />
+                </div>
+                <FullKeyboard />
+            </Dialog>
+        </>
+    );
 };
 
 export default AddMoreProducts;

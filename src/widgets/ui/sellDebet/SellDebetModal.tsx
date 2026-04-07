@@ -97,9 +97,10 @@ const SellDebetModal = ({
 
       <FormItem label="Комментарий" className="!mb-3">
         <textarea
-          className="w-full border rounded-xl resize-none h-32 px-3 py-2"
+          className="w-full border rounded-xl resize-none h-32 px-3 py-2 outline-none focus:ring-1 focus:ring-blue-400"
           placeholder="Введите комментарий"
           value={contragent.comment}
+          inputMode="none"
           onChange={(e) =>
             setContragent((prev) => ({ ...prev, comment: e.target.value }))
           }

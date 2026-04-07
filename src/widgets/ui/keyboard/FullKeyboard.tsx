@@ -126,6 +126,7 @@ const FullKeyboard = ({ setSearch }: FullKeyboardProps) => {
     const onClear = () => {
         if (typeof setSearch === "function") {
             setSearch("");
+            clear();
         } else {
             clear();
         }
@@ -282,7 +283,7 @@ const FullKeyboard = ({ setSearch }: FullKeyboardProps) => {
                     type="button"
                     icon={<AiOutlineEnter />}
                     className="bg-white h-[42px] col-span-2 text-slate-800 font-medium text-xl w-full hover:bg-blue-50 transition-all"
-                    onClick={() => {
+                    onMouseDown={() => {
                         blurActiveField();
                     }}
                 />
@@ -291,7 +292,8 @@ const FullKeyboard = ({ setSearch }: FullKeyboardProps) => {
                     variant="solid"
                     type="button"
                     className="bg-white h-[42px] col-span-2 text-slate-800 font-medium text-sm w-full hover:bg-blue-50 transition-all"
-                    onClick={() => {
+                    onMouseDown={(e) => {
+                        e.preventDefault();
                         onClear();
                     }}
                 >

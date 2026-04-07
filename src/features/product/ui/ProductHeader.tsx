@@ -44,11 +44,13 @@ const ProductHeader = ({
     setFilterParams,
     setIsAddOpen,
     setIsOpen,
+    setBarcode,
     setIsOpenExcel,
 }: any) => {
     const [openFilter, setOpenFilter] = useState(false);
     const [showInformation, setShowInformation] = useState(false);
-    const [isUpdateCatalogCodeOpen, setIsUpdateCatalogCodeOpen] = useState(false);
+    const [isUpdateCatalogCodeOpen, setIsUpdateCatalogCodeOpen] =
+        useState(false);
 
     const { data: categoryData } = useCategoryApi();
     const { data: infoData } = useAllInfoProductApi(
@@ -80,8 +82,8 @@ const ProductHeader = ({
     }, [categoryData]);
 
     return (
-        <div className="mb-3 flex items-center justify-between">
-            <div className="w-[433px] flex items-center gap-x-2">
+        <div className="mb-3 flex items-center justify-between gap-x-1">
+            <div className="w-[433px] flex items-center gap-x-1">
                 <SearchProduct
                     search={search}
                     pageType={false}
@@ -110,7 +112,7 @@ const ProductHeader = ({
                     styles={selectStyles}
                 />
             </div>
-            <div className="flex items-center gap-x-2">
+            <div className="flex items-center gap-x-1">
                 <Button
                     size="sm"
                     variant="default"
@@ -146,7 +148,11 @@ const ProductHeader = ({
                     renderTitle={<Button size="sm">Добавить</Button>}
                 >
                     <DropdownItem
-                        onClick={() => setIsAddOpen(true)}
+                        onClick={() => {
+                            setIsAddOpen(true);
+                            setBarcode(null);
+                            setSearch("");
+                        }}
                         className="h-auto!"
                     >
                         <div className="w-full flex items-center gap-2 text-slate-700 py-3 px-5 rounded-xl">
@@ -201,7 +207,10 @@ const ProductHeader = ({
                 infoData={infoData}
             />
 
-            <UpdateCatalogCode isOpen={isUpdateCatalogCodeOpen} setIsOpen={setIsUpdateCatalogCodeOpen} />
+            <UpdateCatalogCode
+                isOpen={isUpdateCatalogCodeOpen}
+                setIsOpen={setIsUpdateCatalogCodeOpen}
+            />
 
             <Dialog
                 onClose={() => setOpenFilter(false)}
@@ -227,6 +236,7 @@ const ProductHeader = ({
                                         option.value as FilterParams["is_legal"],
                                 })
                             }
+                            isSearchable={false}
                             menuPortalTarget={document.body}
                             menuPosition="fixed"
                             styles={selectStyles}
@@ -251,6 +261,7 @@ const ProductHeader = ({
                                         option?.value as FilterParams["category_exists"],
                                 }))
                             }
+                            isSearchable={false}
                             menuPortalTarget={document.body}
                             menuPosition="fixed"
                             styles={selectStyles}
@@ -279,9 +290,10 @@ const ProductHeader = ({
                                         : null,
                                 }))
                             }
-                            isClearable
+                            isSearchable={false}
                             menuPortalTarget={document.body}
                             menuPosition="fixed"
+                            isClearable
                             styles={selectStyles}
                         />
                     </div>
@@ -312,6 +324,7 @@ const ProductHeader = ({
                                 }))
                             }
                             isClearable
+                            isSearchable={false}
                             menuPortalTarget={document.body}
                             menuPosition="fixed"
                             styles={selectStyles}
@@ -336,6 +349,7 @@ const ProductHeader = ({
                                         option?.value as FilterParams["sku_exists"],
                                 }))
                             }
+                            isSearchable={false}
                             menuPortalTarget={document.body}
                             menuPosition="fixed"
                             styles={selectStyles}
@@ -362,6 +376,7 @@ const ProductHeader = ({
                                         option?.value as FilterParams["barcode_exists"],
                                 }))
                             }
+                            isSearchable={false}
                             getOptionLabel={(opt) => opt.label}
                             getOptionValue={(opt) => String(opt.value)}
                             menuPortalTarget={document.body}
@@ -391,6 +406,7 @@ const ProductHeader = ({
                                         option?.value as FilterParams["catalog_code_exists"],
                                 }));
                             }}
+                            isSearchable={false}
                             getOptionLabel={(opt) => opt.label}
                             getOptionValue={(opt) => String(opt.value)}
                             menuPortalTarget={document.body}
@@ -418,6 +434,7 @@ const ProductHeader = ({
                                         option?.value as FilterParams["code_exists"],
                                 }))
                             }
+                            isSearchable={false}
                             getOptionLabel={(opt) => opt.label}
                             getOptionValue={(opt) => String(opt.value)}
                             menuPortalTarget={document.body}
@@ -444,6 +461,7 @@ const ProductHeader = ({
                                     sort: option?.value as FilterParams["sort"],
                                 }))
                             }
+                            isSearchable={false}
                             getOptionLabel={(opt) => opt.label}
                             getOptionValue={(opt) => String(opt.value)}
                             menuPortalTarget={document.body}
@@ -476,6 +494,7 @@ const ProductHeader = ({
                                         option?.value as FilterParams["is_selling_at_loss"],
                                 }))
                             }
+                            isSearchable={false}
                             getOptionLabel={(opt) => opt.label}
                             getOptionValue={(opt) => String(opt.value)}
                             menuPortalTarget={document.body}

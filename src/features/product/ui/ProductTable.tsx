@@ -45,6 +45,7 @@ const ProductTable = ({
   setIsOpen,
   isOpen,
   productPriceType,
+  setSearch
 }: {
   data: any;
   countData: number;
@@ -57,6 +58,7 @@ const ProductTable = ({
   setIsOpen: (val: boolean) => void;
   isOpen: boolean;
   productPriceType: ProductPriceType[];
+  setSearch: (val: string) => void;
 }) => {
   const [confirmProductId, setConfirmProductId] = useState<number | null>(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -80,6 +82,7 @@ const ProductTable = ({
         );
         setDeleteModalOpen(false);
         setConfirmProductId(null);
+        setSearch("");
       },
       onError: (error) => {
         showErrorMessage(error);

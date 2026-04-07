@@ -116,6 +116,7 @@ const ProductsPage = () => {
         setIsAddOpen={setIsAddOpen}
         setIsOpen={setIsOpen}
         setSearch={setSearch}
+        setBarcode={setBarcode}
         setIsOpenExcel={setIsOpenExcel}
       />
       <ProductTable
@@ -123,6 +124,7 @@ const ProductsPage = () => {
         countData={countData ?? 0}
         isPending={isPending}
         searchFocus={searchFocus}
+        setSearch={setSearch}
         pagination={pagination}
         setPagination={setPagination}
         barcode={barcode}
@@ -154,6 +156,7 @@ const ProductsPage = () => {
       <AddMoreProducts
         barcode={barcode}
         setBarcode={setBarcode}
+        catalogCode={catalogCode}
         productPriceType={productPriceType}
         isOpen={isOpen}
         setIsOpen={setIsOpen}
