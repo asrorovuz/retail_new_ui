@@ -274,6 +274,7 @@ const OrderActions = ({
         callback: (success: boolean) => void,
         typeButton: boolean,
     ) {
+        
         // init payload
         const payload: RegisterSaleModel &
             RegisterRefundModel &
@@ -310,7 +311,7 @@ const OrderActions = ({
             const draftItems = activeDraft?.items ?? [];
             for (let i = 0; i < draftItems?.length; i++) {
                 const draftItem = draftItems[i];
-
+            
                 const isActiveBulk =
                     type === "sale" && !!selectedRows?.[draftItem?.productId];
 
@@ -333,6 +334,7 @@ const OrderActions = ({
 
                 payload.items.push(saleAndRefunItem);
             }
+
             // set payment
             if (paymentAmounts) {
                 const paymentKey = type === "sale" ? "payment" : "payout";

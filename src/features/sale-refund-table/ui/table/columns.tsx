@@ -41,7 +41,7 @@ export const columns = (
       accessorKey: "productName",
       cell: ({ row }) => {
         const name = row.original.productName;
-        return <span>{truncateText(name, 20, 20)}</span>;
+        return <span>{truncateText(name, 30, 10)}</span>;
       },
       meta: {
         bodyCellClassName: "text-start",

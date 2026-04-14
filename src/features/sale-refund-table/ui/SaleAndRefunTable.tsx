@@ -353,6 +353,7 @@ const SaleAndRefunTable = ({
                       components={{
                         DropdownIndicator: SmallDropdownIndicator,
                       }}
+                      isSearchable={false}
                       value={
                         selectedRows?.[currentItem?.productId]
                           ? { value: 2, label: "Опт. цена" }

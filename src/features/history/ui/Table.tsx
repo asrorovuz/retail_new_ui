@@ -466,6 +466,9 @@ const TableHistory = ({
                 header: () => {
                     return "Примечание";
                 },
+                cell: ({row}) => {
+                    return <div>{row?.original?.comment}</div>
+                }
             },
             {
                 id: "date",

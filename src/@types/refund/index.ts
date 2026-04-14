@@ -45,7 +45,7 @@ export interface RefundStoreActions {
   // updateDraftRefundPaymentAmounts: (
   //   paymentAmounts: DraftRefundPayoutAmountSchema[]
   // ) => void;
-  addDraftRefundItem: (payload: DraftRefundItemSchema) => void;
+  // addDraftRefundItem: (payload: DraftRefundItemSchema) => void;
   //   incrementDraftRefundItemQuantity: (draftRefundItemIndex: number) => void;
   //   decrementDraftRefundItemQuantity: (draftRefundItemIndex: number) => void;
   updateDraftRefundItemQuantity: (
@@ -61,7 +61,6 @@ export interface RefundStoreActions {
     totalPrice: number
   ) => void;
   updateDraftRefundPayout: (payout: DraftRefundPayoutAmountSchema[]) => void;
-  deleteDraftRefundMark: (item: { productId: number; index: number }) => void;
 }
 
 export interface RefundStoreInitialState {

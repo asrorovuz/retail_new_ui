@@ -21,8 +21,6 @@ const Cashbox = () => {
         setType(ind);
     };
 
-    console.log(data, "data");
-
     return (
         <div className="bg-white h-full rounded-2xl p-4">
             <div className="flex justify-between items-center mb-4">

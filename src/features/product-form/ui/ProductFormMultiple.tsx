@@ -162,18 +162,21 @@ const ProductFormMultiple: FC<Props> = ({
     };
 
     const onSubmit = async (data: any) => {
+        console.log(data, catalogData, "datacha");
         setIsSubmitting(true);
 
         const successfullyAdded: number[] = []; // muvaffaqiyatli elementlar
+        console.log(data, "data");
+        
 
-        for (const [index, values] of data.products.entries()) {
+        for (const [index, values] of data?.products?.entries()) {
             try {
                 // IMAGE LOGIKASI O'ZGARMADI
                 const images = await convertImageObjectsToBase64(
                     values?.images || [],
                     values?.images?.[0]?.img || "",
                 );
-
+                
                 const prices = (values?.prices || []).map((p: PriceType) => ({
                     price_type_id: p?.price_type?.id ?? null,
                     amount: p?.amount ? +p?.amount : 0,
@@ -198,11 +201,11 @@ const ProductFormMultiple: FC<Props> = ({
                     category_id: values?.category?.id ?? null,
                     category_name: values?.category?.name ?? null,
                     package_measurements: (
-                        measurmentsPackages[index] || []
+                        measurmentsPackages[fields[index].id] || []
                     ).map((p) => ({
                         name: p.name,
                         quantity: Number(p.amount) || 0,
-                    })),
+                    }))?.filter((item) => !!item?.name),
                     catalog_code: values.catalog?.value
                         ? String(values?.catalog?.value)
                         : null,
@@ -326,6 +329,7 @@ const ProductFormMultiple: FC<Props> = ({
                 onKeyDown={(e) => {
                     if (e.key === "Enter") {
                         e.preventDefault();
+                        e.isPropagationStopped()
                     }
                 }}
             >

@@ -84,10 +84,6 @@ const SalePage = () => {
   const completeActiveDraftSale = useDraftSaleStore(
     (store) => store.completeActiveDraftSale,
   );
-  const deleteDraftSaleMark = useDraftSaleStore(
-    (store) => store.deleteDraftSaleMark,
-  );
-
   const activeDraft: DraftSaleSchema =
     draftSales?.find((s) => s.isActive) ?? draftSales[0];
 
@@ -113,6 +109,7 @@ const SalePage = () => {
 
   useEffect(() => {
     if (isSuccess && !isFetching && !payModal) {
+      
       if (findBarcodeData) {
         handleScannedProduct(
           findBarcodeData,
@@ -335,10 +332,9 @@ const SalePage = () => {
       </div>
       {mark ? (
         <ViewMark
-          item={mark}
+          itemId={mark}
           onClose={() => setMark(null)}
           activeDraft={activeDraft}
-          deleteDraftMark={deleteDraftSaleMark}
         />
       ) : null}
 
