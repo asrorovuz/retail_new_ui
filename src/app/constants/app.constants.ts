@@ -3,3 +3,4 @@ export const REDIRECT_URL_KEY = 'redirectUrl'
 export const TOKEN = 'token'
 export const USERNAME_KEY = 'u'
 export const PASSWORD_KEY = 'p'
+export const USER_KEY = "i"

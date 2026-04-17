@@ -69,9 +69,9 @@ const WriteOffOperation = () => {
     };
 
     return (
-        <div className="grid grid-cols-2 gap-x-3">
-            <div className="bg-white rounded-2xl p-3">
-                <div className="flex p-1 h-9 bg-slate-200 text-slate-800 justify-between rounded-lg mb-3">
+        <div className="flex gap-x-3">
+            <div className="bg-white rounded-2xl p-3 w-3/5 flex flex-col gap-y-3">
+                <div className="flex p-1 h-9 bg-slate-200 text-slate-800 justify-between rounded-lg">
                     <span className="bg-white flex items-center p-2 rounded-md">
                         Окно
                     </span>
@@ -88,7 +88,7 @@ const WriteOffOperation = () => {
                     deleteDraftItem={deleteDraftWriteOfItem}
                     updateDraftItemQuantity={updateDraftWriteOfItemQuantity}
                 />
-                <div className="h-[27vh] bg-slate-200 rounded-2xl p-1 mb-3 flex items-center justify-center">
+                <div className="h-[20vh] bg-slate-200 rounded-2xl p-1 flex items-center justify-center">
                     <textarea
                         placeholder="Добавить комментарий для ревизии"
                         disabled
@@ -97,8 +97,8 @@ const WriteOffOperation = () => {
                 </div>
                 <Footer />
             </div>
-            <div className="bg-white rounded-2xl p-3">
-                <div className="rounded-2xl mb-3 bg-slate-200 p-1">
+            <div className="bg-white rounded-2xl p-3 w-2/5 flex flex-col gap-y-3 h-full">
+                <div className="rounded-2xl bg-slate-200 p-1">
                     <SearchProduct
                         search={search}
                         activeType={activeType}
@@ -119,7 +119,7 @@ const WriteOffOperation = () => {
                     )}
                 </div>
                 {activeType === "numeric" && (
-                    <div className="rounded-2xl bg-slate-200 mb-3 p-1">
+                    <div className="rounded-2xl bg-slate-200 p-1">
                         <>
                             <PaymeTypeCards
                                 type={"revision"}
@@ -131,7 +131,7 @@ const WriteOffOperation = () => {
                     </div>
                 )}
                 {activeType === "numeric" && (
-                    <div className="rounded-2xl bg-slate-200 mb-3 p-1 flex gap-x-1">
+                    <div className="rounded-2xl bg-slate-200 p-1 flex gap-x-1">
                         <>
                             <Button
                                 onClick={() => navigate("/writeoff")}
@@ -160,14 +160,13 @@ const WriteOffOperation = () => {
                         </>
                     </div>
                 )}
-                <div className="rounded-2xl bg-slate-200 mb-3 p-1">
-                    <>
-                        {activeType === "numeric" && (
-                            <div className="h-[14.6vh] flex items-center text-xl justify-center text-gray-700">
+                {activeType === "numeric" && (
+                    <div className="rounded-2xl bg-slate-200 p-1">
+                        <>
+                            <div className="h-[18vh] flex items-center text-xl justify-center text-gray-700">
                                 Остаток в системе: {0}
                             </div>
-                        )}
-                        {activeType === "numeric" && (
+
                             <div className="grid grid-cols-4 gap-1 mb-1">
                                 <Button
                                     size="sm"
@@ -207,14 +206,16 @@ const WriteOffOperation = () => {
                                     icon={<LuDelete />}
                                 ></Button>
                             </div>
-                        )}
-                        <KeyboardSwitcher
-                            activeType={activeType}
-                            setActiveType={setActiveType}
-                            setSearch={setSearch}
-                        />
-                    </>
-                </div>
+
+                            
+                        </>
+                    </div>
+                )}
+                <KeyboardSwitcher
+                    activeType={activeType}
+                    setActiveType={setActiveType}
+                    setSearch={setSearch}
+                />
 
                 {activeType === "numeric" && (
                     <div className="rounded-2xl bg-slate-200 p-1">

@@ -135,9 +135,7 @@ const ProductsPage = () => {
       />
 
       {searchFocus && (
-        <div className="rounded-2xl bg-slate-200 mb-3 p-1">
           <FullKeyboard setSearch={setSearch} />
-        </div>
       )}
       <UploadExcelFile isOpen={isOpenExcel} setIsOpen={setIsOpenExcel} />
       {isAddOpen && (

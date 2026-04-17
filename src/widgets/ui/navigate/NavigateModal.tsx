@@ -10,6 +10,7 @@ import {
     MdOutlinePeopleOutline,
     MdAssignment,
     MdBarChart,
+    MdAccountCircle,
 } from "react-icons/md";
 
 const NavigateModal = ({ isOpenNavigate, setIsOpenNavigate }: any) => {
@@ -88,6 +89,11 @@ const NavigateModal = ({ isOpenNavigate, setIsOpenNavigate }: any) => {
                     Ревизия
                 </NavItem>
 
+                <NavItem className={linkClass} to={"/writeoff/operation"}>
+                    <MdAssignment size={20} />
+                    Списание
+                </NavItem>
+
                 {/* <NavItem className={linkClass} to={"/report"}>
           <MdBarChart size={20} />
           Отчёт
@@ -96,6 +102,11 @@ const NavigateModal = ({ isOpenNavigate, setIsOpenNavigate }: any) => {
                 <NavItem className={linkClass} to={"/period-report"}>
                     <MdBarChart size={20} />
                     Отчет за период
+                </NavItem>
+
+                <NavItem className={linkClass} to={"/account"}>
+                    <MdAccountCircle size={20} />
+                    Аккаунт
                 </NavItem>
 
                 <NavItem className={linkClass} to={"/settings"}>

@@ -24,6 +24,7 @@ import {
   WriteOffOperationPage,
   ReportPage,
   PeriodReport,
+  AccountPage,
 } from "./RoutePath";
 import { PrivateRoute, PublicRoute } from "./PrivateRoute";
 import Counterparty from "@/pages/counterparty";
@@ -87,6 +88,7 @@ export const AppRouter = () => (
             <Route path="/report" element={<ReportPage />} />
 
             <Route path="/period-report" element={<PeriodReport/>} />
+            <Route path="/account" element={<AccountPage/>} />
           </Route>
         </Route>
 

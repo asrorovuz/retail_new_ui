@@ -10,7 +10,8 @@ export const pathServices = {
     updateContractor: "/api/contractor/update/",
     registeration: "/public/auth/register-account",
     registerOrgPath: "/public/auth/register-organization",
-    registerOrgLocalPath: "/public/auth/register-organization-local"
+    registerOrgLocalPath: "/public/auth/register-organization-local",
+    resetPass: "/public/auth/reset-password"
   },
 
   init: {

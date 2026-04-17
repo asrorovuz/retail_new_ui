@@ -110,8 +110,8 @@ const RevisionTable = ({
   );
 
   return (
-    <div className="overflow-hidden h-[52vh] mb-3 rounded-2xl">
-      <div className="border-2 border-slate-200 overflow-y-auto rounded-2xl h-[52vh]">
+    <div className="overflow-hidden flex-1 rounded-2xl">
+      <div className="border-2 border-slate-200 overflow-y-auto rounded-2xl h-full">
         <div className="h-full flex flex-col justify-between">
           <Table
             className="table-fixed border-separate border-spacing-0"

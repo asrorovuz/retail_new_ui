@@ -36,6 +36,14 @@ export const login = async (payload: LoginPayload): Promise<LoginResponse> => {
   });
 };
 
+export const resetPass = async (payload: any): Promise<any> => {
+  return await apiRequest<any>({
+    url: pathServices.auth.resetPass,
+    method: "POST",
+    data: payload,
+  });
+};
+
 // 🔹 Global login
 export const globalLogin = async (
   data: GlobalLogin & { signal?: AbortSignal }

@@ -9,7 +9,7 @@ const Cashbox: FC<CashboxPropsType> = (props) => {
   const activeIndex = drafts?.findIndex((item) => item?.isActive);
 
   return (
-    <div className="p-1 rounded-2xl flex items-center justify-between gap-x-2 mb-3 bg-slate-200">
+    <div className="p-1 rounded-2xl flex items-center justify-between gap-x-2 bg-slate-200">
       <Button
         disabled={!activeIndex}
         className="bg-white disabled:bg-white h-8"

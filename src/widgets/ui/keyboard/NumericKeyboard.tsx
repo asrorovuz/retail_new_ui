@@ -12,7 +12,7 @@ const NumericKeyboard = ({
   const keys = ["7", "8", "9", "4", "5", "6", "1", "2", "3", "0", "."];
 
   return (
-    <div className="grid grid-cols-3 grid-rows-4 h-[35.9vh] gap-1">
+    <div className="h-[31vh] grid grid-cols-3 grid-rows-4 gap-1">
       {keys.map((key) => (
         <Button
           key={key}

@@ -7,7 +7,8 @@ import { useKeyboard } from "@/app/providers/KeyboardProvider";
 import classNames from "@/shared/lib/classNames";
 import { Button } from "@/shared/ui/kit";
 import MagnetSvg from "@/shared/ui/svg/MagnetSvg";
-import { KeyboardSwitcher } from "@/widgets/ui/keyboard/Keybord";
+import NumericKeyboard from "@/widgets/ui/keyboard/NumericKeyboard";
+import QuertyKeyboard from "@/widgets/ui/keyboard/QuertyKeyboard";
 import { useEffect, useMemo } from "react";
 import { LuDelete } from "react-icons/lu";
 
@@ -182,99 +183,106 @@ const PaymentSection = ({
     return (
         <>
             {activeType === "numeric" && (
-                <div className="flex flex-col gap-y-2 mb-1">
-                    <div className="py-3 px-4 flex justify-between">
-                        <div className="w-full">
-                            <div className="flex justify-between text-slate-900">
-                                <span className="text-sm">ОПЛАТA</span>
-                                <span className="text-2xl">
-                                    {value ? value : "0"}
-                                </span>
-                            </div>
-                            <div className="grid grid-cols-2 gap-x-2">
-                                <div className="text-sm bg-white px-1 rounded-[4px] text-slate-600 flex justify-between pt-1">
-                                    <span>Сумма</span>
-                                    <span>
-                                        {totalPaymentAmount.toLocaleString("ru-RU")}
+                <div className="rounded-2xl bg-slate-200 p-1 h-full">
+                    <div className="flex flex-col gap-y-2 mb-1">
+                        <div className="py-3 px-4 flex justify-between">
+                            <div className="w-full">
+                                <div className="flex justify-between text-slate-900">
+                                    <span className="text-sm">ОПЛАТA</span>
+                                    <span className="text-2xl">
+                                        {value ? value : "0"}
                                     </span>
                                 </div>
+                                <div className="grid grid-cols-2 gap-x-2">
+                                    <div className="text-sm bg-white px-1 rounded-[4px] text-slate-600 flex justify-between pt-1">
+                                        <span>Сумма</span>
+                                        <span>
+                                            {totalPaymentAmount.toLocaleString(
+                                                "ru-RU",
+                                            )}
+                                        </span>
+                                    </div>
 
-                                <div className="text-sm bg-white px-1 rounded-[4px] text-slate-600 flex justify-between pt-1">
-                                    <span>Сдача</span>
-                                    <span>
-                                        {cashBackAmount.toLocaleString("ru-RU")}
-                                    </span>
+                                    <div className="text-sm bg-white px-1 rounded-[4px] text-slate-600 flex justify-between pt-1">
+                                        <span>Сдача</span>
+                                        <span>
+                                            {cashBackAmount.toLocaleString(
+                                                "ru-RU",
+                                            )}
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
+                            <Button
+                                variant="plain"
+                                className="bg-transparent text-blue-500 w-max h-8 ml-1"
+                                onClick={onMagent}
+                                icon={<MagnetSvg size={28} />}
+                            />
                         </div>
-                        <Button
-                            variant="plain"
-                            className="bg-transparent text-blue-500 w-max h-8 ml-1"
-                            onClick={onMagent}
-                            icon={<MagnetSvg size={28} />}
-                        />
+                        <div className="grid grid-cols-4 gap-1">
+                            <Button
+                                size="sm"
+                                type="button"
+                                variant="plain"
+                                onClick={() => setActiveType("qwerty")}
+                                className="w-full bg-slate-300 text-slate-700"
+                            >
+                                ABC
+                            </Button>
+                            <Button
+                                size="sm"
+                                type="button"
+                                variant="plain"
+                                disabled={!["sale"].includes(type)}
+                                onClick={() =>
+                                    setActivePaymentSelectType(
+                                        activeSelectPaymetype === 0 ? 1 : 0,
+                                    )
+                                }
+                                className={classNames(
+                                    "w-full",
+                                    activeSelectPaymetype
+                                        ? "bg-slate-300 text-slate-700"
+                                        : "bg-blue-400 !text-white",
+                                )}
+                            >
+                                Скидка
+                            </Button>
+                            <Button
+                                size="sm"
+                                type="button"
+                                variant="plain"
+                                onMouseDown={(e) => {
+                                    e.preventDefault();
+                                    clear(onClear);
+                                }}
+                                className="w-full bg-slate-300 text-slate-700"
+                            >
+                                Oчистить
+                            </Button>
+                            <Button
+                                size="sm"
+                                type="button"
+                                variant="plain"
+                                onMouseDown={(e) => {
+                                    e.preventDefault();
+                                    backspace(onBackSpace);
+                                }}
+                                className="w-full bg-slate-300 text-slate-700"
+                                icon={<LuDelete />}
+                            ></Button>
+                        </div>
                     </div>
-                    <div className="grid grid-cols-4 gap-1">
-                        <Button
-                            size="sm"
-                            type="button"
-                            variant="plain"
-                            onClick={() => setActiveType("qwerty")}
-                            className="w-full bg-slate-300 text-slate-700"
-                        >
-                            ABC
-                        </Button>
-                        <Button
-                            size="sm"
-                            type="button"
-                            variant="plain"
-                            disabled={!["sale"].includes(type)}
-                            onClick={() =>
-                                setActivePaymentSelectType(
-                                    activeSelectPaymetype === 0 ? 1 : 0,
-                                )
-                            }
-                            className={classNames(
-                                "w-full",
-                                activeSelectPaymetype
-                                    ? "bg-slate-300 text-slate-700"
-                                    : "bg-blue-400 !text-white",
-                            )}
-                        >
-                            Скидка
-                        </Button>
-                        <Button
-                            size="sm"
-                            type="button"
-                            variant="plain"
-                            onMouseDown={(e) => {
-                                e.preventDefault();
-                                clear(onClear);
-                            }}
-                            className="w-full bg-slate-300 text-slate-700"
-                        >
-                            Oчистить
-                        </Button>
-                        <Button
-                            size="sm"
-                            type="button"
-                            variant="plain"
-                            onMouseDown={(e) => {
-                                e.preventDefault();
-                                backspace(onBackSpace);
-                            }}
-                            className="w-full bg-slate-300 text-slate-700"
-                            icon={<LuDelete />}
-                        ></Button>
-                    </div>
+                    <NumericKeyboard onClickNumber={onClickNumber} />
                 </div>
             )}
-            <KeyboardSwitcher
-                onClickNumber={onClickNumber}
-                activeType={activeType}
-                setActiveType={setActiveType}
-                setSearch={setSearch}
-            />
+            {activeType === "qwerty" && (
+                <QuertyKeyboard
+                    setActiveType={setActiveType}
+                    setSearch={setSearch}
+                />
+            )}
         </>
     );
 };

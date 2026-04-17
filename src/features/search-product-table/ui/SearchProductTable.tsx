@@ -139,9 +139,9 @@ const SearchProductTable = ({
             )}
           >
             {highlightText(item?.name, debouncedSearch)}
-            <div>
+            <>
               <FormattedNumber value={Number(price?.amount || 0)} /> сум
-            </div>
+            </>
           </div>
         );
       })}

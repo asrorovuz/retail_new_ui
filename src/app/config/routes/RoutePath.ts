@@ -41,3 +41,4 @@ export const ReportPage = lazy(() => import("@/pages/report"));
 export const PeriodReport = lazy(
     () => import("@/pages/period-report/PeriodReport"),
 );
+export const AccountPage = lazy(() => import("@/pages/accounts"));
