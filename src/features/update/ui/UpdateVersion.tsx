@@ -10,6 +10,7 @@ const UpdateVersion = () => {
     updates,
     loading,
     onSendUpdates,
+    messsageText
   } = useUpdateProject();
 
   const hasUpdates = updates.length > 0;
@@ -18,7 +19,7 @@ const UpdateVersion = () => {
     <>
       <Button
         variant="plain"
-        className="border-0 bg-slate-100 relative px-3"
+        className="border-0 bg-slate-100 relative px-3 bg-transparent"
         onClick={() => setUpdateDialogOpen(true)}
       >
         <span className="text-xl">
@@ -38,13 +39,15 @@ const UpdateVersion = () => {
       {/* 🔔 Versiya yangilash */}
       <Dialog
         width={490}
+        
         title="Обновление версии проекта"
         isOpen={updateDialogOpen}
-        closable={!loading}
+        closable={!loading || messsageText}
         shouldCloseOnOverlayClick={!loading}
         shouldCloseOnEsc={!loading}
         onClose={() => setUpdateDialogOpen(false)}
       >
+        {messsageText && <p className="text-orange-600 mb-5">Для корректной и стабильной работы системы, пожалуйста, обновите её.</p>}
         <ul className="list-disc pl-5 overflow-y-auto max-h-[60vh] flex flex-col gap-y-2">
           {updates.length > 0 ? (
             updates?.map((u, i) => (

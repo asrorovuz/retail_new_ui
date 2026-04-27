@@ -11,6 +11,8 @@ import { useDeleteAccount } from "@/entities/auth/repository";
 import { showErrorMessage, showSuccessMessage } from "@/shared/lib/showMessage";
 import { messages } from "@/app/constants/message.request";
 import ConfirmDialog from "@/shared/ui/kit-pro/confirm-dialog/ConfirmDialog";
+import { FaUserCheck } from "react-icons/fa";
+import { Button } from "@/shared/ui/kit";
 
 type User = {
     id: string;
@@ -34,6 +36,8 @@ const columnHelper = createColumnHelper<User>();
 const AccountsSection = ({ users }: { users: User[] }) => {
     const [id, setId] = useState<string | null>(null);
     const [isOpen, setIsOpen] = useState(false);
+    // const [isOpenPermission, setIsOpenPermission] = useState(false);
+
     const { mutate: deleteMutate, isPending } = useDeleteAccount();
 
     const handleDelete = () => {
@@ -109,33 +113,43 @@ const AccountsSection = ({ users }: { users: User[] }) => {
                 id: "action",
                 header: "Действие",
                 cell: ({ row }) => {
-                    if (row.original.type === 1) return null; // ← Admin bo'lsa ko'rsatma
+                    // if (row.original.type === 1) return null; // ← Admin bo'lsa ko'rsatma
 
                     return (
-                        <button
-                            onClick={() => {
-                                setId(row.original.id);
-                                setIsOpen(true);
-                            }}
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 border border-transparent hover:border-red-200 transition-all duration-150"
-                        >
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                className="w-4 h-4"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth={2}
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                            >
-                                <polyline points="3 6 5 6 21 6" />
-                                <path d="M19 6l-1 14H6L5 6" />
-                                <path d="M10 11v6M14 11v6" />
-                                <path d="M9 6V4h6v2" />
-                            </svg>
-                            Удалить
-                        </button>
+                        <div className="flex gap-x-2">
+                            <Button
+                                onClick={() => {
+                                    setId(row.original.id);
+                                    setIsOpen(true);
+                                }}
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 border border-transparent hover:border-red-200 transition-all duration-150"
+                                icon={
+                                    <>
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            className="w-4 h-4"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            strokeWidth={2}
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                        >
+                                            <polyline points="3 6 5 6 21 6" />
+                                            <path d="M19 6l-1 14H6L5 6" />
+                                            <path d="M10 11v6M14 11v6" />
+                                            <path d="M9 6V4h6v2" />
+                                        </svg>
+                                    </>
+                                }
+                            />
+
+                            <Button
+                                // onClick={() => setIsOpenPermission(true)}
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-blue-600 hover:bg-blue-50 border border-transparent hover:border-blue-200 transition-all duration-150"
+                                icon={<FaUserCheck />}
+                            />
+                        </div>
                     );
                 },
             }),
