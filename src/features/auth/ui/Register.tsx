@@ -3,7 +3,7 @@ import { Controller, FormProvider, useForm } from "react-hook-form";
 import Step1Phone from "./Step1";
 import Step2Info from "./Step2";
 import Step3Confirm from "./Step3";
-import { Button, Dialog, Form, Input, Spinner, Steps } from "@/shared/ui/kit";
+import { Button, Dialog, Form, FormItem, Input, Spinner, Steps } from "@/shared/ui/kit";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import {
     useConfirmCode,
@@ -26,7 +26,6 @@ const Register = () => {
     const [isOpenCode, setIsOpenCode] = useState(false);
     const [response, setResponse] = useState<any>(null);
     const [step, setStep] = useState(1);
-    const [activeIndex, setActiveIndex] = useState(0);
 
     const { refetch } = useOutletContext<OutletContextType>() || {
         refetch: () => {},
@@ -247,68 +246,33 @@ const Register = () => {
                         <Controller
                             name="confirm_code"
                             control={form.control}
-                            render={({ field }) => (
-                                <div className="flex justify-center gap-2 mb-6">
-                                    {[...Array(6)].map((_, index) => (
-                                        <Input
-                                            value={field.value?.[index] || ""}
-                                            onFocus={() =>
-                                                setActiveIndex(index)
-                                            }
-                                            onChange={(e) => {
-                                                const val =
-                                                    e.target.value.replace(
-                                                        /\D/g,
-                                                        "",
-                                                    );
-                                                if (!val) return;
-
-                                                const current =
-                                                    field.value || "";
-
-                                                const newCode =
-                                                    current.substring(
-                                                        0,
-                                                        activeIndex,
-                                                    ) +
-                                                    val +
-                                                    current.substring(
-                                                        activeIndex + 1,
-                                                    );
-
-                                                field.onChange(newCode);
-
-                                                // next inputga o'tish
-                                                setActiveIndex((prev) =>
-                                                    Math.min(prev + 1, 5),
-                                                );
-                                            }}
-                                            onKeyDown={(e) => {
-                                                if (e.key === "Backspace") {
-                                                    const current =
-                                                        field.value || "";
-
-                                                    const newCode =
-                                                        current.substring(
-                                                            0,
-                                                            index,
-                                                        ) +
-                                                        current.substring(
-                                                            index + 1,
-                                                        );
-
-                                                    field.onChange(newCode);
-
-                                                    setActiveIndex(
-                                                        Math.max(index - 1, 0),
-                                                    );
-                                                }
-                                            }}
-                                            maxLength={1}
-                                            className="w-12 h-12 text-center"
-                                        />
-                                    ))}
-                                </div>
+                            rules={{
+                                required: "Введите код",
+                                minLength: {
+                                    value: 6,
+                                    message: "Код должен состоять из 6 цифр",
+                                },
+                            }}
+                            render={({ field, fieldState }) => (
+                                <FormItem
+                                    invalid={!!fieldState.error}
+                                    errorMessage={fieldState.error?.message}
+                                >
+                                    <Input
+                                        {...field}
+                                        placeholder="Введите SMS-код"
+                                        maxLength={6}
+                                        inputMode="numeric"
+                                        className="text-center text-2xl tracking-[10px]"
+                                        onChange={(e) => {
+                                            const val = e.target.value.replace(
+                                                /\D/g,
+                                                "",
+                                            );
+                                            field.onChange(val);
+                                        }}
+                                    />
+                                </FormItem>
                             )}
                         />
                     </div>
@@ -316,7 +280,7 @@ const Register = () => {
                     <Button
                         type="button"
                         variant="solid"
-                        loading={regesPending}
+                        loading={isPending}
                         disabled={(confirmCodeValue?.length || 0) !== 6}
                         className="w-full bg-blue-500 hover:bg-blue-600 text-white rounded-xl"
                         onClick={onSubmitCode}

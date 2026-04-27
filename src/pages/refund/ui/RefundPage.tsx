@@ -94,9 +94,9 @@ const RefundPage = () => {
     const completeActiveDraftRefund = useDraftRefundStore(
         (store) => store.completeActiveDraftRefund,
     );
-    const deleteDraftRefundMark = useDraftRefundStore(
-        (store) => store.deleteDraftRefundMark,
-    );
+    // const deleteDraftRefundMark = useDraftRefundStore(
+    //     (store) => store.deleteDraftRefundMark,
+    // );
 
     const activeDraft: DraftRefundSchema =
         draftRefunds?.find((s) => s.isActive) ?? draftRefunds[0];
@@ -197,8 +197,8 @@ const RefundPage = () => {
     }, [checkData]);
 
     return (
-        <div className="grid grid-cols-2 gap-x-3">
-            <div className="bg-white rounded-2xl p-3">
+        <div className="flex gap-x-3">
+            <div className="bg-white w-3/5 rounded-2xl p-3 flex flex-col gap-y-3">
                 <Cashbox
                     type={"refund"}
                     drafts={draftRefunds}
@@ -229,8 +229,8 @@ const RefundPage = () => {
                 />
                 <Footer deleteDraft={deleteDraftRefund} draft={draftRefunds} />
             </div>
-            <div className="bg-white rounded-2xl p-3">
-                <div className="rounded-2xl mb-3 bg-slate-200 p-1">
+            <div className="bg-white w-2/5 rounded-2xl p-3 flex flex-col gap-y-3 h-full">
+                <div className="rounded-2xl bg-slate-200 p-1">
                     <SearchProduct
                         search={search}
                         activeType={activeType}
@@ -252,7 +252,7 @@ const RefundPage = () => {
                     )}
                 </div>
                 {activeType === "numeric" && (
-                    <div className="rounded-2xl bg-slate-200 mb-3 p-1">
+                    <div className="rounded-2xl bg-slate-200 p-1">
                         <>
                             <PaymeTypeCards
                                 type={"refund"}
@@ -266,7 +266,7 @@ const RefundPage = () => {
                     </div>
                 )}
                 {activeType === "numeric" && (
-                    <div className="rounded-2xl bg-slate-200 mb-3 p-1 flex gap-x-1">
+                    <div className="rounded-2xl bg-slate-200 p-1 flex gap-x-1">
                         <>
                             <Button
                                 onClick={() => navigate("/refund-history")}
@@ -298,7 +298,7 @@ const RefundPage = () => {
                         </>
                     </div>
                 )}
-                <div className="rounded-2xl bg-slate-200 mb-3 p-1">
+                <div className="rounded-2xl bg-slate-200 p-1">
                     <>
                         {activeType === "numeric" && (
                             <div className="flex items-center gap-1 mb-1">
@@ -424,10 +424,9 @@ const RefundPage = () => {
 
                 {mark ? (
                     <ViewMark
-                        item={mark}
+                        itemId={mark}
                         onClose={() => setMark(null)}
                         activeDraft={activeDraft}
-                        deleteDraftMark={deleteDraftRefundMark}
                     />
                 ) : null}
             </div>

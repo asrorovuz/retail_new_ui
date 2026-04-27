@@ -74,9 +74,9 @@ const PurchasePrice = () => {
     const completeActiveDraftPurchase = useDraftPurchaseStore(
         (store) => store.completeActiveDraftPurchase,
     );
-    const deleteDraftPurchaseMark = useDraftPurchaseStore(
-        (store) => store.deleteDraftPurchaseMark,
-    );
+    // const deleteDraftPurchaseMark = useDraftPurchaseStore(
+    //     (store) => store.deleteDraftPurchaseMark,
+    // );
 
     const { data } = useAllProductApi(50, 1, debouncedSearch || "");
     const {
@@ -131,8 +131,8 @@ const PurchasePrice = () => {
     }, [isError]);
 
     return (
-        <div className="grid grid-cols-2 gap-x-3">
-            <div className="bg-white rounded-2xl p-3">
+        <div className="flex gap-x-3">
+            <div className="bg-white w-3/5 rounded-2xl p-3 flex flex-col gap-y-3">
                 <Cashbox
                     type={"purchase"}
                     drafts={draftPurchases}
@@ -163,8 +163,8 @@ const PurchasePrice = () => {
                     draft={draftPurchases}
                 />
             </div>
-            <div className="bg-white rounded-2xl p-3">
-                <div className="rounded-2xl mb-3 bg-slate-200 p-1">
+            <div className="bg-white w-2/5 rounded-2xl p-3 flex flex-col gap-y-3 h-full">
+                <div className="rounded-2xl bg-slate-200 p-1">
                     <SearchProduct
                         search={search}
                         activeType={activeType}
@@ -186,7 +186,7 @@ const PurchasePrice = () => {
                     )}
                 </div>
                 {activeType === "numeric" && (
-                    <div className="rounded-2xl bg-slate-200 mb-3 p-1">
+                    <div className="rounded-2xl bg-slate-200 p-1">
                         <>
                             <PaymeTypeCards
                                 type={"purchase"}
@@ -200,7 +200,7 @@ const PurchasePrice = () => {
                     </div>
                 )}
                 {activeType === "numeric" && (
-                    <div className="rounded-2xl bg-slate-200 mb-3 p-1 flex gap-x-1">
+                    <div className="rounded-2xl bg-slate-200 p-1 flex gap-x-1">
                         <>
                             <Button
                                 onClick={() => navigate("/purchase-history")}
@@ -223,7 +223,7 @@ const PurchasePrice = () => {
                         </>
                     </div>
                 )}
-                <div className="rounded-2xl bg-slate-200 mb-3 p-1">
+                <div className="rounded-2xl bg-slate-200 p-1">
                     <>
                         {activeType === "numeric" && (
                             <div className="flex items-center gap-1 mb-1">
@@ -341,10 +341,9 @@ const PurchasePrice = () => {
             </div>
             {mark ? (
                 <ViewMark
-                    item={mark}
+                    itemId={mark}
                     onClose={() => setMark(null)}
                     activeDraft={activeDraft}
-                    deleteDraftMark={deleteDraftPurchaseMark}
                 />
             ) : null}
         </div>

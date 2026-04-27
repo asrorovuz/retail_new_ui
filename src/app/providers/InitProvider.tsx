@@ -13,18 +13,22 @@ import {
 } from "@/entities/products/repository";
 import { useCurrencyStore } from "../store/useCurrencyStore";
 import { useVersionStore } from "../store/useVersionStore";
+import { usePermissionApi } from "@/entities/settings/repository";
+import { useAuthContext } from "./AuthProvider";
 
 export const InitProvider = ({ children }: { children: ReactNode }) => {
-  const { setSettings, setTableSettings, setWareHouseId, setWareHouse } =
+  const { setSettings, setTableSettings, setWareHouseId, setWareHouse, setPermissionList } =
     useSettingsStore();
   const { setNationalCurrency, setCurrencies } = useCurrencyStore();
   const setVersions = useVersionStore((store) => store.setVersions);
+  const { user } = useAuthContext();
 
   const { data: settings } = useSettingsApi();
   const { data: settingsTable } = useProductTableSettingsApi();
   const { data: wareHouseData } = useWarehouseApi();
   const { data: currency } = useCurrancyApi();
   const { data: versions } = useVersionApi();
+  const { data: permission } = usePermissionApi(user?.id);
 
   // 📦 Ilova versiyalarini o‘rnatish
   useEffect(() => {
@@ -32,6 +36,14 @@ export const InitProvider = ({ children }: { children: ReactNode }) => {
       setVersions(versions);
     }
   }, [versions, setVersions]);
+
+  useEffect(() => {
+    console.log(permission);
+    
+    if (permission?.permissions) {
+      setPermissionList(permission?.permissions);
+    }
+  }, [permission?.permissions, setPermissionList]);
 
   // 🏬 Warehouse ID ni o‘rnatish
   useEffect(() => {

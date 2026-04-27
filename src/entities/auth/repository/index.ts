@@ -1,6 +1,6 @@
 import type { GlobalLogin, LoginPayload, LoginResponse, Organizationtype } from "@/@types/auth/login";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createContractorApi, deleteContractorApi, fetchAuthStatus, fetchConfirmCode, globalLogin, login, register, registeration, registerOrg, registerOrgLocal, resetPass, updateContractorApi } from "../api";
+import { addAccountApi, createContractorApi, deleteAccountApi, deleteContractorApi, fetchAuthStatus, fetchConfirmCode, getAllAccounts, globalLogin, login, register, registeration, registerOrg, registerOrgLocal, resetPass, updateContractorApi, updatePasswordApi } from "../api";
 
 
 export const useLogin = () => {
@@ -19,6 +19,24 @@ export const useAuthStatus = () => {
   return useQuery({
     queryKey: ["auth-status"],
     queryFn: fetchAuthStatus,
+  });
+};
+
+export const useGetAllAcounts = () => {
+  return useQuery({
+    queryKey: ["all-accounts"],
+    queryFn: getAllAccounts,
+  });
+};
+
+export const useUpdatePassword = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ payload, id }: { payload: any; id: number }) =>
+      updatePasswordApi(payload, id),
+    onSuccess() {
+      queryClient.invalidateQueries({ queryKey: ["passord-change"] });
+    },
   });
 };
 
@@ -54,6 +72,16 @@ export const useCreateContractor = () => {
   });
 };
 
+export const useAddAccount = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: any) => addAccountApi(data),
+    onSuccess() {
+      queryClient.invalidateQueries({ queryKey: ["all-accounts"] });
+    },
+  });
+};
+
 export const useUpdateContractor = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -71,6 +99,16 @@ export const useDeleteContractor = () => {
     mutationFn: (id: number) => deleteContractorApi(id),
     onSuccess() {
       queryClient.invalidateQueries({ queryKey: ["contractor-all"] });
+    },
+  });
+};
+
+export const useDeleteAccount = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => deleteAccountApi(id),
+    onSuccess() {
+      queryClient.invalidateQueries({ queryKey: ["all-accounts"] });
     },
   });
 };

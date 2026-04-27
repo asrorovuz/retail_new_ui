@@ -11,7 +11,11 @@ export const pathServices = {
     registeration: "/public/auth/register-account",
     registerOrgPath: "/public/auth/register-organization",
     registerOrgLocalPath: "/public/auth/register-organization-local",
-    resetPass: "/public/auth/reset-password"
+    resetPass: "/public/auth/reset-password",
+    getAllAccounts: "/admin/auth/accounts/get",
+    updatePassword: "/admin/auth/change-account-password/",
+    createAccount: "/admin/auth/add-account",
+    deleteAccount: "/admin/auth/delete-account/"
   },
 
   init: {
@@ -38,6 +42,7 @@ export const pathServices = {
     addBot: "/api/bot/register",
     sendContacts: "/api/bot/config/update",
     deleteBot: `/api/bot/delete/`,
+    permissionPat: "/public/auth/account-permissions/"
   },
 
   warhouse: {

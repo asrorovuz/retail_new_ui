@@ -1,3 +1,6 @@
+import { messages } from "@/app/constants/message.request";
+import { useUpdatePassword } from "@/entities/auth/repository";
+import { showErrorMessage, showSuccessMessage } from "@/shared/lib/showMessage";
 import { Button, Form, FormItem, Input } from "@/shared/ui/kit";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -9,8 +12,16 @@ interface ChangePasswordForm {
     repeat_pass: string;
 }
 
-const ChangePasswordModal = ({ onClose }: { onClose: () => void }) => {
+const ChangePasswordModal = ({
+    onClose,
+    id,
+}: {
+    onClose: () => void;
+    id: number;
+}) => {
     const [visible, setVisible] = useState([false, false, false]);
+
+    const { mutate, isPending } = useUpdatePassword();
 
     const { control, handleSubmit, watch, reset } =
         useForm<ChangePasswordForm>();
@@ -32,9 +43,29 @@ const ChangePasswordModal = ({ onClose }: { onClose: () => void }) => {
     };
 
     const onSubmit = (data: ChangePasswordForm) => {
-        console.log("Изменение пароля:", data);
-        // API call shu yerda
-        // reset();
+        const payload = {
+            new_password: data?.new_pass,
+            old_password: data?.old_pass,
+        };
+
+        mutate(
+            {
+                payload,
+                id,
+            },
+            {
+                onSuccess() {
+                    showSuccessMessage(
+                        messages.uz.SUCCESS_MESSAGE,
+                        messages.ru.SUCCESS_MESSAGE,
+                    );
+                    onClose();
+                },
+                onError(error) {
+                    showErrorMessage(error);
+                },
+            },
+        );
     };
 
     return (
@@ -157,10 +188,20 @@ const ChangePasswordModal = ({ onClose }: { onClose: () => void }) => {
             />
 
             <div className="flex gap-x-2">
-                <Button onClick={close} type="button" className="w-full">
+                <Button
+                    disabled={isPending}
+                    onClick={close}
+                    type="button"
+                    className="w-full"
+                >
                     Отменить
                 </Button>
-                <Button variant="solid" type="submit" className="w-full">
+                <Button
+                    loading={isPending}
+                    variant="solid"
+                    type="submit"
+                    className="w-full"
+                >
                     Изменить пароль
                 </Button>
             </div>

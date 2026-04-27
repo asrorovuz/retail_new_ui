@@ -65,7 +65,7 @@ export type DraftSaleItemSchema = {
   quantity: number;
   totalAmount: number;
   marks?: string[];
-  isMark: boolean;
+  isMark?: boolean;
   catalogCode?: string;
   catalogName?: string;
 };

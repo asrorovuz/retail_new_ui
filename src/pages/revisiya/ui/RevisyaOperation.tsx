@@ -75,8 +75,8 @@ const RevisyaOperation = () => {
   };
 
   return (
-    <div className="grid grid-cols-2 gap-x-3">
-      <div className="bg-white rounded-2xl p-3">
+    <div className="flex gap-x-3">
+      <div className="bg-white w-3/5 rounded-2xl p-3 flex flex-col gap-y-3">
         <div className="flex p-1 h-9 bg-slate-200 text-slate-800 justify-between rounded-lg mb-3">
           <span className="bg-white flex items-center p-2 rounded-md">
             Окно
@@ -94,7 +94,7 @@ const RevisyaOperation = () => {
           deleteDraftItem={deleteDraftRevisionItem}
           updateDraftItemQuantity={updateDraftRevisionItemQuantity}
         />
-        <div className="h-[27vh] bg-slate-200 rounded-2xl p-1 mb-3 flex items-center justify-center">
+        <div className="h-[27vh] bg-slate-200 rounded-2xl p-1 flex items-center justify-center">
           <textarea
             placeholder="Добавить комментарий для ревизии"
             disabled
@@ -103,8 +103,8 @@ const RevisyaOperation = () => {
         </div>
         <Footer />
       </div>
-      <div className="bg-white rounded-2xl p-3">
-        <div className="rounded-2xl mb-3 bg-slate-200 p-1">
+      <div className="bg-white w-2/5 rounded-2xl p-3 flex flex-col gap-y-3 h-full">
+        <div className="rounded-2xl bg-slate-200 p-1">
           <SearchProduct search={search} activeType={activeType} setSearch={setSearch} setActiveType={setActiveType} />
           {activeType === "qwerty" && (
             <>
@@ -120,7 +120,7 @@ const RevisyaOperation = () => {
           )}
         </div>
         {activeType === "numeric" && (
-          <div className="rounded-2xl bg-slate-200 mb-3 p-1">
+          <div className="rounded-2xl bg-slate-200 p-1">
             <>
               <PaymeTypeCards
                 type={"revision"}
@@ -132,7 +132,7 @@ const RevisyaOperation = () => {
           </div>
         )}
         {activeType === "numeric" && (
-          <div className="rounded-2xl bg-slate-200 mb-3 p-1 flex gap-x-1">
+          <div className="rounded-2xl bg-slate-200 p-1 flex gap-x-1">
             <>
               <Button
                 onClick={() => navigate("/revisiya")}
@@ -161,7 +161,7 @@ const RevisyaOperation = () => {
             </>
           </div>
         )}
-        <div className="rounded-2xl bg-slate-200 mb-3 p-1">
+        <div className="rounded-2xl bg-slate-200 p-1">
           <>
             {activeType === "numeric" && (
               <div className="h-[14.6vh] flex items-center text-xl justify-center text-gray-700">

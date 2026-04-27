@@ -25,7 +25,6 @@ const Login = () => {
     const [forgotPass, setForgotPass] = useState(false);
     const [isOpenCode, setIsOpenCode] = useState(false);
     const [response, setResponse] = useState<any>(null);
-    const [activeIndex, setActiveIndex] = useState(0);
 
     const timeoutRef = useRef<number | null>(null);
 

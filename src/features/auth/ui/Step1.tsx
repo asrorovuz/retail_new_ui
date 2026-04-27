@@ -153,7 +153,7 @@ const Step1Phone = () => {
               isDisabled={!regionCode}
               options={DISTRICTS?.[regionCode] || []}
               getOptionLabel={(option) => option?.name}
-              getOptionValue={(option: any) => option?.value}
+              getOptionValue={(option: any) => option?.id}
               isSearchable={false}
               value={
                 DISTRICTS?.[regionCode]?.find((i) => i?.id === field?.value) ||

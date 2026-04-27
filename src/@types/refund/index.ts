@@ -2,6 +2,7 @@ export type DraftRefundSchema = {
   id?: number;
   isActive: boolean;
   items: DraftRefundItemSchema[];
+  comment?: string | undefined;
   payout?: DraftRefundPayoutSchema;
   discountAmount?: string;
   is_fiscalized?: boolean;

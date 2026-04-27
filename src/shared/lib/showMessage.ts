@@ -53,7 +53,7 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
     // 2️⃣ - API dan kelgan javob
     if (typeof error === "object" && error !== null) {
         console.log(error, "ssskwkdnkwndkwkndkwnfknw");
-        
+
         if (error.invalid_username_or_password) {
             return toast.error(
                 lang === "ru"
@@ -109,6 +109,14 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
                 lang === "ru"
                     ? "Бота с таким токеном не найдено"
                     : "Bunday tokenga bog'langan bot mavjud emas.",
+            );
+        }
+
+        if (error.not_allowed) {
+            return toast.error(
+                lang === "ru"
+                    ? "У вас нет прав для удаления этого пользователя"
+                    : "Sizda ushbu foydalanuvchini o‘chirish uchun ruxsat yo‘q.",
             );
         }
 
