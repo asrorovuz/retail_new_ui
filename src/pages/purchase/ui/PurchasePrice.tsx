@@ -1,5 +1,5 @@
 import type {
-    DraftPurchasePayoutAmountSchema,
+    // DraftPurchasePayoutAmountSchema,
     DraftPurchaseSchema,
 } from "@/@types/purchase";
 import { useDraftPurchaseStore } from "@/app/store/usePurchaseDraftStore";
@@ -22,7 +22,8 @@ import { handleScannedProduct } from "@/shared/lib/handleScannedProduct";
 import { showErrorLocalMessage } from "@/shared/lib/showMessage";
 import { useDebounce } from "@/shared/lib/useDebounce";
 import { Button } from "@/shared/ui/kit";
-import FormattedNumber from "@/shared/ui/kit-pro/numeric-format/NumericFormat";
+// import FormattedNumber from "@/shared/ui/kit-pro/numeric-format/NumericFormat";
+import { Header } from "@/widgets";
 import Footer from "@/widgets/ui/footer/Footer";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -164,6 +165,7 @@ const PurchasePrice = () => {
                 />
             </div>
             <div className="bg-white w-2/5 rounded-2xl p-3 flex flex-col gap-y-3 h-full">
+                <Header />
                 <div className="rounded-2xl bg-slate-200 p-1">
                     <SearchProduct
                         search={search}
@@ -225,7 +227,7 @@ const PurchasePrice = () => {
                 )}
                 <div className="rounded-2xl bg-slate-200 p-1">
                     <>
-                        {activeType === "numeric" && (
+                        {/* {activeType === "numeric" && (
                             <div className="flex items-center gap-1 mb-1">
                                 {["20000", "50000", "100000", "200000"].map(
                                     (amountStr) => (
@@ -307,7 +309,7 @@ const PurchasePrice = () => {
                                     ),
                                 )}
                             </div>
-                        )}
+                        )} */}
                         <PaymentSection
                             type={"purchase"}
                             activeDraft={activeDraft}

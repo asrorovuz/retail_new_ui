@@ -123,7 +123,7 @@ const SearchProductTable = ({
   };
 
   return (
-    <div className="h-[56vh] bg-white overflow-y-auto w-full rounded-md mt-1">
+    <div className="h-[48vh] bg-white overflow-y-auto w-full rounded-md mt-1">
       {data?.map((item, index) => {
         const price = item?.prices?.find(
           (el) => el?.product_price_type?.is_primary,

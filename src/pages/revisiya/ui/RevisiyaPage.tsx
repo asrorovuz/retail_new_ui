@@ -186,8 +186,6 @@ const RevisiyaPage = () => {
         getCoreRowModel: getCoreRowModel(),
     });
 
-    console.log(count, "count", data, "data");
-
     return (
         <div className="bg-white h-full rounded-2xl p-3">
             <div className="flex justify-between mb-4 items-center">

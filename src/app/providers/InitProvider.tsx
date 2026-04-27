@@ -38,7 +38,6 @@ export const InitProvider = ({ children }: { children: ReactNode }) => {
   }, [versions, setVersions]);
 
   useEffect(() => {
-    console.log(permission);
     
     if (permission?.permissions) {
       setPermissionList(permission?.permissions);

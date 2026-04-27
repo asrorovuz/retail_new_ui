@@ -11,6 +11,7 @@ import classNames from "@/shared/lib/classNames";
 import { showErrorMessage, showSuccessMessage } from "@/shared/lib/showMessage";
 import { useDebounce } from "@/shared/lib/useDebounce";
 import { Button } from "@/shared/ui/kit";
+import { Header } from "@/widgets";
 import Footer from "@/widgets/ui/footer/Footer";
 import NumericKeyboard from "@/widgets/ui/keyboard/NumericKeyboard";
 import QuertyKeyboard from "@/widgets/ui/keyboard/QuertyKeyboard";
@@ -99,6 +100,7 @@ const WriteOffOperation = () => {
                 <Footer />
             </div>
             <div className="bg-white w-2/5 rounded-2xl p-3 flex flex-col gap-y-3 h-full">
+                <Header />
                 <div className="rounded-2xl bg-slate-200 p-1">
                     <SearchProduct
                         search={search}
@@ -164,7 +166,7 @@ const WriteOffOperation = () => {
                 {activeType === "numeric" && (
                     <div className="rounded-2xl bg-slate-200 p-1">
                         <>
-                            <div className="h-[18vh] flex items-center text-xl justify-center text-gray-700">
+                            <div className="h-[11.5vh] flex items-center text-xl justify-center text-gray-700">
                                 Остаток в системе: {0}
                             </div>
 

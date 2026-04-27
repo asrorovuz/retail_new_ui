@@ -1,5 +1,5 @@
 import type {
-    DraftSalePaymentAmountSchema,
+    // DraftSalePaymentAmountSchema,
     DraftSaleSchema,
 } from "@/@types/sale";
 import { useDraftSaleStore } from "@/app/store/useSaleDraftStore";
@@ -21,13 +21,14 @@ import { handleBarcodeScanned } from "@/shared/lib/handleScannedBarcode";
 import { handleScannedProduct } from "@/shared/lib/handleScannedProduct";
 import { showErrorLocalMessage } from "@/shared/lib/showMessage";
 import OrderActions from "@/features/order-actions";
-import FormattedNumber from "@/shared/ui/kit-pro/numeric-format/NumericFormat";
+// import FormattedNumber from "@/shared/ui/kit-pro/numeric-format/NumericFormat";
 import classNames from "@/shared/lib/classNames";
 import Footer from "@/widgets/ui/footer/Footer";
 import { Button } from "@/shared/ui/kit";
 import { useNavigate } from "react-router-dom";
 import ViewMark from "@/features/viewMark";
 import PaymentDebtsModal from "@/features/modals/ui/PaymentDebtsModal";
+import { Header } from "@/widgets";
 
 const SalePage = () => {
     const [search, setSearch] = useState<string>("");
@@ -165,6 +166,7 @@ const SalePage = () => {
                 <Footer deleteDraft={deleteDraftSale} draft={draftSales} />
             </div>
             <div className="bg-white w-2/5 rounded-2xl p-3 flex flex-col gap-y-3 h-full">
+                <Header />
                 <div className="rounded-2xl bg-slate-200 p-1">
                     <SearchProduct
                         search={search}
@@ -242,7 +244,7 @@ const SalePage = () => {
                         </>
                     </div>
                 )}
-                {activeType === "numeric" && (
+                {/* {activeType === "numeric" && (
                     <div className="rounded-2xl bg-slate-200 p-1">
                         <>
                             <div className="grid grid-cols-4 gap-1 mb-1">
@@ -328,7 +330,7 @@ const SalePage = () => {
                             </div>
                         </>
                     </div>
-                )}
+                )} */}
                 <PaymentSection
                     type={"sale"}
                     activeDraft={activeDraft}
