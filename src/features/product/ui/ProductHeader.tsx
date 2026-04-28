@@ -34,6 +34,8 @@ import { CiSquarePlus } from "react-icons/ci";
 import { PiMicrosoftExcelLogo } from "react-icons/pi";
 import UpdateCatalogCode from "@/features/update-catalog-code/ui/UpdateCatalogCode";
 import { FiRefreshCw } from "react-icons/fi";
+import { AccountPermissions } from "@/app/constants/permissions";
+import { useCheckPermission } from "@/shared/lib/checkPermission";
 
 const ProductHeader = ({
     search,
@@ -51,6 +53,8 @@ const ProductHeader = ({
     const [showInformation, setShowInformation] = useState(false);
     const [isUpdateCatalogCodeOpen, setIsUpdateCatalogCodeOpen] =
         useState(false);
+
+    const checkPermission = useCheckPermission();
 
     const { data: categoryData } = useCategoryApi();
     const { data: infoData } = useAllInfoProductApi(
@@ -147,45 +151,51 @@ const ProductHeader = ({
                     toggleClassName="text-base text-slate-600 flex justify-center"
                     renderTitle={<Button size="sm">Добавить</Button>}
                 >
-                    <DropdownItem
-                        onClick={() => {
-                            setIsAddOpen(true);
-                            setBarcode(null);
-                            setSearch("");
-                        }}
-                        className="h-auto!"
-                    >
-                        <div className="w-full flex items-center gap-2 text-slate-700 py-3 px-5 rounded-xl">
-                            <span className="text-green-700">
-                                <CiSquarePlus size={20} />
-                            </span>{" "}
-                            Добавить товар
-                        </div>
-                    </DropdownItem>
-                    <DropdownItem
-                        onClick={() => {
-                            setIsOpen(true);
-                        }}
-                        className="h-auto!"
-                    >
-                        <div className="w-full flex items-center gap-2  py-3 px-5 rounded-xl">
-                            <span className="text-green-700">
-                                <CiSquarePlus size={20} />
-                            </span>{" "}
-                            Добавить несколько товаров
-                        </div>
-                    </DropdownItem>
-                    <DropdownItem
-                        onClick={() => setIsOpenExcel(true)}
-                        className="h-auto!"
-                    >
-                        <div className="w-full flex items-center gap-2  py-3 px-5 rounded-xl">
-                            <span className="text-green-700">
-                                <PiMicrosoftExcelLogo size={20} />
-                            </span>{" "}
-                            Импорт из Excel
-                        </div>
-                    </DropdownItem>
+                    {checkPermission(
+                        AccountPermissions.AccountPermissionProductCreate,
+                    ) && (
+                        <>
+                            <DropdownItem
+                                onClick={() => {
+                                    setIsAddOpen(true);
+                                    setBarcode(null);
+                                    setSearch("");
+                                }}
+                                className="h-auto!"
+                            >
+                                <div className="w-full flex items-center gap-2 text-slate-700 py-3 px-5 rounded-xl">
+                                    <span className="text-green-700">
+                                        <CiSquarePlus size={20} />
+                                    </span>{" "}
+                                    Добавить товар
+                                </div>
+                            </DropdownItem>
+                            <DropdownItem
+                                onClick={() => {
+                                    setIsOpen(true);
+                                }}
+                                className="h-auto!"
+                            >
+                                <div className="w-full flex items-center gap-2  py-3 px-5 rounded-xl">
+                                    <span className="text-green-700">
+                                        <CiSquarePlus size={20} />
+                                    </span>{" "}
+                                    Добавить несколько товаров
+                                </div>
+                            </DropdownItem>
+                            <DropdownItem
+                                onClick={() => setIsOpenExcel(true)}
+                                className="h-auto!"
+                            >
+                                <div className="w-full flex items-center gap-2  py-3 px-5 rounded-xl">
+                                    <span className="text-green-700">
+                                        <PiMicrosoftExcelLogo size={20} />
+                                    </span>{" "}
+                                    Импорт из Excel
+                                </div>
+                            </DropdownItem>
+                        </>
+                    )}
 
                     <DropdownItem
                         onClick={() => setIsUpdateCatalogCodeOpen(true)}

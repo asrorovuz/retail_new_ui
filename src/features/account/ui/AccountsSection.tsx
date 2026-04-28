@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
     useReactTable,
     getCoreRowModel,
@@ -7,12 +7,23 @@ import {
     type ColumnDef,
 } from "@tanstack/react-table";
 import CreateAccount from "./CreateAccount";
-import { useDeleteAccount } from "@/entities/auth/repository";
+import {
+    useDeleteAccount,
+    useUpdatePermission,
+} from "@/entities/auth/repository";
 import { showErrorMessage, showSuccessMessage } from "@/shared/lib/showMessage";
 import { messages } from "@/app/constants/message.request";
 import ConfirmDialog from "@/shared/ui/kit-pro/confirm-dialog/ConfirmDialog";
 import { FaUserCheck } from "react-icons/fa";
-import { Button } from "@/shared/ui/kit";
+import { Button, Checkbox, Dialog } from "@/shared/ui/kit";
+import {
+    AccountPermissions,
+    PermissionGroups,
+    PermissionLabels,
+    type PermissionKey,
+} from "@/app/constants/permissions";
+import { useTranslation } from "react-i18next";
+import { useSettingsStore } from "@/app/store/useSettingsStore";
 
 type User = {
     id: string;
@@ -36,9 +47,61 @@ const columnHelper = createColumnHelper<User>();
 const AccountsSection = ({ users }: { users: User[] }) => {
     const [id, setId] = useState<string | null>(null);
     const [isOpen, setIsOpen] = useState(false);
-    // const [isOpenPermission, setIsOpenPermission] = useState(false);
+    const [isOpenPermission, setIsOpenPermission] = useState(false);
+    const [selectedPermissions, setSelectedPermissions] = useState<number[]>(
+        [],
+    );
+    const [accountID, setAccountID] = useState<string | null>(null);
+
+    const { permissionList } = useSettingsStore();
+    const { i18n } = useTranslation();
+    const lang = i18n.language as "uz" | "ru";
+    const { mutate } = useUpdatePermission();
 
     const { mutate: deleteMutate, isPending } = useDeleteAccount();
+
+    const handleChange = (value: number) => {
+        setSelectedPermissions((prev) =>
+            prev.includes(value)
+                ? prev.filter((p) => p !== value)
+                : [...prev, value],
+        );
+    };
+
+    const onSubmitPermission = () => {
+        if (!accountID) return;
+
+        const payload = {
+            account_id: accountID,
+            permissions: selectedPermissions,
+        };
+
+        mutate(payload, {
+            onSuccess() {
+                showSuccessMessage(
+                    messages.uz.SUCCESS_MESSAGE,
+                    messages.ru.SUCCESS_MESSAGE,
+                );
+                setIsOpenPermission(false);
+            },
+            onError(err) {
+                showErrorMessage(err);
+            },
+        });
+    };
+
+    // 🔥 SELECT ALL
+    const allPermissions = Object.values(AccountPermissions);
+
+    const isAllSelected = allPermissions.length === selectedPermissions.length;
+
+    const toggleAll = () => {
+        if (isAllSelected) {
+            setSelectedPermissions([]);
+        } else {
+            setSelectedPermissions(allPermissions);
+        }
+    };
 
     const handleDelete = () => {
         if (!id) return;
@@ -113,42 +176,47 @@ const AccountsSection = ({ users }: { users: User[] }) => {
                 id: "action",
                 header: "Действие",
                 cell: ({ row }) => {
-                    // if (row.original.type === 1) return null; // ← Admin bo'lsa ko'rsatma
-
                     return (
                         <div className="flex gap-x-2">
-                            <Button
-                                onClick={() => {
-                                    setId(row.original.id);
-                                    setIsOpen(true);
-                                }}
-                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 border border-transparent hover:border-red-200 transition-all duration-150"
-                                icon={
-                                    <>
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            className="w-4 h-4"
-                                            viewBox="0 0 24 24"
-                                            fill="none"
-                                            stroke="currentColor"
-                                            strokeWidth={2}
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                        >
-                                            <polyline points="3 6 5 6 21 6" />
-                                            <path d="M19 6l-1 14H6L5 6" />
-                                            <path d="M10 11v6M14 11v6" />
-                                            <path d="M9 6V4h6v2" />
-                                        </svg>
-                                    </>
-                                }
-                            />
+                            {row.original.type !== 1 && (
+                                <Button
+                                    onClick={() => {
+                                        setId(row.original.id);
+                                        setIsOpen(true);
+                                    }}
+                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 border border-transparent hover:border-red-200 transition-all duration-150"
+                                    icon={
+                                        <>
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                className="w-4 h-4"
+                                                viewBox="0 0 24 24"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                strokeWidth={2}
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                            >
+                                                <polyline points="3 6 5 6 21 6" />
+                                                <path d="M19 6l-1 14H6L5 6" />
+                                                <path d="M10 11v6M14 11v6" />
+                                                <path d="M9 6V4h6v2" />
+                                            </svg>
+                                        </>
+                                    }
+                                />
+                            )}
 
-                            <Button
-                                // onClick={() => setIsOpenPermission(true)}
-                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-blue-600 hover:bg-blue-50 border border-transparent hover:border-blue-200 transition-all duration-150"
-                                icon={<FaUserCheck />}
-                            />
+                            {row.original.type !== 1 && (
+                                <Button
+                                    onClick={() => {
+                                        setIsOpenPermission(true);
+                                        setAccountID(row?.original?.id);
+                                    }}
+                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-blue-600 hover:bg-blue-50 border border-transparent hover:border-blue-200 transition-all duration-150"
+                                    icon={<FaUserCheck />}
+                                />
+                            )}
                         </div>
                     );
                 },
@@ -156,6 +224,12 @@ const AccountsSection = ({ users }: { users: User[] }) => {
         ],
         [],
     );
+
+    useEffect(() => {
+        if (permissionList?.length > 0) {
+            setSelectedPermissions(permissionList);
+        }
+    }, [permissionList]);
 
     const table = useReactTable({
         data: users ?? [],
@@ -265,6 +339,86 @@ const AccountsSection = ({ users }: { users: User[] }) => {
                     После удаления восстановить пользователя будет невозможно.
                 </p>
             </ConfirmDialog>
+
+            {/* PERMISSION */}
+            <Dialog
+                portalClassName="w-full"
+                closable={false}
+                width={"80vw"}
+                height={"90vh"}
+                title={"Управление разрешениями"}
+                isOpen={isOpenPermission}
+            >
+                <div className="flex gap-x-2 justify-between mb-5">
+                    <label className="flex items-center gap-x-2 text-slate-800">
+                        <Checkbox
+                            checked={isAllSelected}
+                            onChange={toggleAll}
+                        />
+                        <span>Выбрать все</span>
+                    </label>
+                    <div className="flex gap-x-2 items-center">
+                        <Button
+                            size="sm"
+                            onClick={() => setIsOpenPermission(false)}
+                        >
+                            Закрыть
+                        </Button>
+
+                        <Button
+                            variant="solid"
+                            size="sm"
+                            loading={isPending}
+                            onClick={onSubmitPermission}
+                        >
+                            Сохранить
+                        </Button>
+                    </div>
+                </div>
+                <div className="h-[66vh] overflow-y-auto mb-5 text-slate-700">
+                    <div className="flex flex-col gap-y-5">
+                        {PermissionGroups[lang].map((group) => (
+                            <div key={group.label}>
+                                {/* Bo'lim sarlavhasi */}
+                                <h4 className="text-[13px] font-semibold text-slate-400 uppercase tracking-wide mb-2 border-b pb-1">
+                                    {group.label}
+                                </h4>
+
+                                {/* Bo'lim permissionlari */}
+                                <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                                    {(
+                                        group.keys as readonly PermissionKey[]
+                                    ).map((key) => {
+                                        const value = AccountPermissions[key];
+                                        return (
+                                            <label
+                                                className="flex items-center gap-x-2 text-slate-700 text-[14px]"
+                                                key={value}
+                                            >
+                                                <Checkbox
+                                                    checked={selectedPermissions.includes(
+                                                        value,
+                                                    )}
+                                                    onChange={() =>
+                                                        handleChange(value)
+                                                    }
+                                                />
+                                                <span>
+                                                    {
+                                                        PermissionLabels[lang][
+                                                            key
+                                                        ]
+                                                    }
+                                                </span>
+                                            </label>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </Dialog>
         </div>
     );
 };

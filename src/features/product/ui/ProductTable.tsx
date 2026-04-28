@@ -30,6 +30,8 @@ import { useSettingsStore } from "@/app/store/useSettingsStore";
 import PrintCheckProduct from "@/features/print-modal";
 import classNames from "@/shared/lib/classNames";
 import { showMeasurmentName } from "@/shared/lib/showMeausermentName";
+import { AccountPermissions } from "@/app/constants/permissions";
+import { useCheckPermission } from "@/shared/lib/checkPermission";
 
 const ProductTable = ({
     data,
@@ -65,6 +67,8 @@ const ProductTable = ({
     const [isopenPrint, setIsOpenPrint] = useState(false);
     const [item, setItem] = useState<Product | null>(null);
     const { tableSettings } = useSettingsStore((s) => s);
+
+    const checkPermission = useCheckPermission();
 
     const { mutate: deleteProduct, isPending: productDeleteLoading } =
         useDeleteProduct();
@@ -140,59 +144,93 @@ const ProductTable = ({
                             ?.color || "#fff",
                 },
             }),
-            columnHelper.display({
-                id: "price",
-                header: () => <span className="text-nowrap">ЦЕНА</span>,
-                cell: (info) => {
-                    const price = info.row.original.prices?.[0]?.amount;
-                    return (
-                        <p className="w-[140px]">
-                            {price ? `${price.toLocaleString()}` : "-"}
-                        </p>
-                    );
-                },
-                meta: {
-                    color:
-                        tableSettings?.find((i) => i.key === "price")?.color ||
-                        "#fff",
-                },
-            }),
-            columnHelper.display({
-                id: "bulkPrice",
-                header: () => <span className="text-nowrap">ОПТОВАЯ ЦЕНА</span>,
-                cell: (info) => {
-                    const price = info.row.original.prices?.[1]?.amount;
-                    return (
-                        <p className="w-[140px]">
-                            {price ? `${price.toLocaleString()}` : "-"}
-                        </p>
-                    );
-                },
-                size: 140,
-                meta: {
-                    color:
-                        tableSettings?.find((i) => i.key === "bulkPrice")
-                            ?.color || "#fff",
-                },
-            }),
-            columnHelper.display({
-                id: "purchesPrice",
-                header: () => (
-                    <span className="text-nowrap">Приходная цена</span>
-                ),
-                cell: (info) => {
-                    const price =
-                        info.row.original.warehouse_items?.[0]
-                            ?.purchase_price_amount;
-                    return price ? `${price.toLocaleString()} сум` : "-";
-                },
-                size: 140,
-                meta: {
-                    color:
-                        tableSettings?.find((i) => i.key === "purchesPrice")
-                            ?.color || "#fff",
-                },
-            }),
+            ...(checkPermission(
+                AccountPermissions.AccountPermissionViewProductCommonPrice,
+            )
+                ? [
+                      columnHelper.display({
+                          id: "price",
+                          header: () => (
+                              <span className="text-nowrap">ЦЕНА</span>
+                          ),
+                          cell: (info) => {
+                              const price =
+                                  info.row.original.prices?.[0]?.amount;
+                              return (
+                                  <p className="w-[140px]">
+                                      {price
+                                          ? `${price.toLocaleString()}`
+                                          : "-"}
+                                  </p>
+                              );
+                          },
+                          meta: {
+                              color:
+                                  tableSettings?.find((i) => i.key === "price")
+                                      ?.color || "#fff",
+                          },
+                      }),
+                  ]
+                : []),
+            ...(checkPermission(
+                AccountPermissions.AccountPermissionViewProductBulkPrice,
+            )
+                ? [
+                      columnHelper.display({
+                          id: "bulkPrice",
+                          header: () => (
+                              <span className="text-nowrap">ОПТОВАЯ ЦЕНА</span>
+                          ),
+                          cell: (info) => {
+                              const price =
+                                  info.row.original.prices?.[1]?.amount;
+                              return (
+                                  <p className="w-[140px]">
+                                      {price
+                                          ? `${price.toLocaleString()}`
+                                          : "-"}
+                                  </p>
+                              );
+                          },
+                          size: 140,
+                          meta: {
+                              color:
+                                  tableSettings?.find(
+                                      (i) => i.key === "bulkPrice",
+                                  )?.color || "#fff",
+                          },
+                      }),
+                  ]
+                : []),
+            ...(checkPermission(
+                AccountPermissions.AccountPermissionViewProductPurchasePrice,
+            )
+                ? [
+                      columnHelper.display({
+                          id: "purchesPrice",
+                          header: () => (
+                              <span className="text-nowrap">
+                                  Приходная цена
+                              </span>
+                          ),
+                          cell: (info) => {
+                              const price =
+                                  info.row.original.warehouse_items?.[0]
+                                      ?.purchase_price_amount;
+                              return price
+                                  ? `${price.toLocaleString()} сум`
+                                  : "-";
+                          },
+                          size: 140,
+                          meta: {
+                              color:
+                                  tableSettings?.find(
+                                      (i) => i.key === "purchesPrice",
+                                  )?.color || "#fff",
+                          },
+                      }),
+                  ]
+                : []),
             columnHelper.display({
                 id: "category",
                 header: () => <span className="text-nowrap">КАТЕГОРИЯ</span>,
@@ -304,38 +342,44 @@ const ProductTable = ({
                                 Печать штрих код товара
                             </div>
                         </DropdownItem>
-                        <DropdownItem
-                            onClick={() => {
-                                setConfirmProductId(info.row.original.id);
-                                setIsOpen(true);
-                            }}
-                            className="h-auto!"
-                        >
-                            <div className="w-full flex items-center gap-2 text-orange-500 py-3 px-5 rounded-xl">
-                                <FaRegEdit />
-                                Редактировать
-                            </div>
-                        </DropdownItem>
-                        <DropdownItem
-                            onClick={() => {
-                                setConfirmProductId(info.row.original.id);
-                                setDeleteModalOpen(true);
-                            }}
-                            className="h-auto!"
-                        >
-                            <div className="w-full flex items-center gap-2 text-red-500 py-3 px-5 rounded-xl">
-                                <IoTrashOutline />
-                                Удалить
-                            </div>
-                        </DropdownItem>
+                        {checkPermission(
+                            AccountPermissions.AccountPermissionProductUpdate,
+                        ) && (
+                            <DropdownItem
+                                onClick={() => {
+                                    setConfirmProductId(info.row.original.id);
+                                    setIsOpen(true);
+                                }}
+                                className="h-auto!"
+                            >
+                                <div className="w-full flex items-center gap-2 text-orange-500 py-3 px-5 rounded-xl">
+                                    <FaRegEdit />
+                                    Редактировать
+                                </div>
+                            </DropdownItem>
+                        )}
+                        {checkPermission(
+                            AccountPermissions.AccountPermissionProductDelete,
+                        ) && (
+                            <DropdownItem
+                                onClick={() => {
+                                    setConfirmProductId(info.row.original.id);
+                                    setDeleteModalOpen(true);
+                                }}
+                                className="h-auto!"
+                            >
+                                <div className="w-full flex items-center gap-2 text-red-500 py-3 px-5 rounded-xl">
+                                    <IoTrashOutline />
+                                    Удалить
+                                </div>
+                            </DropdownItem>
+                        )}
                     </Dropdown>
                 ),
             }),
         ],
         [pagination, tableSettings],
     );
-
-    console.log(tableSettings, "settings");
 
     const table = useReactTable({
         data: (data as unknown as Product[]) || [],
@@ -389,8 +433,7 @@ const ProductTable = ({
                                                             ? " bg-white"
                                                             : "",
                                                         header.column.columnDef
-                                                            .meta
-                                                            ?.color,
+                                                            .meta?.color,
                                                     )}
                                                     key={header.id}
                                                 >
@@ -423,13 +466,17 @@ const ProductTable = ({
                                         return (
                                             <Td
                                                 key={cell.id}
-                                                className={cell.column.columnDef.meta?.color}
+                                                className={
+                                                    cell.column.columnDef.meta
+                                                        ?.color
+                                                }
                                             >
                                                 <div
                                                     className={classNames(
                                                         "py-3 text-xs xl:text-sm px-4",
-                                                        cell.column.columnDef.meta
-                                                        ?.bodyCellClassName
+                                                        cell.column.columnDef
+                                                            .meta
+                                                            ?.bodyCellClassName,
                                                     )}
                                                 >
                                                     {flexRender(

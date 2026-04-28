@@ -56,7 +56,7 @@ const FormItem = (props: FormItemProps) => {
                       }`
                     : 'ltr:pr-2 rtl:pl-2'
             case LAYOUT.VERTICAL:
-                return `mb-2`
+                return `mb-1`
             case LAYOUT.INLINE:
                 return `${CONTROL_SIZES[formItemLabelHeight].h} ${
                     label && 'ltr:pr-2 rtl:pl-2'

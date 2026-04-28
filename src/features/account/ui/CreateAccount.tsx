@@ -85,31 +85,33 @@ const CreateAccount = () => {
                 onClick={() => setIsOpen(true)}
                 className="uppercase"
                 variant="solid"
-                size="md"
+                size="sm"
             >
-                создать пользователя
+                Создать пользователя
             </Button>
-            <Dialog width={"40vw"} height={"80vh"} onClose={onClose} isOpen={isOpen}>
+            <Dialog width={"60vw"} height={"86vh"} onClose={onClose} isOpen={isOpen}>
                 <FormProvider {...form}>
                     <Form
                         layout="vertical"
                         onSubmit={form.handleSubmit(onSubmitCode)}
                     >
-                        <div className={"overflow-y-auto h-[60vh] mb-5"}>
+                        <div className={"overflow-y-auto grid grid-cols-2 gap-x-5  mb-5"}>
                             <Step1Phone />
                         </div>
 
-                        <div className="flex gap-x-2 justify-end">
+                        <div className="flex gap-x-2 justify-end mb-2">
                             <Button
                                 type="button"
+                                size="sm"
                                 className="text-gray-700 font-medium rounded-xl"
-                                onClick={() => {}}
+                                onClick={onClose}
                             >
                                 Назад
                             </Button>
                             <Button
                                 type="submit"
                                 variant="solid"
+                                size="sm"
                                 loading={isPending}
                                 className="bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-xl"
                             >
@@ -118,6 +120,7 @@ const CreateAccount = () => {
                         </div>
                     </Form>
                 </FormProvider>
+                <FullKeyboard/>
             </Dialog>
             <Dialog
                 width={"60vw"}

@@ -105,6 +105,16 @@ export const addAccountApi = async (
   });
 };
 
+export const updatePermissionApi = async (
+  payload: any,
+): Promise<any> => {
+  return await apiRequest<any>({
+    url: pathServices.auth.updatePermission,
+    method: "POST",
+    data: payload,
+  });
+};
+
 export const updateContractorApi = async (
   payload: any,
   id: number

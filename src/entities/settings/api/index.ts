@@ -1,7 +1,7 @@
 import { apiRequest } from "@/app/config/axios";
 import { pathServices } from "@/entities/path";
 
-export const getAllPermission = async (id: string): Promise<any> => {
+export const getAllIDPermission = async (id: string | null): Promise<any> => {
   return await apiRequest<any>({
     url: pathServices.settings.permissionPat + id,
     method: "GET",

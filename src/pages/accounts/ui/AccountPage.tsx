@@ -74,9 +74,11 @@ const AccountPage = () => {
                     <ChangePassowdModal onClose={onClose} id={user?.id} />
                 </Dialog>
             </div>
-            <div className="bg-white p-6 rounded-2xl shadow-sm flex-1 h-full overflow-y-auto">
-                <AccountsSections users={allUser} />
-            </div>
+            {user?.type === 1 && (
+                <div className="bg-white p-6 rounded-2xl shadow-sm flex-1 h-full overflow-y-auto">
+                    <AccountsSections users={allUser} />
+                </div>
+            )}
         </div>
     );
 };

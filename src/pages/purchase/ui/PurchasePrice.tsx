@@ -2,6 +2,7 @@ import type {
     // DraftPurchasePayoutAmountSchema,
     DraftPurchaseSchema,
 } from "@/@types/purchase";
+import { AccountPermissions } from "@/app/constants/permissions";
 import { useDraftPurchaseStore } from "@/app/store/usePurchaseDraftStore";
 import {
     useAllProductApi,
@@ -15,6 +16,7 @@ import PurchaseTable from "@/features/sale-refund-table/ui/PurchaseTable";
 import SearchProduct from "@/features/search-product";
 import SearchProductTable from "@/features/search-product-table";
 import ViewMark from "@/features/viewMark";
+import { useCheckPermission } from "@/shared/lib/checkPermission";
 import classNames from "@/shared/lib/classNames";
 import eventBus from "@/shared/lib/eventBus";
 import { handleBarcodeScanned } from "@/shared/lib/handleScannedBarcode";
@@ -45,6 +47,8 @@ const PurchasePrice = () => {
     const [activeSelectPaymetype, setActivePaymentSelectType] =
         useState<number>(1);
     const [search, setSearch] = useState("");
+
+    const checkPermission = useCheckPermission();
 
     const debouncedSearch = useDebounce(search, 500);
     const navigate = useNavigate();
@@ -213,15 +217,19 @@ const PurchasePrice = () => {
                             >
                                 История
                             </Button>
-                            <Button
-                                onClick={() => navigate("/products")}
-                                size="sm"
-                                className={classNames(
-                                    "flex flex-col justify-center items-center overflow-hidden",
-                                )}
-                            >
-                                Товары
-                            </Button>
+                            {checkPermission(
+                                AccountPermissions.AccountPermissionProductView,
+                            ) && (
+                                <Button
+                                    onClick={() => navigate("/products")}
+                                    size="sm"
+                                    className={classNames(
+                                        "flex flex-col justify-center items-center overflow-hidden",
+                                    )}
+                                >
+                                    Товары
+                                </Button>
+                            )}
                         </>
                     </div>
                 )}

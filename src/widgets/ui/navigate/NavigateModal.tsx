@@ -12,9 +12,12 @@ import {
     MdBarChart,
     MdAccountCircle,
 } from "react-icons/md";
+import { AccountPermissions } from "@/app/constants/permissions";
+import { useCheckPermission } from "@/shared/lib/checkPermission";
 
 const NavigateModal = ({ isOpenNavigate, setIsOpenNavigate }: any) => {
     const onClose = () => setIsOpenNavigate(false);
+    const checkPermission = useCheckPermission();
 
     const linkClass =
         "text-sm font-medium py-4 flex justify-center items-center gap-x-2 bg-slate-200 hover:bg-slate-300 transition text-slate-800 rounded-lg";
@@ -49,10 +52,14 @@ const NavigateModal = ({ isOpenNavigate, setIsOpenNavigate }: any) => {
                     Поступления
                 </NavItem>
 
-                <NavItem className={linkClass} to={"/products"}>
-                    <MdOutlineShoppingCart size={20} />
-                    Товары
-                </NavItem>
+                {checkPermission(
+                    AccountPermissions.AccountPermissionProductView,
+                ) && (
+                    <NavItem className={linkClass} to={"/products"}>
+                        <MdOutlineShoppingCart size={20} />
+                        Товары
+                    </NavItem>
+                )}
 
                 <NavItem className={linkClass} to={"/favoutite-products"}>
                     <MdOutlineStarBorder size={20} />

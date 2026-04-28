@@ -1,6 +1,6 @@
 import type { GlobalLogin, LoginPayload, LoginResponse, Organizationtype } from "@/@types/auth/login";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { addAccountApi, createContractorApi, deleteAccountApi, deleteContractorApi, fetchAuthStatus, fetchConfirmCode, getAllAccounts, globalLogin, login, register, registeration, registerOrg, registerOrgLocal, resetPass, updateContractorApi, updatePasswordApi } from "../api";
+import { addAccountApi, createContractorApi, deleteAccountApi, deleteContractorApi, fetchAuthStatus, fetchConfirmCode, getAllAccounts, globalLogin, login, register, registeration, registerOrg, registerOrgLocal, resetPass, updateContractorApi, updatePasswordApi, updatePermissionApi } from "../api";
 
 
 export const useLogin = () => {
@@ -78,6 +78,16 @@ export const useAddAccount = () => {
     mutationFn: (data: any) => addAccountApi(data),
     onSuccess() {
       queryClient.invalidateQueries({ queryKey: ["all-accounts"] });
+    },
+  });
+};
+
+export const useUpdatePermission = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: any) => updatePermissionApi(data),
+    onSuccess() {
+      queryClient.invalidateQueries({ queryKey: ["permission-id"] });
     },
   });
 };

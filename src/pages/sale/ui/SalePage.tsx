@@ -29,6 +29,8 @@ import { useNavigate } from "react-router-dom";
 import ViewMark from "@/features/viewMark";
 import PaymentDebtsModal from "@/features/modals/ui/PaymentDebtsModal";
 import { Header } from "@/widgets";
+import { useCheckPermission } from "@/shared/lib/checkPermission";
+import { AccountPermissions } from "@/app/constants/permissions";
 
 const SalePage = () => {
     const [search, setSearch] = useState<string>("");
@@ -48,6 +50,7 @@ const SalePage = () => {
     const [dobtModal, setDebtModal] = useState(false);
 
     const navigate = useNavigate();
+    const checkPermission = useCheckPermission();
 
     const [activeType, setActiveType] = useState<
         "numeric" | "qwerty" | "fullkey"
@@ -214,15 +217,19 @@ const SalePage = () => {
                             >
                                 История
                             </Button>
-                            <Button
-                                onClick={() => navigate("/products")}
-                                size="sm"
-                                className={classNames(
-                                    "flex flex-col justify-center items-center overflow-hidden",
-                                )}
-                            >
-                                Товары
-                            </Button>
+                            {checkPermission(
+                                AccountPermissions.AccountPermissionProductView,
+                            ) && (
+                                <Button
+                                    onClick={() => navigate("/products")}
+                                    size="sm"
+                                    className={classNames(
+                                        "flex flex-col justify-center items-center overflow-hidden",
+                                    )}
+                                >
+                                    Товары
+                                </Button>
+                            )}
                             <Button
                                 onClick={() => navigate("/refund")}
                                 size="sm"

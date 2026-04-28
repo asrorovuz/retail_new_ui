@@ -1,93 +1,99 @@
 import { useEffect, type ReactNode } from "react";
 import { useSettingsStore } from "../store/useSettingsStore";
 import {
-  useSettingsApi,
-  useVersionApi,
-  useWarehouseApi,
+    useSettingsApi,
+    useVersionApi,
+    useWarehouseApi,
 } from "@/entities/init/repository";
 import { transformProductColumns } from "@/shared/lib/transformation-table";
 import i18n from "../config/i18n";
 import {
-  useCurrancyApi,
-  useProductTableSettingsApi,
+    useCurrancyApi,
+    useProductTableSettingsApi,
 } from "@/entities/products/repository";
 import { useCurrencyStore } from "../store/useCurrencyStore";
 import { useVersionStore } from "../store/useVersionStore";
-import { usePermissionApi } from "@/entities/settings/repository";
+import { usePermissionIdApi } from "@/entities/settings/repository";
 import { useAuthContext } from "./AuthProvider";
 
 export const InitProvider = ({ children }: { children: ReactNode }) => {
-  const { setSettings, setTableSettings, setWareHouseId, setWareHouse, setPermissionList } =
-    useSettingsStore();
-  const { setNationalCurrency, setCurrencies } = useCurrencyStore();
-  const setVersions = useVersionStore((store) => store.setVersions);
-  const { user } = useAuthContext();
+    const {
+        setSettings,
+        setTableSettings,
+        setWareHouseId,
+        setWareHouse,
+        setPermissionList,
+    } = useSettingsStore();
+    const { setNationalCurrency, setCurrencies } = useCurrencyStore();
+    const setVersions = useVersionStore((store) => store.setVersions);
+    const { user } = useAuthContext();
 
-  const { data: settings } = useSettingsApi();
-  const { data: settingsTable } = useProductTableSettingsApi();
-  const { data: wareHouseData } = useWarehouseApi();
-  const { data: currency } = useCurrancyApi();
-  const { data: versions } = useVersionApi();
-  const { data: permission } = usePermissionApi(user?.id);
+    const { data: settings } = useSettingsApi();
+    const { data: settingsTable } = useProductTableSettingsApi();
+    const { data: wareHouseData } = useWarehouseApi();
+    const { data: currency } = useCurrancyApi();
+    const { data: versions } = useVersionApi();
+    const { data: permission } = usePermissionIdApi(user?.id);
 
-  // 📦 Ilova versiyalarini o‘rnatish
-  useEffect(() => {
-    if (versions) {
-      setVersions(versions);
-    }
-  }, [versions, setVersions]);
+    // 📦 Ilova versiyalarini o‘rnatish
+    useEffect(() => {
+        if (versions) {
+            setVersions(versions);
+        }
+    }, [versions, setVersions]);
 
-  useEffect(() => {
-    
-    if (permission?.permissions) {
-      setPermissionList(permission?.permissions);
-    }
-  }, [permission?.permissions, setPermissionList]);
+    useEffect(() => {
+        if (permission?.permissions) {
+            setPermissionList(permission?.permissions);
+        } else {
+            setPermissionList([]);
+        }
+    }, [permission, setPermissionList]);
 
-  // 🏬 Warehouse ID ni o‘rnatish
-  useEffect(() => {
-    if (wareHouseData && wareHouseData.length > 0) {
-      setWareHouseId(wareHouseData[0].id);
-      setWareHouse(wareHouseData[0]);
-    }
-  }, [wareHouseData, setWareHouseId]);
+    // 🏬 Warehouse ID ni o‘rnatish
+    useEffect(() => {
+        if (wareHouseData && wareHouseData.length > 0) {
+            setWareHouseId(wareHouseData[0].id);
+            setWareHouse(wareHouseData[0]);
+        }
+    }, [wareHouseData, setWareHouseId]);
 
-  // ⚙️ Foydalanuvchi sozlamalari (til, boshqa configlar)
-  useEffect(() => {
-    if (settings) {
-      setSettings(settings);
+    // ⚙️ Foydalanuvchi sozlamalari (til, boshqa configlar)
+    useEffect(() => {
+        if (settings) {
+            setSettings(settings);
 
-      if (settings.lang) {
-        i18n.changeLanguage(settings.lang);
-      }
-    }
-  }, [settings, setSettings]);
+            if (settings.lang) {
+                i18n.changeLanguage(settings.lang);
+            }
+        }
+    }, [settings, setSettings]);
 
-  // useEffect(() => {
-  //   if(!!error) setActiveShift(null)
-  //   else if (data) setActiveShift(data);
-  //   else setActiveShift(null);
-  // }, [data, error, setActiveShift]);
+    // useEffect(() => {
+    //   if(!!error) setActiveShift(null)
+    //   else if (data) setActiveShift(data);
+    //   else setActiveShift(null);
+    // }, [data, error, setActiveShift]);
 
-  // 📋 Jadval ustunlari sozlamalari
-  useEffect(() => {
-    if (settingsTable) {
-      const result = transformProductColumns(settingsTable);
-      setTableSettings(result);
-    }
-  }, [settingsTable, setTableSettings]);
+    // 📋 Jadval ustunlari sozlamalari
+    useEffect(() => {
+        if (settingsTable) {
+            const result = transformProductColumns(settingsTable);
+            setTableSettings(result);
+        }
+    }, [settingsTable, setTableSettings]);
 
-  // Valyuta va milliy valyutani saqlash
-  useEffect(() => {
-    if (currency && currency.length > 0) {
-      const nationalCurrency = currency.find((item) => item.is_national);
-      setCurrencies(currency);
+    // Valyuta va milliy valyutani saqlash
+    useEffect(() => {
+        if (currency && currency.length > 0) {
+            const nationalCurrency = currency.find((item) => item.is_national);
+            setCurrencies(currency);
 
-      if (nationalCurrency) {
-        setNationalCurrency(nationalCurrency);
-      }
-    }
-  }, [currency, setCurrencies, setNationalCurrency]);
+            if (nationalCurrency) {
+                setNationalCurrency(nationalCurrency);
+            }
+        }
+    }, [currency, setCurrencies, setNationalCurrency]);
 
-  return <>{children}</>;
+    return <>{children}</>;
 };

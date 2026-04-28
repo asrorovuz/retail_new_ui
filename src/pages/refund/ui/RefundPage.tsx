@@ -3,6 +3,7 @@ import type {
     DraftRefundSchema,
 } from "@/@types/refund";
 import { PaymentTypes } from "@/app/constants/payment.types";
+import { AccountPermissions } from "@/app/constants/permissions";
 import { useDraftRefundStore } from "@/app/store/useRefundDraftStore";
 import {
     useAllProductApi,
@@ -19,6 +20,7 @@ import SaleAndRefunTable from "@/features/sale-refund-table";
 import SearchProduct from "@/features/search-product";
 import SearchProductTable from "@/features/search-product-table";
 import ViewMark from "@/features/viewMark";
+import { useCheckPermission } from "@/shared/lib/checkPermission";
 import classNames from "@/shared/lib/classNames";
 import eventBus from "@/shared/lib/eventBus";
 import { handleBarcodeScanned } from "@/shared/lib/handleScannedBarcode";
@@ -60,6 +62,7 @@ const RefundPage = () => {
     >("numeric");
     const debouncedSearch = useDebounce(search, 500);
     const navigate = useNavigate();
+    const checkPermission = useCheckPermission();
 
     const { data } = useAllProductApi(50, 1, debouncedSearch || "");
     const {
@@ -279,15 +282,19 @@ const RefundPage = () => {
                             >
                                 История
                             </Button>
-                            <Button
-                                onClick={() => navigate("/products")}
-                                size="sm"
-                                className={classNames(
-                                    "flex flex-col justify-center items-center overflow-hidden",
-                                )}
-                            >
-                                Товары
-                            </Button>
+                            {checkPermission(
+                                AccountPermissions.AccountPermissionProductView,
+                            ) && (
+                                <Button
+                                    onClick={() => navigate("/products")}
+                                    size="sm"
+                                    className={classNames(
+                                        "flex flex-col justify-center items-center overflow-hidden",
+                                    )}
+                                >
+                                    Товары
+                                </Button>
+                            )}
                             <Button
                                 onClick={() => navigate("/sales")}
                                 size="sm"

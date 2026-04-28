@@ -15,7 +15,8 @@ export const pathServices = {
     getAllAccounts: "/admin/auth/accounts/get",
     updatePassword: "/admin/auth/change-account-password/",
     createAccount: "/admin/auth/add-account",
-    deleteAccount: "/admin/auth/delete-account/"
+    deleteAccount: "/admin/auth/delete-account/",
+    updatePermission: "/admin/auth/account-permissions"
   },
 
   init: {

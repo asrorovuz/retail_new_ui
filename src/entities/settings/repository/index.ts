@@ -6,7 +6,7 @@ import {
   deleteTelegramBot,
   getAllBot,
   getAllConfigBot,
-  getAllPermission,
+  getAllIDPermission,
   postCashRegisterArca,
   postCashRegisterEPos,
   postCashRegisterHippoPos,
@@ -25,10 +25,11 @@ import {
   updateSettingsShift,
 } from "../api";
 
-export const usePermissionApi = (id: string) => {
+export const usePermissionIdApi = (id: string | null) => {
   return useQuery({
-    queryKey: ["permission"],
-    queryFn: () => getAllPermission(id),
+    queryKey: ["permission-id", id],
+    queryFn: () => getAllIDPermission(id),
+    enabled: !!id,
   });
 };
 

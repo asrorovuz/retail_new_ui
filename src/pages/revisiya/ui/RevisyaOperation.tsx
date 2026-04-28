@@ -1,4 +1,5 @@
 import { messages } from "@/app/constants/message.request";
+import { AccountPermissions } from "@/app/constants/permissions";
 import { useRevisionStore } from "@/app/store/useRevision";
 import { useSettingsStore } from "@/app/store/useSettingsStore";
 import { useAllProductApi } from "@/entities/products/repository";
@@ -7,6 +8,7 @@ import PaymeTypeCards from "@/features/payme-type-cards";
 import RevisionTable from "@/features/revision/RevisionTable";
 import SearchProduct from "@/features/search-product";
 import SearchProductTable from "@/features/search-product-table";
+import { useCheckPermission } from "@/shared/lib/checkPermission";
 import classNames from "@/shared/lib/classNames";
 import { showErrorMessage, showSuccessMessage } from "@/shared/lib/showMessage";
 import { useDebounce } from "@/shared/lib/useDebounce";
@@ -30,6 +32,7 @@ const RevisyaOperation = () => {
         useCreateregister();
 
     const navigate = useNavigate();
+    const checkPermission = useCheckPermission();
 
     const {
         draftRevisions,
@@ -146,14 +149,19 @@ const RevisyaOperation = () => {
                             >
                                 История
                             </Button>
-                            <Button
-                                onClick={() => navigate("/products")}
-                                className={classNames(
-                                    "flex flex-col justify-center items-center overflow-hidden h-[50px]",
-                                )}
-                            >
-                                Товары
-                            </Button>
+                            {checkPermission(
+                                AccountPermissions.AccountPermissionProductView,
+                            ) && (
+                                <Button
+                                    onClick={() => navigate("/products")}
+                                    size="sm"
+                                    className={classNames(
+                                        "flex flex-col justify-center items-center overflow-hidden",
+                                    )}
+                                >
+                                    Товары
+                                </Button>
+                            )}
                             <Button
                                 onClick={() => navigate("/sales")}
                                 className={classNames(

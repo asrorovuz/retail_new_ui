@@ -281,7 +281,7 @@ const QuertyKeyboard = ({ setActiveType, setSearch }: any) => {
     // 🍏 iOS key style
     const keyClass =
         "w-full h-10 p-0 text-[17px] font-medium " +
-        "rounded-xl " +
+        "rounded " +
         "bg-[#ffffff] text-black " +
         "shadow-[0_1px_0_rgba(0,0,0,0.25),0_3px_6px_rgba(0,0,0,0.15)] " +
         "hover:bg-[#f2f2f2] " +
@@ -321,7 +321,7 @@ const QuertyKeyboard = ({ setActiveType, setSearch }: any) => {
             {/* Keys */}
             <div
                 className={classNames(
-                    "grid grid-rows-3 gap-2 mb-2",
+                    "grid grid-rows-3 gap-1 mb-2",
                     lang === "en" ? "grid-cols-10" : "grid-cols-12",
                 )}
             >
