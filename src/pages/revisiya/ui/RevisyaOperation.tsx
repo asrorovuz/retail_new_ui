@@ -10,7 +10,8 @@ import SearchProduct from "@/features/search-product";
 import SearchProductTable from "@/features/search-product-table";
 import { useCheckPermission } from "@/shared/lib/checkPermission";
 import classNames from "@/shared/lib/classNames";
-import { showErrorMessage, showSuccessMessage } from "@/shared/lib/showMessage";
+import { usePermission } from "@/shared/lib/controlActionWithPermission";
+import { showErrorLocalMessage, showErrorMessage, showSuccessMessage } from "@/shared/lib/showMessage";
 import { useDebounce } from "@/shared/lib/useDebounce";
 import { Button } from "@/shared/ui/kit";
 import { Header } from "@/widgets";
@@ -47,7 +48,17 @@ const RevisyaOperation = () => {
     const debouncedSearch = useDebounce(search ?? "", 500);
     const { data } = useAllProductApi(50, 1, debouncedSearch || "");
 
+    const { checkPermissionByAction } = usePermission();
+    const canCreate = checkPermissionByAction("revision", "create");
+
     const onSubmit = () => {
+        if (!canCreate) {
+            showErrorLocalMessage(
+                "У вас нет прав для выполнения данного действия",
+            );
+            return;
+        }
+
         const items = draftRevisions[0]?.items?.map((el) => {
             return {
                 product_id: el?.productId,
@@ -143,8 +154,9 @@ const RevisyaOperation = () => {
                         <>
                             <Button
                                 onClick={() => navigate("/revisiya")}
+                                size="sm"
                                 className={classNames(
-                                    "flex flex-col justify-center items-center overflow-hidden h-[50px]",
+                                    "flex flex-col justify-center items-center overflow-hidden",
                                 )}
                             >
                                 История
@@ -164,8 +176,9 @@ const RevisyaOperation = () => {
                             )}
                             <Button
                                 onClick={() => navigate("/sales")}
+                                size="sm"
                                 className={classNames(
-                                    "flex flex-col justify-center items-center overflow-hidden h-[50px]",
+                                    "flex flex-col justify-center items-center overflow-hidden",
                                 )}
                             >
                                 Продажи

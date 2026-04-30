@@ -35,15 +35,15 @@ export const AccountPermissions = {
   AccountPermissionContractorDelete: 503,
   AccountPermissionViewContractorDebt: 504,
 
-  AccountPermissionContractorPaymentView: 600,
-  AccountPermissionContractorPaymentCreate: 601,
-  AccountPermissionContractorPaymentUpdate: 602,
-  AccountPermissionContractorPaymentDelete: 603,
+  // AccountPermissionContractorPaymentView: 600,
+  // AccountPermissionContractorPaymentCreate: 601,
+  // AccountPermissionContractorPaymentUpdate: 602,
+  // AccountPermissionContractorPaymentDelete: 603,
 
-  AccountPermissionPayoutView: 700,
-  AccountPermissionPayoutCreate: 701,
-  AccountPermissionPayoutUpdate: 702,
-  AccountPermissionPayoutDelete: 703,
+  // AccountPermissionPayoutView: 700,
+  // AccountPermissionPayoutCreate: 701,
+  // AccountPermissionPayoutUpdate: 702,
+  // AccountPermissionPayoutDelete: 703,
 
   AccountPermissionTelegramBotCreate: 800,
   AccountPermissionTelegramBotUpdate: 801,

@@ -42,15 +42,23 @@ const NavigateModal = ({ isOpenNavigate, setIsOpenNavigate }: any) => {
                     Продажи
                 </NavItem>
 
-                <NavItem className={linkClass} to={"/refund"}>
-                    <MdOutlineAssignmentReturn size={20} />
-                    Возвраты
-                </NavItem>
+                {checkPermission(
+                    AccountPermissions.AccountPermissionRefundView,
+                ) && (
+                    <NavItem className={linkClass} to={"/refund"}>
+                        <MdOutlineAssignmentReturn size={20} />
+                        Возвраты
+                    </NavItem>
+                )}
 
-                <NavItem className={linkClass} to={"/purchase"}>
-                    <MdOutlineInventory2 size={20} />
-                    Поступления
-                </NavItem>
+                {checkPermission(
+                    AccountPermissions.AccountPermissionPurchaseView,
+                ) && (
+                    <NavItem className={linkClass} to={"/purchase"}>
+                        <MdOutlineInventory2 size={20} />
+                        Поступления
+                    </NavItem>
+                )}
 
                 {checkPermission(
                     AccountPermissions.AccountPermissionProductView,
@@ -66,35 +74,30 @@ const NavigateModal = ({ isOpenNavigate, setIsOpenNavigate }: any) => {
                     Избранные товары
                 </NavItem>
 
-                {/* <Link className={linkClass} to={"/sales-history"}>
-          <MdOutlineHistory size={20} />
-          История продаж
-        </Link>
-
-        <Link className={linkClass} to={"/purchase-history"}>
-          <MdOutlineHistory size={20} />
-          История поступлений
-        </Link>
-
-        <Link className={linkClass} to={"/refund-history"}>
-          <MdOutlineHistory size={20} />
-          История возвратов
-        </Link> */}
-
-                <NavItem className={linkClass} to={"/cashbox"}>
+                {checkPermission(
+                    AccountPermissions.AccountPermissionCashBoxView,
+                ) && <NavItem className={linkClass} to={"/cashbox"}>
                     <MdOutlinePointOfSale size={20} />
                     Касса
-                </NavItem>
+                </NavItem>}
 
-                <NavItem className={linkClass} to={"/counterparties"}>
-                    <MdOutlinePeopleOutline size={20} />
-                    Контрагенты
-                </NavItem>
+                {checkPermission(
+                    AccountPermissions.AccountPermissionContractorView,
+                ) && (
+                    <NavItem className={linkClass} to={"/counterparties"}>
+                        <MdOutlinePeopleOutline size={20} />
+                        Контрагенты
+                    </NavItem>
+                )}
 
-                <NavItem className={linkClass} to={"/revisiya/operation"}>
-                    <MdAssignment size={20} />
-                    Ревизия
-                </NavItem>
+                {checkPermission(
+                    AccountPermissions.AccountPermissionRevisionView,
+                ) && (
+                    <NavItem className={linkClass} to={"/revisiya/operation"}>
+                        <MdAssignment size={20} />
+                        Ревизия
+                    </NavItem>
+                )}
 
                 <NavItem className={linkClass} to={"/writeoff/operation"}>
                     <MdAssignment size={20} />

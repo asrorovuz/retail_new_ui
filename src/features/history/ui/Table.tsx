@@ -5,6 +5,7 @@ import { useDraftRefundStore } from "@/app/store/useRefundDraftStore";
 import { useDraftSaleStore } from "@/app/store/useSaleDraftStore";
 import { useDeleteTransactions } from "@/entities/history/repository";
 import classNames from "@/shared/lib/classNames";
+import { usePermission } from "@/shared/lib/controlActionWithPermission";
 import CurrencyName from "@/shared/lib/CurrencyName";
 import { onChangePagination } from "@/shared/lib/onPaginationChange";
 import payment from "@/shared/lib/payment";
@@ -75,6 +76,11 @@ const TableHistory = ({
         setIsOpenDelete(false);
         setId(null);
     };
+    const { checkPermissionByAction } = usePermission();
+
+    const canUpdate = checkPermissionByAction(type, "update");
+    const canDelete = checkPermissionByAction(type, "delete");
+    const canView = checkPermissionByAction(type, "view");
 
     const onDeleteFunc = () => {
         if (!id) return;
@@ -466,9 +472,9 @@ const TableHistory = ({
                 header: () => {
                     return "Примечание";
                 },
-                cell: ({row}) => {
-                    return <div>{row?.original?.comment}</div>
-                }
+                cell: ({ row }) => {
+                    return <div>{row?.original?.comment}</div>;
+                },
             },
             {
                 id: "date",
@@ -508,41 +514,47 @@ const TableHistory = ({
                                 </div>
                             }
                         >
-                            <DropdownItem
-                                onClick={() =>
-                                    setViewModal({
-                                        isOpen: true,
-                                        id: row?.id,
-                                    })
-                                }
-                                className="h-auto!"
-                            >
-                                <div className="w-full flex items-center gap-2 text-slate-700 py-3 px-5 rounded-xl">
-                                    <TbEye size={22} />
-                                    Посмотреть
-                                </div>
-                            </DropdownItem>
-                            <DropdownItem
-                                onClick={() => onSubmit(row.original)}
-                                className="h-auto!"
-                            >
-                                <div className="w-full flex items-center gap-2 text-orange-500 py-3 px-5 rounded-xl">
-                                    <FaRegEdit size={20} />
-                                    Редактировать
-                                </div>
-                            </DropdownItem>
-                            <DropdownItem
-                                onClick={() => {
-                                    setId(row.original.id);
-                                    setIsOpenDelete(true);
-                                }}
-                                className="h-auto!"
-                            >
-                                <div className="w-full flex items-center gap-2 text-red-500 py-3 px-5 rounded-xl">
-                                    <IoTrashOutline size={20} />
-                                    Удалить
-                                </div>
-                            </DropdownItem>
+                            {canView && (
+                                <DropdownItem
+                                    onClick={() =>
+                                        setViewModal({
+                                            isOpen: true,
+                                            id: row?.id,
+                                        })
+                                    }
+                                    className="h-auto!"
+                                >
+                                    <div className="w-full flex items-center gap-2 text-slate-700 py-3 px-5 rounded-xl">
+                                        <TbEye size={22} />
+                                        Посмотреть
+                                    </div>
+                                </DropdownItem>
+                            )}
+                            {canUpdate && (
+                                <DropdownItem
+                                    onClick={() => onSubmit(row.original)}
+                                    className="h-auto!"
+                                >
+                                    <div className="w-full flex items-center gap-2 text-orange-500 py-3 px-5 rounded-xl">
+                                        <FaRegEdit size={20} />
+                                        Редактировать
+                                    </div>
+                                </DropdownItem>
+                            )}
+                            {canDelete && (
+                                <DropdownItem
+                                    onClick={() => {
+                                        setId(row.original.id);
+                                        setIsOpenDelete(true);
+                                    }}
+                                    className="h-auto!"
+                                >
+                                    <div className="w-full flex items-center gap-2 text-red-500 py-3 px-5 rounded-xl">
+                                        <IoTrashOutline size={20} />
+                                        Удалить
+                                    </div>
+                                </DropdownItem>
+                            )}
                         </Dropdown>
                     );
                 },

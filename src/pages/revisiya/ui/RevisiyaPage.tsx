@@ -6,13 +6,9 @@ import {
     useRevisionCount,
 } from "@/entities/revision/repository";
 import classNames from "@/shared/lib/classNames";
+import { usePermission } from "@/shared/lib/controlActionWithPermission";
 import { showErrorMessage, showSuccessMessage } from "@/shared/lib/showMessage";
-import {
-    Button,
-    DatePicker,
-    Pagination,
-    Table,
-} from "@/shared/ui/kit";
+import { Button, DatePicker, Pagination, Table } from "@/shared/ui/kit";
 import ConfirmDialog from "@/shared/ui/kit-pro/confirm-dialog/ConfirmDialog";
 import Empty from "@/shared/ui/kit-pro/empty/Empty";
 import NavigateButton from "@/shared/ui/kit-pro/navigate-button/NavigateButton";
@@ -43,6 +39,9 @@ const RevisiyaPage = () => {
     const [itemId, setItemId] = useState(null);
     const [isOpenDeleteModal, setIsOpenDeleteModal] = useState(false);
     const navigate = useNavigate();
+    const { checkPermissionByAction } = usePermission();
+    const canCreate = checkPermissionByAction("revision", "create");
+    const canDelete = checkPermissionByAction("revision", "delete");
 
     const { mutate: deleteMutate, isPending: deletePending } =
         useDeleteRevision();
@@ -115,8 +114,8 @@ const RevisiyaPage = () => {
     //   navigate("/revisiya/operation");
     // };
 
-    const columns = useMemo<ColumnDef<any>[]>(
-        () => [
+    const columns = useMemo<ColumnDef<any>[]>(() => {
+        const baseColumns: ColumnDef<any>[] = [
             {
                 id: "№",
                 enableSorting: false,
@@ -149,9 +148,11 @@ const RevisiyaPage = () => {
                 cell: ({ row }) =>
                     dayjs(row.original.date).format("DD-MM-YYYY HH:mm"),
             },
-            {
+        ];
+
+        if (canDelete) {
+            baseColumns.push({
                 id: "actions",
-                // header: "Действия",
                 cell: ({ row }) => (
                     <div
                         onClick={() => {
@@ -163,10 +164,11 @@ const RevisiyaPage = () => {
                         <IoTrashOutline />
                     </div>
                 ),
-            },
-        ],
-        [pagination],
-    );
+            });
+        }
+
+        return baseColumns;
+    }, [pagination, canDelete]);
 
     useEffect(() => {
         setParams((prev: any) => ({
@@ -231,17 +233,19 @@ const RevisiyaPage = () => {
                         }}
                     />
 
-                    <Button
-                        icon={<FaPlus />}
-                        variant="solid"
-                        size="sm"
-                        onClick={() => {
-                            clearDraftRevision();
-                            navigate("/revisiya/operation");
-                        }}
-                    >
-                        Добавить
-                    </Button>
+                    {canCreate && (
+                        <Button
+                            icon={<FaPlus />}
+                            variant="solid"
+                            size="sm"
+                            onClick={() => {
+                                clearDraftRevision();
+                                navigate("/revisiya/operation");
+                            }}
+                        >
+                            Добавить
+                        </Button>
+                    )}
                 </div>
             </div>
             {data && data?.length > 0 && !isPending ? (

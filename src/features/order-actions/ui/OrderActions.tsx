@@ -23,7 +23,11 @@ import {
     useRegisterSellApi,
     useUpdateSellApi,
 } from "@/entities/sale/repository";
-import { showErrorMessage, showSuccessMessage } from "@/shared/lib/showMessage";
+import {
+    showErrorLocalMessage,
+    showErrorMessage,
+    showSuccessMessage,
+} from "@/shared/lib/showMessage";
 import { messages } from "@/app/constants/message.request";
 import { FiscalizedModal } from "@/features/modals";
 import type { FizcalResponsetype } from "@/entities/sale/model";
@@ -48,6 +52,7 @@ import { PaymentTypes } from "@/app/constants/payment.types";
 import SellDebetModal from "@/widgets/ui/sellDebet/SellDebetModal";
 import ContragentModal from "@/features/modals/ui/ContragentModal";
 import Alert from "@/shared/ui/kit-pro/alert/Alert";
+import { usePermission } from "@/shared/lib/controlActionWithPermission";
 
 type OrderActionType = {
     type: "sale" | "refund" | "purchase";
@@ -117,6 +122,10 @@ const OrderActions = ({
     const { mutate: updateRefund } = useUpdateRefundApi();
     const { mutate: updateSale } = useUpdateSellApi();
     const { mutate: createShiftMutate } = useCreateShiftApi();
+
+    const { checkPermissionByAction } = usePermission();
+
+    const canCreate = checkPermissionByAction(type, "create");
 
     const addDrafts = () => {
         const newDraftSale:
@@ -274,7 +283,6 @@ const OrderActions = ({
         callback: (success: boolean) => void,
         typeButton: boolean,
     ) {
-        
         // init payload
         const payload: RegisterSaleModel &
             RegisterRefundModel &
@@ -311,7 +319,7 @@ const OrderActions = ({
             const draftItems = activeDraft?.items ?? [];
             for (let i = 0; i < draftItems?.length; i++) {
                 const draftItem = draftItems[i];
-            
+
                 const isActiveBulk =
                     type === "sale" && !!selectedRows?.[draftItem?.productId];
 
@@ -418,6 +426,12 @@ const OrderActions = ({
                 },
             );
         } else {
+            if (!canCreate) {
+                showErrorLocalMessage(
+                    "У вас нет прав для выполнения данного действия",
+                );
+                return;
+            }
             registerMutate(payload, {
                 onSuccess: (data: any) => {
                     if (

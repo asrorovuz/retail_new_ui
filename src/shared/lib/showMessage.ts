@@ -15,16 +15,15 @@ export const showSuccessMessage = (msgUz: string, msgRu?: string) => {
     const message = lang === "ru" ? msgRu || msgUz : msgUz;
 
     toast.success(message, {
-        position: "top-right",
-        autoClose: 3000,
+        position: "bottom-right",
+        autoClose: 2000,
     });
 };
 
 export const showErrorLocalMessage = (message: string) => {
     toast.error(message, {
-        position: "bottom-left",
-        closeOnClick: true,
-        draggable: true,
+        position: "bottom-right",
+        autoClose: 3000,
     });
 };
 
@@ -52,7 +51,6 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
 
     // 2️⃣ - API dan kelgan javob
     if (typeof error === "object" && error !== null) {
-        console.log(error, "ssskwkdnkwndkwkndkwnfknw");
 
         if (error.invalid_username_or_password) {
             return toast.error(

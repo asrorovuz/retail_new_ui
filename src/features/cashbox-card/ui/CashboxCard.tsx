@@ -6,6 +6,7 @@ import CurrencyName from "@/shared/lib/CurrencyName";
 import FormattedNumber from "@/shared/ui/kit-pro/numeric-format/NumericFormat";
 import { paymentTypes } from "@/@types/cashbox";
 import CashboxCardFooter from "./CashboxCardFooter";
+import { usePermission } from "@/shared/lib/controlActionWithPermission";
 
 const CashboxCard = ({
     data,
@@ -28,6 +29,11 @@ const CashboxCard = ({
             }, {}),
         );
 
+    const { checkPermissionByAction } = usePermission();
+    const canViewIn = checkPermissionByAction("cashIn", "view");
+    const canViewOut = checkPermissionByAction("cashOut", "view");
+    const canViewExpense = checkPermissionByAction("cashExpense", "view");
+
     return (
         <>
             {data ? (
@@ -38,9 +44,12 @@ const CashboxCard = ({
                             className="w-[360px]"
                             header={{
                                 content: item?.name,
-                                extra: (
+                                extra: (canViewIn || canViewOut || canViewExpense) && (
                                     <CashboxDropDown
                                         cashbox={data}
+                                        canViewIn={canViewIn}
+                                        canViewOut={canViewOut}
+                                        canViewExpense={canViewExpense}
                                         button={
                                             <Button
                                                 variant="plain"
@@ -70,7 +79,6 @@ const CashboxCard = ({
                                         key={currency?.currency?.code}
                                         className="font-bold my-5 "
                                     >
-
                                         {Object.entries(
                                             currency?.moneyType,
                                         )?.map(
