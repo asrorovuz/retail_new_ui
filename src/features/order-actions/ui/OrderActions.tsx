@@ -575,7 +575,7 @@ const OrderActions = ({
     }, [filterDataFiscal]);
 
     return keyType === "numeric" ? (
-        <div className="rounded-2xl bg-slate-200 p-1">
+        <>
             <div className="flex gap-x-1">
                 {(type === "sale" || type === "purchase") && (
                     <Button
@@ -583,7 +583,6 @@ const OrderActions = ({
                         onClick={() =>
                             checkShiftAndRun(() => setSellDebit(true))
                         }
-                        variant="plain"
                         disabled={!activeDraft?.items?.length}
                         className="w-full text-base font-medium text-slate-800 bg-white"
                     >
@@ -710,7 +709,7 @@ const OrderActions = ({
                     </div>
                 </Dialog>
             </div>
-        </div>
+        </>
     ) : (
         ""
     );

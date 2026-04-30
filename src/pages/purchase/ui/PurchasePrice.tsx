@@ -324,7 +324,6 @@ const PurchasePrice = () => {
                             activeSelectPaymetype={activeSelectPaymetype}
                             value={value}
                             setValue={setValue}
-                            setSearch={setSearch}
                             activeType={activeType}
                             setActiveType={setActiveType}
                             setActivePaymentSelectType={

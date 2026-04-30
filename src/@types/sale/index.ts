@@ -89,6 +89,10 @@ export interface SaleStoreActions {
     draftSaleItemIndex: number,
     priceAmount: number
   ) => void;
+  updateDraftSaleItemPriceBulk: (
+    draftSaleItemIndex: number,
+    priceAmountBulk: number
+  ) => void;
   updateDraftSaleItemQuantity: (
     draftSaleItemIndex: number,
     quantity: number

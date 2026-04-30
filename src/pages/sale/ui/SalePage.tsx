@@ -31,6 +31,7 @@ import PaymentDebtsModal from "@/features/modals/ui/PaymentDebtsModal";
 import { Header } from "@/widgets";
 import { useCheckPermission } from "@/shared/lib/checkPermission";
 import { AccountPermissions } from "@/app/constants/permissions";
+import QuertyKeyboard from "@/widgets/ui/keyboard/QuertyKeyboard";
 
 const SalePage = () => {
     const [search, setSearch] = useState<string>("");
@@ -74,6 +75,9 @@ const SalePage = () => {
     );
     const updateDraftSaleItemPrice = useDraftSaleStore(
         (store) => store.updateDraftSaleItemPrice,
+    );
+    const updateDraftSaleItemPriceBulk = useDraftSaleStore(
+        (store) => store.updateDraftSaleItemPriceBulk,
     );
     const updateDraftSaleItemQuantity = useDraftSaleStore(
         (store) => store.updateDraftSaleItemQuantity,
@@ -135,8 +139,8 @@ const SalePage = () => {
     }, [isError]);
 
     return (
-        <div className="flex gap-x-3">
-            <div className="bg-white w-3/5 rounded-2xl p-3 flex flex-col gap-y-3">
+        <div className="flex gap-x-2 bg-white h-screen overflow-hidden p-2">
+            <div className="bg-white w-[65%] flex flex-col gap-y-2">
                 <Cashbox
                     type={"sale"}
                     drafts={draftSales}
@@ -157,6 +161,7 @@ const SalePage = () => {
                     setExpandedId={setExpandedId}
                     deleteDraftItem={deleteDraftSaleItem}
                     updateDraftItemPrice={updateDraftSaleItemPrice}
+                    updateDraftItemPriceBulk={updateDraftSaleItemPriceBulk}
                     updateDraftItemTotalPrice={updateDraftSaleItemTotalPrice}
                     updateDraftItemQuantity={updateDraftSaleItemQuantity}
                 />
@@ -168,9 +173,10 @@ const SalePage = () => {
                 />
                 <Footer deleteDraft={deleteDraftSale} draft={draftSales} />
             </div>
-            <div className="bg-white w-2/5 rounded-2xl p-3 flex flex-col gap-y-3 h-full">
+
+            <div className="bg-white w-[35%] flex flex-col gap-y-2">
                 <Header />
-                <div className="rounded-2xl bg-slate-200 p-1">
+                <div className={classNames("rounded-lg p-1 flex flex-col gap-2", activeType === "qwerty" && "h-full")}>
                     <SearchProduct
                         search={search}
                         activeType={activeType}
@@ -188,11 +194,14 @@ const SalePage = () => {
                                 setExpandedRow={setExpandedRow}
                                 setExpandedId={setExpandedId}
                             />
+                            <QuertyKeyboard
+                                setActiveType={setActiveType}
+                                setSearch={setSearch}
+                            />
                         </>
                     )}
                 </div>
                 {activeType === "numeric" && (
-                    <div className="rounded-2xl bg-slate-200 p-1">
                         <>
                             <PaymeTypeCards
                                 type={"sale"}
@@ -203,10 +212,9 @@ const SalePage = () => {
                                 }
                             />
                         </>
-                    </div>
                 )}
                 {activeType === "numeric" && (
-                    <div className="rounded-2xl bg-slate-200 p-1 flex gap-x-1">
+                    <div className="flex gap-x-1">
                         <>
                             <Button
                                 onClick={() => navigate("/sales-history")}
@@ -258,7 +266,6 @@ const SalePage = () => {
                     activeSelectPaymetype={activeSelectPaymetype}
                     value={value}
                     setValue={setValue}
-                    setSearch={setSearch}
                     activeType={activeType}
                     setActiveType={setActiveType}
                     setActivePaymentSelectType={setActivePaymentSelectType}

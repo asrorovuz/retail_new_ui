@@ -8,7 +8,6 @@ import classNames from "@/shared/lib/classNames";
 import { Button } from "@/shared/ui/kit";
 import MagnetSvg from "@/shared/ui/svg/MagnetSvg";
 import NumericKeyboard from "@/widgets/ui/keyboard/NumericKeyboard";
-import QuertyKeyboard from "@/widgets/ui/keyboard/QuertyKeyboard";
 import { useEffect, useMemo } from "react";
 import { LuDelete } from "react-icons/lu";
 
@@ -19,7 +18,6 @@ type PaymentSectionPropsType = {
     value: string;
     activeType: "numeric" | "qwerty" | "fullkey";
     setValue: (val: string) => void;
-    setSearch: (val: string) => void;
     updateDraftDiscount?: (val: string) => void;
     updateDraftPayment: (val: DraftSalePaymentAmountSchema[]) => void;
     setActiveType: (val: "qwerty" | "numeric" | "fullkey") => void;
@@ -35,7 +33,6 @@ const PaymentSection = ({
     updateDraftDiscount,
     value,
     setValue,
-    setSearch,
     setActiveType,
     setActivePaymentSelectType,
 }: PaymentSectionPropsType) => {
@@ -73,6 +70,11 @@ const PaymentSection = ({
     const cashBackAmount = useMemo<number>(() => {
         const backAmount = totalPaymentAmount - netPrice;
         return backAmount > 0 ? backAmount : 0;
+    }, [netPrice, totalPaymentAmount]);
+
+    const debetAmount = useMemo<number>(() => {
+        const debtAmount = netPrice - totalPaymentAmount;
+        return debtAmount > 0 ? debtAmount : 0;
     }, [netPrice, totalPaymentAmount]);
 
     const onPaymentChanged = (paymentType: number, amount: string) => {
@@ -187,13 +189,49 @@ const PaymentSection = ({
                     <div className="flex flex-col gap-y-2 mb-1">
                         <div className="py-3 px-4 flex justify-between">
                             <div className="w-full">
-                                <div className="flex justify-between text-slate-900">
-                                    <span className="text-sm">ОПЛАТA</span>
-                                    <span className="text-2xl">
-                                        {value ? value : "0"}
+                                <div className="flex justify-between text-slate-900 border-b text-2xl">
+                                    <span>ОПЛАТA</span>
+                                    <span>
+                                        {value
+                                            ? Number(value)?.toLocaleString("ru-RU")
+                                            : 0}
                                     </span>
                                 </div>
-                                <div className="grid grid-cols-2 gap-x-2">
+                                <div className="flex justify-between text-slate-700 border-b text-lg">
+                                    <span>Оюшая сумма</span>
+                                    <span>
+                                        {totalPaymentAmount
+                                            ? totalPaymentAmount?.toLocaleString(
+                                                  "ru-RU",
+                                              )
+                                            : 0}
+                                    </span>
+                                </div>
+                                <div className="flex justify-between text-slate-700 border-b text-lg">
+                                    <span>Скидка</span>
+                                    <span>
+                                        {activeDraft?.discountAmount
+                                            ? Number(
+                                                  activeDraft?.discountAmount,
+                                              )?.toLocaleString("ru-RU")
+                                            : 0}
+                                    </span>
+                                </div>
+                                <div className="flex justify-between text-slate-700 border-b text-lg">
+                                    <span>В долг</span>
+                                    <span>{debetAmount ? debetAmount : 0}</span>
+                                </div>
+                                <div className="flex justify-between text-slate-700 border-b text-lg">
+                                    <span>Сдача</span>
+                                    <span>
+                                        {cashBackAmount
+                                            ? cashBackAmount.toLocaleString(
+                                                  "ru-RU",
+                                              )
+                                            : 0}
+                                    </span>
+                                </div>
+                                {/* <div className="grid grid-cols-2 gap-x-2">
                                     <div className="text-sm bg-white px-1 rounded-[4px] text-slate-600 flex justify-between pt-1">
                                         <span>Сумма</span>
                                         <span>
@@ -211,7 +249,7 @@ const PaymentSection = ({
                                             )}
                                         </span>
                                     </div>
-                                </div>
+                                </div> */}
                             </div>
                             <Button
                                 variant="plain"
@@ -226,7 +264,7 @@ const PaymentSection = ({
                                 type="button"
                                 variant="plain"
                                 onClick={() => setActiveType("qwerty")}
-                                className="w-full bg-slate-300 text-slate-700"
+                                className="w-full bg-slate-300 text-slate-700 text-sm"
                             >
                                 ABC
                             </Button>
@@ -241,7 +279,7 @@ const PaymentSection = ({
                                     )
                                 }
                                 className={classNames(
-                                    "w-full",
+                                    "w-full text-sm",
                                     activeSelectPaymetype
                                         ? "bg-slate-300 text-slate-700"
                                         : "bg-blue-400 !text-white",
@@ -257,7 +295,7 @@ const PaymentSection = ({
                                     e.preventDefault();
                                     clear(onClear);
                                 }}
-                                className="w-full bg-slate-300 text-slate-700"
+                                className="w-full !bg-slate-300 text-slate-700 text-sm px-0"
                             >
                                 Oчистить
                             </Button>
@@ -270,18 +308,12 @@ const PaymentSection = ({
                                     backspace(onBackSpace);
                                 }}
                                 className="w-full bg-slate-300 text-slate-700"
-                                icon={<LuDelete />}
+                                icon={<LuDelete size={"22"}/>}
                             ></Button>
                         </div>
                     </div>
                     <NumericKeyboard onClickNumber={onClickNumber} />
                 </div>
-            )}
-            {activeType === "qwerty" && (
-                <QuertyKeyboard
-                    setActiveType={setActiveType}
-                    setSearch={setSearch}
-                />
             )}
         </>
     );

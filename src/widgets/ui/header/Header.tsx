@@ -12,17 +12,21 @@ const Header = () => {
     );
 
     return (
-        <div className="rounded-2xl text-slate-800 bg-slate-200 h-10 flex justify-between items-center font-semibold px-3">
-            <div className="flex items-center">
-                В: <span>{versions ? versions : "-"}</span>
-            </div>
-            <div className="flex gap-2 items-center">
-                <UpdateVersion />
-                <div className="flex flex-col items-end">
-                    <p>{formatted}</p>
-                    <p>{user?.type === 1 ? "Admin" : "Hodim"}</p>
+        <div className="flex gap-x-1">
+            <div className="w-full rounded-lg text-slate-800 bg-slate-200 h-10 flex justify-between items-center px-3">
+                <div className="flex items-center">
+                    В: <span>{versions ? versions : "-"}</span>
+                </div>
+                <div className="flex gap-2 items-center">
+                    <div className="flex items-end gap-x-2">
+                        <p className="capitalize">
+                            {user?.type === 1 ? "админ" : "сотрудник"}:
+                        </p>
+                        <p>{formatted}</p>
+                    </div>
                 </div>
             </div>
+            <UpdateVersion />
         </div>
     );
 };

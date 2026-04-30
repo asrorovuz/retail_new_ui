@@ -37,7 +37,7 @@ const FavouriteCard = ({ name, prices, img, onItemChange }: Propstype) => {
   return (
     <article
       onClick={onItemChange}
-      className="flex justify-between bg-white rounded-lg max-h-[72px] overflow-hidden active:bg-gray-100 active:scale-105 transition-all duration-300"
+      className="w-[33%] flex h-[80px] justify-between bg-white rounded-lg overflow-hidden active:bg-gray-100 active:scale-105 transition-all duration-300"
     >
       <div className="w-full p-3">
         <h4 className="text-xs font-semibold line-clamp-1">{name}</h4>
@@ -46,7 +46,7 @@ const FavouriteCard = ({ name, prices, img, onItemChange }: Propstype) => {
         </p>
       </div>
       {img?.length > 0 && (
-        <div className="w-[150px] h-[72px]">
+        <div className="w-[150px] h-[72px] self-end">
           <img
             className="w-full h-full object-contain"
             src={img?.[0]?.fs_url}

@@ -215,6 +215,7 @@ const RefundPage = () => {
                     draft={draftRefunds}
                     activeDraft={activeDraft}
                     expandedRow={expandedRow}
+                    selectedRows={selectedRows}
                     expendedId={expendedId}
                     setActiveTypeKeyboard={setActiveType}
                     setExpandedRow={setExpandedRow}
@@ -398,7 +399,6 @@ const RefundPage = () => {
                             activeSelectPaymetype={activeSelectPaymetype}
                             value={value}
                             setValue={setValue}
-                            setSearch={setSearch}
                             activeType={activeType}
                             setActiveType={setActiveType}
                             setActivePaymentSelectType={

@@ -162,6 +162,17 @@ export const useDraftSaleStore = create<
                         priceAmount;
                 }
             }),
+        updateDraftSaleItemPriceBulk: (
+            draftSaleItemIndex: number,
+            priceAmoutBulk: number,
+        ) =>
+            set((state) => {
+                const activeSale = state.draftSales.find((s) => s.isActive);
+                if (activeSale) {
+                    activeSale.items[draftSaleItemIndex].priceAmoutBulk =
+                        priceAmoutBulk;
+                }
+            }),
         updateDraftSaleItemTotalPrice: (
             draftSaleItemIndex: number,
             totalPrice: number,

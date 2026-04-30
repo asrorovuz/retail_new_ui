@@ -8,12 +8,12 @@ export const AppLayout = () => {
     const [isOpenNavigate, setIsOpenNavigate] = useState(false);
 
     return (
-        <div className="h-screen w-screen overflow-hidden p-3 bg-slate-200">
+        <>
             <Outlet context={setIsOpenNavigate} />
             <NavigateModal
                 isOpenNavigate={isOpenNavigate}
                 setIsOpenNavigate={setIsOpenNavigate}
             />
-        </div>
+        </>
     );
 };
