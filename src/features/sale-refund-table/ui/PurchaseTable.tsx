@@ -156,8 +156,8 @@ const PurchaseTable = ({
 
     return (
         <>
-            <div className="overflow-hidden flex-1 rounded-2xl">
-                <div className="border-2 border-slate-200 overflow-y-auto rounded-t-2xl h-full">
+            <div className="overflow-hidden flex-1 rounded-lg">
+                <div className="border-2 border-slate-200 overflow-y-auto rounded-t-lg h-full">
                     <div className="h-full flex flex-col justify-between">
                         <Table
                             className="table-fixed border-separate border-spacing-0"
@@ -206,7 +206,6 @@ const PurchaseTable = ({
                                     table
                                         .getRowModel()
                                         .rows.map((row, rowIndex) => {
-                                            const oddEven = rowIndex % 2 === 0;
                                             return (
                                                 <Tr
                                                     key={row.id}
@@ -216,13 +215,10 @@ const PurchaseTable = ({
                                                         );
                                                     }}
                                                     className={classNames(
-                                                        oddEven
-                                                            ? "bg-slate-200"
-                                                            : "bg-white",
                                                         expandedRow?.toString() ===
                                                             row.id &&
-                                                            "text-green-600",
-                                                        "!h-max cursor-pointer",
+                                                            "bg-green-200",
+                                                        "!h-max cursor-pointer text-black",
                                                     )}
                                                 >
                                                     {row

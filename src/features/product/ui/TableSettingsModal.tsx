@@ -12,162 +12,179 @@ import { useTranslation } from "react-i18next";
 import { FiSettings } from "react-icons/fi";
 
 const TableSettingsModal = () => {
-  const { t } = useTranslation();
-  const [isOpen, setIsOpen] = useState(false);
-  const [tempHiddenColumns, setTempHiddenColumns] = useState<any[]>([]);
+    const { t } = useTranslation();
+    const [isOpen, setIsOpen] = useState(false);
+    const [tempHiddenColumns, setTempHiddenColumns] = useState<any[]>([]);
 
-  const { setTableSettings, tableSettings } = useSettingsStore(
-    (store) => store
-  );
-  const { mutate: updateTableSettingsMutation } = useUpdateTableSettings();
-
-  const toggleOpen = () => {
-    const merged = tableSettings?.map((col) => {
-      const existing = tableSettings.find((h) => h?.key === col?.key);
-      return {
-        key: col?.key,
-        color: existing ? existing?.color : col?.defaultColor || null,
-        visible: existing ? existing?.visible : col?.visible ?? true,
-      };
-    });
-    setTempHiddenColumns(merged);
-    setIsOpen(true);
-  };
-
-  const changeVisibleColumns = (column: string) => {
-    let newHiddenColumns = tempHiddenColumns.map((i) =>
-      i.key === column ? { ...i, visible: !i.visible } : i
+    const { setTableSettings, tableSettings } = useSettingsStore(
+        (store) => store,
     );
-    setTempHiddenColumns(newHiddenColumns);
-  };
+    const { mutate: updateTableSettingsMutation } = useUpdateTableSettings();
 
-  const changeColor = (column: string, color: string) => {
-    let newHiddenColumns = tempHiddenColumns.map((i) =>
-      i.key === column ? { ...i, color: color || null } : i
-    );
-    setTempHiddenColumns(newHiddenColumns);
-  };
+    const toggleOpen = () => {
+        const merged = tableSettings?.map((col) => {
+            const existing = tableSettings.find((h) => h?.key === col?.key);
+            return {
+                key: col?.key,
+                color: existing ? existing?.color : col?.defaultColor || null,
+                visible: existing ? existing?.visible : (col?.visible ?? true),
+            };
+        });
+        setTempHiddenColumns(merged);
+        setIsOpen(true);
+    };
 
-  const handleCancel = () => {
-    setTempHiddenColumns(tableSettings);
-    setIsOpen(false);
-  };
-
-  const handleSave = () => {
-    const result = convertArrayToBackendSettings(
-      tempHiddenColumns
-    ) as ProductColumnVisibility;
-
-    updateTableSettingsMutation(result, {
-      onSuccess: () => {
-        showSuccessMessage(
-          messages.uz.SUCCESS_MESSAGE,
-          messages.ru.SUCCESS_MESSAGE
+    const changeVisibleColumns = (column: string) => {
+        let newHiddenColumns = tempHiddenColumns.map((i) =>
+            i.key === column ? { ...i, visible: !i.visible } : i,
         );
-        setTableSettings(tempHiddenColumns);
+        setTempHiddenColumns(newHiddenColumns);
+    };
+
+    const changeColor = (column: string, color: string) => {
+        let newHiddenColumns = tempHiddenColumns.map((i) =>
+            i.key === column ? { ...i, color: color || null } : i,
+        );
+        setTempHiddenColumns(newHiddenColumns);
+    };
+
+    const handleCancel = () => {
+        setTempHiddenColumns(tableSettings);
         setIsOpen(false);
-      },
-      onError: (error) => {
-        showErrorMessage(error);
-      },
-    });
-  };
+    };
 
-  const onClose = () => {
-    setIsOpen(false);
-  };
+    const handleSave = () => {
+        const result = convertArrayToBackendSettings(
+            tempHiddenColumns,
+        ) as ProductColumnVisibility;
 
-  return (
-    <div>
-      <Button
-        variant="plain"
-        icon={<FiSettings />}
-        className="bg-white"
-        onClick={toggleOpen}
-      />
+        updateTableSettingsMutation(result, {
+            onSuccess: () => {
+                showSuccessMessage(
+                    messages.uz.SUCCESS_MESSAGE,
+                    messages.ru.SUCCESS_MESSAGE,
+                );
+                setTableSettings(tempHiddenColumns);
+                setIsOpen(false);
+            },
+            onError: (error) => {
+                showErrorMessage(error);
+            },
+        });
+    };
 
-      <Dialog
-        title={t("Настройки")}
-        isOpen={isOpen}
-        closable={true}
-        onClose={onClose}
-        onRequestClose={onClose}
-        width={490}
-        height={"90vh"}
-      >
-        <div className="flex flex-col gap-y-3 mb-5 max-h-[calc(90vh-180px)] overflow-y-auto">
-          {tableSettings?.map((i) =>
-            i?.key !== "package" ? (
-              <React.Fragment key={i.key}>
-                <div className="flex items-center justify-between">
-                  <span className="font-semibold text-xl">
-                    {t(`tableSettings.${i.key}`)}
-                  </span>
-                  <div className="flex items-center justify-end">
-                    <Switcher
-                      checked={
-                        tempHiddenColumns.find((j) => j.key === i.key)
-                          ?.visible ?? false
-                      }
-                      disabled={i?.key === "name"}
-                      onChange={() => changeVisibleColumns(i.key)}
-                    />
-                    <Select
-                      className={classNames(
-                        `w-[200px] ml-2`,
-                        colors?.find(
-                          (j) =>
-                            j.name ===
-                            tempHiddenColumns?.find((l) => l.key === i.key)
-                              ?.color
-                        )
-                      )}
-                      options={colors}
-                      isSearchable={false}
-                      isClearable
-                      onChange={(option) =>
-                        changeColor(i.key, option?.name || "")
-                      }
-                      value={
-                        colors?.find(
-                          (j) =>
-                            j.name ===
-                            tempHiddenColumns?.find((l) => l.key === i.key)
-                              ?.color
-                        ) || null
-                      }
-                      hideDropdownIndicator={true}
-                      getOptionLabel={(option) => t(`colors.${option?.name}`)}
-                      getOptionValue={(option) => option?.name}
-                      placeholder={t("color")}
-                      menuPortalTarget={document.body}
-                      menuPosition="fixed"
-                      styles={{
-                        menuPortal: (base) => ({
-                          ...base,
-                          zIndex: 9999,
-                        }),
-                      }}
-                    />
-                  </div>
+    const onClose = () => {
+        setIsOpen(false);
+    };
+
+    return (
+        <div>
+            <Button
+                variant="plain"
+                icon={<FiSettings />}
+                className="bg-white"
+                onClick={toggleOpen}
+            />
+
+            <Dialog
+                title={t("Настройки")}
+                isOpen={isOpen}
+                closable={true}
+                onClose={onClose}
+                onRequestClose={onClose}
+                width={380}
+                height={"70vh"}
+            >
+                <div className="flex flex-col gap-y-3 mb-5 max-h-[calc(90vh-180px)] overflow-y-auto">
+                    {tableSettings?.map((i) =>
+                        i?.key !== "package" ? (
+                            <React.Fragment key={i.key}>
+                                <div className="flex items-center justify-between">
+                                    <span className="font-semibold text-md">
+                                        {t(`tableSettings.${i.key}`)}
+                                    </span>
+                                    <div className="flex items-center justify-end">
+                                        <Switcher
+                                            checked={
+                                                tempHiddenColumns.find(
+                                                    (j) => j.key === i.key,
+                                                )?.visible ?? false
+                                            }
+                                            disabled={i?.key === "name"}
+                                            onChange={() =>
+                                                changeVisibleColumns(i.key)
+                                            }
+                                        />
+                                        <Select
+                                            size="sm"
+                                            className={classNames(
+                                                `w-[150px] ml-2 text-xs`,
+                                                colors?.find(
+                                                    (j) =>
+                                                        j.name ===
+                                                        tempHiddenColumns?.find(
+                                                            (l) =>
+                                                                l.key === i.key,
+                                                        )?.color,
+                                                ),
+                                            )}
+                                            options={colors}
+                                            isSearchable={false}
+                                            isClearable
+                                            onChange={(option) =>
+                                                changeColor(
+                                                    i.key,
+                                                    option?.name || "",
+                                                )
+                                            }
+                                            value={
+                                                colors?.find(
+                                                    (j) =>
+                                                        j.name ===
+                                                        tempHiddenColumns?.find(
+                                                            (l) =>
+                                                                l.key === i.key,
+                                                        )?.color,
+                                                ) || null
+                                            }
+                                            hideDropdownIndicator={true}
+                                            getOptionLabel={(option) =>
+                                                t(`colors.${option?.name}`)
+                                            }
+                                            getOptionValue={(option) =>
+                                                option?.name
+                                            }
+                                            placeholder={t("color")}
+                                            menuPortalTarget={document.body}
+                                            menuPosition="fixed"
+                                            styles={{
+                                                menuPortal: (base) => ({
+                                                    ...base,
+                                                    zIndex: 9999,
+                                                }),
+                                            }}
+                                        />
+                                    </div>
+                                </div>
+                            </React.Fragment>
+                        ) : (
+                            ""
+                        ),
+                    )}
                 </div>
-              </React.Fragment>
-            ) : (
-              ""
-            )
-          )}
-        </div>
 
-        {/* 🔹 Pastki tugmalar */}
-        <div className="flex justify-end gap-x-3">
-          <Button onClick={handleCancel}>{t("common.cancel")}</Button>
-          <Button variant="solid" onClick={handleSave}>
-            {t("common.save")}
-          </Button>
+                {/* 🔹 Pastki tugmalar */}
+                <div className="flex justify-end gap-x-3">
+                    <Button size="sm" onClick={handleCancel}>
+                        {t("common.cancel")}
+                    </Button>
+                    <Button size="sm" variant="solid" onClick={handleSave}>
+                        {t("common.save")}
+                    </Button>
+                </div>
+            </Dialog>
         </div>
-      </Dialog>
-    </div>
-  );
+    );
 };
 
 export default TableSettingsModal;

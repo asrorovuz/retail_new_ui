@@ -162,12 +162,10 @@ const ProductFormMultiple: FC<Props> = ({
     };
 
     const onSubmit = async (data: any) => {
-        console.log(data, catalogData, "datacha");
         setIsSubmitting(true);
 
         const successfullyAdded: number[] = []; // muvaffaqiyatli elementlar
         console.log(data, "data");
-        
 
         for (const [index, values] of data?.products?.entries()) {
             try {
@@ -176,7 +174,7 @@ const ProductFormMultiple: FC<Props> = ({
                     values?.images || [],
                     values?.images?.[0]?.img || "",
                 );
-                
+
                 const prices = (values?.prices || []).map((p: PriceType) => ({
                     price_type_id: p?.price_type?.id ?? null,
                     amount: p?.amount ? +p?.amount : 0,
@@ -202,10 +200,12 @@ const ProductFormMultiple: FC<Props> = ({
                     category_name: values?.category?.name ?? null,
                     package_measurements: (
                         measurmentsPackages[fields[index].id] || []
-                    ).map((p) => ({
-                        name: p.name,
-                        quantity: Number(p.amount) || 0,
-                    }))?.filter((item) => !!item?.name),
+                    )
+                        .map((p) => ({
+                            name: p.name,
+                            quantity: Number(p.amount) || 0,
+                        }))
+                        ?.filter((item) => !!item?.name),
                     catalog_code: values.catalog?.value
                         ? String(values?.catalog?.value)
                         : null,
@@ -266,7 +266,6 @@ const ProductFormMultiple: FC<Props> = ({
 
     /* 🔥 BARCODE LOGIC */
     useEffect(() => {
-        if (typeof barcode !== "string") return;
         if (!barcode) return;
 
         // form array'dan olamiz
@@ -329,7 +328,7 @@ const ProductFormMultiple: FC<Props> = ({
                 onKeyDown={(e) => {
                     if (e.key === "Enter") {
                         e.preventDefault();
-                        e.isPropagationStopped()
+                        e.isPropagationStopped();
                     }
                 }}
             >
@@ -395,7 +394,7 @@ const ProductFormMultiple: FC<Props> = ({
                             <div className="p-2 text-nowrap w-[100px] border border-slate-300 border-l-0">
                                 Код
                             </div>
-                            <div className="p-2 text-nowrap w-[300px] border border-slate-300 border-l-0">
+                            <div className="p-2 text-nowrap w-[350px] border border-slate-300 border-l-0">
                                 Штрих-код
                             </div>
                             <div className="p-2 text-nowrap w-[450px] border border-slate-300 border-l-0">
@@ -404,7 +403,7 @@ const ProductFormMultiple: FC<Props> = ({
                             <div className="p-2 text-nowrap w-[120px] border border-slate-300 border-l-0">
                                 Описание товара
                             </div>
-                            <div className="p-2 text-nowrap w-[180px] border border-slate-300 border-l-0 rounded-tr-xl">
+                            <div className="p-2 text-nowrap w-[120px] border border-slate-300 border-l-0 rounded-tr-xl">
                                 Фото
                             </div>
                         </div>
@@ -782,7 +781,7 @@ const ProductFormMultiple: FC<Props> = ({
                                         </div>
 
                                         {/* Штрих-коды */}
-                                        <div className="p-2 w-[300px] border border-slate-300 border-t-0 border-l-0">
+                                        <div className="p-2 w-[350px] border border-slate-300 border-t-0 border-l-0">
                                             <BarcodeForm
                                                 fieldName={`${name}.${index}.barcodes`}
                                                 barcode={barcode}
@@ -963,10 +962,11 @@ const ProductFormMultiple: FC<Props> = ({
                                             />
                                         </div>
 
-                                        <div className="p-2 w-[120px] border border-t-0 border-l-0 border-slate-300 flex">
+                                        <div className="p-2 w-[60px] border border-t-0 border-l-0 border-slate-300 flex">
                                             {/* Фото */}
                                             <ImageForm
-                                                extra={false}
+                                                extra={true}
+                                                width={"50px"}
                                                 fieldName={`${name}.${index}.images`}
                                                 control={methods.control}
                                             />

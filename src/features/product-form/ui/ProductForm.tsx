@@ -221,7 +221,7 @@ const ProductForm: FC<ProductFormType> = ({
                 code: values?.code,
                 sku: values?.sku,
                 vat_rate: values?.vat_rate,
-                barcodes: values?.barcodes || [],
+                barcodes: values?.barcodes?.filter((item) => item?.value) || [],
                 images,
                 prices,
                 is_legal: values?.is_legal,
@@ -478,427 +478,481 @@ const ProductForm: FC<ProductFormType> = ({
                 </div>
 
                 <div className="max-h-[53vh] overflow-y-auto mb-4">
-                    <div className="grid grid-cols-5 gap-x-3 mb-4">
-                        <Controller
-                            name="name"
-                            control={control}
-                            rules={{
-                                required: "Название обязательно к заполнению",
-                            }}
-                            render={({ field, fieldState }) => (
-                                <FormItem
-                                    label="Название товара"
-                                    asterisk
-                                    className="col-span-2 !mb-0"
-                                    invalid={!!fieldState?.error}
-                                    errorMessage={fieldState?.error?.message}
-                                >
-                                    <Input
-                                        {...field}
-                                        type="text"
-                                        autoComplete="off"
-                                        size="sm"
-                                        disabled={catalogLoading}
-                                        autoFocus={!!fieldState?.error}
-                                        invalid={!!fieldState?.error}
-                                        placeholder="Введите название товара"
-                                        className="w-full"
-                                    />
-                                </FormItem>
-                            )}
-                        />
+                    <section className="rounded-lg mb-2 bg-slate-200 overflow-hidden">
+                        <h3 className="text-lg text-slate-700 mb-2 bg-slate-300 p-2">
+                            Основная информация
+                        </h3>
+                        <div className="flex flex-col gap-3 p-2">
+                            <div className="grid grid-cols-2 gap-x-3">
+                                <Controller
+                                    name="name"
+                                    control={control}
+                                    rules={{
+                                        required:
+                                            "Название обязательно к заполнению",
+                                    }}
+                                    render={({ field, fieldState }) => (
+                                        <FormItem
+                                            label="Название товара"
+                                            asterisk
+                                            className="!mb-0"
+                                            invalid={!!fieldState?.error}
+                                            errorMessage={
+                                                fieldState?.error?.message
+                                            }
+                                        >
+                                            <Input
+                                                {...field}
+                                                type="text"
+                                                autoComplete="off"
+                                                size="sm"
+                                                disabled={catalogLoading}
+                                                autoFocus={!!fieldState?.error}
+                                                invalid={!!fieldState?.error}
+                                                placeholder="Введите название товара"
+                                                className="w-full"
+                                            />
+                                        </FormItem>
+                                    )}
+                                />
 
-                        <Controller
-                            name="prices.0.amount"
-                            control={control}
-                            rules={{
-                                required:
-                                    "Розничная цена обязательна к заполнению",
-                                min: {
-                                    value: 1,
-                                    message: "Цена должна быть больше 0",
-                                },
-                            }}
-                            render={({ field, fieldState }) => (
-                                <FormItem
-                                    asterisk
-                                    className="!mb-0"
-                                    label="Розничный цена"
-                                >
-                                    <Input
-                                        {...field}
-                                        autoFocus={!!fieldState?.error}
-                                        type="number"
-                                        size="sm"
-                                        invalid={!!fieldState?.error}
-                                        autoComplete="off"
-                                        placeholder="Сумма"
-                                        space={false}
-                                        replaceLeadingZero={true}
-                                        className="w-full"
-                                    />
-                                </FormItem>
-                            )}
-                        />
-                        <Controller
-                            name="prices.1.amount"
-                            control={control}
-                            render={({ field }) => (
-                                <FormItem
-                                    label="Оптовая цена"
-                                    className="!mb-0"
-                                >
-                                    <Input
-                                        {...field}
-                                        type="number"
-                                        size="sm"
-                                        autoComplete="off"
-                                        placeholder="Сумма"
-                                        space={false}
-                                        replaceLeadingZero={true}
-                                        className="w-full"
-                                    />
-                                </FormItem>
-                            )}
-                        />
-                        <Controller
-                            name="purchase_price.amount"
-                            control={control}
-                            render={({ field }) => (
-                                <FormItem
-                                    label="Закупочная цена"
-                                    className="!mb-0"
-                                >
-                                    <Input
-                                        {...field}
-                                        type="number"
-                                        // disabled={type === "edit"}
-                                        autoComplete="off"
-                                        placeholder="Сумма"
-                                        size="sm"
-                                        replaceLeadingZero={true}
-                                        space={false}
-                                        className="w-full"
-                                    />
-                                </FormItem>
-                            )}
-                        />
-                    </div>
-                    <div className="grid grid-cols-7 gap-x-3 mb-4">
-                        <FormItem className={"!mb-0"} label="Остаток">
-                            <Input
-                                type="number"
-                                autoComplete="off"
-                                size="sm"
-                                value={remainder}
-                                placeholder="Введите остаток"
-                                replaceLeadingZero={true}
-                                space={false}
-                                className="w-full"
-                                onChange={(e) => setRemainder(+e.target.value)}
-                            />
-                        </FormItem>
-                        <Controller
-                            name="measurement_name"
-                            control={control}
-                            render={({ field, fieldState }) => (
-                                <FormItem
-                                    className={"!mb-0"}
-                                    label="Ед. изм."
-                                    invalid={!!fieldState?.error}
-                                >
-                                    <Select
-                                        {...field}
-                                        options={optionMeasurement}
-                                        isSearchable={false}
-                                        className="w-full"
-                                        size="sm"
-                                        hideDropdownIndicator={true}
-                                        getOptionLabel={(option) =>
-                                            option?.label
-                                        }
-                                        getOptionValue={(option) =>
-                                            String(option?.value)
-                                        }
-                                        value={
-                                            optionMeasurement?.find(
-                                                (opt) =>
-                                                    opt.value === field.value,
-                                            ) ?? { label: "шт", value: "шт" }
-                                        }
-                                        menuPortalTarget={document.body}
-                                        menuPosition="fixed"
-                                        styles={{
-                                            menuPortal: (base) => ({
-                                                ...base,
-                                                zIndex: 9999,
-                                            }),
-                                        }}
-                                        onChange={(option) =>
-                                            field.onChange(
-                                                option?.value ?? "шт",
-                                            )
-                                        }
-                                    />
-                                </FormItem>
-                            )}
-                        />
-                        <FormItem className={"!mb-0"} label="Оповещения">
-                            <Input
-                                type="number"
-                                autoComplete="off"
-                                size="sm"
-                                value={alertOn}
-                                placeholder="Введите остаток"
-                                replaceLeadingZero={true}
-                                space={false}
-                                className="w-full"
-                                onChange={(e) => setAlertOn(+e.target.value)}
-                            />
-                        </FormItem>
-                        <CategorySelect
-                            name={`category`}
-                            control={control}
-                            label={"Категория"}
-                            placeholder={"Категория"}
-                        />
-                        <Controller
-                            name="code"
-                            control={control}
-                            render={({ field }) => (
-                                <FormItem className={"!mb-0"} label="Код">
-                                    <Input
-                                        {...field}
-                                        size="sm"
-                                        type="text"
-                                        autoComplete="off"
-                                        space={false}
-                                        placeholder="Введите код"
-                                    />
-                                </FormItem>
-                            )}
-                        />
-                        <Controller
-                            name="sku"
-                            control={control}
-                            render={({ field }) => (
-                                <FormItem
-                                    className={"!mb-0"}
-                                    asterisk={false}
-                                    label="Артикул"
-                                >
-                                    <div className="relative">
-                                        <Input
-                                            {...field}
-                                            type="text"
-                                            size="sm"
-                                            autoComplete="off"
-                                            space={false}
-                                            placeholder="Введите артикул"
-                                        />
-                                    </div>
-                                </FormItem>
-                            )}
-                        />
-                    </div>
-                    <div className="grid grid-cols-2 items-start gap-x-3 mb-4">
-                        <BarcodeForm
-                            fieldName={"barcodes"}
-                            barcode={barcode}
-                            setValue={setValue}
-                            control={control}
-                            getValues={getValues}
-                        />
-                        <div className="flex flex-col">
-                            <div className="form-label flex justify-between mb-1">
-                                <span className="font-semibold">
-                                    Название упаковки
-                                </span>
-                                <Button
-                                    variant="plain"
-                                    type="button"
-                                    className="bg-transparent border-transparent py-0 h-auto text-blue-500"
-                                    size="sm"
-                                    onClick={addPackage}
-                                >
-                                    Добавить упаковку
-                                </Button>
+                                <CategorySelect
+                                    name={`category`}
+                                    control={control}
+                                    label={"Категория"}
+                                    placeholder={"Категория"}
+                                />
                             </div>
-                            <div className="flex flex-col gap-y-1">
-                                {measurmentsPackages?.map((item) => (
-                                    <div
-                                        key={item.id}
-                                        className="flex items-center gap-x-2"
-                                    >
-                                        <Input
-                                            placeholder="Название упаковки"
-                                            value={item.name}
-                                            onChange={(e) =>
-                                                updatePackage(
-                                                    item.id,
-                                                    "name",
-                                                    e.target.value,
-                                                )
-                                            }
-                                        />
 
-                                        <Input
-                                            type="number"
-                                            placeholder="Количество в упаковке"
-                                            value={item.amount}
-                                            space={false}
-                                            className="!w-[100px]"
-                                            onChange={(e) =>
-                                                updatePackage(
-                                                    item.id,
-                                                    "amount",
-                                                    +e.target.value,
-                                                )
-                                            }
-                                        />
+                            <div className="grid grid-cols-5 gap-x-3">
+                                <FormItem className={"!mb-0"} label="Остаток">
+                                    <Input
+                                        type="number"
+                                        autoComplete="off"
+                                        size="sm"
+                                        value={remainder}
+                                        placeholder="Введите остаток"
+                                        replaceLeadingZero={true}
+                                        space={false}
+                                        className="w-full"
+                                        onChange={(e) =>
+                                            setRemainder(+e.target.value)
+                                        }
+                                    />
+                                </FormItem>
 
-                                        {measurmentsPackages?.length > 1 && (
-                                            <Button
-                                                type="button"
-                                                variant="default"
-                                                icon={<IoMdClose size={20} />}
-                                                className="text-red-500 hover:text-red-400 active:text-red-400 px-3"
-                                                onClick={() =>
-                                                    removePackage(item.id)
+                                <FormItem
+                                    className={"!mb-0"}
+                                    label="Мин. Остаток"
+                                >
+                                    <Input
+                                        type="number"
+                                        autoComplete="off"
+                                        size="sm"
+                                        value={alertOn}
+                                        placeholder="Введите остаток"
+                                        replaceLeadingZero={true}
+                                        space={false}
+                                        className="w-full"
+                                        onChange={(e) =>
+                                            setAlertOn(+e.target.value)
+                                        }
+                                    />
+                                </FormItem>
+
+                                <Controller
+                                    name="measurement_name"
+                                    control={control}
+                                    render={({ field, fieldState }) => (
+                                        <FormItem
+                                            className={"!mb-0"}
+                                            label="Ед. изм."
+                                            invalid={!!fieldState?.error}
+                                        >
+                                            <Select
+                                                {...field}
+                                                options={optionMeasurement}
+                                                isSearchable={false}
+                                                className="w-full"
+                                                size="sm"
+                                                hideDropdownIndicator={true}
+                                                getOptionLabel={(option) =>
+                                                    option?.label
+                                                }
+                                                getOptionValue={(option) =>
+                                                    String(option?.value)
+                                                }
+                                                value={
+                                                    optionMeasurement?.find(
+                                                        (opt) =>
+                                                            opt.value ===
+                                                            field.value,
+                                                    ) ?? {
+                                                        label: "шт",
+                                                        value: "шт",
+                                                    }
+                                                }
+                                                menuPortalTarget={document.body}
+                                                menuPosition="fixed"
+                                                styles={{
+                                                    menuPortal: (base) => ({
+                                                        ...base,
+                                                        zIndex: 9999,
+                                                    }),
+                                                }}
+                                                onChange={(option) =>
+                                                    field.onChange(
+                                                        option?.value ?? "шт",
+                                                    )
                                                 }
                                             />
-                                        )}
-                                    </div>
-                                ))}
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <Controller
+                                    name="code"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <FormItem
+                                            className={"!mb-0"}
+                                            label="Код"
+                                        >
+                                            <Input
+                                                {...field}
+                                                size="sm"
+                                                type="text"
+                                                autoComplete="off"
+                                                space={false}
+                                                placeholder="Введите код"
+                                            />
+                                        </FormItem>
+                                    )}
+                                />
+                                <Controller
+                                    name="sku"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <FormItem
+                                            className={"!mb-0"}
+                                            asterisk={false}
+                                            label="Артикул"
+                                        >
+                                            <div className="relative">
+                                                <Input
+                                                    {...field}
+                                                    type="text"
+                                                    size="sm"
+                                                    autoComplete="off"
+                                                    space={false}
+                                                    placeholder="Введите артикул"
+                                                />
+                                            </div>
+                                        </FormItem>
+                                    )}
+                                />
                             </div>
                         </div>
-                    </div>
-                    <div className="grid grid-cols-12 items-end gap-x-3 mb-4">
-                        {/* <Checkbox
-              className="text-nowrap text-slate-800 col-span-2 mb-3"
-              checked={isShow}
-              onChange={handleClick}
-            >
-            </Checkbox> */}
-                        {/* Идентификаторы и измерения в GN */}
-                        <span className="text-nowrap text-slate-800 col-span-2 mb-3">
-                            Интергация с ОФД
-                        </span>
-                        <>
-                            <Controller
-                                name={`catalog_code`}
-                                control={control}
-                                render={({ field }) => {
-                                    return (
-                                        <FormItem
-                                            className="col-span-3 !mb-0"
-                                            label={"ИКПУ-код"}
-                                        >
-                                            <CatalogSelector
-                                                {...field}
-                                                fieldName={`catalog`}
-                                                isOpen={isOpen}
-                                                placeholder={"Введите ИКПУ-код"}
-                                                value={field.value}
-                                                setValue={setValue}
-                                                getValues={getValues}
-                                                onChange={(opt) =>
-                                                    field.onChange(opt.value)
-                                                }
-                                                setPackageNames={
-                                                    setPackageNames
-                                                }
-                                            />
-                                        </FormItem>
-                                    );
-                                }}
-                            />
+                    </section>
 
+                    <section className="rounded-lg mb-2 bg-slate-200 overflow-hidden">
+                        <h3 className="text-lg text-slate-700 mb-2 bg-slate-300 p-2">
+                            Цены
+                        </h3>
+                        <div className="grid grid-cols-3 gap-x-3 p-2">
                             <Controller
-                                name={`package_code`}
+                                name="prices.0.amount"
                                 control={control}
-                                render={({ field }) => {
-                                    return (
-                                        <FormItem
-                                            className="col-span-3 !mb-0"
-                                            label={"Ед. изм."}
-                                        >
-                                            <CatalogPackageSelector
-                                                {...field}
-                                                options={packageNames || []}
-                                                value={field?.value}
-                                                setValue={setValue}
-                                                placeholder={"Введите Ед. изм."}
-                                                onChange={field.onChange}
-                                            />
-                                        </FormItem>
-                                    );
+                                rules={{
+                                    required:
+                                        "Розничная цена обязательна к заполнению",
+                                    min: {
+                                        value: 1,
+                                        message: "Цена должна быть больше 0",
+                                    },
                                 }}
-                            />
-
-                            <Controller
-                                name={`vat_rate`}
-                                control={control}
-                                render={({ field }) => (
+                                render={({ field, fieldState }) => (
                                     <FormItem
-                                        className="col-span-2 !mb-0"
-                                        label={"НДС"}
+                                        asterisk
+                                        className="!mb-0"
+                                        label="Розничный цена"
                                     >
-                                        <Select
-                                            options={options}
-                                            isSearchable={false}
+                                        <Input
+                                            {...field}
+                                            autoFocus={!!fieldState?.error}
+                                            type="number"
                                             size="sm"
-                                            placeholder={"Введите НДС"}
-                                            getOptionLabel={(option) =>
-                                                typeof option?.value ===
-                                                "number"
-                                                    ? option.label
-                                                    : "БЕЗ НДС"
-                                            }
-                                            getOptionValue={(option) =>
-                                                String(option.value)
-                                            }
-                                            value={
-                                                options.find(
-                                                    (opt) =>
-                                                        opt.value ===
-                                                        field.value,
-                                                ) || options[0]
-                                            }
-                                            onChange={(option) =>
-                                                field.onChange(
-                                                    option?.value ?? null,
-                                                )
-                                            }
-                                            menuPortalTarget={document.body}
-                                            menuPosition="fixed"
-                                            styles={{
-                                                menuPortal: (base) => ({
-                                                    ...base,
-                                                    zIndex: 9999,
-                                                }),
-                                            }}
+                                            invalid={!!fieldState?.error}
+                                            autoComplete="off"
+                                            placeholder="Сумма"
+                                            space={false}
+                                            replaceLeadingZero={true}
+                                            className="w-full"
                                         />
                                     </FormItem>
                                 )}
                             />
-                        </>
-                        <div className="w-full flex gap-x-2 text-nowrap grid-cols-2 mb-3">
                             <Controller
-                                name="is_legal"
+                                name="prices.1.amount"
                                 control={control}
                                 render={({ field }) => (
-                                    <Switcher
-                                        checked={field.value}
-                                        onChange={field.onChange}
-                                    />
+                                    <FormItem
+                                        label="Оптовая цена"
+                                        className="!mb-0"
+                                    >
+                                        <Input
+                                            {...field}
+                                            type="number"
+                                            size="sm"
+                                            autoComplete="off"
+                                            placeholder="Сумма"
+                                            space={false}
+                                            replaceLeadingZero={true}
+                                            className="w-full"
+                                        />
+                                    </FormItem>
                                 )}
                             />
-                            Белых товаров
+                            <Controller
+                                name="purchase_price.amount"
+                                control={control}
+                                render={({ field }) => (
+                                    <FormItem
+                                        label="Закупочная цена"
+                                        className="!mb-0"
+                                    >
+                                        <Input
+                                            {...field}
+                                            type="number"
+                                            // disabled={type === "edit"}
+                                            autoComplete="off"
+                                            placeholder="Сумма"
+                                            size="sm"
+                                            replaceLeadingZero={true}
+                                            space={false}
+                                            className="w-full"
+                                        />
+                                    </FormItem>
+                                )}
+                            />
                         </div>
-                    </div>
+                    </section>
 
-                    <ImageForm fieldName={`images`} control={control} />
+                    <section className="rounded-lg mb-2 bg-slate-200 overflow-hidden">
+                        <h3 className="text-lg text-slate-700 mb-2 p-2 bg-slate-300">
+                            Штрих-код и упаковка
+                        </h3>
+                        <div className="grid grid-cols-2 gap-x-3 p-2">
+                            <BarcodeForm
+                                fieldName={"barcodes"}
+                                barcode={barcode}
+                                setValue={setValue}
+                                control={control}
+                                getValues={getValues}
+                            />
+                            <div className="flex flex-col">
+                                <div className="form-label flex justify-between mb-1">
+                                    <span className="font-semibold">
+                                        Название упаковки
+                                    </span>
+                                    <Button
+                                        variant="plain"
+                                        type="button"
+                                        className="bg-transparent border-transparent py-0 h-auto text-blue-500"
+                                        size="sm"
+                                        onClick={addPackage}
+                                    >
+                                        Добавить упаковку
+                                    </Button>
+                                </div>
+                                <div className="flex flex-col gap-y-1">
+                                    {measurmentsPackages?.map((item) => (
+                                        <div
+                                            key={item.id}
+                                            className="flex items-center gap-x-2"
+                                        >
+                                            <Input
+                                                placeholder="Название упаковки"
+                                                value={item.name}
+                                                onChange={(e) =>
+                                                    updatePackage(
+                                                        item.id,
+                                                        "name",
+                                                        e.target.value,
+                                                    )
+                                                }
+                                            />
+
+                                            <Input
+                                                type="number"
+                                                placeholder="Количество в упаковке"
+                                                value={item.amount}
+                                                space={false}
+                                                className="!w-[100px]"
+                                                onChange={(e) =>
+                                                    updatePackage(
+                                                        item.id,
+                                                        "amount",
+                                                        +e.target.value,
+                                                    )
+                                                }
+                                            />
+
+                                            {measurmentsPackages?.length >
+                                                1 && (
+                                                <Button
+                                                    type="button"
+                                                    variant="default"
+                                                    icon={
+                                                        <IoMdClose size={20} />
+                                                    }
+                                                    className="text-red-500 hover:text-red-400 active:text-red-400 px-3"
+                                                    onClick={() =>
+                                                        removePackage(item.id)
+                                                    }
+                                                />
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section className="rounded-lg mb-2 bg-slate-200 overflow-hidden">
+                        <h3 className="text-lg text-slate-700 mb-2 bg-slate-300 p-2">
+                            Интеграция с ОФД
+                        </h3>
+                        <div className="grid grid-cols-9 items-center gap-x-3 p-2">
+                            <>
+                                <Controller
+                                    name={`catalog_code`}
+                                    control={control}
+                                    render={({ field }) => {
+                                        return (
+                                            <FormItem
+                                                className="col-span-3 !mb-0"
+                                                label={"ИКПУ-код"}
+                                            >
+                                                <CatalogSelector
+                                                    {...field}
+                                                    fieldName={`catalog`}
+                                                    isOpen={isOpen}
+                                                    placeholder={
+                                                        "Введите ИКПУ-код"
+                                                    }
+                                                    value={field.value}
+                                                    setValue={setValue}
+                                                    getValues={getValues}
+                                                    onChange={(opt) =>
+                                                        field.onChange(
+                                                            opt.value,
+                                                        )
+                                                    }
+                                                    setPackageNames={
+                                                        setPackageNames
+                                                    }
+                                                />
+                                            </FormItem>
+                                        );
+                                    }}
+                                />
+
+                                <Controller
+                                    name={`package_code`}
+                                    control={control}
+                                    render={({ field }) => {
+                                        return (
+                                            <FormItem
+                                                className="col-span-2 !mb-0"
+                                                label={"Ед. изм."}
+                                            >
+                                                <CatalogPackageSelector
+                                                    {...field}
+                                                    options={packageNames || []}
+                                                    value={field?.value}
+                                                    setValue={setValue}
+                                                    placeholder={
+                                                        "Введите Ед. изм."
+                                                    }
+                                                    onChange={field.onChange}
+                                                />
+                                            </FormItem>
+                                        );
+                                    }}
+                                />
+
+                                <Controller
+                                    name={`vat_rate`}
+                                    control={control}
+                                    render={({ field }) => (
+                                        <FormItem
+                                            className="col-span-2 !mb-0"
+                                            label={"НДС"}
+                                        >
+                                            <Select
+                                                options={options}
+                                                isSearchable={false}
+                                                size="sm"
+                                                placeholder={"Введите НДС"}
+                                                getOptionLabel={(option) =>
+                                                    typeof option?.value ===
+                                                    "number"
+                                                        ? option.label
+                                                        : "БЕЗ НДС"
+                                                }
+                                                getOptionValue={(option) =>
+                                                    String(option.value)
+                                                }
+                                                value={
+                                                    options.find(
+                                                        (opt) =>
+                                                            opt.value ===
+                                                            field.value,
+                                                    ) || options[0]
+                                                }
+                                                onChange={(option) =>
+                                                    field.onChange(
+                                                        option?.value ?? null,
+                                                    )
+                                                }
+                                                menuPortalTarget={document.body}
+                                                menuPosition="fixed"
+                                                styles={{
+                                                    menuPortal: (base) => ({
+                                                        ...base,
+                                                        zIndex: 9999,
+                                                    }),
+                                                }}
+                                            />
+                                        </FormItem>
+                                    )}
+                                />
+                            </>
+                            <div className="w-full flex gap-x-2 text-nowrap grid-cols-2">
+                                <Controller
+                                    name="is_legal"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <Switcher
+                                            checked={field.value}
+                                            onChange={field.onChange}
+                                        />
+                                    )}
+                                />
+                                Белых товаров
+                            </div>
+                        </div>
+                    </section>
+
+                    <section className="rounded-lg bg-slate-200 overflow-hidden">
+                        <h3 className="text-lg text-slate-700 mb-2 bg-slate-300 p-2">
+                            Фотографии товара
+                        </h3>
+                        <div className="flex justify-center p-2">
+                            <ImageForm fieldName={`images`} control={control} />
+                        </div>
+                    </section>
                 </div>
             </Form>
             <FullKeyboard />

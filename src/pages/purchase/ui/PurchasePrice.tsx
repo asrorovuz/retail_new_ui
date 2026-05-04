@@ -27,6 +27,7 @@ import { Button } from "@/shared/ui/kit";
 // import FormattedNumber from "@/shared/ui/kit-pro/numeric-format/NumericFormat";
 import { Header } from "@/widgets";
 import Footer from "@/widgets/ui/footer/Footer";
+import QuertyKeyboard from "@/widgets/ui/keyboard/QuertyKeyboard";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -136,8 +137,8 @@ const PurchasePrice = () => {
     }, [isError]);
 
     return (
-        <div className="flex gap-x-3">
-            <div className="bg-white w-3/5 rounded-2xl p-3 flex flex-col gap-y-3">
+        <div className="flex gap-x-2 bg-white h-screen overflow-hidden p-2">
+            <div className="bg-white w-[65%] flex flex-col gap-y-2">
                 <Cashbox
                     type={"purchase"}
                     drafts={draftPurchases}
@@ -168,9 +169,14 @@ const PurchasePrice = () => {
                     draft={draftPurchases}
                 />
             </div>
-            <div className="bg-white w-2/5 rounded-2xl p-3 flex flex-col gap-y-3 h-full">
+            <div className="bg-white w-[35%] flex flex-col gap-y-2">
                 <Header />
-                <div className="rounded-2xl bg-slate-200 p-1">
+                <div
+                    className={classNames(
+                        "rounded-lg p-1 flex flex-col gap-2",
+                        activeType === "qwerty" && "h-full",
+                    )}
+                >
                     <SearchProduct
                         search={search}
                         activeType={activeType}
@@ -188,22 +194,24 @@ const PurchasePrice = () => {
                                 setExpandedRow={setExpandedRow}
                                 setExpandedId={setExpandedId}
                             />
+                            <QuertyKeyboard
+                                setActiveType={setActiveType}
+                                setSearch={setSearch}
+                            />
                         </>
                     )}
                 </div>
                 {activeType === "numeric" && (
-                    <div className="rounded-2xl bg-slate-200 p-1">
-                        <>
-                            <PaymeTypeCards
-                                type={"purchase"}
-                                activeDraft={activeDraft}
-                                activeSelectPaymetype={activeSelectPaymetype}
-                                setActivePaymentSelectType={
-                                    setActivePaymentSelectType
-                                }
-                            />
-                        </>
-                    </div>
+                    <>
+                        <PaymeTypeCards
+                            type={"purchase"}
+                            activeDraft={activeDraft}
+                            activeSelectPaymetype={activeSelectPaymetype}
+                            setActivePaymentSelectType={
+                                setActivePaymentSelectType
+                            }
+                        />
+                    </>
                 )}
                 {activeType === "numeric" && (
                     <div className="rounded-2xl bg-slate-200 p-1 flex gap-x-1">
@@ -233,107 +241,19 @@ const PurchasePrice = () => {
                         </>
                     </div>
                 )}
-                <div className="rounded-2xl bg-slate-200 p-1">
-                    <>
-                        {/* {activeType === "numeric" && (
-                            <div className="flex items-center gap-1 mb-1">
-                                {["20000", "50000", "100000", "200000"].map(
-                                    (amountStr) => (
-                                        <div
-                                            key={amountStr}
-                                            onClick={() => {
-                                                const amount =
-                                                    amountStr.toString(); // string tipiga o'tkazamiz
-                                                const payments: DraftPurchasePayoutAmountSchema[] =
-                                                    activeDraft?.payout?.amounts?.map(
-                                                        (p) => ({
-                                                            ...p,
-                                                        }),
-                                                    ) ?? [];
 
-                                                const existingIndex =
-                                                    payments.findIndex(
-                                                        (p) =>
-                                                            p.paymentType === 1,
-                                                    );
-
-                                                let updatedAmounts: DraftPurchasePayoutAmountSchema[];
-
-                                                if (
-                                                    existingIndex >= 0 &&
-                                                    payments[existingIndex]
-                                                        .amount === amount
-                                                ) {
-                                                    payments[existingIndex] = {
-                                                        ...payments[
-                                                            existingIndex
-                                                        ],
-                                                        amount: "0",
-                                                    };
-                                                    updatedAmounts = payments;
-
-                                                    setValue("0");
-                                                } else if (existingIndex >= 0) {
-                                                    // mavjud bo‘lsa, amount-ni yangilaymiz
-                                                    payments[existingIndex] = {
-                                                        ...payments[
-                                                            existingIndex
-                                                        ],
-                                                        amount,
-                                                    };
-                                                    updatedAmounts = payments;
-                                                } else {
-                                                    // yo‘q bo‘lsa, yangi qo‘shamiz
-                                                    updatedAmounts = [
-                                                        ...payments,
-                                                        {
-                                                            paymentType: 1,
-                                                            amount,
-                                                        },
-                                                    ];
-                                                }
-
-                                                setActivePaymentSelectType(1);
-                                                setValue(amount);
-                                                updateDraftPurchasePayout(
-                                                    updatedAmounts,
-                                                );
-                                            }}
-                                            className={classNames(
-                                                "h-9 px-4 text-sm flex items-center cursor-pointer rounded-lg bg-white font-medium transition-all",
-                                                activeDraft?.payout?.amounts.find(
-                                                    (p) =>
-                                                        p.paymentType === 1 &&
-                                                        p.amount === amountStr,
-                                                )
-                                                    ? "text-blue-500"
-                                                    : "",
-                                            )}
-                                        >
-                                            <FormattedNumber
-                                                value={+amountStr}
-                                            />
-                                        </div>
-                                    ),
-                                )}
-                            </div>
-                        )} */}
-                        <PaymentSection
-                            type={"purchase"}
-                            activeDraft={activeDraft}
-                            activeSelectPaymetype={activeSelectPaymetype}
-                            value={value}
-                            setValue={setValue}
-                            activeType={activeType}
-                            setActiveType={setActiveType}
-                            setActivePaymentSelectType={
-                                setActivePaymentSelectType
-                            }
-                            updateDraftDiscount={updateDraftPurchaseDiscount}
-                            updateDraftPayment={updateDraftPurchasePayout}
-                        />
-                    </>
-                </div>
+                <PaymentSection
+                    type={"purchase"}
+                    activeDraft={activeDraft}
+                    activeSelectPaymetype={activeSelectPaymetype}
+                    value={value}
+                    setValue={setValue}
+                    activeType={activeType}
+                    setActiveType={setActiveType}
+                    setActivePaymentSelectType={setActivePaymentSelectType}
+                    updateDraftDiscount={updateDraftPurchaseDiscount}
+                    updateDraftPayment={updateDraftPurchasePayout}
+                />
                 <OrderActions
                     type={"purchase"}
                     keyType={activeType}

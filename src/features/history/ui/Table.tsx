@@ -195,11 +195,12 @@ const TableHistory = ({
                 },
                 cell: ({ row }) => {
                     return (
-                        <span className="cursor-pointer font-bold !w-10">
+                        <span className="cursor-pointer font-bold w-10">
                             {(params.skip || 0) + (row.index + 1)}
                         </span>
                     );
                 },
+                maxSize: 60,
             },
             {
                 id: "number",
@@ -214,14 +215,15 @@ const TableHistory = ({
                 cell: ({ row }) => {
                     const number = row?.original.number;
                     return (
-                        <span
+                        <div
                             className="cursor-pointer font-bold hover:text-primary"
                             onClick={() => onSubmit(row.original)}
                         >
                             {number}
-                        </span>
+                        </div>
                     );
                 },
+                maxSize: 60,
             },
             ...(pay
                 ? [
@@ -254,7 +256,7 @@ const TableHistory = ({
                     const totals = row?.original?.totals;
 
                     return (
-                        <div>
+                        <div className="text-nowrap">
                             {totals ? (
                                 totals?.map((item: any, index: number) => (
                                     <p
@@ -275,6 +277,8 @@ const TableHistory = ({
                         </div>
                     );
                 },
+                maxSize: 150,
+                minSize: 150,
             },
             ...(pay
                 ? [
@@ -379,6 +383,8 @@ const TableHistory = ({
                                   </div>
                               );
                           },
+                          maxSize: 150,
+                          minSize: 150,
                       },
                       {
                           id: "debt",
@@ -434,6 +440,8 @@ const TableHistory = ({
                                   </div>
                               );
                           },
+                          maxSize: 150,
+                          minSize: 150,
                       },
                       {
                           id: "cashbox",

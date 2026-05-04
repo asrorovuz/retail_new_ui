@@ -19,7 +19,7 @@
 }
 
 .upload-draggable {
-  min-height: 7rem;
+  /* min-height: 7rem; */
   @apply border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-lg cursor-pointer flex items-center justify-center;
 }
 

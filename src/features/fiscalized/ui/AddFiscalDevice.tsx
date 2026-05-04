@@ -5,12 +5,14 @@ import {
   useCreateArca,
   useCreateEPos,
   useCreateHippoPos,
+  useCreateHippoPos4,
   useCreateSimurg,
 } from "@/entities/settings/repository";
 import {
   CashRegisterProviderTypeArca,
   CashRegisterProviderTypeEPos,
   CashRegisterProviderTypeHippoPos,
+  CashRegisterProviderTypeHippoPos4,
   CashRegisterProviderTypeSimurg,
 } from "@/shared/lib/cashProvider";
 import { showErrorMessage, showSuccessMessage } from "@/shared/lib/showMessage";
@@ -29,6 +31,9 @@ const AddFiscalDevice = ({
       hippopos: {
         printerSize: "80",
       },
+      hippopos4: {
+        printerSize: "80",
+      },
       epos: {
         printerSize: "80",
       },
@@ -40,6 +45,8 @@ const AddFiscalDevice = ({
   const { mutate: mutateEPos, isPending: eposLoading } = useCreateEPos();
   const { mutate: mutateHippoPos, isPending: hippoposLoading } =
     useCreateHippoPos();
+  const { mutate: mutateHippoPos4, isPending: hippoposLoading4 } =
+    useCreateHippoPos4();
 
   const successFunc = () => {
     showSuccessMessage(
@@ -96,6 +103,27 @@ const AddFiscalDevice = ({
       );
     }
 
+    if (Number(data.type) === CashRegisterProviderTypeHippoPos4) {
+      mutateHippoPos4(
+        {
+          name: data.name,
+          is_enabled: data.isEnabled ?? true,
+          company_name: data.hippopos4?.companyName,
+          company_address: data.hippopos4?.companyAddress,
+          company_inn: data.hippopos4?.companyInn,
+          printer_size: Number(data.hippopos4?.printerSize),
+        },
+        {
+          onSuccess() {
+            successFunc();
+          },
+          onError(err) {
+            showErrorMessage(err);
+          },
+        }
+      );
+    }
+
     if (Number(data.type) === CashRegisterProviderTypeEPos) {
       mutateEPos(
         {
@@ -137,7 +165,7 @@ const AddFiscalDevice = ({
     }
   };
 
-  let loading = simurgLoading || arcaLoading || eposLoading || hippoposLoading;
+  let loading = simurgLoading || arcaLoading || eposLoading || hippoposLoading || hippoposLoading4;
 
   return (
     <Fragment>

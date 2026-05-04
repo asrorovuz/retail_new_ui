@@ -3,7 +3,7 @@
 }
 
 .dropdown-menu {
-  @apply rounded-2xl bg-white dark:bg-slate-900 ring-0 shadow-[0px_48px_64px_-16px_rgba(0,0,0,0.25)] border border-slate-100 dark:border-slate-800 focus:outline-none p-3 z-30 outline-none;
+  @apply rounded-lg bg-white dark:bg-slate-900 ring-0 shadow-[0px_48px_64px_-16px_rgba(0,0,0,0.25)] border border-slate-100 dark:border-slate-800 focus:outline-none p-1 z-30 outline-none;
 
   &.top-start {
     @apply ltr:left-0 rtl:right-0 bottom-full origin-bottom;

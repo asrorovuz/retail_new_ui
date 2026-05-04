@@ -57,7 +57,7 @@ const SearchProduct = ({
 
     return (
         <div className="flex gap-1">
-            <div className="bg-slate-200 gap-1 w-full rounded-lg">
+            <div className=" gap-1 w-full rounded-lg">
                 <Input
                     ref={inputRef}
                     value={search ?? ""}
@@ -65,7 +65,7 @@ const SearchProduct = ({
                     className="max-h-[40px] !bg-transparent"
                     onFocus={onFocusedSearch}
                     onBlur={onBlurSearch}
-                    placeholder={placeholder ?? "Поиск по любому товару"}
+                    placeholder={placeholder ?? "Поиск "}
                 />
             </div>
             {pageType && (

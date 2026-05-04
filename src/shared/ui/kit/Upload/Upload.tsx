@@ -47,6 +47,7 @@ const Upload = (props: UploadProps) => {
         uploadLimit,
         children,
         className,
+        style,
         ...rest
     } = props
 
@@ -206,6 +207,7 @@ const Upload = (props: UploadProps) => {
             <div
                 ref={ref}
                 className={uploadClass}
+                style={style} 
                 {...(draggable ? draggableProp : { onClick: triggerUpload })}
                 {...rest}
             >

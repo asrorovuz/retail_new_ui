@@ -111,16 +111,45 @@ const ProductTable = ({
             columnHelper.display({
                 id: "index",
                 header: "№",
-                cell: (info) =>
-                    (pagination?.pageIndex - 1) * pagination?.pageSize +
-                    (info?.row?.index + 1),
-                size: 60,
+                cell: (info) => (
+                    <div className="!w-10">
+                        {(pagination?.pageIndex - 1) * pagination?.pageSize +
+                            (info?.row?.index + 1)}
+                    </div>
+                ),
             }),
             columnHelper.accessor("name", {
                 header: "НАЗВАНИЕ",
-                cell: (info) => (
-                    <p className="w-[280px]">{info.getValue() || "-"}</p>
-                ),
+                cell: ({ row }) => {
+                    const item = row?.original;
+                    return (
+                        <div className="min-w-[250px]">
+                            <p>{item?.name || "-"}</p>
+                            <div className="flex gap-x-2 text-[11px] mt-0.5">
+                                {item?.category && (
+                                    <span className="bg-green-200 px-0.5 rounded-md text-black">
+                                        {item?.category?.name}
+                                    </span>
+                                )}
+                                {(item?.barcodes?.length ?? 0) > 0 && (
+                                    <span className="bg-slate-300 px-0.5 rounded-md text-black">
+                                        {item?.barcodes?.[0]?.value}
+                                    </span>
+                                )}
+                                {item?.sku && (
+                                    <span className="bg-slate-300 px-0.5 rounded-md text-black">
+                                        {item?.sku}
+                                    </span>
+                                )}
+                                {item?.code && (
+                                    <span className="bg-slate-300 px-0.5 rounded-md text-black">
+                                        {item?.code}
+                                    </span>
+                                )}
+                            </div>
+                        </div>
+                    );
+                },
                 meta: {
                     color:
                         tableSettings?.find((i) => i.key === "name")?.color ||
@@ -129,15 +158,16 @@ const ProductTable = ({
             }),
             columnHelper.display({
                 id: "totalRemainder",
-                header: () => <span className="text-nowrap">ОСТАТОК</span>,
+                header: () => <div className="text-center">ОСТ.</div>,
                 cell: (info) => {
                     const total = info.row.original.warehouse_items?.[0]?.state;
 
-                    return `${
-                        total !== undefined ? total.toLocaleString() : "0"
-                    } ${showMeasurmentName(info.row.original.measurement_code)}`;
+                    return (
+                        <p className="w-20 text-center">{`${
+                            total !== undefined ? total.toLocaleString() : "0"
+                        } ${showMeasurmentName(info.row.original.measurement_code)}`}</p>
+                    );
                 },
-                size: 80,
                 meta: {
                     color:
                         tableSettings?.find((i) => i.key === "totalRemainder")
@@ -150,20 +180,19 @@ const ProductTable = ({
                 ? [
                       columnHelper.display({
                           id: "price",
-                          header: () => (
-                              <span className="text-nowrap">ЦЕНА</span>
-                          ),
+                          header: () => <div className="text-center">ЦЕНА</div>,
                           cell: (info) => {
                               const price =
                                   info.row.original.prices?.[0]?.amount;
                               return (
-                                  <p className="w-[140px]">
+                                  <p className="w-[80px] text-right">
                                       {price
                                           ? `${price.toLocaleString()}`
                                           : "-"}
                                   </p>
                               );
                           },
+
                           meta: {
                               color:
                                   tableSettings?.find((i) => i.key === "price")
@@ -179,13 +208,15 @@ const ProductTable = ({
                       columnHelper.display({
                           id: "bulkPrice",
                           header: () => (
-                              <span className="text-nowrap">ОПТОВАЯ ЦЕНА</span>
+                              <div className="text-nowrap text-center">
+                                  ОПТ. ЦЕНА
+                              </div>
                           ),
                           cell: (info) => {
                               const price =
                                   info.row.original.prices?.[1]?.amount;
                               return (
-                                  <p className="w-[140px]">
+                                  <p className="w-[100px] text-right">
                                       {price
                                           ? `${price.toLocaleString()}`
                                           : "-"}
@@ -209,19 +240,22 @@ const ProductTable = ({
                       columnHelper.display({
                           id: "purchesPrice",
                           header: () => (
-                              <span className="text-nowrap">
-                                  Приходная цена
-                              </span>
+                              <div className="text-nowrap text-center">
+                                  При. цена
+                              </div>
                           ),
                           cell: (info) => {
                               const price =
                                   info.row.original.warehouse_items?.[0]
                                       ?.purchase_price_amount;
-                              return price
-                                  ? `${price.toLocaleString()} сум`
-                                  : "-";
+                              return (
+                                  <p className="w-[100px] text-right">
+                                      {price
+                                          ? `${price.toLocaleString()}`
+                                          : "-"}
+                                  </p>
+                              );
                           },
-                          size: 140,
                           meta: {
                               color:
                                   tableSettings?.find(
@@ -232,61 +266,15 @@ const ProductTable = ({
                   ]
                 : []),
             columnHelper.display({
-                id: "category",
-                header: () => <span className="text-nowrap">КАТЕГОРИЯ</span>,
-                cell: (info) => info.row.original.category?.name || "-",
-                size: 100,
-                meta: {
-                    color:
-                        tableSettings?.find((i) => i.key === "category")
-                            ?.color || "#fff",
-                },
-            }),
-            columnHelper.display({
-                id: "barcode",
-                header: () => <span className="text-nowrap">ШТРИХ-КОД</span>,
-                cell: (info) => {
-                    const barcodes = info.row.original.barcodes;
-
-                    if (!Array.isArray(barcodes) || !barcodes.length)
-                        return "-";
-
-                    return barcodes[0]?.value || "-";
-                },
-                size: 100,
-                meta: {
-                    color:
-                        tableSettings?.find((i) => i.key === "barcode")
-                            ?.color || "#fff",
-                },
-            }),
-            columnHelper.display({
-                id: "sku",
-                header: () => <span className="text-nowrap">АРТИКУЛ</span>,
-                cell: (info) => info.row.original.sku || "-",
-                size: 100,
-                meta: {
-                    color:
-                        tableSettings?.find((i) => i.key === "sku")?.color ||
-                        "#fff",
-                },
-            }),
-            columnHelper.display({
-                id: "code",
-                header: () => <span className="text-nowrap">КОД</span>,
-                cell: (info) => info.row.original.code || "-",
-                size: 100,
-                meta: {
-                    color:
-                        tableSettings?.find((i) => i.key === "code")?.color ||
-                        "#fff",
-                },
-            }),
-            columnHelper.display({
                 id: "catalogCode",
-                header: () => <span className="text-nowrap">ИКПУ-код</span>,
-                cell: (info) => info.row.original.catalog_name || "-",
-                size: 100,
+                header: () => (
+                    <div className="text-nowrap text-center">ИКПУ-код</div>
+                ),
+                cell: (info) => (
+                    <p className="w-[250px]">
+                        {info.row.original.catalog_name || "-"}
+                    </p>
+                ),
                 meta: {
                     color:
                         tableSettings?.find((i) => i.key === "catalogCode")
@@ -295,16 +283,19 @@ const ProductTable = ({
             }),
             columnHelper.display({
                 id: "totalRemainderMin",
-                header: () => <span className="text-nowrap">МИН. ОСТАТОК</span>,
+                header: () => (
+                    <div className="text-nowrap text-center">МИН. ОСТ.</div>
+                ),
                 cell: (info) => {
                     const total =
                         info.row.original.warehouse_items?.[0]?.alert_on;
 
-                    return `${total ? total?.toLocaleString() : "0"} ${showMeasurmentName(
-                        info.row.original.measurement_code,
-                    )}`;
+                    return (
+                        <p className="w-[80px] text-center">{`${total ? total?.toLocaleString() : "0"} ${showMeasurmentName(
+                            info.row.original.measurement_code,
+                        )}`}</p>
+                    );
                 },
-                size: 80,
                 meta: {
                     color:
                         tableSettings?.find(
@@ -316,65 +307,71 @@ const ProductTable = ({
             columnHelper.display({
                 id: "actions",
                 header: () => (
-                    <div className="text-2xl flex justify-center">
+                    <div className="text-2xl flex justify-center w-10">
                         <TableSettingsModal />
                     </div>
                 ),
-                size: 50,
                 cell: (info) => (
-                    <Dropdown
-                        renderTitle={
-                            <div className="flex justify-center text-2xl text-slate-600">
-                                <HiOutlineDotsHorizontal />
-                            </div>
-                        }
-                    >
-                        <DropdownItem
-                            onClick={() => {
-                                setItem(info?.row?.original);
-                                setConfirmProductId(info.row.original.id);
-                                setIsOpenPrint(true);
-                            }}
-                            className="h-auto!"
+                    <div className="w-[40px] mx-auto">
+                        <Dropdown
+                            renderTitle={
+                                <div className="flex justify-center text-2xl text-slate-600">
+                                    <HiOutlineDotsHorizontal />
+                                </div>
+                            }
                         >
-                            <div className="w-full flex items-center gap-2 text-slate-700 py-3 px-5 rounded-xl">
-                                <ShtrixCod />
-                                Печать штрих код товара
-                            </div>
-                        </DropdownItem>
-                        {checkPermission(
-                            AccountPermissions.AccountPermissionProductUpdate,
-                        ) && (
+                            {checkPermission(
+                                AccountPermissions.AccountPermissionProductUpdate,
+                            ) && (
+                                <DropdownItem
+                                    onClick={() => {
+                                        setConfirmProductId(
+                                            info.row.original.id,
+                                        );
+                                        setIsOpen(true);
+                                    }}
+                                    className="!h-auto !px-0"
+                                >
+                                    <div className="w-full flex items-center gap-2 text-slate-600 py-2 px-3 rounded-lg hover:text-slate-800">
+                                        <FaRegEdit />
+                                        Редактировать
+                                    </div>
+                                </DropdownItem>
+                            )}
                             <DropdownItem
                                 onClick={() => {
+                                    setItem(info?.row?.original);
                                     setConfirmProductId(info.row.original.id);
-                                    setIsOpen(true);
+                                    setIsOpenPrint(true);
                                 }}
-                                className="h-auto!"
+                                className="!h-auto !px-0"
                             >
-                                <div className="w-full flex items-center gap-2 text-orange-500 py-3 px-5 rounded-xl">
-                                    <FaRegEdit />
-                                    Редактировать
+                                <div className="w-full flex items-center gap-2 text-slate-600 py-2 px-3 rounded-lg hover:text-slate-800">
+                                    <ShtrixCod />
+                                    Печать штрих код товара
                                 </div>
                             </DropdownItem>
-                        )}
-                        {checkPermission(
-                            AccountPermissions.AccountPermissionProductDelete,
-                        ) && (
-                            <DropdownItem
-                                onClick={() => {
-                                    setConfirmProductId(info.row.original.id);
-                                    setDeleteModalOpen(true);
-                                }}
-                                className="h-auto!"
-                            >
-                                <div className="w-full flex items-center gap-2 text-red-500 py-3 px-5 rounded-xl">
-                                    <IoTrashOutline />
-                                    Удалить
-                                </div>
-                            </DropdownItem>
-                        )}
-                    </Dropdown>
+
+                            {checkPermission(
+                                AccountPermissions.AccountPermissionProductDelete,
+                            ) && (
+                                <DropdownItem
+                                    onClick={() => {
+                                        setConfirmProductId(
+                                            info.row.original.id,
+                                        );
+                                        setDeleteModalOpen(true);
+                                    }}
+                                    className="!h-auto !px-0"
+                                >
+                                    <div className="w-full flex items-center gap-2 text-red-500 py-2 px-3 rounded-lg">
+                                        <IoTrashOutline size={20}/>
+                                        Удалить
+                                    </div>
+                                </DropdownItem>
+                            )}
+                        </Dropdown>
+                    </div>
                 ),
             }),
         ],
@@ -411,14 +408,16 @@ const ProductTable = ({
     return (
         <div
             className={classNames(
-                "h-[46vh] flex flex-col mb-3",
-                !searchFocus ? "h-[78vh]" : "h-[46vh]",
+                " flex flex-col mb-3",
+                !searchFocus
+                    ? "h-[calc(100vh-120px)]"
+                    : "h-[calc(100vh-346px)]",
             )}
         >
             {/* 🔹 Jadval */}
-            <div className="h-full mb-3 border border-slate-300 rounded-3xl overflow-auto">
+            <div className="h-full mb-3 border-slate-300 rounded-lg overflow-auto">
                 {data && data?.length > 0 && !isPending ? (
-                    <Table className="min-w-full table-fixed border-separate border-spacing-0">
+                    <Table className="rounded-lg">
                         <THead className="sticky top-0">
                             {table.getHeaderGroups().map((headerGroup) => {
                                 return (
@@ -434,6 +433,7 @@ const ProductTable = ({
                                                             : "",
                                                         header.column.columnDef
                                                             .meta?.color,
+                                                        "border",
                                                     )}
                                                     key={header.id}
                                                 >
@@ -457,23 +457,24 @@ const ProductTable = ({
                             })}
                         </THead>
                         <TBody>
-                            {table.getRowModel().rows.map((row, index) => (
+                            {table.getRowModel().rows.map((row) => (
                                 <Tr
                                     key={row.id}
-                                    className={`${index % 2 ? "bg-white" : "bg-slate-100"} hover:bg-slate-100 transition`}
+                                    className={`hover:bg-slate-100 transition`}
                                 >
                                     {row.getVisibleCells().map((cell) => {
                                         return (
                                             <Td
                                                 key={cell.id}
-                                                className={
+                                                className={classNames(
                                                     cell.column.columnDef.meta
-                                                        ?.color
-                                                }
+                                                        ?.color,
+                                                    "border",
+                                                )}
                                             >
                                                 <div
                                                     className={classNames(
-                                                        "py-3 text-xs xl:text-sm px-4",
+                                                        "text-xs xl:text-sm px-1",
                                                         cell.column.columnDef
                                                             .meta
                                                             ?.bodyCellClassName,

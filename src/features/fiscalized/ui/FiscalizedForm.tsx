@@ -2,6 +2,7 @@ import {
     CashRegisterProviderTypeArca,
     CashRegisterProviderTypeEPos,
     CashRegisterProviderTypeHippoPos,
+    CashRegisterProviderTypeHippoPos4,
     CashRegisterProviderTypes,
     CashRegisterProviderTypeSimurg,
     GetCashRegisterProviderLogo,
@@ -32,6 +33,12 @@ interface CashRegisterFormData {
         cashierPassword: string;
     };
     hippopos?: {
+        companyName: string;
+        companyAddress: string;
+        companyInn: string;
+        printerSize: string;
+    };
+    hippopos4?: {
         companyName: string;
         companyAddress: string;
         companyInn: string;
@@ -75,6 +82,8 @@ const CashRegisterForm = () => {
     const showArca = Number(cashRegisterType) === CashRegisterProviderTypeArca;
     const showHippoPos =
         Number(cashRegisterType) === CashRegisterProviderTypeHippoPos;
+    const showHippoPos4 =
+        Number(cashRegisterType) === CashRegisterProviderTypeHippoPos4;
     const showEPos = Number(cashRegisterType) === CashRegisterProviderTypeEPos;
     const showSimurg =
         Number(cashRegisterType) === CashRegisterProviderTypeSimurg;
@@ -167,6 +176,7 @@ const CashRegisterForm = () => {
                 {showSimurg && <SimurgForm />}
                 {showHippoPos && <HippoPosForm />}
                 {showEPos && <EPosForm />}
+                {showHippoPos4 && <HippoPosForm4 />}
             </div>
             <div className="mt-4 flex items-center gap-2">
                 <FormItem
@@ -524,6 +534,159 @@ const HippoPosForm = () => {
                             {errors?.hippopos?.printerSize && (
                                 <p className="text-red-500 text-sm mt-1">
                                     {errors.hippopos.printerSize.message}
+                                </p>
+                            )}
+                        </>
+                    )}
+                />
+            </div>
+        </>
+    );
+};
+
+const HippoPosForm4 = () => {
+    const {
+        control,
+        formState: { errors },
+    } = useFormContext<CashRegisterFormData>();
+
+    return (
+        <>
+            <div className="mb-2">
+                <FormItem label="Название организации">
+                    <Controller
+                        name="hippopos4.companyName"
+                        control={control}
+                        rules={{ required: "Обязательное поле" }}
+                        render={({ field }) => (
+                            <Input
+                                {...field}
+                                placeholder="Введите название организации"
+                                className={classNames(
+                                    "bg-white border-slate-300 font-medium rounded",
+                                    {
+                                        "border-red-500":
+                                            errors?.hippopos4?.companyName,
+                                    },
+                                )}
+                            />
+                        )}
+                    />
+                    {errors?.hippopos4?.companyName && (
+                        <p className="text-red-500 text-sm mt-1">
+                            {errors.hippopos4.companyName.message}
+                        </p>
+                    )}
+                </FormItem>
+            </div>
+
+            <div className="mb-2">
+                <FormItem label="Адрес организации">
+                    <Controller
+                        name="hippopos4.companyAddress"
+                        control={control}
+                        rules={{ required: "Обязательное поле" }}
+                        render={({ field }) => (
+                            <Input
+                                {...field}
+                                placeholder="Введите адрес организации"
+                                className={classNames(
+                                    "bg-white border-slate-300 font-medium rounded",
+                                    {
+                                        "border-red-500":
+                                            errors?.hippopos4?.companyAddress,
+                                    },
+                                )}
+                            />
+                        )}
+                    />
+                    {errors?.hippopos4?.companyAddress && (
+                        <p className="text-red-500 text-sm mt-1">
+                            {errors.hippopos4.companyAddress.message}
+                        </p>
+                    )}
+                </FormItem>
+            </div>
+
+            <div className="mb-2">
+                <FormItem label="Инн организации">
+                    <Controller
+                        name="hippopos4.companyInn"
+                        control={control}
+                        rules={{
+                            required: "Обязательное поле",
+                            pattern: {
+                                value: /^\d+$/,
+                                message: "ИНН должен состоять только из цифр",
+                            },
+                            minLength: {
+                                value: 6,
+                                message: "ИНН должен содержать минимум 6 цифр",
+                            },
+                        }}
+                        render={({ field }) => (
+                            <Input
+                                {...field}
+                                placeholder="Введите инн организации"
+                                className={classNames(
+                                    "bg-white border-slate-300 font-medium rounded",
+                                    {
+                                        "border-red-500":
+                                            errors?.hippopos4?.companyInn,
+                                    },
+                                )}
+                            />
+                        )}
+                    />
+                    {errors?.hippopos4?.companyInn && (
+                        <p className="text-red-500 text-sm mt-1">
+                            {errors.hippopos4.companyInn.message}
+                        </p>
+                    )}
+                </FormItem>
+            </div>
+
+            <div className="mb-2">
+                <Controller
+                    name="hippopos4.printerSize"
+                    control={control}
+                    rules={{ required: "Обязательное поле" }}
+                    render={({ field }) => (
+                        <>
+                            <FormItem label="Размер печатаемого чека">
+                                <Select
+                                    placeholder="Введите размер печатаемого чека"
+                                    className={classNames(
+                                        "bg-white border-slate-300 font-medium rounded",
+                                        {
+                                            "border-red-500":
+                                                errors?.hippopos4?.printerSize,
+                                        },
+                                    )}
+                                    options={printerSizeOptions}
+                                    value={
+                                        printerSizeOptions.find(
+                                            (opt) => opt.value === field.value,
+                                        ) ?? printerSizeOptions?.[0]
+                                    }
+                                    onChange={(newValue) =>
+                                        field.onChange(newValue?.value)
+                                    }
+                                    onBlur={field.onBlur}
+                                    isSearchable={false}
+                                    menuPortalTarget={document.body}
+                                    menuPosition="fixed"
+                                    styles={{
+                                        menuPortal: (base) => ({
+                                            ...base,
+                                            zIndex: 9999,
+                                        }),
+                                    }}
+                                />
+                            </FormItem>
+                            {errors?.hippopos4?.printerSize && (
+                                <p className="text-red-500 text-sm mt-1">
+                                    {errors.hippopos4.printerSize.message}
                                 </p>
                             )}
                         </>

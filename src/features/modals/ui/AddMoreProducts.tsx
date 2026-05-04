@@ -37,13 +37,14 @@ const AddMoreProducts = ({
     const createEmptyProduct = (barcode?: string): ProductDefaultValues => {
         return {
             name: "",
-            barcodes: [
-                {
-                    value:
-                        barcode || new Date().getTime().toString().slice(5, 13),
-                    count: 1,
-                },
-            ],
+            barcodes: barcode
+                ? [
+                      {
+                          value: barcode,
+                          count: 1,
+                      },
+                  ]
+                : [],
             catalog_code: null,
             catalog_name: null,
             package_code: null,
@@ -99,7 +100,6 @@ const AddMoreProducts = ({
             <Dialog
                 width="100vw"
                 height="100vh"
-                className={""}
                 contentClassName="!my-0 !rounded-none"
                 closable={false}
                 isOpen={isOpen}

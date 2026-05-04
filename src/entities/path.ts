@@ -150,12 +150,14 @@ export const pathServices = {
     updateCashRegisterArca: `/api/fiscal-device/arca/update/`,
     updateCashRegisterSimurg: `/api/fiscal-device/simurg/update/`,
     updateCashRegisterHippoPos: `/api/fiscal-device/hippo-pos/update/`,
+    updateCashRegisterHippoPos4: `/api/fiscal-device/hippo-pos-applet4/update/`,
     updateCashRegisterEPos: `/api/fiscal-device/e-pos/update/`,
 
     // CREATE
     addCashRegisterArca: `/api/fiscal-device/arca/add`,
     addCashRegisterSimurg: `/api/fiscal-device/simurg/add`,
     addCashRegisterHippoPos: `/api/fiscal-device/hippo-pos/add`,
+    addCashRegisterHippoPos4: `/api/fiscal-device/hippo-pos-applet4/add`,
     addCashRegisterEPos: `/api/fiscal-device/e-pos/add`,
 
     // DELETE

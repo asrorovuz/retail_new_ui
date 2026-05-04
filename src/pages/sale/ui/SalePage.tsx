@@ -214,7 +214,7 @@ const SalePage = () => {
                         </>
                 )}
                 {activeType === "numeric" && (
-                    <div className="flex gap-x-1">
+                    <div className="rounded-2xl bg-slate-200 p-1 flex gap-x-1">
                         <>
                             <Button
                                 onClick={() => navigate("/sales-history")}

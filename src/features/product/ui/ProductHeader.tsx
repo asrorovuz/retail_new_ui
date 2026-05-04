@@ -98,7 +98,7 @@ const ProductHeader = ({
                 />
                 {/* Остаток */}
                 <Select
-                    className="w-[276px]"
+                    className="w-[200px]"
                     options={stateOptions}
                     placeholder="Остатки товары"
                     isSearchable={false}
@@ -149,7 +149,7 @@ const ProductHeader = ({
 
                 <Dropdown
                     toggleClassName="text-base text-slate-600 flex justify-center"
-                    renderTitle={<Button size="sm">Добавить</Button>}
+                    renderTitle={<Button variant="solid" size="sm">+ Добавить</Button>}
                 >
                     {checkPermission(
                         AccountPermissions.AccountPermissionProductCreate,

@@ -2,157 +2,180 @@ import { Button, Input } from "@/shared/ui/kit";
 import { useEffect, useRef, useState } from "react";
 import { Controller, useFieldArray } from "react-hook-form";
 import { useTranslation } from "react-i18next";
+import { FaPlus } from "react-icons/fa";
 import { IoMdClose } from "react-icons/io";
 
 type BarcodeFormProps = {
-  fieldName: string;
-  label?: string;
-  barcode: string | null;
-  control: any;
-  getValues: any;
-  setValue: any;
-  multiplay?: boolean;
+    fieldName: string;
+    label?: string;
+    barcode: string | null;
+    control: any;
+    getValues: any;
+    setValue: any;
+    multiplay?: boolean;
 };
 
 const BarcodeForm = ({
-  fieldName,
-  barcode,
-  control,
-  getValues,
-  setValue,
-  multiplay,
-}: BarcodeFormProps) => {
-  const { t } = useTranslation();
-  const countRefs = useRef<(HTMLInputElement | null)[]>([]);
-  const { fields, append, remove } = useFieldArray({
-    name: fieldName,
+    fieldName,
+    barcode,
     control,
-  });
+    getValues,
+    setValue,
+    multiplay,
+}: BarcodeFormProps) => {
+    const { t } = useTranslation();
+    const countRefs = useRef<(HTMLInputElement | null)[]>([]);
+    const { fields, append, remove } = useFieldArray({
+        name: fieldName,
+        control,
+    });
 
-  const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
+    const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
 
-  const addBarcode = () => {
-    const newIndex = fields.length;
+    const addBarcode = () => {
+        const newIndex = fields.length;
 
-    append({ value: new Date().getTime().toString().slice(5, 13), count: 1 });
-    setFocusedIndex(newIndex);
-  };
-
-  const deleteBarcode = (index: number) => {
-    remove(index);
-  };
-
-  // Count inputga fokus berish
-  useEffect(() => {
-    if (focusedIndex === null) return;
-
-    const el = countRefs.current[focusedIndex];
-    if (el) {
-      el.focus();
-      el.select();
-    }
-  }, [focusedIndex, fields.length]);
-
-  useEffect(() => {
-    if (!barcode || focusedIndex === null) return;
-
-    const values = getValues(fieldName) || [];
-
-    values[focusedIndex] = {
-      ...values[focusedIndex],
-      value: barcode,
+        append({
+            value: new Date().getTime().toString().slice(5, 13),
+            count: 1,
+        });
+        setFocusedIndex(newIndex);
     };
 
-    setValue(fieldName, [...values], { shouldDirty: true });
-  }, [barcode]);
+    const deleteBarcode = (index: number) => {
+        remove(index);
+    };
 
-  useEffect(() => {
-    if (focusedIndex === null) return;
+    // Count inputga fokus berish
+    useEffect(() => {
+        if (focusedIndex === null) return;
 
-    const input = countRefs.current[focusedIndex];
-    if (input) {
-      input.focus();
-      input.select();
-    }
-  }, [fields.length]);
+        const el = countRefs.current[focusedIndex];
+        if (el) {
+            el.focus();
+            el.select();
+        }
+    }, [focusedIndex, fields.length]);
 
-  return (
-    <div className="flex flex-col">
-      {/* <div> */}
-      {!multiplay && (
-        <div className="form-label flex justify-between mb-1 min-w-44">
-          <span className="whitespace-nowrap">Штрих-коды</span>
-          <Button
-            variant="plain"
-            type="button"
-            className="bg-transparent border-transparent py-0 h-auto text-blue-500"
-            size="sm"
-            onClick={addBarcode}
-          >
-            Добавить штрих-код
-          </Button>
-        </div>
-      )}
-      <div className="flex flex-col gap-y-1">
-        {fields?.map((fieldItem, index) => {
-          return (
-            <div key={fieldItem.id} className="flex items-center gap-x-2">
-              {/* BARCODE VALUE */}
-              <Controller
-                name={`${fieldName}.${index}.value`}
-                control={control}
-                render={({ field }) => (
-                  <Input
-                    {...field}
-                    type="text"
-                    className={multiplay ? "!w-[160px]" : "min-w-max"}
-                    size="sm"
-                    placeholder={t("Введите код")}
-                    onFocus={() => setFocusedIndex(index)}
-                  />
+    useEffect(() => {
+        if (!barcode || focusedIndex === null) return;
+
+        const values = getValues(fieldName) || [];
+
+        values[focusedIndex] = {
+            ...values[focusedIndex],
+            value: barcode,
+        };
+
+        setValue(fieldName, [...values], { shouldDirty: true });
+    }, [barcode]);
+
+    useEffect(() => {
+        if (focusedIndex === null) return;
+
+        const input = countRefs.current[focusedIndex];
+        if (input) {
+            input.focus();
+            input.select();
+        }
+    }, [fields.length]);
+
+    return (
+        <div className="flex flex-col">
+            {/* <div> */}
+            {!multiplay && (
+                <div className="form-label flex justify-between mb-1 min-w-44">
+                    <span className="whitespace-nowrap">Штрих-коды</span>
+                    <Button
+                        variant="plain"
+                        type="button"
+                        className="bg-transparent border-transparent py-0 h-auto text-blue-500"
+                        size="sm"
+                        onClick={addBarcode}
+                    >
+                        Добавить штрих-код
+                    </Button>
+                </div>
+            )}
+            <div className="flex gap-x-2 justify-end">
+                <div className="flex flex-col gap-y-1">
+                    {fields?.map((fieldItem, index) => {
+                        return (
+                            <div
+                                key={fieldItem.id}
+                                className="flex items-center gap-x-2"
+                            >
+                                {/* BARCODE VALUE */}
+                                <Controller
+                                    name={`${fieldName}.${index}.value`}
+                                    control={control}
+                                    render={({ field }) => (
+                                        <Input
+                                            {...field}
+                                            type="text"
+                                            className={
+                                                multiplay
+                                                    ? "!w-[160px]"
+                                                    : "min-w-max"
+                                            }
+                                            size="sm"
+                                            placeholder={t("Введите код")}
+                                            onFocus={() =>
+                                                setFocusedIndex(index)
+                                            }
+                                        />
+                                    )}
+                                />
+
+                                {/* COUNT */}
+                                <Controller
+                                    name={`${fieldName}.${index}.count`}
+                                    control={control}
+                                    render={({ field }) => (
+                                        <Input
+                                            {...field}
+                                            ref={(el: any) =>
+                                                (countRefs.current[index] = el)
+                                            }
+                                            type="number"
+                                            size="sm"
+                                            min={1}
+                                            onChange={(e) =>
+                                                field.onChange(+e.target.value)
+                                            }
+                                            className={
+                                                multiplay
+                                                    ? "!w-[70px]"
+                                                    : "!w-[100px]"
+                                            }
+                                        />
+                                    )}
+                                />
+
+                                <Button
+                                    type="button"
+                                    variant="default"
+                                    size="sm"
+                                    className="px-3 text-red-500 hover:text-red-400 active:text-red-400"
+                                    onClick={() => deleteBarcode(index)}
+                                    icon={<IoMdClose size={20} />}
+                                />
+                            </div>
+                        );
+                    })}
+                </div>
+                {multiplay && (
+                    <Button
+                        variant="default"
+                        type="button"
+                        icon={<FaPlus size={16} />}
+                        size="sm"
+                        onClick={addBarcode}
+                    ></Button>
                 )}
-              />
-
-              {/* COUNT */}
-              <Controller
-                name={`${fieldName}.${index}.count`}
-                control={control}
-                render={({ field }) => (
-                  <Input
-                    {...field}
-                    ref={(el: any) => (countRefs.current[index] = el)}
-                    type="number"
-                    size="sm"
-                    min={1}
-                    onChange={(e) => field.onChange(+e.target.value)}
-                    className={multiplay ? "!w-[70px]" : "!w-[100px]"}
-                  />
-                )}
-              />
-
-              <Button
-                type="button"
-                variant="default"
-                size="sm"
-                className="px-3 text-red-500 hover:text-red-400 active:text-red-400"
-                onClick={() => deleteBarcode(index)}
-                icon={<IoMdClose size={20} />}
-              />
             </div>
-          );
-        })}
-        <Button
-          variant="default"
-          type="button"
-          className="w-full"
-          size="sm"
-          onClick={addBarcode}
-        >
-          Добавить штрих-код
-        </Button>
-      </div>
-    </div>
-  );
+        </div>
+    );
 };
 
 export default BarcodeForm;

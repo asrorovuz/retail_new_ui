@@ -201,8 +201,8 @@ const SaleAndRefunTable = ({
                                                         (type === "sale"
                                                             ? "bg-blue-200"
                                                             : type === "refund"
-                                                              ? "text-red-200"
-                                                              : "text-green-200"),
+                                                              ? "bg-red-200"
+                                                              : "bg-green-200"),
                                                     "!h-max cursor-pointer",
                                                 )}
                                             >

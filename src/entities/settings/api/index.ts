@@ -51,6 +51,17 @@ export const updateCashRegisterHippoPos = async (
   });
 };
 
+export const updateCashRegisterHippoPos4 = async (
+  payload: any,
+  id: number | string
+) => {
+  return await apiRequest({
+    method: "POST",
+    data: payload,
+    url: `${pathServices.fiscalized.updateCashRegisterHippoPos4}${id}`,
+  });
+};
+
 export const updatePaymentPayme = async (payload: any, id: number | string) => {
   return await apiRequest({
     method: "POST",
@@ -117,6 +128,14 @@ export const postCashRegisterHippoPos = async (payload: any) => {
     method: "POST",
     data: payload,
     url: pathServices.fiscalized.addCashRegisterHippoPos,
+  });
+};
+
+export const postCashRegisterHippoPos4 = async (payload: any) => {
+  return apiRequest({
+    method: "POST",
+    data: payload,
+    url: pathServices.fiscalized.addCashRegisterHippoPos4,
   });
 };
 

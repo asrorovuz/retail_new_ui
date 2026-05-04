@@ -114,8 +114,10 @@ const ProductsPage = () => {
     }, [isAddOpen]);
 
     return (
-        <div className="bg-white h-full rounded-2xl p-4">
-            <NavigateButton content={"Товары"} />
+        <div className="bg-white h-screen p-2 flex flex-col">
+            <div>
+                <NavigateButton content={"Товары"} />
+            </div>
             <ProductHeader
                 search={search}
                 setActiveType={() => {}}

@@ -26,12 +26,6 @@ export const transformProductColumns = (
     purchase_price: "purchesPrice",
     primary_price: "price",
     bulk_price: "bulkPrice",
-    category: "category",
-    barcodes: "barcode",
-    sku: "sku",
-    code: "code",
-    package_quantity: "packInCount",
-    measurement_name: "package",
     catalog_code: "catalogCode",
   };
 
@@ -59,17 +53,11 @@ export function convertArrayToBackendSettings(
   // };
   const keyMapping: Record<string, string> = {
     name: "product_name",
-    category: "category",
     totalRemainder: "total_warehouses_state",
     totalRemainderMin: "alert_on",
     purchesPrice: "purchase_price",
     price: "primary_price",
     bulkPrice: "bulk_price",
-    barcode: "barcodes",
-    sku: "sku",
-    code: "code",
-    packInCount: "package_quantity",
-    package: "measurement_name",
     catalogCode: "catalog_code",
   };
 
