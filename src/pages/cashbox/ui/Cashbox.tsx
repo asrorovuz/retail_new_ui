@@ -22,13 +22,11 @@ const Cashbox = () => {
     const [type, setType] = useState<number>(0);
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const { data } = useCashboxApi();
-    const { data: fiscalData } = useFescalDeviceApi();
+    const { data: fiscalData } = useFescalDeviceApi(true);
     const { mutate: printXReportMutate } = useGetPrintXReport();
     const { mutate: openZReportMutate } = useGetOpenZReport();
     const { mutate: closeZReportMutate } = useGetCloseZReport();
     const { mutate: syncReportMutate } = useGetSyncReport();
-
-    console.log(fiscalData);
 
     const onCloseModal = () => {
         setIsOpen(false);
