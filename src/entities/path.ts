@@ -146,6 +146,11 @@ export const pathServices = {
   },
 
   fiscalized: {
+    getPrintFiscalXReport: "/api/fiscalization/x-report/print/",
+    getOpenZReport: "/api/fiscalization/z-report/open/",
+    getCloseZReport: "/api/fiscalization/z-report/close/",
+    getSyncReport: "/api/fiscalization/sync-state/",
+
     // UPDATE
     updateCashRegisterArca: `/api/fiscal-device/arca/update/`,
     updateCashRegisterSimurg: `/api/fiscal-device/simurg/update/`,

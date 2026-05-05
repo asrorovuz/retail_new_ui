@@ -281,8 +281,8 @@ const CashboxOperations = () => {
         );
 
     return (
-        <div className="bg-white rounded-3xl p-6 h-[calc(100vh_-_100px)] flex flex-col">
-            <div className="flex items-center justify-between mb-6 border-b pb-4">
+        <div className="bg-white p-4 h-screen flex flex-col">
+            <div className="flex items-center justify-between mb-6">
                 <Button
                     onClick={() => {
                         (setType(0), navigate(-1));
@@ -337,7 +337,7 @@ const CashboxOperations = () => {
                 </div>
             </div>
 
-            <div className="flex-1 mb-3 border border-slate-300 rounded-3xl overflow-y-auto">
+            <div className="flex-1 mb-3 border border-slate-300 rounded-lg overflow-y-auto">
                 {selectedData && selectedData.length > 0 && !isPending ? (
                     <Table className="w-full table-fixed">
                         <THead className="bg-white sticky top-0 z-10">
@@ -347,7 +347,7 @@ const CashboxOperations = () => {
                                         <Th key={header.id}>
                                             <div
                                                 className={classNames(
-                                                    "px-4 text-left font-medium text-xs xl:text-sm text-slate-800",
+                                                    "px-4 py-3 text-left font-medium text-xs xl:text-sm text-slate-800",
                                                     header.column.columnDef.meta
                                                         ?.headerClassName,
                                                 )}
@@ -364,12 +364,10 @@ const CashboxOperations = () => {
                             ))}
                         </THead>
                         <TBody>
-                            {table.getRowModel().rows.map((row, index) => (
+                            {table.getRowModel().rows.map((row) => (
                                 <Tr
                                     key={row.id}
-                                    className={`${
-                                        index % 2 ? "bg-white" : "bg-slate-100"
-                                    } hover:bg-slate-100 transition`}
+                                    className={` hover:bg-slate-200 transition`}
                                 >
                                     {row.getVisibleCells().map((cell) => (
                                         <Td

@@ -13,7 +13,11 @@ import {
   getCashInCount,
   getCashOut,
   getCashOutCount,
+  getCloseZReportApi,
+  getOpenZReportApi,
   getOperationCategoryApi,
+  getPrintXReportApi,
+  getSyncReportApi,
   updateCashExpenseApi,
   updateCashInApi,
   updateCashOutApi,
@@ -197,6 +201,47 @@ export const useDeleteCashExpense = () => {
       // queryClient.invalidateQueries({ queryKey: ["cashbox"] });
       queryClient.invalidateQueries({ queryKey: ["cash-expense"] });
       queryClient.invalidateQueries({ queryKey: ["cash-expense-count"] });
+    },
+  });
+};
+
+
+export const useGetCloseZReport = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: any) => getCloseZReportApi(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["close-z"] });
+    },
+  });
+};
+
+export const useGetOpenZReport = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: any) => getOpenZReportApi(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["close-z"] });
+    },
+  });
+};
+
+export const useGetSyncReport = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: any) => getSyncReportApi(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["close-z"] });
+    },
+  });
+};
+
+export const useGetPrintXReport = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: any) => getPrintXReportApi(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["close-z"] });
     },
   });
 };
