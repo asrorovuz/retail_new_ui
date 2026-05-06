@@ -2,96 +2,94 @@ import { useEffect, useState, type FC } from "react";
 import type { ProductDefaultValues, ProductModalProps } from "../model";
 import ProductForm from "@/features/product-form";
 import {
-  CurrencyCodeUZS,
-  CurrencyCodeUZSText,
-  CurrencyRateUZS,
+    CurrencyCodeUZS,
+    CurrencyCodeUZSText,
+    CurrencyRateUZS,
 } from "@/app/constants/paymentType";
 import { useCatalogSearchApi } from "@/entities/products/repository";
 
 const AddProductModal: FC<ProductModalProps> = ({
-  type,
-  pageType,
-  setBarcode,
-  barcode,
-  catalogCode,
-  setCatalogCode,
-  productPriceType,
-  setIsOpen,
-  isOpen,
-}) => {
-  const [defaultValues, setDefaultValues] =
-    useState<ProductDefaultValues | null>(null);
-  const { data: catalogData, isLoading } = useCatalogSearchApi(
-    (isOpen && (catalogCode || barcode)) || "",
+    type,
+    pageType,
+    setBarcode,
+    barcode,
+    catalogCode,
+    setCatalogCode,
+    productPriceType,
+    setIsOpen,
     isOpen,
-  );
+}) => {
+    const [defaultValues, setDefaultValues] =
+        useState<ProductDefaultValues | null>(null);
+    const { data: catalogData, isLoading } = useCatalogSearchApi(
+        (isOpen && (catalogCode || barcode)) || "",
+        isOpen,
+    );
 
-  useEffect(() => {
-    if (!isOpen) return;
+    useEffect(() => {
+        if (!isOpen) return;
 
-    const prices = productPriceType?.map((i, inx) => ({
-      amount: inx ? 0 : null,
-      price_type: i,
-      currency: {
-        code: CurrencyCodeUZS,
-        name: CurrencyCodeUZSText,
-        rate: CurrencyRateUZS,
-      },
-    }));
+        const prices = productPriceType?.map((i, inx) => ({
+            amount: inx ? 0 : null,
+            price_type: i,
+            currency: {
+                code: CurrencyCodeUZS,
+                name: CurrencyCodeUZSText,
+                rate: CurrencyRateUZS,
+            },
+        }));
+        // new Date().getTime().toString().slice(5, 13)
+        setDefaultValues({
+            name: "",
+            barcodes: [],
+            catalog_code: null,
+            catalog_name: null,
+            package_code: null,
+            package_name: null,
+            package_measurements: [],
+            purchase_price: {
+                amount: null,
+                currency: {
+                    code: CurrencyCodeUZS,
+                    name: CurrencyCodeUZSText,
+                    rate: CurrencyRateUZS,
+                },
+            },
+            is_legal: true,
+            images: [],
+            category: null,
+            isActive: true,
+            sku: null,
+            code: null,
+            measurement_name: "шт",
+            vat_rate: null,
+            prices,
+            count: 1,
+            catalog: null,
+            is_default: true,
+        });
+    }, [isOpen]);
 
-    setDefaultValues({
-      name: "",
-      barcodes: [
-        { value: new Date().getTime().toString().slice(5, 13), count: 1 },
-      ],
-      catalog_code: null,
-      catalog_name: null,
-      package_code: null,
-      package_name: null,
-      package_measurements: [],
-      purchase_price: {
-        amount: null,
-        currency: {
-          code: CurrencyCodeUZS,
-          name: CurrencyCodeUZSText,
-          rate: CurrencyRateUZS,
-        },
-      },
-      is_legal: true,
-      images: [],
-      category: null,
-      isActive: true,
-      sku: null,
-      code: null,
-      measurement_name: "шт",
-      vat_rate: null,
-      prices,
-      count: 1,
-      catalog: null,
-      is_default: true,
-    });
-  }, [isOpen]);
-
-  return (
-    <>
-      {defaultValues && isOpen && (
-        <ProductForm
-          type={type}
-          isOpen={isOpen}
-          pageType={pageType}
-          setIsOpen={setIsOpen}
-          catalogLoading={isLoading}
-          catalogCode={catalogCode}
-          setCatalogCode={setCatalogCode}
-          defaultValue={defaultValues!} // '!' bilan null bo'lmasligini bildiramiz
-          barcode={barcode}
-          setBarcode={setBarcode}
-          setDefaultValues={setDefaultValues}
-          catalogData={catalogData}
-        />
-      )}
-    </>
-  );
+    return (
+        <>
+            {defaultValues && isOpen && (
+                <ProductForm
+                    type={type}
+                    isOpen={isOpen}
+                    pageType={pageType}
+                    setIsOpen={setIsOpen}
+                    catalogLoading={isLoading}
+                    catalogCode={catalogCode}
+                    setCatalogCode={setCatalogCode}
+                    defaultValue={defaultValues!} // '!' bilan null bo'lmasligini bildiramiz
+                    barcode={barcode}
+                    setBarcode={setBarcode}
+                    setDefaultValues={setDefaultValues}
+                    catalogData={catalogData}
+                />
+            )}
+        </>
+    );
 };
 
 export default AddProductModal;

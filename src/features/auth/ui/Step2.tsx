@@ -8,6 +8,7 @@ import { Button, Dialog, Form, FormItem, Input, Select } from "@/shared/ui/kit";
 import { useEffect, useState } from "react";
 import { useRegisterOrg } from "@/entities/auth/repository";
 import { storeTypeOptions } from "../options";
+import FullKeyboard from "@/widgets/ui/keyboard/FullKeyboard";
 
 const Step2 = ({
     item,
@@ -161,6 +162,7 @@ const Step2 = ({
                         </Button>
                     </Form>
                 </FormProvider>
+                <FullKeyboard />
             </Dialog>
         </>
     );

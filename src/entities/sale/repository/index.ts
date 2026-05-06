@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFiscalizedApi, fiscalDeviceApi, getAllContractorApi, getTransferApi, paymentDebtsApi, paymentProviderApi, registerSaleApi, updateSellApi } from "../api";
 import type { RegisterSaleModel } from "@/@types/sale";
 
@@ -45,8 +45,13 @@ export const useCreateFiscalizedApi = () => {
 };
 
 export const usePaymentDebtsApi = () => {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: (data: any) => paymentDebtsApi(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["contractor-all"] });
+    },
   });
 };
 

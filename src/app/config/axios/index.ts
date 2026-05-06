@@ -69,11 +69,11 @@ export const ipcFetch = async <T>(request: {
             }
           }
 
-          if (status_code === 401) {
-            sessionStorage.removeItem(TOKEN);
-            window.location.href = "/login";
-            return reject("Unauthorized");
-          }
+          // if (status_code === 401) {
+          //   sessionStorage.removeItem(TOKEN);
+          //   window.location.href = "/login";
+          //   return reject("Unauthorized");
+          // }
 
           if (status_code >= 400) {
             return reject(result || "Unknown error");

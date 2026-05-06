@@ -1,9 +1,9 @@
 import { useRef, useState } from "react";
-import { FormProvider, useForm } from "react-hook-form";
+import { Controller, FormProvider, useForm } from "react-hook-form";
 import Step1Phone from "./Step1";
 import Step2Info from "./Step2";
 import Step3Confirm from "./Step3";
-import { Button, Dialog, Form, Spinner, Steps } from "@/shared/ui/kit";
+import { Button, Dialog, Form, FormItem, Input, Spinner, Steps } from "@/shared/ui/kit";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import {
     useConfirmCode,
@@ -11,6 +11,7 @@ import {
     useRegisterOrgLocal,
 } from "@/entities/auth/repository";
 import { showErrorMessage } from "@/shared/lib/showMessage";
+import FullKeyboard from "@/widgets/ui/keyboard/FullKeyboard";
 
 type OutletContextType = {
     refetch: any;
@@ -22,7 +23,6 @@ const Register = () => {
     const timeoutRef = useRef<any | null>(null);
 
     const [isError, setIsError] = useState<boolean>(false);
-    const [code, setCode] = useState("");
     const [isOpenCode, setIsOpenCode] = useState(false);
     const [response, setResponse] = useState<any>(null);
     const [step, setStep] = useState(1);
@@ -49,6 +49,8 @@ const Register = () => {
             organization: null,
         },
     });
+
+    const confirmCodeValue = form.watch("confirm_code");
 
     const onErrors = (err: any) => {
         setIsError(true);
@@ -93,10 +95,12 @@ const Register = () => {
     const onSubmitCode = () => {
         if (!response) return;
 
+        const confirm_code = form.getValues("confirm_code"); // 🔥 shu
+
         registerationMutate(
             {
                 ...response,
-                confirm_code: code,
+                confirm_code,
             },
             {
                 onSuccess(res) {
@@ -106,7 +110,7 @@ const Register = () => {
                     }
                     setResponse(res);
                     setIsOpenCode(false);
-                    nextStep(); // Step 2 ga o'tadi
+                    nextStep();
                 },
                 onError(err) {
                     if (timeoutRef.current) {
@@ -118,7 +122,6 @@ const Register = () => {
             },
         );
     };
-
     // 3️⃣ Form onSubmit – stepga qarab ajratilgan
     const onSubmit = (values: any) => {
         if (step === 1) {
@@ -230,7 +233,7 @@ const Register = () => {
                 </Form>
             </FormProvider>
             <Dialog
-                width={"380px"}
+                width={"60vw"}
                 isOpen={isOpenCode}
                 onClose={() => setIsOpenCode(false)}
             >
@@ -240,58 +243,52 @@ const Register = () => {
                     </h3>
 
                     <div className="flex justify-center gap-2 mb-6">
-                        {[...Array(6)].map((_, index) => (
-                            <input
-                                key={index}
-                                type="text"
-                                maxLength={1}
-                                value={code[index] || ""}
-                                onChange={(e) => {
-                                    const val = e.target.value.replace(
-                                        /\D/g,
-                                        "",
-                                    );
-                                    if (!val) return;
-
-                                    const newCode =
-                                        code.substring(0, index) +
-                                        val +
-                                        code.substring(index + 1);
-
-                                    setCode(newCode);
-
-                                    const next = e.target
-                                        .nextSibling as HTMLInputElement;
-                                    if (next) next.focus();
-                                }}
-                                onKeyDown={(e) => {
-                                    if (e.key === "Backspace") {
-                                        const newCode =
-                                            code.substring(0, index) +
-                                            code.substring(index + 1);
-                                        setCode(newCode);
-
-                                        const prev = e.currentTarget
-                                            .previousSibling as HTMLInputElement;
-                                        if (prev) prev.focus();
-                                    }
-                                }}
-                                className="w-12 h-12 text-center text-lg border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            />
-                        ))}
+                        <Controller
+                            name="confirm_code"
+                            control={form.control}
+                            rules={{
+                                required: "Введите код",
+                                minLength: {
+                                    value: 6,
+                                    message: "Код должен состоять из 6 цифр",
+                                },
+                            }}
+                            render={({ field, fieldState }) => (
+                                <FormItem
+                                    invalid={!!fieldState.error}
+                                    errorMessage={fieldState.error?.message}
+                                >
+                                    <Input
+                                        {...field}
+                                        placeholder="Введите SMS-код"
+                                        maxLength={6}
+                                        inputMode="numeric"
+                                        className="text-center text-2xl tracking-[10px]"
+                                        onChange={(e) => {
+                                            const val = e.target.value.replace(
+                                                /\D/g,
+                                                "",
+                                            );
+                                            field.onChange(val);
+                                        }}
+                                    />
+                                </FormItem>
+                            )}
+                        />
                     </div>
 
                     <Button
                         type="button"
                         variant="solid"
-                        loading={regesPending}
-                        disabled={code.length !== 6}
+                        loading={isPending}
+                        disabled={(confirmCodeValue?.length || 0) !== 6}
                         className="w-full bg-blue-500 hover:bg-blue-600 text-white rounded-xl"
                         onClick={onSubmitCode}
                     >
                         Подтвердить
                     </Button>
                 </div>
+                <FullKeyboard />
             </Dialog>
         </div>
     );

@@ -228,7 +228,7 @@ const Counterparty = () => {
   });
 
   return (
-    <div className="bg-white h-full rounded-2xl p-4">
+    <div className="bg-white h-screen p-4">
       <NavigateButton content="Контрагенты" />
       <div className="mb-3 flex items-center justify-between">
         <Input
@@ -253,10 +253,10 @@ const Counterparty = () => {
       <div
         className={classNames(
           "h-[46vh] flex flex-col mb-3",
-          !searchFocus ? "h-[78vh]" : "h-[46vh]",
+          !searchFocus ? "h-[82vh]" : "h-[47vh]",
         )}
       >
-        <div className="h-full mb-3 border border-slate-300 rounded-3xl overflow-auto">
+        <div className="h-full mb-3 border border-slate-300 rounded-lg overflow-auto">
           {data && data?.length > 0 && !isPending ? (
             <Table className="min-w-full table-fixed border-separate border-spacing-0">
               <THead className="sticky top-0">
@@ -272,7 +272,7 @@ const Counterparty = () => {
                           >
                             <div
                               className={classNames(
-                                "px-4 text-left font-medium text-xs xl:text-sm text-slate-800",
+                                "px-4 py-2 text-left font-medium text-xs xl:text-sm text-slate-800",
                                 header.column.columnDef.meta?.headerClassName,
                               )}
                             >

@@ -1,279 +1,299 @@
 import type {
-  DraftSaleSchema,
-  SaleStoreActions,
-  SaleStoreInitialState,
-  DraftSaleItemSchema,
+    DraftSaleSchema,
+    SaleStoreActions,
+    SaleStoreInitialState,
+    DraftSaleItemSchema,
 } from "@/@types/sale";
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import { PaymentTypes } from "../constants/payment.types";
 
 const initialState: SaleStoreInitialState = {
-  draftSales: [
-    {
-      items: [],
-      isActive: true,
-      discountAmount: "0",
-      contractor_id: null,
-      comment: "",
-      payment: {
-        amounts: PaymentTypes.map((paymentType) => {
-          return { amount: "0", paymentType: paymentType.type };
-        }),
-      },
-    },
-  ],
-};
-
-export const useDraftSaleStore = create<
-  SaleStoreInitialState & SaleStoreActions
->()(
-  immer((set) => ({
-    ...initialState,
-    addDraftSale: (draftSale) =>
-      set((state) => {
-        const activeSale = state.draftSales.find(
-          (s: DraftSaleSchema) => s.isActive,
-        );
-        if (activeSale) {
-          activeSale.isActive = false;
-        }
-
-        draftSale.isActive = true;
-
-        if (draftSale.id) {
-          const existIndex = state.draftSales.findIndex(
-            (s: DraftSaleSchema) => s.id === draftSale.id,
-          );
-          if (existIndex !== -1) {
-            state.draftSales[existIndex].isActive = true;
-            if (!state.draftSales[existIndex].items) {
-              state.draftSales[existIndex].items = [];
-            }
-            return;
-          }
-        }
-
-        state.draftSales.push(draftSale);
-      }),
-    activateDraftSale: (draftSaleIndex: number) =>
-      set((state) => {
-        if (state.draftSales.length > 0) {
-          const activeSale = state.draftSales.find((s) => s.isActive);
-          if (activeSale) {
-            activeSale.isActive = false;
-          }
-        }
-
-        state.draftSales[draftSaleIndex].isActive = true;
-      }),
-    deleteDraftSale: (draftSaleIndex: number) =>
-      set((state) => {
-        if (state.draftSales.length === 1 && draftSaleIndex === 0) {
-          const newDraftSale: DraftSaleSchema = {
+    draftSales: [
+        {
             items: [],
             isActive: true,
             discountAmount: "0",
             contractor_id: null,
             comment: "",
             payment: {
-              amounts: PaymentTypes.map((paymentType) => {
-                return { amount: "0", paymentType: paymentType.type };
-              }),
-            },
-          };
-          state.draftSales = [newDraftSale];
-        } else {
-          let items = state.draftSales.filter(
-            (_, index) => index !== draftSaleIndex,
-          );
-          if (draftSaleIndex === 0) items[0].isActive = true;
-          else items[draftSaleIndex - 1].isActive = true;
-          state.draftSales = items;
-        }
-      }),
-
-    updateDraftSaleItem: (draftItem: DraftSaleItemSchema) =>
-      set((state) => {
-        const activeSale = state.draftSales?.find((s) => s.isActive);
-        if (activeSale) {
-          const draftSaleItem = activeSale.items.find((i) => {
-            return i.productId === draftItem.productId;
-          });
-
-          if (draftSaleItem) {
-            draftSaleItem.priceAmount = draftItem.priceAmount;
-            draftSaleItem.priceTypeId = draftItem.priceTypeId;
-
-            if (draftItem.quantity <= 0) {
-              const draftSaleItemIndex = activeSale.items.findIndex((i) => {
-                return i.productId === draftItem.productId;
-              });
-              if (draftSaleItemIndex >= 0) {
-                activeSale.items.splice(draftSaleItemIndex, 1);
-              }
-            } else {
-              draftSaleItem.quantity = draftItem.quantity;
-              draftSaleItem.totalAmount = draftItem.totalAmount;
-            }
-          } else {
-            if (draftItem.quantity < 0) {
-              return;
-            }
-            activeSale.items.unshift(draftItem);
-          }
-        }
-      }),
-    resetActiveDraftSale: () =>
-      set((state) => {
-        const activeSale = state.draftSales.find((s) => s.isActive);
-        if (activeSale) {
-          activeSale.items = [];
-          activeSale.discountAmount = "0";
-          if (activeSale.payment) {
-            activeSale.payment.amounts.forEach((a) => (a.amount = "0"));
-          }
-        }
-      }),
-    deleteDraftSaleItem: (draftSaleItemIndex: number) =>
-      set((state) => {
-        const activeSale = state.draftSales.find((s) => s.isActive);
-        if (activeSale) {
-          activeSale.items.splice(draftSaleItemIndex, 1);
-        }
-      }),
-    updateDraftSaleItemPrice: (
-      draftSaleItemIndex: number,
-      priceAmount: number,
-    ) =>
-      set((state) => {
-        const activeSale = state.draftSales.find((s) => s.isActive);
-        if (activeSale) {
-          activeSale.items[draftSaleItemIndex].priceAmount = priceAmount;
-        }
-      }),
-    updateDraftSaleItemTotalPrice: (
-      draftSaleItemIndex: number,
-      totalPrice: number,
-    ) =>
-      set((state) => {
-        const activeSale = state.draftSales.find((s) => s.isActive);
-        if (activeSale) {
-          activeSale.items[draftSaleItemIndex].totalAmount = totalPrice;
-        }
-      }),
-    updateDraftSaleItemQuantity: (
-      draftSaleItemIndex: number,
-      quantity: number,
-    ) =>
-      set((state) => {
-        const activeSale = state.draftSales.find((s) => s.isActive);
-        if (activeSale) {
-          activeSale.items[draftSaleItemIndex].quantity = quantity;
-        }
-      }),
-    updateDraftSaleDiscount: (discountAmount: string) =>
-      set((state) => {
-        const activeSale = state.draftSales.find((s) => s.isActive);
-        if (activeSale) {
-          activeSale.discountAmount = discountAmount;
-        }
-      }),
-    updateDraftSalePayment: (payment) =>
-      set((state) => {
-        const activeSale = state.draftSales.find((s) => s.isActive);
-        if (activeSale) {
-          activeSale.payment = { amounts: payment };
-        }
-      }),
-    completeActiveDraftSale: () =>
-      set((state) => {
-        const activeSaleIndex = state.draftSales.findIndex((s) => s.isActive);
-
-        if (state.draftSales.length > 1) {
-          state.draftSales.splice(activeSaleIndex, 1);
-
-          const previousSaleIndex = state.draftSales.length - 1;
-          state.draftSales[previousSaleIndex].isActive = true;
-        } else {
-          const activeSale = state.draftSales.find((s) => s.isActive);
-          if (activeSale) {
-            if (activeSale.id) {
-              const newDraftSale: DraftSaleSchema = {
-                items: [],
-                isActive: true,
-                discountAmount: "0",
-                contractor_id: null,
-                comment: "",
-                payment: {
-                  amounts: PaymentTypes.map((paymentType) => {
+                amounts: PaymentTypes.map((paymentType) => {
                     return { amount: "0", paymentType: paymentType.type };
-                  }),
-                },
-              };
-              state.draftSales = [newDraftSale];
-            } else {
-              activeSale.items = [];
-              activeSale.discountAmount = "0";
-              if (activeSale.payment) {
-                activeSale.payment.amounts.forEach((a) => (a.amount = "0"));
-              }
-            }
-          }
-        }
-      }),
-    deleteDraftSaleMark: (item) =>
-      set((state) => {
-        const activeSale = state.draftSales.find((s) => s.isActive);
-        if (activeSale) {
-          activeSale.items
-            .find((i) => i.productId === item?.productId)
-            ?.marks?.splice(item.index, 1);
-        }
-      }),
-    addDraftSaleItem: (draftItem) =>
-      set((state) => {
-        const activeSale = state.draftSales.find((s) => s.isActive);
-        const [mark] = draftItem.marks ?? [];
+                }),
+            },
+        },
+    ],
+};
 
-        if (activeSale) {
-          const existSaleItem = activeSale.items.find((i) => {
-            return i.productId === draftItem.productId;
-          });
+export const useDraftSaleStore = create<
+    SaleStoreInitialState & SaleStoreActions
+>()(
+    immer((set) => ({
+        ...initialState,
+        addDraftSale: (draftSale) =>
+            set((state) => {
+                const activeSale = state.draftSales.find(
+                    (s: DraftSaleSchema) => s.isActive,
+                );
+                if (activeSale) {
+                    activeSale.isActive = false;
+                }
 
-          if (existSaleItem) {
-            existSaleItem.quantity += 1;
-            existSaleItem.totalAmount =
-              Number(existSaleItem.quantity) *
-              Number(existSaleItem.priceAmount);
-            if (mark) {
-              existSaleItem.marks ??= [];
+                draftSale.isActive = true;
 
-              const isExist = existSaleItem.marks.some(
-                (existing) => existing === mark,
-              );
+                if (draftSale.id) {
+                    const existIndex = state.draftSales.findIndex(
+                        (s: DraftSaleSchema) => s.id === draftSale.id,
+                    );
+                    if (existIndex !== -1) {
+                        state.draftSales[existIndex].isActive = true;
+                        if (!state.draftSales[existIndex].items) {
+                            state.draftSales[existIndex].items = [];
+                        }
+                        return;
+                    }
+                }
 
-              if (!isExist) {
-                existSaleItem.marks.push(mark);
-              }
-            }
-          } else {
-            const newSaleItem: DraftSaleItemSchema = {
-              id: draftItem.productId,
-              productId: draftItem.productId,
-              productName: draftItem.productName,
-              productPackageName: draftItem.productPackageName,
-              priceAmount: draftItem.priceAmount,
-              priceTypeId: draftItem.priceTypeId,
-              quantity: draftItem.quantity,
-              totalAmount: draftItem.totalAmount,
-              catalogName: draftItem.catalogName,
-              catalogCode: draftItem.catalogCode,
-              ...(mark ? { marks: [mark] } : {}),
-            };
-            activeSale.items.unshift(newSaleItem);
-          }
-        }
-      }),
-  })),
+                state.draftSales.push(draftSale);
+            }),
+        activateDraftSale: (draftSaleIndex: number) =>
+            set((state) => {
+                if (state.draftSales.length > 0) {
+                    const activeSale = state.draftSales.find((s) => s.isActive);
+                    if (activeSale) {
+                        activeSale.isActive = false;
+                    }
+                }
+
+                state.draftSales[draftSaleIndex].isActive = true;
+            }),
+        deleteDraftSale: (draftSaleIndex: number) =>
+            set((state) => {
+                if (state.draftSales.length === 1 && draftSaleIndex === 0) {
+                    const newDraftSale: DraftSaleSchema = {
+                        items: [],
+                        isActive: true,
+                        discountAmount: "0",
+                        contractor_id: null,
+                        comment: "",
+                        payment: {
+                            amounts: PaymentTypes.map((paymentType) => {
+                                return {
+                                    amount: "0",
+                                    paymentType: paymentType.type,
+                                };
+                            }),
+                        },
+                    };
+                    state.draftSales = [newDraftSale];
+                } else {
+                    let items = state.draftSales.filter(
+                        (_, index) => index !== draftSaleIndex,
+                    );
+                    if (draftSaleIndex === 0) items[0].isActive = true;
+                    else items[draftSaleIndex - 1].isActive = true;
+                    state.draftSales = items;
+                }
+            }),
+
+        updateDraftSaleItem: (draftItem: DraftSaleItemSchema) =>
+            set((state) => {
+                const activeSale = state.draftSales?.find((s) => s.isActive);
+                if (activeSale) {
+                    const draftSaleItem = activeSale.items.find((i) => {
+                        return i.productId === draftItem.productId;
+                    });
+
+                    if (draftSaleItem) {
+                        draftSaleItem.priceAmount = draftItem.priceAmount;
+                        draftSaleItem.priceTypeId = draftItem.priceTypeId;
+
+                        if (draftItem.quantity <= 0) {
+                            const draftSaleItemIndex =
+                                activeSale.items.findIndex((i) => {
+                                    return i.productId === draftItem.productId;
+                                });
+                            if (draftSaleItemIndex >= 0) {
+                                activeSale.items.splice(draftSaleItemIndex, 1);
+                            }
+                        } else {
+                            draftSaleItem.quantity = draftItem.quantity;
+                            draftSaleItem.totalAmount = draftItem.totalAmount;
+
+                            // ✅ MARKS FIX (ASOSIY JOY)
+                            draftSaleItem.marks = draftItem.marks ?? [];
+                        }
+                    } else {
+                        if (draftItem.quantity < 0) {
+                            return;
+                        }
+                        activeSale.items.unshift(draftItem);
+                    }
+                }
+            }),
+        resetActiveDraftSale: () =>
+            set((state) => {
+                const activeSale = state.draftSales.find((s) => s.isActive);
+                if (activeSale) {
+                    activeSale.items = [];
+                    activeSale.discountAmount = "0";
+                    if (activeSale.payment) {
+                        activeSale.payment.amounts.forEach(
+                            (a) => (a.amount = "0"),
+                        );
+                    }
+                }
+            }),
+        deleteDraftSaleItem: (draftSaleItemIndex: number) =>
+            set((state) => {
+                const activeSale = state.draftSales.find((s) => s.isActive);
+                if (activeSale) {
+                    activeSale.items.splice(draftSaleItemIndex, 1);
+                }
+            }),
+        updateDraftSaleItemPrice: (
+            draftSaleItemIndex: number,
+            priceAmount: number,
+        ) =>
+            set((state) => {
+                const activeSale = state.draftSales.find((s) => s.isActive);
+                if (activeSale) {
+                    activeSale.items[draftSaleItemIndex].priceAmount =
+                        priceAmount;
+                }
+            }),
+        updateDraftSaleItemPriceBulk: (
+            draftSaleItemIndex: number,
+            priceAmoutBulk: number,
+        ) =>
+            set((state) => {
+                const activeSale = state.draftSales.find((s) => s.isActive);
+                if (activeSale) {
+                    activeSale.items[draftSaleItemIndex].priceAmoutBulk =
+                        priceAmoutBulk;
+                }
+            }),
+        updateDraftSaleItemTotalPrice: (
+            draftSaleItemIndex: number,
+            totalPrice: number,
+        ) =>
+            set((state) => {
+                const activeSale = state.draftSales.find((s) => s.isActive);
+                if (activeSale) {
+                    activeSale.items[draftSaleItemIndex].totalAmount =
+                        totalPrice;
+                }
+            }),
+        updateDraftSaleItemQuantity: (
+            draftSaleItemIndex: number,
+            quantity: number,
+        ) =>
+            set((state) => {
+                const activeSale = state.draftSales.find((s) => s.isActive);
+                if (activeSale) {
+                    activeSale.items[draftSaleItemIndex].quantity = quantity;
+                }
+            }),
+        updateDraftSaleDiscount: (discountAmount: string) =>
+            set((state) => {
+                const activeSale = state.draftSales.find((s) => s.isActive);
+                if (activeSale) {
+                    activeSale.discountAmount = discountAmount;
+                }
+            }),
+        updateDraftSalePayment: (payment) =>
+            set((state) => {
+                const activeSale = state.draftSales.find((s) => s.isActive);
+                if (activeSale) {
+                    activeSale.payment = { amounts: payment };
+                }
+            }),
+        completeActiveDraftSale: () =>
+            set((state) => {
+                const activeSaleIndex = state.draftSales.findIndex(
+                    (s) => s.isActive,
+                );
+
+                if (state.draftSales.length > 1) {
+                    state.draftSales.splice(activeSaleIndex, 1);
+
+                    const previousSaleIndex = state.draftSales.length - 1;
+                    state.draftSales[previousSaleIndex].isActive = true;
+                } else {
+                    const activeSale = state.draftSales.find((s) => s.isActive);
+                    if (activeSale) {
+                        if (activeSale.id) {
+                            const newDraftSale: DraftSaleSchema = {
+                                items: [],
+                                isActive: true,
+                                discountAmount: "0",
+                                contractor_id: null,
+                                comment: "",
+                                payment: {
+                                    amounts: PaymentTypes.map((paymentType) => {
+                                        return {
+                                            amount: "0",
+                                            paymentType: paymentType.type,
+                                        };
+                                    }),
+                                },
+                            };
+                            state.draftSales = [newDraftSale];
+                        } else {
+                            activeSale.items = [];
+                            activeSale.discountAmount = "0";
+                            if (activeSale.payment) {
+                                activeSale.payment.amounts.forEach(
+                                    (a) => (a.amount = "0"),
+                                );
+                            }
+                        }
+                    }
+                }
+            }),
+        // addDraftSaleItem: (draftItem) =>
+        //     set((state) => {
+        //         const activeSale = state.draftSales.find((s) => s.isActive);
+        //         const [mark] = draftItem.marks ?? [];
+
+        //         if (activeSale) {
+        //             const existSaleItem = activeSale.items.find((i) => {
+        //                 return i.productId === draftItem.productId;
+        //             });
+
+        //             if (existSaleItem) {
+        //                 existSaleItem.quantity += 1;
+        //                 existSaleItem.totalAmount =
+        //                     Number(existSaleItem.quantity) *
+        //                     Number(existSaleItem.priceAmount);
+        //                 // if (mark) {
+        //                 //     existSaleItem.marks ??= [];
+
+        //                 //     const isExist = existSaleItem.marks.some(
+        //                 //         (existing) => existing === mark,
+        //                 //     );
+
+        //                 //     if (!isExist) {
+        //                 //         existSaleItem.marks.push(mark);
+        //                 //     }
+        //                 // }
+        //             } else {
+        //                 const newSaleItem: DraftSaleItemSchema = {
+        //                     id: draftItem.productId,
+        //                     productId: draftItem.productId,
+        //                     productName: draftItem.productName,
+        //                     productPackageName: draftItem.productPackageName,
+        //                     priceAmount: draftItem.priceAmount,
+        //                     priceTypeId: draftItem.priceTypeId,
+        //                     quantity: draftItem.quantity,
+        //                     totalAmount: draftItem.totalAmount,
+        //                     catalogName: draftItem.catalogName,
+        //                     catalogCode: draftItem.catalogCode,
+        //                     ...(mark ? { marks: [mark] } : {}),
+        //                 };
+        //                 activeSale.items.unshift(newSaleItem);
+        //             }
+        //         }
+        //     }),
+    })),
 );

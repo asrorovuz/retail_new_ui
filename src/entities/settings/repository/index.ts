@@ -6,9 +6,11 @@ import {
   deleteTelegramBot,
   getAllBot,
   getAllConfigBot,
+  getAllIDPermission,
   postCashRegisterArca,
   postCashRegisterEPos,
   postCashRegisterHippoPos,
+  postCashRegisterHippoPos4,
   postCashRegisterSimurg,
   postClick,
   postPayme,
@@ -16,6 +18,7 @@ import {
   updateCashRegisterArca,
   updateCashRegisterEPos,
   updateCashRegisterHippoPos,
+  updateCashRegisterHippoPos4,
   updateCashRegisterSimurg,
   updateFiscalizationWhite,
   updatePaymentClick,
@@ -23,6 +26,14 @@ import {
   updateSettings,
   updateSettingsShift,
 } from "../api";
+
+export const usePermissionIdApi = (id: string | null) => {
+  return useQuery({
+    queryKey: ["permission-id", id],
+    queryFn: () => getAllIDPermission(id),
+    enabled: !!id,
+  });
+};
 
 // UPDATE
 export const useUpdateArca = () => {
@@ -54,6 +65,18 @@ export const useUpdateHippoPos = () => {
   return useMutation({
     mutationFn: ({ id, payload }: { id: number; payload: any }) =>
       updateCashRegisterHippoPos(payload, id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["fiscalized"] });
+    },
+  });
+};
+
+export const useUpdateHippoPos4 = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, payload }: { id: number; payload: any }) =>
+      updateCashRegisterHippoPos4(payload, id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["fiscalized"] });
     },
@@ -170,6 +193,17 @@ export const useCreateHippoPos = () => {
 
   return useMutation({
     mutationFn: (payload: any) => postCashRegisterHippoPos(payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["fiscalized"] });
+    },
+  });
+};
+
+export const useCreateHippoPos4 = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: any) => postCashRegisterHippoPos4(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["fiscalized"] });
     },

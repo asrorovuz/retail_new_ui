@@ -25,7 +25,7 @@ const Step1Phone = () => {
       <Controller
         name="name"
         control={control}
-        rules={{ required: "Поле Ф.И.О обязательно" }}
+        rules={{ required: true }}
         render={({ field, fieldState }) => (
           <FormItem
             label="Ф.И.О"
@@ -33,7 +33,7 @@ const Step1Phone = () => {
             errorMessage={fieldState?.error?.message}
             asterisk
           >
-            <Input {...field} placeholder="Введите свое имя." />
+            <Input {...field} size="sm" placeholder="Введите свое имя." />
           </FormItem>
         )}
       />
@@ -42,7 +42,7 @@ const Step1Phone = () => {
         name="username"
         control={control}
         rules={{
-          required: "Поле телефона обязательно",
+          required: true,
           minLength: {
             value: 12,
             message: "Введите полный номер телефона",
@@ -52,7 +52,6 @@ const Step1Phone = () => {
           <FormItem
             label="Телефон"
             labelClass="text-gray-700 text-base font-medium"
-            className="mb-6"
             errorClassName="text-red-500"
             invalid={!!fieldState.error}
             errorMessage={fieldState.error?.message}
@@ -66,12 +65,11 @@ const Step1Phone = () => {
       <Controller
         name="password"
         control={control}
-        rules={{ required: "Введите пароль" }}
+        rules={{ required: true }}
         render={({ field, fieldState }) => (
           <FormItem
             label="Пароль"
             labelClass="text-gray-700 text-base font-medium"
-            className="mb-6"
             errorClassName="text-red-500"
             invalid={!!fieldState.error}
             errorMessage={fieldState.error?.message}
@@ -82,6 +80,7 @@ const Step1Phone = () => {
                 {...field}
                 type={showPassword ? "text" : "password"}
                 placeholder="Пароль"
+                size="sm"
               />
               <Button
                 type="button"
@@ -105,7 +104,7 @@ const Step1Phone = () => {
             invalid={!!fieldState?.error}
             errorMessage={fieldState?.error?.message}
           >
-            <Input {...field} placeholder="Введите код агента." />
+            <Input {...field} placeholder="Введите код агента." size="sm"/>
           </FormItem>
         )}
       />
@@ -123,6 +122,7 @@ const Step1Phone = () => {
               getOptionValue={(option: any) => option?.id}
               value={REGIONS?.find((i) => i?.id === field?.value) || null}
               placeholder="Выберите регион"
+              size="sm"
               isSearchable={false}
               onChange={(opt) => {
                 field.onChange(opt?.id);
@@ -153,8 +153,9 @@ const Step1Phone = () => {
               isDisabled={!regionCode}
               options={DISTRICTS?.[regionCode] || []}
               getOptionLabel={(option) => option?.name}
-              getOptionValue={(option: any) => option?.value}
+              getOptionValue={(option: any) => option?.id}
               isSearchable={false}
+              size="sm"
               value={
                 DISTRICTS?.[regionCode]?.find((i) => i?.id === field?.value) ||
                 null

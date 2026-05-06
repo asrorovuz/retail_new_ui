@@ -3,6 +3,7 @@ import { showErrorLocalMessage } from "@/shared/lib/showMessage";
 import { Button, Dialog, FormItem, Select } from "@/shared/ui/kit";
 import { useEffect, useMemo, useState } from "react";
 import { FaPlus } from "react-icons/fa";
+import FullKeyboard from "../keyboard/FullKeyboard";
 
 interface SellDebetModalProps {
   isOpen: boolean;
@@ -61,7 +62,7 @@ const SellDebetModal = ({
 
   return (
     <Dialog
-      width={350}
+      width={"60vw"}
       title="Выбор клиента"
       isOpen={isOpen}
       onClose={onCancel}
@@ -97,16 +98,17 @@ const SellDebetModal = ({
 
       <FormItem label="Комментарий" className="!mb-3">
         <textarea
-          className="w-full border rounded-xl resize-none h-32 px-3 py-2"
+          className="w-full border rounded-xl resize-none h-32 px-3 py-2 outline-none focus:ring-1 focus:ring-blue-400"
           placeholder="Введите комментарий"
           value={contragent.comment}
+          inputMode="none"
           onChange={(e) =>
             setContragent((prev) => ({ ...prev, comment: e.target.value }))
           }
         />
       </FormItem>
 
-      <div className="flex gap-x-2 mt-2">
+      <div className="flex gap-x-2 my-2">
         <Button onClick={onCancel} className="w-full" size="sm" type="button">
           Отменить
         </Button>
@@ -120,6 +122,7 @@ const SellDebetModal = ({
           Сохранить
         </Button>
       </div>
+      <FullKeyboard/>
     </Dialog>
   );
 };

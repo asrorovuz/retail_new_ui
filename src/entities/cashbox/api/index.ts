@@ -160,3 +160,44 @@ export const deleteCashExpenseApi = async (id: number): Promise<any> => {
     method: "POST",
   });
 };
+
+
+export const getPrintXReportApi = async (
+  id: number
+): Promise<any> => {
+  return await apiRequest<any>({
+    url: pathServices.fiscalized.getPrintFiscalXReport + id,
+    method: "GET",
+    data: null,
+  });
+};
+
+export const getOpenZReportApi = async (
+  id: number
+): Promise<any> => {
+  return await apiRequest<any>({
+    url: pathServices.fiscalized.getOpenZReport + id,
+    method: "GET",
+    data: null,
+  });
+};
+
+export const getCloseZReportApi = async (
+  id: number
+): Promise<any> => {
+  return await apiRequest<any>({
+    url: pathServices.fiscalized.getCloseZReport + id,
+    method: "GET",
+    data: null,
+  });
+};
+
+export const getSyncReportApi = async (
+  id: number
+): Promise<any> => {
+  return await apiRequest<any>({
+    url: pathServices.fiscalized.getSyncReport + id,
+    method: "GET",
+    data: null,
+  });
+};

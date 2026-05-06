@@ -9,6 +9,14 @@ const QuertyKeyboard = ({ setActiveType, setSearch }: any) => {
     const [upperLater, setUpperLater] = useState(false);
     const [lang, setLang] = useState("en");
 
+    // 🍏 iOS key style
+    const keyClass =
+        "w-full h-10 p-0 text-[17px] font-medium " +
+        "rounded " +
+        "bg-[#ffffff] text-black " +
+        "hover:bg-[#f2f2f2] " +
+        "active:bg-blue-200 "
+
     const keysEn = [
         "q",
         "w",
@@ -76,18 +84,11 @@ const QuertyKeyboard = ({ setActiveType, setSearch }: any) => {
         "ь",
         "б",
         "ю",
-
         ".",
     ];
 
     const changeLang = () => {
-        if (lang === "en") {
-            setLang("ru");
-        }
-
-        if (lang === "ru") {
-            setLang("en");
-        }
+        setLang((prev) => (prev === "en" ? "ru" : "en"));
     };
 
     const onBackSpace = () => {
@@ -98,53 +99,21 @@ const QuertyKeyboard = ({ setActiveType, setSearch }: any) => {
         setSearch((prev: string) => prev + sym);
     };
 
-    // useEffect(() => {
-    //     const handleKeyDown = (e: KeyboardEvent) => {
-    //         if (activeType !== "querty") return;
-
-    //         if (e.key === "Enter") {
-    //             setActiveType("numeric");
-    //             setSearch("");
-    //             return;
-    //         }
-    //         if (e.key === "Backspace") {
-    //             onBackSpace();
-    //             return;
-    //         }
-    //         if (e.key === " ") {
-    //             onWriteSymbol(" ");
-    //             return;
-    //         }
-    //         if (e.key === "Shift") {
-    //             setUpperLater((prev) => !prev);
-    //             return;
-    //         }
-
-    //         if (e.key.length === 1) {
-    //             const char = upperLater ? e.key.toUpperCase() : e.key;
-    //             onWriteSymbol(char);
-    //         }
-    //     };
-
-    //     window.addEventListener("keyup", handleKeyDown);
-    //     return () => window.removeEventListener("keydown", handleKeyDown);
-    // }, [activeType, upperLater, onWriteSymbol, onBackSpace]);
-
     return (
-        <div className="h-[28vh]">
+        <div className="h-max p-2 rounded-2xl bg-[#d1d5db]">
+            {/* Keys */}
             <div
                 className={classNames(
-                    "grid grid-rows-3 gap-1 mb-1",
+                    "grid grid-rows-3 gap-0.5 mb-0.5",
                     lang === "en" ? "grid-cols-10" : "grid-cols-12",
                 )}
             >
-                {(lang === "en" ? keysEn : keysRu)?.map((key, index) => {
+                {(lang === "en" ? keysEn : keysRu).map((key, index) => {
                     if (typeof key === "string") {
                         return (
                             <Button
                                 key={index}
-                                variant="solid"
-                                className="w-full h-12 p-0 bg-white font-medium text-xl text-slate-800 hover:bg-blue-50 transition-all"
+                                className={keyClass}
                                 type="button"
                                 onMouseDown={(e) => {
                                     e.preventDefault();
@@ -165,8 +134,11 @@ const QuertyKeyboard = ({ setActiveType, setSearch }: any) => {
                     return (
                         <Button
                             key={index}
-                            variant="solid"
-                            className="w-full h-12 bg-white p-0 font-medium text-xl text-slate-800 hover:bg-blue-50 transition-all"
+                            className={classNames(
+                                keyClass,
+                                "bg-[#e5e7eb]",
+                                upperLater && "bg-[#c7d2fe]",
+                            )}
                             type="button"
                             icon={key}
                             onMouseDown={(e) => {
@@ -177,9 +149,9 @@ const QuertyKeyboard = ({ setActiveType, setSearch }: any) => {
                     );
                 })}
 
+                {/* Backspace */}
                 <Button
-                    variant="solid"
-                    className="w-full h-12 bg-white p-0 font-medium text-xl text-slate-800 hover:bg-blue-50 transition-all"
+                    className={classNames(keyClass, "bg-[#e5e7eb]")}
                     type="button"
                     icon={<RiDeleteBack2Line />}
                     onMouseDown={(e) => {
@@ -188,40 +160,27 @@ const QuertyKeyboard = ({ setActiveType, setSearch }: any) => {
                     }}
                 />
             </div>
-            <div className="grid grid-cols-10 gap-1">
-                <Button
-                    variant="solid"
-                    type="button"
-                    className="bg-white h-12 p-0 text-slate-800 font-medium text-xs w-full hover:bg-blue-50 transition-all"
+
+            {/* Bottom */}
+            <div className="grid grid-cols-10 gap-0.5">
+                <div className="grid grid-cols-2 col-span-3">
+                    <Button
+                    className={classNames(keyClass, "bg-[#e5e7eb] text-xs")}
                     onClick={() => setActiveType("numeric")}
                 >
                     123
                 </Button>
+
                 <Button
-                    variant="solid"
-                    type="button"
-                    className="bg-white h-12 p-0 text-slate-800 font-medium text-xs w-full hover:bg-blue-50 transition-all"
+                    className={classNames(keyClass, "bg-[#e5e7eb] text-xs")}
                     onClick={changeLang}
                 >
-                    РУС
+                    {lang === "ru" ? "ENG" : "РУС"}
                 </Button>
-                {/* <Button
-          variant="solid"
-          icon={<IoCaretBackOutline />}
-          className="bg-white h-12 p-0 text-slate-800 font-medium text-xl w-full hover:bg-blue-50 transition-all"
-          onClick={() => blurActiveField()}
-        />
-        <Button
-          variant="solid"
-          icon={<IoCaretForwardOutline />}
-          className="bg-white h-12 p-0 text-slate-800 font-medium text-xl w-full hover:bg-blue-50 transition-all"
-          onClick={() => blurActiveField()}
-          
-        /> */}
+                </div>
+
                 <Button
-                    variant="solid"
-                    type="button"
-                    className="bg-white h-12 p-0 text-slate-800 font-medium text-xl w-full hover:bg-blue-50 transition-all"
+                    className={keyClass}
                     onMouseDown={(e) => {
                         e.preventDefault();
                         onWriteSymbol("-");
@@ -229,11 +188,10 @@ const QuertyKeyboard = ({ setActiveType, setSearch }: any) => {
                 >
                     -
                 </Button>
+
                 <Button
-                    variant="solid"
-                    type="button"
                     icon={<RiSpace />}
-                    className="bg-white h-12 p-0 col-span-3 text-slate-800 font-medium text-xl w-full hover:bg-blue-50 transition-all"
+                    className={classNames(keyClass, "col-span-2")}
                     onMouseDown={(e) => {
                         e.preventDefault();
                         onWriteSymbol(" ");
@@ -241,19 +199,19 @@ const QuertyKeyboard = ({ setActiveType, setSearch }: any) => {
                 />
 
                 <Button
-                    variant="solid"
-                    type="button"
                     icon={<AiOutlineEnter />}
-                    className="bg-white h-12 p-0 col-span-2 text-slate-800 font-medium text-xl w-full hover:bg-blue-50 transition-all"
+                    className={classNames(keyClass, "col-span-2 bg-[#e5e7eb]")}
                     onMouseDown={() => {
                         setActiveType("numeric");
                         setSearch("");
                     }}
                 />
+
                 <Button
-                    variant="solid"
-                    type="button"
-                    className="bg-white h-12 p-0 col-span-2 text-slate-800 font-medium text-sm w-full hover:bg-blue-50 transition-all"
+                    className={classNames(
+                        keyClass,
+                        "col-span-2 bg-[#e5e7eb] text-sm",
+                    )}
                     onMouseDown={(e) => {
                         e.preventDefault();
                         setSearch("");

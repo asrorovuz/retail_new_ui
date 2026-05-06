@@ -1,6 +1,6 @@
 import type { GlobalLogin, LoginPayload, LoginResponse, Organizationtype } from "@/@types/auth/login";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createContractorApi, deleteContractorApi, fetchAuthStatus, fetchConfirmCode, globalLogin, login, register, registeration, registerOrg, updateContractorApi } from "../api";
+import { addAccountApi, createContractorApi, deleteAccountApi, deleteContractorApi, fetchAuthStatus, fetchConfirmCode, getAllAccounts, globalLogin, login, register, registeration, registerOrg, registerOrgLocal, resetPass, updateContractorApi, updatePasswordApi, updatePermissionApi } from "../api";
 
 
 export const useLogin = () => {
@@ -9,10 +9,34 @@ export const useLogin = () => {
   });
 };
 
+export const useResetPass = () => {
+  return useMutation<any, Error, any>({
+    mutationFn: resetPass,
+  });
+};
+
 export const useAuthStatus = () => {
   return useQuery({
     queryKey: ["auth-status"],
     queryFn: fetchAuthStatus,
+  });
+};
+
+export const useGetAllAcounts = () => {
+  return useQuery({
+    queryKey: ["all-accounts"],
+    queryFn: getAllAccounts,
+  });
+};
+
+export const useUpdatePassword = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ payload, id }: { payload: any; id: number }) =>
+      updatePasswordApi(payload, id),
+    onSuccess() {
+      queryClient.invalidateQueries({ queryKey: ["passord-change"] });
+    },
   });
 };
 
@@ -48,6 +72,26 @@ export const useCreateContractor = () => {
   });
 };
 
+export const useAddAccount = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: any) => addAccountApi(data),
+    onSuccess() {
+      queryClient.invalidateQueries({ queryKey: ["all-accounts"] });
+    },
+  });
+};
+
+export const useUpdatePermission = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: any) => updatePermissionApi(data),
+    onSuccess() {
+      queryClient.invalidateQueries({ queryKey: ["permission-id"] });
+    },
+  });
+};
+
 export const useUpdateContractor = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -69,6 +113,16 @@ export const useDeleteContractor = () => {
   });
 };
 
+export const useDeleteAccount = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => deleteAccountApi(id),
+    onSuccess() {
+      queryClient.invalidateQueries({ queryKey: ["all-accounts"] });
+    },
+  });
+};
+
 export const useRegisteration = () => {
   return useMutation<any, Error, any>({
     mutationFn: registeration,
@@ -83,6 +137,6 @@ export const useRegisterOrg = () => {
 
 export const useRegisterOrgLocal = () => {
   return useMutation<any, Error, any>({
-    mutationFn: registerOrg,
+    mutationFn: registerOrgLocal,
   })
 }

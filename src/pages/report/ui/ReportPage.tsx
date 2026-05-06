@@ -123,7 +123,7 @@ const ReportPage = () => {
         );
 
     return (
-        <div className="bg-white h-full rounded-2xl p-4">
+        <div className="bg-white h-screen p-3">
             <NavigateButton content="Отчёты по продажам за период" />
             <div className="mb-3 grid grid-cols-4 gap-2 justify-between">
                 <Select
@@ -187,9 +187,9 @@ const ReportPage = () => {
                     />
                 </div>
             </div>
-            <div className={classNames("flex flex-col mb-3 h-[78vh]")}>
+            <div className={classNames("flex flex-col mb-3 h-full flex-1")}>
                 {/* 🔹 Jadval */}
-                <div className="h-full mb-3 border border-slate-300 rounded-3xl overflow-auto">
+                <div className="h-full flex-1 mb-3 border border-slate-300 rounded-lg overflow-auto">
                     {data && data?.length > 0 && !isPending ? (
                         <Table className="min-w-full table-fixed border-separate border-spacing-0">
                             <THead className="sticky top-0">

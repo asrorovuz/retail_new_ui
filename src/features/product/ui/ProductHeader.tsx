@@ -34,6 +34,8 @@ import { CiSquarePlus } from "react-icons/ci";
 import { PiMicrosoftExcelLogo } from "react-icons/pi";
 import UpdateCatalogCode from "@/features/update-catalog-code/ui/UpdateCatalogCode";
 import { FiRefreshCw } from "react-icons/fi";
+import { AccountPermissions } from "@/app/constants/permissions";
+import { useCheckPermission } from "@/shared/lib/checkPermission";
 
 const ProductHeader = ({
     search,
@@ -44,11 +46,15 @@ const ProductHeader = ({
     setFilterParams,
     setIsAddOpen,
     setIsOpen,
+    setBarcode,
     setIsOpenExcel,
 }: any) => {
     const [openFilter, setOpenFilter] = useState(false);
     const [showInformation, setShowInformation] = useState(false);
-    const [isUpdateCatalogCodeOpen, setIsUpdateCatalogCodeOpen] = useState(false);
+    const [isUpdateCatalogCodeOpen, setIsUpdateCatalogCodeOpen] =
+        useState(false);
+
+    const checkPermission = useCheckPermission();
 
     const { data: categoryData } = useCategoryApi();
     const { data: infoData } = useAllInfoProductApi(
@@ -80,8 +86,8 @@ const ProductHeader = ({
     }, [categoryData]);
 
     return (
-        <div className="mb-3 flex items-center justify-between">
-            <div className="w-[433px] flex items-center gap-x-2">
+        <div className="mb-3 flex items-center justify-between gap-x-1">
+            <div className="w-[433px] flex items-center gap-x-1">
                 <SearchProduct
                     search={search}
                     pageType={false}
@@ -92,7 +98,7 @@ const ProductHeader = ({
                 />
                 {/* Остаток */}
                 <Select
-                    className="w-[276px]"
+                    className="w-[200px]"
                     options={stateOptions}
                     placeholder="Остатки товары"
                     isSearchable={false}
@@ -110,7 +116,7 @@ const ProductHeader = ({
                     styles={selectStyles}
                 />
             </div>
-            <div className="flex items-center gap-x-2">
+            <div className="flex items-center gap-x-1">
                 <Button
                     size="sm"
                     variant="default"
@@ -143,43 +149,53 @@ const ProductHeader = ({
 
                 <Dropdown
                     toggleClassName="text-base text-slate-600 flex justify-center"
-                    renderTitle={<Button size="sm">Добавить</Button>}
+                    renderTitle={<Button variant="solid" size="sm">+ Добавить</Button>}
                 >
-                    <DropdownItem
-                        onClick={() => setIsAddOpen(true)}
-                        className="h-auto!"
-                    >
-                        <div className="w-full flex items-center gap-2 text-slate-700 py-3 px-5 rounded-xl">
-                            <span className="text-green-700">
-                                <CiSquarePlus size={20} />
-                            </span>{" "}
-                            Добавить товар
-                        </div>
-                    </DropdownItem>
-                    <DropdownItem
-                        onClick={() => {
-                            setIsOpen(true);
-                        }}
-                        className="h-auto!"
-                    >
-                        <div className="w-full flex items-center gap-2  py-3 px-5 rounded-xl">
-                            <span className="text-green-700">
-                                <CiSquarePlus size={20} />
-                            </span>{" "}
-                            Добавить несколько товаров
-                        </div>
-                    </DropdownItem>
-                    <DropdownItem
-                        onClick={() => setIsOpenExcel(true)}
-                        className="h-auto!"
-                    >
-                        <div className="w-full flex items-center gap-2  py-3 px-5 rounded-xl">
-                            <span className="text-green-700">
-                                <PiMicrosoftExcelLogo size={20} />
-                            </span>{" "}
-                            Импорт из Excel
-                        </div>
-                    </DropdownItem>
+                    {checkPermission(
+                        AccountPermissions.AccountPermissionProductCreate,
+                    ) && (
+                        <>
+                            <DropdownItem
+                                onClick={() => {
+                                    setIsAddOpen(true);
+                                    setBarcode(null);
+                                    setSearch("");
+                                }}
+                                className="h-auto!"
+                            >
+                                <div className="w-full flex items-center gap-2 text-slate-700 py-3 px-5 rounded-xl">
+                                    <span className="text-green-700">
+                                        <CiSquarePlus size={20} />
+                                    </span>{" "}
+                                    Добавить товар
+                                </div>
+                            </DropdownItem>
+                            <DropdownItem
+                                onClick={() => {
+                                    setIsOpen(true);
+                                }}
+                                className="h-auto!"
+                            >
+                                <div className="w-full flex items-center gap-2  py-3 px-5 rounded-xl">
+                                    <span className="text-green-700">
+                                        <CiSquarePlus size={20} />
+                                    </span>{" "}
+                                    Добавить несколько товаров
+                                </div>
+                            </DropdownItem>
+                            <DropdownItem
+                                onClick={() => setIsOpenExcel(true)}
+                                className="h-auto!"
+                            >
+                                <div className="w-full flex items-center gap-2  py-3 px-5 rounded-xl">
+                                    <span className="text-green-700">
+                                        <PiMicrosoftExcelLogo size={20} />
+                                    </span>{" "}
+                                    Импорт из Excel
+                                </div>
+                            </DropdownItem>
+                        </>
+                    )}
 
                     <DropdownItem
                         onClick={() => setIsUpdateCatalogCodeOpen(true)}
@@ -201,7 +217,10 @@ const ProductHeader = ({
                 infoData={infoData}
             />
 
-            <UpdateCatalogCode isOpen={isUpdateCatalogCodeOpen} setIsOpen={setIsUpdateCatalogCodeOpen} />
+            <UpdateCatalogCode
+                isOpen={isUpdateCatalogCodeOpen}
+                setIsOpen={setIsUpdateCatalogCodeOpen}
+            />
 
             <Dialog
                 onClose={() => setOpenFilter(false)}
@@ -227,6 +246,7 @@ const ProductHeader = ({
                                         option.value as FilterParams["is_legal"],
                                 })
                             }
+                            isSearchable={false}
                             menuPortalTarget={document.body}
                             menuPosition="fixed"
                             styles={selectStyles}
@@ -251,6 +271,7 @@ const ProductHeader = ({
                                         option?.value as FilterParams["category_exists"],
                                 }))
                             }
+                            isSearchable={false}
                             menuPortalTarget={document.body}
                             menuPosition="fixed"
                             styles={selectStyles}
@@ -279,9 +300,10 @@ const ProductHeader = ({
                                         : null,
                                 }))
                             }
-                            isClearable
+                            isSearchable={false}
                             menuPortalTarget={document.body}
                             menuPosition="fixed"
+                            isClearable
                             styles={selectStyles}
                         />
                     </div>
@@ -312,6 +334,7 @@ const ProductHeader = ({
                                 }))
                             }
                             isClearable
+                            isSearchable={false}
                             menuPortalTarget={document.body}
                             menuPosition="fixed"
                             styles={selectStyles}
@@ -336,6 +359,7 @@ const ProductHeader = ({
                                         option?.value as FilterParams["sku_exists"],
                                 }))
                             }
+                            isSearchable={false}
                             menuPortalTarget={document.body}
                             menuPosition="fixed"
                             styles={selectStyles}
@@ -362,6 +386,7 @@ const ProductHeader = ({
                                         option?.value as FilterParams["barcode_exists"],
                                 }))
                             }
+                            isSearchable={false}
                             getOptionLabel={(opt) => opt.label}
                             getOptionValue={(opt) => String(opt.value)}
                             menuPortalTarget={document.body}
@@ -391,6 +416,7 @@ const ProductHeader = ({
                                         option?.value as FilterParams["catalog_code_exists"],
                                 }));
                             }}
+                            isSearchable={false}
                             getOptionLabel={(opt) => opt.label}
                             getOptionValue={(opt) => String(opt.value)}
                             menuPortalTarget={document.body}
@@ -418,6 +444,7 @@ const ProductHeader = ({
                                         option?.value as FilterParams["code_exists"],
                                 }))
                             }
+                            isSearchable={false}
                             getOptionLabel={(opt) => opt.label}
                             getOptionValue={(opt) => String(opt.value)}
                             menuPortalTarget={document.body}
@@ -444,6 +471,7 @@ const ProductHeader = ({
                                     sort: option?.value as FilterParams["sort"],
                                 }))
                             }
+                            isSearchable={false}
                             getOptionLabel={(opt) => opt.label}
                             getOptionValue={(opt) => String(opt.value)}
                             menuPortalTarget={document.body}
@@ -476,6 +504,7 @@ const ProductHeader = ({
                                         option?.value as FilterParams["is_selling_at_loss"],
                                 }))
                             }
+                            isSearchable={false}
                             getOptionLabel={(opt) => opt.label}
                             getOptionValue={(opt) => String(opt.value)}
                             menuPortalTarget={document.body}

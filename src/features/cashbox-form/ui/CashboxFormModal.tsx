@@ -104,8 +104,6 @@ const CashboxFormModal = ({
               : updateCashExpenseMutate;
 
     const onMagintButton = (index: number) => {
-        console.log(cashbox);
-
         if (type === 2 || type === 3) {
             // 1️⃣ Tanlangan kassa
             const selectedCashbox = getValues("cashbox");
@@ -465,7 +463,7 @@ const CashboxFormModal = ({
                                                                     ?.message
                                                             }
                                                             className={
-                                                                "w-[calc(100%-350px)]"
+                                                                "w-[calc(100%-250px)]"
                                                             }
                                                         >
                                                             <Input
@@ -476,6 +474,7 @@ const CashboxFormModal = ({
                                                                     borderRadius:
                                                                         "0",
                                                                 }}
+                                                                space={false}
                                                                 onFocus={
                                                                     handleFocusAction
                                                                 }
@@ -515,8 +514,8 @@ const CashboxFormModal = ({
                                                                     type ===
                                                                         2 ||
                                                                     type === 3
-                                                                        ? "w-[125px]"
-                                                                        : "w-[175px]"
+                                                                        ? "w-[25px]"
+                                                                        : "w-[75px]"
                                                                 }
                                                                 isDisabled={
                                                                     filterCurrencies?.length! <=

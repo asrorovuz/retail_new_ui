@@ -1,6 +1,13 @@
 import { apiRequest } from "@/app/config/axios";
 import { pathServices } from "@/entities/path";
 
+export const getAllIDPermission = async (id: string | null): Promise<any> => {
+  return await apiRequest<any>({
+    url: pathServices.settings.permissionPat + id,
+    method: "GET",
+  });
+};
+
 // UPDATE
 export const updateCashRegisterArca = async (
   payload: any,
@@ -41,6 +48,17 @@ export const updateCashRegisterHippoPos = async (
     method: "POST",
     data: payload,
     url: `${pathServices.fiscalized.updateCashRegisterHippoPos}${id}`,
+  });
+};
+
+export const updateCashRegisterHippoPos4 = async (
+  payload: any,
+  id: number | string
+) => {
+  return await apiRequest({
+    method: "POST",
+    data: payload,
+    url: `${pathServices.fiscalized.updateCashRegisterHippoPos4}${id}`,
   });
 };
 
@@ -110,6 +128,14 @@ export const postCashRegisterHippoPos = async (payload: any) => {
     method: "POST",
     data: payload,
     url: pathServices.fiscalized.addCashRegisterHippoPos,
+  });
+};
+
+export const postCashRegisterHippoPos4 = async (payload: any) => {
+  return apiRequest({
+    method: "POST",
+    data: payload,
+    url: pathServices.fiscalized.addCashRegisterHippoPos4,
   });
 };
 

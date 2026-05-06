@@ -5,8 +5,8 @@ import { useDraftRefundStore } from "@/app/store/useRefundDraftStore";
 import { useDraftSaleStore } from "@/app/store/useSaleDraftStore";
 import { useDeleteTransactions } from "@/entities/history/repository";
 import classNames from "@/shared/lib/classNames";
+import { usePermission } from "@/shared/lib/controlActionWithPermission";
 import CurrencyName from "@/shared/lib/CurrencyName";
-import { onChangePagination } from "@/shared/lib/onPaginationChange";
 import payment from "@/shared/lib/payment";
 import { showErrorMessage, showSuccessMessage } from "@/shared/lib/showMessage";
 import { Dropdown, Pagination, Table, Tooltip } from "@/shared/ui/kit";
@@ -20,6 +20,7 @@ import TFoot from "@/shared/ui/kit/Table/TFoot";
 import Th from "@/shared/ui/kit/Table/Th";
 import THead from "@/shared/ui/kit/Table/THead";
 import Tr from "@/shared/ui/kit/Table/Tr";
+import Loading from "@/shared/ui/loading";
 import {
     useReactTable,
     getCoreRowModel,
@@ -37,7 +38,6 @@ const TableHistory = ({
     data,
     count,
     setParams,
-    isOpenFilter,
     setViewModal,
     params,
     loading,
@@ -48,8 +48,7 @@ const TableHistory = ({
     data: any[];
     count: number;
     setParams: any;
-    setViewModal: any;
-    isOpenFilter: boolean;
+    setViewModal: any; 
     params: any;
     loading: boolean;
     pay: boolean;
@@ -61,9 +60,6 @@ const TableHistory = ({
     const navigate = useNavigate();
     const { mutate: deleteMutation, isPending: deletePending } =
         useDeleteTransactions(type);
-    const onPaginationChange = (updater: any) => {
-        onChangePagination(updater, params, setParams);
-    };
 
     const { addDraftSale, draftSales, activateDraftSale } = useDraftSaleStore();
     const { addDraftRefund, draftRefunds, activateDraftRefund } =
@@ -75,6 +71,11 @@ const TableHistory = ({
         setIsOpenDelete(false);
         setId(null);
     };
+    const { checkPermissionByAction } = usePermission();
+
+    const canUpdate = checkPermissionByAction(type, "update");
+    const canDelete = checkPermissionByAction(type, "delete");
+    const canView = checkPermissionByAction(type, "view");
 
     const onDeleteFunc = () => {
         if (!id) return;
@@ -178,42 +179,27 @@ const TableHistory = ({
     const columns = useMemo<ColumnDef<any>[]>(() => {
         return [
             {
-                id: "№",
-                enableSorting: false,
-                enableHiding: false,
-                meta: {
-                    cellClassName: "text-center !w-10",
-                },
-                header: () => {
-                    return `№`;
-                },
-                cell: ({ row }) => {
-                    return (
-                        <span className="cursor-pointer font-bold !w-10">
-                            {(params.skip || 0) + (row.index + 1)}
-                        </span>
-                    );
-                },
+                id: "index",
+                header: "№",
+                cell: (info) => (
+                    <div className="!w-10">
+                        {(params?.pageIndex - 1) * params?.pageSize +
+                            (info?.row?.index + 1)}
+                    </div>
+                ),
             },
             {
                 id: "number",
-                enableSorting: false,
-                enableHiding: false,
-                meta: {
-                    cellClassName: "text-center",
-                },
-                header: () => {
-                    return "Номер";
-                },
+                header: "Номер",
                 cell: ({ row }) => {
                     const number = row?.original.number;
                     return (
-                        <span
-                            className="cursor-pointer font-bold hover:text-primary"
+                        <div
+                            className="cursor-pointer font-bold hover:text-primary text-center"
                             onClick={() => onSubmit(row.original)}
                         >
                             {number}
-                        </span>
+                        </div>
                     );
                 },
             },
@@ -248,7 +234,7 @@ const TableHistory = ({
                     const totals = row?.original?.totals;
 
                     return (
-                        <div>
+                        <div className="text-nowrap">
                             {totals ? (
                                 totals?.map((item: any, index: number) => (
                                     <p
@@ -269,6 +255,8 @@ const TableHistory = ({
                         </div>
                     );
                 },
+                maxSize: 150,
+                minSize: 150,
             },
             ...(pay
                 ? [
@@ -373,6 +361,8 @@ const TableHistory = ({
                                   </div>
                               );
                           },
+                          maxSize: 150,
+                          minSize: 150,
                       },
                       {
                           id: "debt",
@@ -428,6 +418,8 @@ const TableHistory = ({
                                   </div>
                               );
                           },
+                          maxSize: 150,
+                          minSize: 150,
                       },
                       {
                           id: "cashbox",
@@ -466,6 +458,9 @@ const TableHistory = ({
                 header: () => {
                     return "Примечание";
                 },
+                cell: ({ row }) => {
+                    return <div>{row?.original?.comment}</div>;
+                },
             },
             {
                 id: "date",
@@ -494,52 +489,58 @@ const TableHistory = ({
                         "text-center sticky right-0 z-999 !bg-white dark:!bg-slate-800 hover:!bg-white dark:hover:!bg-slate-800 shadow-[inset_0_0_0_#e5e7eb] dark:shadow-[inset_0_0_0_#374151]",
                 },
                 header: () => {
-                    return "Действие";
+                    return "";
                 },
                 cell: ({ row }) => {
                     return (
                         <Dropdown
                             renderTitle={
-                                <div className="flex justify-center text-2xl text-slate-600">
+                                <div className="flex px-2 justify-center text-2xl text-slate-600">
                                     <HiOutlineDotsHorizontal />
                                 </div>
                             }
                         >
-                            <DropdownItem
-                                onClick={() =>
-                                    setViewModal({
-                                        isOpen: true,
-                                        id: row?.id,
-                                    })
-                                }
-                                className="h-auto!"
-                            >
-                                <div className="w-full flex items-center gap-2 text-slate-700 py-3 px-5 rounded-xl">
-                                    <TbEye size={22} />
-                                    Посмотреть
-                                </div>
-                            </DropdownItem>
-                            <DropdownItem
-                                onClick={() => onSubmit(row.original)}
-                                className="h-auto!"
-                            >
-                                <div className="w-full flex items-center gap-2 text-orange-500 py-3 px-5 rounded-xl">
-                                    <FaRegEdit size={20} />
-                                    Редактировать
-                                </div>
-                            </DropdownItem>
-                            <DropdownItem
-                                onClick={() => {
-                                    setId(row.original.id);
-                                    setIsOpenDelete(true);
-                                }}
-                                className="h-auto!"
-                            >
-                                <div className="w-full flex items-center gap-2 text-red-500 py-3 px-5 rounded-xl">
-                                    <IoTrashOutline size={20} />
-                                    Удалить
-                                </div>
-                            </DropdownItem>
+                            {canView && (
+                                <DropdownItem
+                                    onClick={() =>
+                                        setViewModal({
+                                            isOpen: true,
+                                            id: row?.id,
+                                        })
+                                    }
+                                    className="h-auto!"
+                                >
+                                    <div className="w-full flex items-center gap-2 text-slate-700 py-3 px-5 rounded-lg">
+                                        <TbEye size={22} />
+                                        Посмотреть
+                                    </div>
+                                </DropdownItem>
+                            )}
+                            {canUpdate && (
+                                <DropdownItem
+                                    onClick={() => onSubmit(row.original)}
+                                    className="h-auto!"
+                                >
+                                    <div className="w-full flex items-center gap-2 text-orange-500 py-3 px-5 rounded-lg">
+                                        <FaRegEdit size={20} />
+                                        Редактировать
+                                    </div>
+                                </DropdownItem>
+                            )}
+                            {canDelete && (
+                                <DropdownItem
+                                    onClick={() => {
+                                        setId(row.original.id);
+                                        setIsOpenDelete(true);
+                                    }}
+                                    className="h-auto!"
+                                >
+                                    <div className="w-full flex items-center gap-2 text-red-500 py-3 px-5 rounded-lg">
+                                        <IoTrashOutline size={20} />
+                                        Удалить
+                                    </div>
+                                </DropdownItem>
+                            )}
                         </Dropdown>
                     );
                 },
@@ -602,195 +603,207 @@ const TableHistory = ({
         data,
         columns,
         getCoreRowModel: getCoreRowModel(),
-        getRowId: (row: any) => row.id,
-        onPaginationChange: onPaginationChange,
-        autoResetPageIndex: false,
-        manualPagination: true,
-        manualFiltering: true,
-        manualSorting: true,
-        enableSorting: true,
-        enableSortingRemoval: true,
-        rowCount: count,
-        state: {
-            pagination: {
-                pageIndex: params.skip / (params.limit || 1),
-                pageSize: params.limit,
-            },
-        },
+        // getRowId: (row: any) => row.id,
+        // onPaginationChange: onPaginationChange,
+        // autoResetPageIndex: false,
+        // manualPagination: true,
+        // manualFiltering: true,
+        // manualSorting: true,
+        // enableSorting: true,
+        // enableSortingRemoval: true,
+        // rowCount: count,
+        // state: {
+        //     pagination: {
+        //         pageIndex: params.skip / (params.limit || 1),
+        //         pageSize: params.limit,
+        //     },
+        // },
     });
 
-    let customHeiht = isOpenFilter
-        ? "h-[calc(100%-300px)]"
-        : "h-[calc(100%-60px)]";
+    if (loading)
+        return (
+            <div className={classNames("p-4 space-y-3 mb-3 h-full")}>
+                <Loading />
+            </div>
+        );
 
     return (
-        <div className={`${customHeiht} flex flex-col`}>
+        <div className="bg-white h-screen p-2 flex flex-col">
             <div
-                className={`flex-1 mb-3 border border-slate-200 rounded-3xl overflow-y-auto`}
-            >
-                {data && data?.length > 0 && !loading ? (
-                    <Table className="w-full table-fixed">
-                        <THead className="bg-white sticky top-0 z-10">
-                            {table.getHeaderGroups().map((headerGroup) => (
-                                <Tr key={headerGroup.id}>
-                                    {headerGroup.headers.map((header, ind) => (
-                                        <Th key={header.id}>
-                                            <div
-                                                className={classNames(
-                                                    !ind && "w-10",
-                                                    "text-left font-medium text-xs xl:text-sm text-slate-800",
-                                                    header.column.columnDef.meta
-                                                        ?.headerClassName,
-                                                )}
-                                            >
-                                                {flexRender(
-                                                    header.column.columnDef
-                                                        .header,
-                                                    header.getContext(),
-                                                )}
-                                            </div>
-                                        </Th>
-                                    ))}
-                                </Tr>
-                            ))}
-                        </THead>
-                        <TBody>
-                            {table.getRowModel().rows.map((row, index) => (
-                                <Tr
-                                    key={row.id}
-                                    className={`${
-                                        index % 2 ? "bg-white" : "bg-slate-100"
-                                    } hover:bg-slate-100 transition`}
-                                >
-                                    {row.getVisibleCells().map((cell, ind) => (
-                                        <Td
-                                            className={classNames(
-                                                cell.column.columnDef.meta
-                                                    ?.color || "#fff",
-                                            )}
-                                            key={cell.id}
-                                        >
-                                            <div
-                                                className={classNames(
-                                                    !ind && "w-10",
-                                                    "py-1 px-3 text-xs xl:text-sm",
-                                                )}
-                                            >
-                                                {flexRender(
-                                                    cell.column.columnDef.cell,
-                                                    cell.getContext(),
-                                                )}
-                                            </div>
-                                        </Td>
-                                    ))}
-                                </Tr>
-                            ))}
-                        </TBody>
-                        <TFoot className="sticky bottom-0 bg-white border-t">
-                            <Tr className="font-bold bg-slate-50">
-                                {/* № */}
-                                <Td>
-                                    <div className="px-4">Итого</div>
-                                </Td>
-
-                                {/* Номер */}
-                                <Td />
-
-                                {/* Контрагент (agar pay bo‘lsa) */}
-                                {pay && <Td />}
-
-                                {/* 🔹 ИТОГО */}
-                                <Td>
-                                    <div className="px-4 text-end">
-                                        <p className="flex justify-end text-nowrap gap-1">
-                                            <FormattedNumber
-                                                value={summary?.totalsAmount}
-                                            />
-                                            <CurrencyName
-                                                currency={summary?.currency}
-                                            />
-                                        </p>
-                                    </div>
-                                </Td>
-
-                                {pay && (
-                                    <>
-                                        {/* 🔹 ОПЛАТА */}
-                                        <Td>
-                                            <div className="px-4 text-end">
-                                                <p className="flex justify-end text-nowrap gap-1">
-                                                    <FormattedNumber
-                                                        value={
-                                                            summary?.payAmount
-                                                        }
-                                                    />
-                                                    <CurrencyName
-                                                        currency={
-                                                            summary?.currency
-                                                        }
-                                                    />
-                                                </p>
-                                            </div>
-                                        </Td>
-
-                                        {/* 🔹 ДОЛГ */}
-                                        <Td>
-                                            <div className="px-4 text-end">
-                                                <p className="flex justify-end text-nowrap gap-1">
-                                                    <FormattedNumber
-                                                        value={
-                                                            summary?.debtAmount
-                                                        }
-                                                    />
-                                                    <CurrencyName
-                                                        currency={
-                                                            summary?.currency
-                                                        }
-                                                    />
-                                                </p>
-                                            </div>
-                                        </Td>
-
-                                        {/* Касса */}
-                                        <Td />
-                                    </>
-                                )}
-
-                                {/* Employee */}
-                                <Td />
-
-                                {/* Status */}
-                                <Td />
-
-                                {/* Note */}
-                                <Td />
-
-                                {/* Date */}
-                                <Td />
-
-                                {/* Action */}
-                                <Td />
-                            </Tr>
-                        </TFoot>
-                    </Table>
-                ) : (
-                    <Empty size={150} textSize="32px" />
+                className={classNames(
+                    "flex flex-col mb-3 h-[calc(100vh-136px)]",
                 )}
-            </div>
+            >
+                <div className="h-full mb-3 border-slate-300 rounded-lg overflow-auto">
+                    {data && data?.length > 0 && !loading ? (
+                        <Table className="rounded-lg">
+                            <THead className="sticky top-0">
+                                {table.getHeaderGroups().map((headerGroup) => (
+                                    <Tr key={headerGroup.id}>
+                                        {headerGroup.headers.map((header) => (
+                                            <Th
+                                                className={classNames(
+                                                    header.column.columnDef.meta
+                                                        ?.color,
+                                                    "border border-slate-200 bg-slate-200",
+                                                )}
+                                                key={header.id}
+                                            >
+                                                <div
+                                                    className={classNames(
+                                                        "px-4 py-2 text-left font-medium text-xs xl:text-sm text-slate-800",
+                                                    )}
+                                                >
+                                                    {flexRender(
+                                                        header.column.columnDef
+                                                            .header,
+                                                        header.getContext(),
+                                                    )}
+                                                </div>
+                                            </Th>
+                                        ))}
+                                    </Tr>
+                                ))}
+                            </THead>
+                            <TBody>
+                                {table.getRowModel().rows.map((row) => (
+                                    <Tr
+                                        key={row.id}
+                                        className={`hover:bg-slate-100 transition`}
+                                    >
+                                        {row.getVisibleCells().map((cell) => (
+                                            <Td
+                                                className={classNames(
+                                                    cell.column.columnDef.meta
+                                                        ?.color || "#fff",
+                                                    "border !py-0",
+                                                )}
+                                                key={cell.id}
+                                            >
+                                                <div
+                                                    className={classNames(
+                                                        cell.column.columnDef
+                                                            .meta
+                                                            ?.bodyCellClassName,
+                                                        "text-xs xl:text-sm px-1",
+                                                    )}
+                                                >
+                                                    {flexRender(
+                                                        cell.column.columnDef
+                                                            .cell,
+                                                        cell.getContext(),
+                                                    )}
+                                                </div>
+                                            </Td>
+                                        ))}
+                                    </Tr>
+                                ))}
+                            </TBody>
+                            <TFoot>
+                                <Tr className="font-bold bg-slate-200">
+                                    {/* № */}
+                                    <Td>
+                                        <div className="px-4 py-3">Итого</div>
+                                    </Td>
 
+                                    {/* Номер */}
+                                    <Td />
+
+                                    {/* Контрагент (agar pay bo‘lsa) */}
+                                    {pay && <Td />}
+
+                                    {/* 🔹 ИТОГО */}
+                                    <Td>
+                                        <div className="px-4 text-end">
+                                            <p className="flex justify-end text-nowrap gap-1">
+                                                <FormattedNumber
+                                                    value={
+                                                        summary?.totalsAmount
+                                                    }
+                                                />
+                                                <CurrencyName
+                                                    currency={summary?.currency}
+                                                />
+                                            </p>
+                                        </div>
+                                    </Td>
+
+                                    {pay && (
+                                        <>
+                                            {/* 🔹 ОПЛАТА */}
+                                            <Td>
+                                                <div className="px-4 text-end">
+                                                    <p className="flex justify-end text-nowrap gap-1">
+                                                        <FormattedNumber
+                                                            value={
+                                                                summary?.payAmount
+                                                            }
+                                                        />
+                                                        <CurrencyName
+                                                            currency={
+                                                                summary?.currency
+                                                            }
+                                                        />
+                                                    </p>
+                                                </div>
+                                            </Td>
+
+                                            {/* 🔹 ДОЛГ */}
+                                            <Td>
+                                                <div className="px-4 text-end">
+                                                    <p className="flex justify-end text-nowrap gap-1">
+                                                        <FormattedNumber
+                                                            value={
+                                                                summary?.debtAmount
+                                                            }
+                                                        />
+                                                        <CurrencyName
+                                                            currency={
+                                                                summary?.currency
+                                                            }
+                                                        />
+                                                    </p>
+                                                </div>
+                                            </Td>
+
+                                            {/* Касса */}
+                                            <Td />
+                                        </>
+                                    )}
+
+                                    {/* Employee */}
+                                    <Td />
+
+                                    {/* Status */}
+                                    <Td />
+
+                                    {/* Note */}
+                                    <Td />
+
+                                    {/* Date */}
+                                    <Td />
+
+                                    {/* Action */}
+                                    <Td />
+                                </Tr>
+                            </TFoot>
+                        </Table>
+                    ) : (
+                        <Empty size={150} textSize="32px" />
+                    )}
+                </div>
+            </div>
             <Pagination
                 displayTotal={false}
                 total={count}
-                pageSize={params.limit}
+                pageSize={params.pageSize}
                 pageSizeOptions={[10, 20, 50, 100, 1000]}
-                currentPage={
-                    Math.floor((params.skip ?? 0) / (params.limit ?? 1)) + 1
-                }
+                currentPage={params.pageIndex}
                 onChange={(page, size) =>
                     setParams((prev: any) => ({
                         ...prev,
-                        limit: size,
-                        skip: (page - 1) * (size ?? 10),
+                        pageIndex: page,
+                        pageSize: size || params.pageSize,
                     }))
                 }
             />

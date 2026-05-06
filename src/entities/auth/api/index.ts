@@ -16,6 +16,24 @@ export const fetchAuthStatus = async (): Promise<StatusResponse> => {
   });
 };
 
+export const getAllAccounts = async (): Promise<any> => {
+  return await apiRequest<any>({
+    url: pathServices.auth.getAllAccounts,
+    method: "GET",
+  });
+};
+
+export const updatePasswordApi = async (
+  payload: any,
+  id: number
+): Promise<any> => {
+  return await apiRequest<any>({
+    url: pathServices.auth.updatePassword+id,
+    method: "POST",
+    data: payload,
+  });
+};
+
 export const fetchConfirmCode = async (code: string): Promise<any> => {
   return await apiRequest<any>({
     url: pathServices.auth.confirmCode,
@@ -31,6 +49,14 @@ export const fetchConfirmCode = async (code: string): Promise<any> => {
 export const login = async (payload: LoginPayload): Promise<LoginResponse> => {
   return await apiRequest<LoginResponse>({
     url: pathServices.auth.login,
+    method: "POST",
+    data: payload,
+  });
+};
+
+export const resetPass = async (payload: any): Promise<any> => {
+  return await apiRequest<any>({
+    url: pathServices.auth.resetPass,
     method: "POST",
     data: payload,
   });
@@ -69,6 +95,26 @@ export const createContractorApi = async (
   });
 };
 
+export const addAccountApi = async (
+  payload: any,
+): Promise<any> => {
+  return await apiRequest<any>({
+    url: pathServices.auth.createAccount,
+    method: "POST",
+    data: payload,
+  });
+};
+
+export const updatePermissionApi = async (
+  payload: any,
+): Promise<any> => {
+  return await apiRequest<any>({
+    url: pathServices.auth.updatePermission,
+    method: "POST",
+    data: payload,
+  });
+};
+
 export const updateContractorApi = async (
   payload: any,
   id: number
@@ -88,6 +134,16 @@ export const deleteContractorApi = async (
     method: "POST",
   });
 };
+
+export const deleteAccountApi = async (
+  id: string
+): Promise<any> => {
+  return await apiRequest<any>({
+    url: pathServices.auth.deleteAccount+id,
+    method: "POST",
+  });
+};
+
 export const registeration = async (
   payload: any
 ): Promise<any> => {

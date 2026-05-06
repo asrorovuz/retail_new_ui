@@ -1,4 +1,5 @@
 import { messages } from "@/app/constants/message.request";
+import { AccountPermissions } from "@/app/constants/permissions";
 import { useSettingsStore } from "@/app/store/useSettingsStore";
 import { useWriteOfStore } from "@/app/store/useWriteofStroe";
 import { useAllProductApi } from "@/entities/products/repository";
@@ -7,12 +8,15 @@ import PaymeTypeCards from "@/features/payme-type-cards";
 import RevisionTable from "@/features/revision/RevisionTable";
 import SearchProduct from "@/features/search-product";
 import SearchProductTable from "@/features/search-product-table";
+import { useCheckPermission } from "@/shared/lib/checkPermission";
 import classNames from "@/shared/lib/classNames";
 import { showErrorMessage, showSuccessMessage } from "@/shared/lib/showMessage";
 import { useDebounce } from "@/shared/lib/useDebounce";
 import { Button } from "@/shared/ui/kit";
+import { Header } from "@/widgets";
 import Footer from "@/widgets/ui/footer/Footer";
-import { KeyboardSwitcher } from "@/widgets/ui/keyboard/Keybord";
+import NumericKeyboard from "@/widgets/ui/keyboard/NumericKeyboard";
+import QuertyKeyboard from "@/widgets/ui/keyboard/QuertyKeyboard";
 import { useState } from "react";
 import { LuDelete } from "react-icons/lu";
 import { useNavigate } from "react-router-dom";
@@ -29,6 +33,7 @@ const WriteOffOperation = () => {
         useCreateWriteoff();
 
     const navigate = useNavigate();
+    const checkPermission = useCheckPermission();
 
     const { draftWriteOfs, updateDraftWriteOfItemQuantity, clearDraftWriteOf } =
         useWriteOfStore();
@@ -69,9 +74,9 @@ const WriteOffOperation = () => {
     };
 
     return (
-        <div className="grid grid-cols-2 gap-x-3">
-            <div className="bg-white rounded-2xl p-3">
-                <div className="flex p-1 h-9 bg-slate-200 text-slate-800 justify-between rounded-lg mb-3">
+        <div className="flex gap-x-2 bg-white h-screen overflow-hidden p-2">
+            <div className="bg-white w-[65%] flex flex-col gap-y-2">
+                <div className="flex p-1 h-9 bg-slate-200 text-slate-800 justify-between rounded-lg">
                     <span className="bg-white flex items-center p-2 rounded-md">
                         Окно
                     </span>
@@ -88,17 +93,23 @@ const WriteOffOperation = () => {
                     deleteDraftItem={deleteDraftWriteOfItem}
                     updateDraftItemQuantity={updateDraftWriteOfItemQuantity}
                 />
-                <div className="h-[27vh] bg-slate-200 rounded-2xl p-1 mb-3 flex items-center justify-center">
+                <div className="h-[20vh] bg-slate-200 rounded-lg flex items-center justify-center">
                     <textarea
                         placeholder="Добавить комментарий для ревизии"
                         disabled
-                        className="w-full h-full rounded-2xl p-1 text-xl"
+                        className="w-full h-full rounded-lg p-1 text-xl"
                     />
                 </div>
                 <Footer />
             </div>
-            <div className="bg-white rounded-2xl p-3">
-                <div className="rounded-2xl mb-3 bg-slate-200 p-1">
+            <div className="bg-white w-[35%] flex flex-col h-full gap-y-2">
+                <Header />
+                <div
+                    className={classNames(
+                        "rounded-lg flex flex-col gap-2",
+                        activeType === "qwerty" && "h-full",
+                    )}
+                >
                     <SearchProduct
                         search={search}
                         activeType={activeType}
@@ -115,23 +126,25 @@ const WriteOffOperation = () => {
                                 setExpandedRow={setExpandedRow}
                                 setExpandedId={setExpandedId}
                             />
+                            <QuertyKeyboard
+                                setActiveType={setActiveType}
+                                setSearch={setSearch}
+                            />
                         </>
                     )}
                 </div>
                 {activeType === "numeric" && (
-                    <div className="rounded-2xl bg-slate-200 mb-3 p-1">
-                        <>
-                            <PaymeTypeCards
-                                type={"revision"}
-                                activeDraft={draftWriteOfs[0]}
-                                activeSelectPaymetype={1}
-                                setActivePaymentSelectType={() => {}}
-                            />
-                        </>
-                    </div>
+                    <>
+                        <PaymeTypeCards
+                            type={"revision"}
+                            activeDraft={draftWriteOfs[0]}
+                            activeSelectPaymetype={1}
+                            setActivePaymentSelectType={() => {}}
+                        />
+                    </>
                 )}
                 {activeType === "numeric" && (
-                    <div className="rounded-2xl bg-slate-200 mb-3 p-1 flex gap-x-1">
+                    <div className="rounded-lg bg-slate-200 p-1 flex gap-x-1">
                         <>
                             <Button
                                 onClick={() => navigate("/writeoff")}
@@ -141,14 +154,19 @@ const WriteOffOperation = () => {
                             >
                                 История
                             </Button>
-                            <Button
-                                onClick={() => navigate("/products")}
-                                className={classNames(
-                                    "flex flex-col justify-center items-center overflow-hidden h-[50px]",
-                                )}
-                            >
-                                Товары
-                            </Button>
+                            {checkPermission(
+                                AccountPermissions.AccountPermissionProductView,
+                            ) && (
+                                <Button
+                                    onClick={() => navigate("/products")}
+                                    size="sm"
+                                    className={classNames(
+                                        "flex flex-col justify-center items-center overflow-hidden h-[50px]",
+                                    )}
+                                >
+                                    Товары
+                                </Button>
+                            )}
                             <Button
                                 onClick={() => navigate("/sales")}
                                 className={classNames(
@@ -160,14 +178,13 @@ const WriteOffOperation = () => {
                         </>
                     </div>
                 )}
-                <div className="rounded-2xl bg-slate-200 mb-3 p-1">
-                    <>
-                        {activeType === "numeric" && (
-                            <div className="h-[14.6vh] flex items-center text-xl justify-center text-gray-700">
+                {activeType === "numeric" && (
+                    <div className="rounded-lg flex-1 p-1 bg-slate-200 flex flex-col">
+                        <>
+                            <div className="h-full flex-1 flex items-center text-xl justify-center text-gray-700">
                                 Остаток в системе: {0}
                             </div>
-                        )}
-                        {activeType === "numeric" && (
+
                             <div className="grid grid-cols-4 gap-1 mb-1">
                                 <Button
                                     size="sm"
@@ -207,28 +224,22 @@ const WriteOffOperation = () => {
                                     icon={<LuDelete />}
                                 ></Button>
                             </div>
-                        )}
-                        <KeyboardSwitcher
-                            activeType={activeType}
-                            setActiveType={setActiveType}
-                            setSearch={setSearch}
-                        />
-                    </>
-                </div>
+                        </>
+                        <NumericKeyboard />
+                    </div>
+                )}
 
                 {activeType === "numeric" && (
-                    <div className="rounded-2xl bg-slate-200 p-1">
-                        <Button
-                            size="sm"
-                            onClick={onSubmit}
-                            loading={createLoading}
-                            variant="solid"
-                            disabled={!draftWriteOfs[0]?.items?.length}
-                            className="w-full text-base font-medium"
-                        >
-                            Оформить
-                        </Button>
-                    </div>
+                    <Button
+                        size="sm"
+                        onClick={onSubmit}
+                        loading={createLoading}
+                        variant="solid"
+                        disabled={!draftWriteOfs[0]?.items?.length}
+                        className="w-full text-base font-medium"
+                    >
+                        Оформить
+                    </Button>
                 )}
             </div>
         </div>

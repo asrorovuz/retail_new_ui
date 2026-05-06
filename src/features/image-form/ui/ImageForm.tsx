@@ -2,219 +2,243 @@ import { useState } from "react";
 import { Controller, type Control } from "react-hook-form";
 import cloneDeep from "lodash/cloneDeep";
 import { PiImagesThin } from "react-icons/pi";
-import { HiEye, HiTrash } from "react-icons/hi";
-import { Upload, Dialog } from "@/shared/ui/kit";
+import { HiTrash } from "react-icons/hi";
+import { Upload } from "@/shared/ui/kit";
 import ConfirmDialog from "@/shared/ui/kit-pro/confirm-dialog/ConfirmDialog";
 
 type ImageFormProps = {
-  fieldName: string;
-  control: Control<any>; // tashqaridan beriladi
-  imgId?: string | number | null;
-  width?: string;
-  height?: string;
-  extra?: boolean;
+    fieldName: string;
+    control: Control<any>; // tashqaridan beriladi
+    imgId?: string | number | null;
+    width?: string;
+    height?: string;
+    extra?: boolean;
 };
 
 type Image = {
-  id?: string | number | null;
-  name: string;
-  img: string;
-  file?: File;
-  fs_url?: string;
+    id?: string | number | null;
+    name: string;
+    img: string;
+    file?: File;
+    fs_url?: string;
 };
 
 // 🔹 Ichki rasm ro‘yxati
 const ImageList = ({
-  imgList,
-  onImageDelete,
-  extra = true,
+    imgList,
+    onImageDelete,
+    width,
+    extra = true,
 }: {
-  imgList: Image[];
-  onImageDelete: (img: Image) => void;
-  extra: boolean;
+    imgList: Image[];
+    onImageDelete: (img: Image) => void;
+    width: any;
+    extra: boolean;
 }) => {
-  const [selectedImg, setSelectedImg] = useState<Image>({} as Image);
-  const [viewOpen, setViewOpen] = useState(false);
-  const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
+    const [selectedImg, setSelectedImg] = useState<Image>({} as Image);
+    // const [viewOpen, setViewOpen] = useState(false);
+    const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
 
-  const onViewOpen = (img: Image) => {
-    setSelectedImg(img);
-    setViewOpen(true);
-  };
+    // const onViewOpen = (img: Image) => {
+    //   setSelectedImg(img);
+    //   setViewOpen(true);
+    // };
 
-  const onDialogClose = () => {
-    setViewOpen(false);
-    setTimeout(() => setSelectedImg({} as Image), 300);
-  };
+    // const onDialogClose = () => {
+    //     setViewOpen(false);
+    //     setTimeout(() => setSelectedImg({} as Image), 300);
+    // };
 
-  const onDeleteConfirmation = (img: Image) => {
-    setSelectedImg(img);
-    setDeleteConfirmationOpen(true);
-  };
+    const onDeleteConfirmation = (img: Image) => {
+        setSelectedImg(img);
+        setDeleteConfirmationOpen(true);
+    };
 
-  const onDeleteConfirmationClose = () => {
-    setSelectedImg({} as Image);
-    setDeleteConfirmationOpen(false);
-  };
+    const onDeleteConfirmationClose = () => {
+        setSelectedImg({} as Image);
+        setDeleteConfirmationOpen(false);
+    };
 
-  const onDelete = () => {
-    onImageDelete?.(selectedImg);
-    setDeleteConfirmationOpen(false);
-  };
+    const onDelete = () => {
+        onImageDelete?.(selectedImg);
+        setDeleteConfirmationOpen(false);
+    };
 
-  return (
-    <>
-      {imgList.map((img) => (
-        <div
-          key={img.id || img.name}
-          className="group h-[100px] relative rounded-xl border border-slate-200 dark:border-slate-600 p-2 flex"
-        >
-          <img
-            className="rounded-lg max-h-[140px] mx-auto max-w-full dark:bg-transparent"
-            src={img.img}
-            alt={img.name}
-          />
-          {extra && (
-            <div className="absolute inset-2 bg-[#000000ba] group-hover:flex hidden text-xl items-center justify-center">
-              <span
+    return (
+        <>
+            {imgList.map((img) => (
+                <div
+                    key={img.id || img.name}
+                    className={`group h-[${width ? width : "100px"}] relative rounded-xl border border-slate-200 dark:border-slate-600 flex`}
+                >
+                    <img
+                        className="rounded-lg h-full w-full object-contain dark:bg-transparent"
+                        src={img.img}
+                        alt={img.name}
+                    />
+                    {extra && (
+                        <div className="w-full h-full absolute top-0 left-0 inset-2 bg-[#000000ba] group-hover:flex hidden text-xl items-center justify-center">
+                            {/* <span
                 className="text-slate-100 hover:text-slate-300 cursor-pointer p-1.5"
                 onClick={() => onViewOpen(img)}
               >
                 <HiEye />
-              </span>
-              <span
-                className="text-slate-100 hover:text-slate-300 cursor-pointer p-1.5"
-                onClick={() => onDeleteConfirmation(img)}
-              >
-                <HiTrash />
-              </span>
-            </div>
-          )}
-        </div>
-      ))}
+              </span> */}
+                            <span
+                                className="text-slate-100 hover:text-slate-300 cursor-pointer"
+                                onClick={() => onDeleteConfirmation(img)}
+                            >
+                                <HiTrash size={28}/>
+                            </span>
+                        </div>
+                    )}
+                </div>
+            ))}
 
-      <Dialog isOpen={viewOpen} onClose={onDialogClose}>
-        <h5 className="mb-4">{selectedImg.name}</h5>
-        <img className="w-full" src={selectedImg.img} alt={selectedImg.name} />
-      </Dialog>
+            {/* <Dialog isOpen={viewOpen} onClose={onDialogClose}>
+                <h5 className="mb-4">{selectedImg.name}</h5>
+                <img
+                    className="w-full"
+                    src={selectedImg.img}
+                    alt={selectedImg.name}
+                />
+            </Dialog> */}
 
-      <ConfirmDialog
-        width={609}
-        isOpen={deleteConfirmationOpen}
-        type="danger"
-        title="Rasmni o‘chirish"
-        onClose={onDeleteConfirmationClose}
-        onCancel={onDeleteConfirmationClose}
-        onConfirm={onDelete}
-      >
-        <p>Вы действительно хотите удалить это изображение?</p>
-      </ConfirmDialog>
-    </>
-  );
+            <ConfirmDialog
+                width={609}
+                isOpen={deleteConfirmationOpen}
+                type="danger"
+                title="Rasmni o‘chirish"
+                onClose={onDeleteConfirmationClose}
+                onCancel={onDeleteConfirmationClose}
+                onConfirm={onDelete}
+            >
+                <p>Вы действительно хотите удалить это изображение?</p>
+            </ConfirmDialog>
+        </>
+    );
 };
 
 // 🔹 Asosiy komponent (useFormContext yo‘q)
 const ImageForm = ({
-  fieldName,
-  control,
-  imgId = null,
-  extra = true
+    fieldName,
+    control,
+    width,
+    imgId = null,
+    extra = true,
 }: ImageFormProps) => {
-  const beforeUpload = (file: FileList | null) => {
-    let valid: boolean | string = true;
-    const allowedFileType = ["image/jpeg", "image/png", "image/avif"];
-    const maxFileSize = 5 * 1024 * 1024; // 5 MB
+    const beforeUpload = (file: FileList | null) => {
+        let valid: boolean | string = true;
+        const allowedFileType = ["image/jpeg", "image/png", "image/avif"];
+        const maxFileSize = 5 * 1024 * 1024; // 5 MB
 
-    if (file) {
-      for (const f of file) {
-        if (!allowedFileType.includes(f.type)) {
-          valid = "Please upload a .jpeg or .png file!";
-        }
-        if (f.size >= maxFileSize) {
-          valid = "Upload image cannot be more than 500kb!";
-        }
-      }
-    }
-    return valid;
-  };
-
-  const handleUpload = (
-    onChange: (images: Image[]) => void,
-    originalImageList: Image[] = [],
-    files: File[],
-  ) => {
-    const latestFile = files[0];
-    const image: Image = {
-      id: imgId,
-      name: latestFile.name,
-      img: URL.createObjectURL(latestFile),
-      file: latestFile,
-      fs_url: originalImageList[0]?.fs_url ?? originalImageList[0]?.img,
-    };
-    onChange([image]);
-  };
-
-  const handleImageDelete = (
-    onChange: (images: Image[]) => void,
-    originalImageList: Image[] = [],
-    deletedImg: Image,
-  ) => {
-    const imgList = cloneDeep(originalImageList).filter(
-      (img) => img.id !== deletedImg.id && img.name !== deletedImg.name,
-    );
-    onChange(imgList);
-  };
-
-  return (
-    <Controller
-      name={fieldName}
-      control={control}
-      render={({ field }) => {
-        const images: Image[] = (field.value || []).filter(
-          (img: any) => img && img.img,
-        );
-
-        return (
-          <>
-            {images.length > 0 ? (
-              <div
-                className={`w-[100px] h-[100px]`}
-              >
-                <ImageList
-                  imgList={images}
-                  extra={extra}
-                  
-                  onImageDelete={(img) =>
-                    handleImageDelete(field.onChange, images, img)
-                  }
-                />
-              </div>
-            ) : (
-              <Upload
-                draggable
-                beforeUpload={beforeUpload}
-                className={"w-[100px]"}
-                showList={false}
-                onChange={(files) =>
-                  handleUpload(field.onChange, images, files)
+        if (file) {
+            for (const f of file) {
+                if (!allowedFileType.includes(f.type)) {
+                    valid = "Please upload a .jpeg or .png file!";
                 }
-              >
-                <div
-                  className={`flex flex-col px-4 py-8 justify-center items-center w-[100px] h-[100px]`}
-                >
-                  <div
-                    className={`text-[60px]`}
-                  >
-                    <PiImagesThin />
-                  </div>
-                </div>
-              </Upload>
-            )}
-          </>
+                if (f.size >= maxFileSize) {
+                    valid = "Upload image cannot be more than 500kb!";
+                }
+            }
+        }
+        return valid;
+    };
+
+    const handleUpload = (
+        onChange: (images: Image[]) => void,
+        originalImageList: Image[] = [],
+        files: File[],
+    ) => {
+        const latestFile = files[0];
+        const image: Image = {
+            id: imgId,
+            name: latestFile.name,
+            img: URL.createObjectURL(latestFile),
+            file: latestFile,
+            fs_url: originalImageList[0]?.fs_url ?? originalImageList[0]?.img,
+        };
+        onChange([image]);
+    };
+
+    const handleImageDelete = (
+        onChange: (images: Image[]) => void,
+        originalImageList: Image[] = [],
+        deletedImg: Image,
+    ) => {
+        const imgList = cloneDeep(originalImageList).filter(
+            (img) => img.id !== deletedImg.id && img.name !== deletedImg.name,
         );
-      }}
-    />
-  );
+        onChange(imgList);
+    };
+
+    return (
+        <Controller
+            name={fieldName}
+            control={control}
+            render={({ field }) => {
+                const images: Image[] = (field.value || []).filter(
+                    (img: any) => img && img.img,
+                );
+
+                return (
+                    <>
+                        {images.length > 0 ? (
+                            <div
+                                style={{
+                                    width: width ?? "100px",
+                                    height: width ?? "100px",
+                                }}
+                            >
+                                <ImageList
+                                    imgList={images}
+                                    extra={extra}
+                                    width={width}
+                                    onImageDelete={(img) =>
+                                        handleImageDelete(
+                                            field.onChange,
+                                            images,
+                                            img,
+                                        )
+                                    }
+                                />
+                            </div>
+                        ) : (
+                            <div>
+                                <Upload
+                                    draggable
+                                    beforeUpload={beforeUpload}
+                                    // className={`w-[${width ? width : "100px"}] h-[${width ? width : "100px"}]`}
+                                    style={{
+                                        width: width ?? "100px",
+                                        height: width ?? "100px",
+                                    }}
+                                    showList={false}
+                                    onChange={(files) =>
+                                        handleUpload(
+                                            field.onChange,
+                                            images,
+                                            files,
+                                        )
+                                    }
+                                >
+                                    <div
+                                        className={`flex px-4 justify-center items-center`}
+                                        style={{
+                                            width: width ?? "100px",
+                                            height: width ?? "100px",
+                                        }}
+                                    >
+                                        <PiImagesThin size={40} />
+                                    </div>
+                                </Upload>
+                            </div>
+                        )}
+                    </>
+                );
+            }}
+        />
+    );
 };
 
 export default ImageForm;

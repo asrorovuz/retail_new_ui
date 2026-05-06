@@ -90,12 +90,14 @@ const ContragentModal = ({
                 amount: +payload?.debt,
                 currency_code: CurrencyCodeUZS,
             },
-            contacts: payload?.phones?.map((item) => {
-                return {
-                    type: ContactTypePhoneNumber,
-                    value: item.slice(0, 12),
-                };
-            }),
+            contacts: payload?.phones
+                ?.map((item) => {
+                    return {
+                        type: ContactTypePhoneNumber,
+                        value: item.slice(0, 12),
+                    };
+                })
+                ?.filter((item) => item?.value?.length === 12),
         };
 
         if (type === "add") {
@@ -105,7 +107,6 @@ const ContragentModal = ({
                         messages.uz.SUCCESS_MESSAGE,
                         messages.ru.SUCCESS_MESSAGE,
                     );
-                    console.log(data);
 
                     if (setContractorId) {
                         setContractorId(data?.id ?? null);
@@ -254,13 +255,6 @@ const ContragentModal = ({
                                         <Controller
                                             name={`phones.${index}`}
                                             control={control}
-                                            rules={{
-                                                minLength: {
-                                                    value: 12,
-                                                    message:
-                                                        "Номер слишком короткий",
-                                                }, // minimal format tekshirish
-                                            }}
                                             render={({ field }) => (
                                                 <PhoneInput
                                                     {...field}

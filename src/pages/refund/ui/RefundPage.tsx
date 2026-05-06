@@ -1,8 +1,9 @@
 import type {
-    DraftRefundPayoutAmountSchema,
+    // DraftRefundPayoutAmountSchema,
     DraftRefundSchema,
 } from "@/@types/refund";
 import { PaymentTypes } from "@/app/constants/payment.types";
+import { AccountPermissions } from "@/app/constants/permissions";
 import { useDraftRefundStore } from "@/app/store/useRefundDraftStore";
 import {
     useAllProductApi,
@@ -19,6 +20,7 @@ import SaleAndRefunTable from "@/features/sale-refund-table";
 import SearchProduct from "@/features/search-product";
 import SearchProductTable from "@/features/search-product-table";
 import ViewMark from "@/features/viewMark";
+import { useCheckPermission } from "@/shared/lib/checkPermission";
 import classNames from "@/shared/lib/classNames";
 import eventBus from "@/shared/lib/eventBus";
 import { handleBarcodeScanned } from "@/shared/lib/handleScannedBarcode";
@@ -26,8 +28,10 @@ import { handleScannedProduct } from "@/shared/lib/handleScannedProduct";
 import { showErrorLocalMessage } from "@/shared/lib/showMessage";
 import { useDebounce } from "@/shared/lib/useDebounce";
 import { Button } from "@/shared/ui/kit";
-import FormattedNumber from "@/shared/ui/kit-pro/numeric-format/NumericFormat";
+// import FormattedNumber from "@/shared/ui/kit-pro/numeric-format/NumericFormat";
+import { Header } from "@/widgets";
 import Footer from "@/widgets/ui/footer/Footer";
+import QuertyKeyboard from "@/widgets/ui/keyboard/QuertyKeyboard";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -59,6 +63,7 @@ const RefundPage = () => {
     >("numeric");
     const debouncedSearch = useDebounce(search, 500);
     const navigate = useNavigate();
+    const checkPermission = useCheckPermission();
 
     const { data } = useAllProductApi(50, 1, debouncedSearch || "");
     const {
@@ -94,9 +99,9 @@ const RefundPage = () => {
     const completeActiveDraftRefund = useDraftRefundStore(
         (store) => store.completeActiveDraftRefund,
     );
-    const deleteDraftRefundMark = useDraftRefundStore(
-        (store) => store.deleteDraftRefundMark,
-    );
+    // const deleteDraftRefundMark = useDraftRefundStore(
+    //     (store) => store.deleteDraftRefundMark,
+    // );
 
     const activeDraft: DraftRefundSchema =
         draftRefunds?.find((s) => s.isActive) ?? draftRefunds[0];
@@ -197,8 +202,8 @@ const RefundPage = () => {
     }, [checkData]);
 
     return (
-        <div className="grid grid-cols-2 gap-x-3">
-            <div className="bg-white rounded-2xl p-3">
+        <div className="flex gap-x-2 bg-white h-screen overflow-hidden p-2">
+            <div className="bg-white w-[65%] flex flex-col gap-y-2">
                 <Cashbox
                     type={"refund"}
                     drafts={draftRefunds}
@@ -211,6 +216,7 @@ const RefundPage = () => {
                     draft={draftRefunds}
                     activeDraft={activeDraft}
                     expandedRow={expandedRow}
+                    selectedRows={selectedRows}
                     expendedId={expendedId}
                     setActiveTypeKeyboard={setActiveType}
                     setExpandedRow={setExpandedRow}
@@ -229,8 +235,14 @@ const RefundPage = () => {
                 />
                 <Footer deleteDraft={deleteDraftRefund} draft={draftRefunds} />
             </div>
-            <div className="bg-white rounded-2xl p-3">
-                <div className="rounded-2xl mb-3 bg-slate-200 p-1">
+            <div className="bg-white w-[35%] flex flex-col gap-y-2">
+                <Header />
+                <div
+                    className={classNames(
+                        "rounded-lg p-1 flex flex-col gap-2",
+                        activeType === "qwerty" && "h-full",
+                    )}
+                >
                     <SearchProduct
                         search={search}
                         activeType={activeType}
@@ -248,25 +260,27 @@ const RefundPage = () => {
                                 setExpandedRow={setExpandedRow}
                                 setExpandedId={setExpandedId}
                             />
+                            <QuertyKeyboard
+                                setActiveType={setActiveType}
+                                setSearch={setSearch}
+                            />
                         </>
                     )}
                 </div>
                 {activeType === "numeric" && (
-                    <div className="rounded-2xl bg-slate-200 mb-3 p-1">
-                        <>
-                            <PaymeTypeCards
-                                type={"refund"}
-                                activeDraft={activeDraft}
-                                activeSelectPaymetype={activeSelectPaymetype}
-                                setActivePaymentSelectType={
-                                    setActivePaymentSelectType
-                                }
-                            />
-                        </>
-                    </div>
+                    <>
+                        <PaymeTypeCards
+                            type={"refund"}
+                            activeDraft={activeDraft}
+                            activeSelectPaymetype={activeSelectPaymetype}
+                            setActivePaymentSelectType={
+                                setActivePaymentSelectType
+                            }
+                        />
+                    </>
                 )}
                 {activeType === "numeric" && (
-                    <div className="rounded-2xl bg-slate-200 mb-3 p-1 flex gap-x-1">
+                    <div className="rounded-2xl bg-slate-200 p-1 flex gap-x-1">
                         <>
                             <Button
                                 onClick={() => navigate("/refund-history")}
@@ -277,15 +291,19 @@ const RefundPage = () => {
                             >
                                 История
                             </Button>
-                            <Button
-                                onClick={() => navigate("/products")}
-                                size="sm"
-                                className={classNames(
-                                    "flex flex-col justify-center items-center overflow-hidden",
-                                )}
-                            >
-                                Товары
-                            </Button>
+                            {checkPermission(
+                                AccountPermissions.AccountPermissionProductView,
+                            ) && (
+                                <Button
+                                    onClick={() => navigate("/products")}
+                                    size="sm"
+                                    className={classNames(
+                                        "flex flex-col justify-center items-center overflow-hidden",
+                                    )}
+                                >
+                                    Товары
+                                </Button>
+                            )}
                             <Button
                                 onClick={() => navigate("/sales")}
                                 size="sm"
@@ -298,107 +316,18 @@ const RefundPage = () => {
                         </>
                     </div>
                 )}
-                <div className="rounded-2xl bg-slate-200 mb-3 p-1">
-                    <>
-                        {activeType === "numeric" && (
-                            <div className="flex items-center gap-1 mb-1">
-                                {["20000", "50000", "100000", "200000"].map(
-                                    (amountStr) => (
-                                        <div
-                                            key={amountStr}
-                                            onClick={() => {
-                                                const amount =
-                                                    amountStr.toString(); // string tipiga o'tkazamiz
-                                                const payments: DraftRefundPayoutAmountSchema[] =
-                                                    activeDraft?.payout?.amounts?.map(
-                                                        (p) => ({
-                                                            ...p,
-                                                        }),
-                                                    ) ?? [];
 
-                                                const existingIndex =
-                                                    payments.findIndex(
-                                                        (p) =>
-                                                            p.paymentType === 1,
-                                                    );
-
-                                                let updatedAmounts: DraftRefundPayoutAmountSchema[];
-
-                                                if (
-                                                    existingIndex >= 0 &&
-                                                    payments[existingIndex]
-                                                        .amount === amount
-                                                ) {
-                                                    payments[existingIndex] = {
-                                                        ...payments[
-                                                            existingIndex
-                                                        ],
-                                                        amount: "0",
-                                                    };
-                                                    updatedAmounts = payments;
-
-                                                    setValue("0");
-                                                } else if (existingIndex >= 0) {
-                                                    // mavjud bo‘lsa, amount-ni yangilaymiz
-                                                    payments[existingIndex] = {
-                                                        ...payments[
-                                                            existingIndex
-                                                        ],
-                                                        amount,
-                                                    };
-                                                    updatedAmounts = payments;
-                                                } else {
-                                                    // yo‘q bo‘lsa, yangi qo‘shamiz
-                                                    updatedAmounts = [
-                                                        ...payments,
-                                                        {
-                                                            paymentType: 1,
-                                                            amount,
-                                                        },
-                                                    ];
-                                                }
-
-                                                setActivePaymentSelectType(1);
-                                                setValue(amount);
-                                                updateDraftRefundPayout(
-                                                    updatedAmounts,
-                                                );
-                                            }}
-                                            className={classNames(
-                                                "h-9 px-4 text-sm flex items-center cursor-pointer rounded-lg bg-white font-medium transition-all",
-                                                activeDraft?.payout?.amounts.find(
-                                                    (p) =>
-                                                        p.paymentType === 1 &&
-                                                        p.amount === amountStr,
-                                                )
-                                                    ? "text-blue-500"
-                                                    : "",
-                                            )}
-                                        >
-                                            <FormattedNumber
-                                                value={+amountStr}
-                                            />
-                                        </div>
-                                    ),
-                                )}
-                            </div>
-                        )}
-                        <PaymentSection
-                            type={"refund"}
-                            activeDraft={activeDraft}
-                            activeSelectPaymetype={activeSelectPaymetype}
-                            value={value}
-                            setValue={setValue}
-                            setSearch={setSearch}
-                            activeType={activeType}
-                            setActiveType={setActiveType}
-                            setActivePaymentSelectType={
-                                setActivePaymentSelectType
-                            }
-                            updateDraftPayment={updateDraftRefundPayout}
-                        />
-                    </>
-                </div>
+                <PaymentSection
+                    type={"refund"}
+                    activeDraft={activeDraft}
+                    activeSelectPaymetype={activeSelectPaymetype}
+                    value={value}
+                    setValue={setValue}
+                    activeType={activeType}
+                    setActiveType={setActiveType}
+                    setActivePaymentSelectType={setActivePaymentSelectType}
+                    updateDraftPayment={updateDraftRefundPayout}
+                />
 
                 <OrderActions
                     type={"refund"}
@@ -424,10 +353,9 @@ const RefundPage = () => {
 
                 {mark ? (
                     <ViewMark
-                        item={mark}
+                        itemId={mark}
                         onClose={() => setMark(null)}
                         activeDraft={activeDraft}
-                        deleteDraftMark={deleteDraftRefundMark}
                     />
                 ) : null}
             </div>

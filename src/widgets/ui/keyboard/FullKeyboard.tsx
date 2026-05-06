@@ -2,7 +2,7 @@ import { useKeyboard } from "@/app/providers/KeyboardProvider";
 import classNames from "@/shared/lib/classNames";
 import { Button } from "@/shared/ui/kit";
 import { useState } from "react";
-import { AiOutlineEnter } from "react-icons/ai";
+// import { AiOutlineEnter } from "react-icons/ai";
 import { LuArrowBigUp } from "react-icons/lu";
 import { RiDeleteBack2Line, RiSpace } from "react-icons/ri";
 
@@ -13,7 +13,7 @@ interface FullKeyboardProps {
 const FullKeyboard = ({ setSearch }: FullKeyboardProps) => {
     const [upperLater, setUpperLater] = useState(false);
     const [lang, setLang] = useState("en");
-    const { insert, blurActiveField, backspace, clear } = useKeyboard();
+    const { insert, backspace, clear } = useKeyboard();
 
     const keysEn = [
         "1",
@@ -55,9 +55,11 @@ const FullKeyboard = ({ setSearch }: FullKeyboardProps) => {
         "n",
         "m",
         ".",
+        "back",
     ];
 
     const keysRu = [
+        "ё",
         "1",
         "2",
         "3",
@@ -68,8 +70,7 @@ const FullKeyboard = ({ setSearch }: FullKeyboardProps) => {
         "8",
         "9",
         "0",
-        "-",
-        "_",
+        "back",
         "й",
         "ц",
         "у",
@@ -93,9 +94,9 @@ const FullKeyboard = ({ setSearch }: FullKeyboardProps) => {
         "д",
         "ж",
         "э",
-        "\\",
-        <LuArrowBigUp />,
         "я",
+        <LuArrowBigUp />,
+        "/",
         "ч",
         "с",
         "м",
@@ -104,7 +105,8 @@ const FullKeyboard = ({ setSearch }: FullKeyboardProps) => {
         "ь",
         "б",
         "ю",
-        ".",
+        "_",
+        "-",
     ];
 
     const handleInsert = (value: string) => {
@@ -126,6 +128,7 @@ const FullKeyboard = ({ setSearch }: FullKeyboardProps) => {
     const onClear = () => {
         if (typeof setSearch === "function") {
             setSearch("");
+            clear();
         } else {
             clear();
         }
@@ -141,54 +144,34 @@ const FullKeyboard = ({ setSearch }: FullKeyboardProps) => {
 
     const changeLang = () => setLang((prev) => (prev === "en" ? "ru" : "en"));
 
-    // Physical keyboard support
-    // useEffect(() => {
-    //     const handleKeyDown = (e: KeyboardEvent) => {
-    //         if (e.key === "Enter") {
-    //             if (typeof setSearch === "function") setSearch("");
-    //             else blurActiveField();
-    //             return;
-    //         }
-    //         if (e.key === "Backspace") {
-    //             onBackSpace();
-    //             return;
-    //         }
-    //         if (e.key === " ") {
-    //             onWriteSymbol(" ");
-    //             return;
-    //         }
-    //         if (e.key === "Shift") {
-    //             setUpperLater((prev) => !prev);
-    //             return;
-    //         }
-
-    //         if (e.key.length === 1) {
-    //             const char = upperLater ? e.key.toUpperCase() : e.key;
-    //             onWriteSymbol(char);
-    //         }
-    //     };
-
-    //     window.addEventListener("keyup", handleKeyDown);
-    //     return () => window.removeEventListener("keyup", handleKeyDown);
-    // }, [upperLater, onWriteSymbol, onBackSpace]);
-
     const keys = lang === "en" ? keysEn : keysRu;
 
+    const keyClass =
+        "relative overflow-hidden w-full h-[38px] " +
+        "text-[14px] font-medium text-black " +
+        "rounded " +
+        "bg-[#ffffff] " +
+        "shadow-[0_1px_0_rgba(0,0,0,0.25),0_2px_6px_rgba(0,0,0,0.18)] " +
+        "active:translate-y-[2px] active:shadow-[inset_0_2px_6px_rgba(0,0,0,0.25)] " +
+        "hover:bg-[#f2f2f2] " +
+        "transition-all duration-100";
+
     return (
-        <div className="h-[31.88vh] shadow-lg rounded-md bg-slate-200 p-1 relative z-50">
+        <div className="bg-[#d1d5db] p-2 rounded-2xl shadow-inner">
+            {/* Keys */}
             <div
                 className={classNames(
-                    "grid grid-rows-3 gap-1 mb-1",
+                    "grid grid-rows-3 gap-1 mb-2",
                     lang === "en" ? "grid-cols-10" : "grid-cols-12",
                 )}
             >
                 {keys.map((key, index) => {
-                    if (typeof key === "string") {
+                    if (typeof key === "string" && key !== "back") {
                         return (
                             <Button
                                 key={index}
                                 variant="solid"
-                                className="w-full h-[42px] bg-white font-medium text-xl text-slate-800 hover:bg-blue-50 transition-all"
+                                className={keyClass}
                                 type="button"
                                 onMouseDown={(e) => {
                                     e.preventDefault();
@@ -197,8 +180,23 @@ const FullKeyboard = ({ setSearch }: FullKeyboardProps) => {
                                     );
                                 }}
                             >
+                                {/* Ripple */}
+
                                 {upperLater ? key.toUpperCase() : key}
                             </Button>
+                        );
+                    } else if (typeof key === "string" && key === "back") {
+                        return (
+                            <Button
+                                variant="solid"
+                                className={classNames(keyClass)}
+                                type="button"
+                                icon={<RiDeleteBack2Line />}
+                                onMouseDown={(e) => {
+                                    e.preventDefault();
+                                    onBackSpace();
+                                }}
+                            />
                         );
                     }
 
@@ -206,7 +204,10 @@ const FullKeyboard = ({ setSearch }: FullKeyboardProps) => {
                         <Button
                             key={index}
                             variant="solid"
-                            className="w-full h-[42px] bg-white font-medium text-xl text-slate-800 hover:bg-blue-50 transition-all"
+                            className={classNames(
+                                keyClass,
+                                upperLater && "bg-[#c7d2fe]",
+                            )}
                             type="button"
                             icon={key}
                             onMouseDown={(e) => {
@@ -216,61 +217,39 @@ const FullKeyboard = ({ setSearch }: FullKeyboardProps) => {
                         />
                     );
                 })}
-
-                <Button
-                    variant="solid"
-                    className="w-full h-[42px] bg-white font-medium text-xl text-slate-800 hover:bg-blue-50 transition-all"
-                    type="button"
-                    icon={<RiDeleteBack2Line />}
-                    onMouseDown={(e) => {
-                        e.preventDefault();
-                        onBackSpace();
-                    }}
-                />
             </div>
 
-            <div className="grid grid-cols-10 gap-1">
+            {/* Bottom */}
+            <div className="grid grid-cols-6 gap-1">
                 <Button
                     variant="solid"
                     type="button"
-                    className="bg-white h-[42px] text-slate-800 font-medium text-xs w-full hover:bg-blue-50 transition-all"
+                    className={classNames(keyClass, "bg-[#e5e7eb]")}
                     onMouseDown={(e) => {
                         e.preventDefault();
                         changeLang();
                     }}
                 >
-                    РУС
+                    {lang === "ru" ? "ENG" : "РУС"}
                 </Button>
 
                 <Button
                     variant="solid"
                     type="button"
-                    className="bg-white h-[42px] text-slate-800 font-medium text-xl w-full hover:bg-blue-50 transition-all"
+                    className={keyClass}
                     onMouseDown={(e) => {
                         e.preventDefault();
-                        onWriteSymbol("#");
+                        onWriteSymbol("/");
                     }}
                 >
-                    #
-                </Button>
-
-                <Button
-                    variant="solid"
-                    type="button"
-                    className="bg-white h-[42px] text-slate-800 font-medium text-xl w-full hover:bg-blue-50 transition-all"
-                    onMouseDown={(e) => {
-                        e.preventDefault();
-                        onWriteSymbol("%");
-                    }}
-                >
-                    %
+                    /
                 </Button>
 
                 <Button
                     variant="solid"
                     type="button"
                     icon={<RiSpace />}
-                    className="bg-white h-[42px] col-span-3 text-slate-800 font-medium text-xl w-full hover:bg-blue-50 transition-all"
+                    className={classNames(keyClass, "col-span-2")}
                     onMouseDown={(e) => {
                         e.preventDefault();
                         onWriteSymbol(" ");
@@ -280,18 +259,30 @@ const FullKeyboard = ({ setSearch }: FullKeyboardProps) => {
                 <Button
                     variant="solid"
                     type="button"
+                    className={keyClass}
+                    onMouseDown={(e) => {
+                        e.preventDefault();
+                        onWriteSymbol(".");
+                    }}
+                >
+                    .
+                </Button>
+                {/* <Button
+                    variant="solid"
+                    type="button"
                     icon={<AiOutlineEnter />}
-                    className="bg-white h-[42px] col-span-2 text-slate-800 font-medium text-xl w-full hover:bg-blue-50 transition-all"
-                    onClick={() => {
+                    className={classNames(keyClass, "bg-[#e5e7eb]")}
+                    onMouseDown={() => {
                         blurActiveField();
                     }}
-                />
+                /> */}
 
                 <Button
                     variant="solid"
                     type="button"
-                    className="bg-white h-[42px] col-span-2 text-slate-800 font-medium text-sm w-full hover:bg-blue-50 transition-all"
-                    onClick={() => {
+                    className={classNames(keyClass, "bg-[#e5e7eb]")}
+                    onMouseDown={(e) => {
+                        e.preventDefault();
                         onClear();
                     }}
                 >

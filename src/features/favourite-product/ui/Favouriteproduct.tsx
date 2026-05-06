@@ -69,6 +69,8 @@ const FavouriteProduct = ({
       ) || item.product.prices[1];
     const quantity = operationItem?.quantity ?? 0;
 
+    console.log(item, "item");
+    
     const newItem = {
       productId: item?.product?.id,
       productName: item?.product.name,
@@ -78,6 +80,7 @@ const FavouriteProduct = ({
       priceAmount: packagePrice?.amount,
       priceAmoutBulk: packagePriceBulk?.amount,
       quantity: quantity + 1,
+      isMark: type === "sale" ? (item?.product?.is_marked || false) : false,
       totalAmount:
         (quantity + 1) *
         (isSelectedBulk && type === "sale"
@@ -93,16 +96,16 @@ const FavouriteProduct = ({
   };
 
   return (
-    <div className="h-[26.58vh] mb-3 rounded-2xl overflow-auto">
-      <div className="min-h-full bg-slate-200 p-1 grid grid-cols-2 gap-2">
+    <div className="h-[27vh] rounded-lg overflow-auto">
+      <div className="h-full bg-slate-200 p-1 flex flex-wrap items-start gap-x-[0.5%] gap-y-1">
         {isPending && (
-          <div className="col-span-3 flex justify-center">
+          <div className="w-full h-full flex justify-center">
             <Loading />
           </div>
         )}
 
         {!isPending && !favoriteProducts?.length ? (
-          <div className="col-span-3 flex justify-center">
+          <div className="w-full h-full flex justify-center">
             <Empty size={64} textSize="32px" text="Нет избранных товаров" />
           </div>
         ) : (

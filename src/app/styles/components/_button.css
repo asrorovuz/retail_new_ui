@@ -1,5 +1,5 @@
 .button {
-	@apply font-bold outline-none whitespace-nowrap content-center;
+	@apply font-bold outline-none whitespace-nowrap content-center rounded-lg;
 }
 
 .button-press-feedback {

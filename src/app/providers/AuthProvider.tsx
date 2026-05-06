@@ -8,7 +8,7 @@ import React, {
 import { decode, encode } from "js-base64";
 import { AxiosError } from "axios";
 import type { LoginPayload } from "@/@types/auth/login";
-import { PASSWORD_KEY, TOKEN, USERNAME_KEY } from "../constants/app.constants";
+import { PASSWORD_KEY, TOKEN, USER_KEY, USERNAME_KEY } from "../constants/app.constants";
 import { useLogin } from "@/entities/auth/repository";
 
 type AuthContextType = {
@@ -47,6 +47,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           TOKEN,
           encode(`${payload.username}:${payload.password}`)
         );
+        sessionStorage.setItem(USER_KEY, encode(JSON.stringify(res)))
 
         setUser(res);
         setIsAuthenticated(true);
@@ -72,13 +73,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const encodedUsername = sessionStorage.getItem(USERNAME_KEY);
     const encodedPassword = sessionStorage.getItem(PASSWORD_KEY);
+    const encodedUser = sessionStorage.getItem(USER_KEY);
 
-    if (encodedUsername && encodedPassword) {
+    if (encodedUsername && encodedPassword && encodedUser) {
       try {
-        const username = decode(encodedUsername);
+        const user = JSON.parse(decode(encodedUser));
 
         // 🔹 Faqat localdan tiklaymiz
-        setUser({ username });
+        setUser(user);
         setIsAuthenticated(true);
       } catch {
         setIsAuthenticated(false);

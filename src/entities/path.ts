@@ -10,7 +10,13 @@ export const pathServices = {
     updateContractor: "/api/contractor/update/",
     registeration: "/public/auth/register-account",
     registerOrgPath: "/public/auth/register-organization",
-    registerOrgLocalPath: "/public/auth/register-organization-local"
+    registerOrgLocalPath: "/public/auth/register-organization-local",
+    resetPass: "/public/auth/reset-password",
+    getAllAccounts: "/admin/auth/accounts/get",
+    updatePassword: "/admin/auth/change-account-password/",
+    createAccount: "/admin/auth/add-account",
+    deleteAccount: "/admin/auth/delete-account/",
+    updatePermission: "/admin/auth/account-permissions"
   },
 
   init: {
@@ -37,6 +43,7 @@ export const pathServices = {
     addBot: "/api/bot/register",
     sendContacts: "/api/bot/config/update",
     deleteBot: `/api/bot/delete/`,
+    permissionPat: "/public/auth/account-permissions/"
   },
 
   warhouse: {
@@ -139,16 +146,23 @@ export const pathServices = {
   },
 
   fiscalized: {
+    getPrintFiscalXReport: "/api/fiscalization/x-report/print/",
+    getOpenZReport: "/api/fiscalization/z-report/open/",
+    getCloseZReport: "/api/fiscalization/z-report/close/",
+    getSyncReport: "/api/fiscalization/sync-state/",
+
     // UPDATE
     updateCashRegisterArca: `/api/fiscal-device/arca/update/`,
     updateCashRegisterSimurg: `/api/fiscal-device/simurg/update/`,
     updateCashRegisterHippoPos: `/api/fiscal-device/hippo-pos/update/`,
+    updateCashRegisterHippoPos4: `/api/fiscal-device/hippo-pos-applet4/update/`,
     updateCashRegisterEPos: `/api/fiscal-device/e-pos/update/`,
 
     // CREATE
     addCashRegisterArca: `/api/fiscal-device/arca/add`,
     addCashRegisterSimurg: `/api/fiscal-device/simurg/add`,
     addCashRegisterHippoPos: `/api/fiscal-device/hippo-pos/add`,
+    addCashRegisterHippoPos4: `/api/fiscal-device/hippo-pos-applet4/add`,
     addCashRegisterEPos: `/api/fiscal-device/e-pos/add`,
 
     // DELETE

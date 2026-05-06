@@ -23,7 +23,11 @@ import {
     useRegisterSellApi,
     useUpdateSellApi,
 } from "@/entities/sale/repository";
-import { showErrorMessage, showSuccessMessage } from "@/shared/lib/showMessage";
+import {
+    showErrorLocalMessage,
+    showErrorMessage,
+    showSuccessMessage,
+} from "@/shared/lib/showMessage";
 import { messages } from "@/app/constants/message.request";
 import { FiscalizedModal } from "@/features/modals";
 import type { FizcalResponsetype } from "@/entities/sale/model";
@@ -48,6 +52,7 @@ import { PaymentTypes } from "@/app/constants/payment.types";
 import SellDebetModal from "@/widgets/ui/sellDebet/SellDebetModal";
 import ContragentModal from "@/features/modals/ui/ContragentModal";
 import Alert from "@/shared/ui/kit-pro/alert/Alert";
+import { usePermission } from "@/shared/lib/controlActionWithPermission";
 
 type OrderActionType = {
     type: "sale" | "refund" | "purchase";
@@ -117,6 +122,10 @@ const OrderActions = ({
     const { mutate: updateRefund } = useUpdateRefundApi();
     const { mutate: updateSale } = useUpdateSellApi();
     const { mutate: createShiftMutate } = useCreateShiftApi();
+
+    const { checkPermissionByAction } = usePermission();
+
+    const canCreate = checkPermissionByAction(type, "create");
 
     const addDrafts = () => {
         const newDraftSale:
@@ -333,6 +342,7 @@ const OrderActions = ({
 
                 payload.items.push(saleAndRefunItem);
             }
+
             // set payment
             if (paymentAmounts) {
                 const paymentKey = type === "sale" ? "payment" : "payout";
@@ -366,6 +376,11 @@ const OrderActions = ({
             }
         }
 
+        const isMarked = activeDraft?.items?.some(
+            (item) =>
+                item?.isMark || item?.marks?.length !== Number(item?.quantity),
+        );
+
         const registerMutate =
             type === "sale"
                 ? registerSaleMutate
@@ -382,6 +397,15 @@ const OrderActions = ({
 
         // register sale
         if (activeDraft?.id) {
+            if (
+                isMarked &&
+                typeButton &&
+                (type === "sale" || type === "refund")
+            ) {
+                showErrorLocalMessage("Маркировка заполнена не полностью");
+                callback(true);
+                return;
+            }
             updateRegister(
                 { id: activeDraft?.id, payload },
                 {
@@ -416,6 +440,21 @@ const OrderActions = ({
                 },
             );
         } else {
+            if (!canCreate) {
+                showErrorLocalMessage(
+                    "У вас нет прав для выполнения данного действия",
+                );
+                return;
+            }
+            if (
+                isMarked &&
+                typeButton &&
+                (type === "sale" || type === "refund")
+            ) {
+                showErrorLocalMessage("Маркировка заполнена не полностью");
+                callback(true);
+                return;
+            }
             registerMutate(payload, {
                 onSuccess: (data: any) => {
                     if (
@@ -559,7 +598,7 @@ const OrderActions = ({
     }, [filterDataFiscal]);
 
     return keyType === "numeric" ? (
-        <div className="rounded-2xl bg-slate-200 p-1">
+        <>
             <div className="flex gap-x-1">
                 {(type === "sale" || type === "purchase") && (
                     <Button
@@ -567,7 +606,6 @@ const OrderActions = ({
                         onClick={() =>
                             checkShiftAndRun(() => setSellDebit(true))
                         }
-                        variant="plain"
                         disabled={!activeDraft?.items?.length}
                         className="w-full text-base font-medium text-slate-800 bg-white"
                     >
@@ -694,7 +732,7 @@ const OrderActions = ({
                     </div>
                 </Dialog>
             </div>
-        </div>
+        </>
     ) : (
         ""
     );

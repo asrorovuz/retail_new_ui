@@ -77,7 +77,7 @@ const CategorySelect = ({
     setModals((prev) => prev.filter((m) => m.id !== id));
   };
   return (
-    <div className="flex justify-center items-center gap-x-1 col-span-2">
+    <div className="flex justify-center items-center gap-x-1">
       <Controller
         name={name}
         control={control}

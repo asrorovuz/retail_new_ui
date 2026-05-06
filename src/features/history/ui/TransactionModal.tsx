@@ -1,9 +1,9 @@
-import classNames from "@/shared/lib/classNames";
+// import classNames from "@/shared/lib/classNames";
 import { Button, Dropdown } from "@/shared/ui/kit";
-import { FaCheckCircle, FaClock, FaEdit, FaPrint } from "react-icons/fa";
-import InfoGrid from "./InfoGrid";
+import { FaEdit, FaPrint } from "react-icons/fa";
+// import InfoGrid from "./InfoGrid";
 import ProductTable from "./ProductTable";
-import TotalsBlock from "./TotalsBlock";
+// import TotalsBlock from "./TotalsBlock";
 import DeletedTable from "./DeletedTable";
 import { useCreatePrintApi } from "@/entities/init/repository";
 import { messages } from "@/app/constants/message.request";
@@ -212,7 +212,7 @@ const TransactionModal = ({ data, payKey, type, viewModal }: any) => {
 
   return (
     <div className="h-[75vh] overflow-y-auto">
-      <div className="sticky top-0 bg-white">
+      <div className="sticky top-0 bg-white mb-5">
         <div className="flex justify-between items-center">
           <p className="flex gap-x-2">
             <span>Создано:</span>
@@ -265,7 +265,7 @@ const TransactionModal = ({ data, payKey, type, viewModal }: any) => {
             </Button>
           </div>
         </div>
-        <div className="mb-6">
+        {/* <div className="mb-6">
           <span
             className={classNames(
               "inline-flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm shadow-sm",
@@ -286,17 +286,17 @@ const TransactionModal = ({ data, payKey, type, viewModal }: any) => {
               </>
             )}
           </span>
-        </div>
+        </div> */}
       </div>
 
-      <InfoGrid data={data} />
+      {/* <InfoGrid data={data} /> */}
 
       <ProductTable
         items={data?.items?.filter((i: any) => !i?.is_deleted) ?? []}
         totals={data?.totals}
         discount={data?.exact_discounts?.[0] ?? 0}
       />
-      <TotalsBlock data={data} payKey={payKey} />
+      {/* <TotalsBlock data={data} payKey={payKey} /> */}
       {deletedTotals > 0 && (
         <DeletedTable
           items={data.items?.filter((i: any) => i?.is_deleted) ?? []}

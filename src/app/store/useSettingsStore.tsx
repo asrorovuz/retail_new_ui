@@ -16,11 +16,10 @@ const initialState: SettingsStoreInitialState = {
     { key: "package", visible: true, color: "" },
     { key: "price", visible: true, color: "" },
     { key: "purchesPrice", visible: true, color: "" },
-    { key: "sku", visible: true, color: "" },
-    { key: "code", visible: true, color: "" },
   ],
   wareHouseId: null,
-  warhouse: null
+  warhouse: null,
+  permissionList: []
 };
 
 export const useSettingsStore = create<SettingsStoreInitialState & SettingsStoreActions>(
@@ -32,6 +31,7 @@ export const useSettingsStore = create<SettingsStoreInitialState & SettingsStore
     setWareHouseId: (payload: number) => set({wareHouseId: payload}),
     setWareHouse: (payload: number) => set({warhouse: payload}),
     setActiveShift: (payload: Shift | null) =>
-        set(() => ({ activeShift: payload }))
+        set(() => ({ activeShift: payload })),
+    setPermissionList: (payload: number[]) => set({permissionList: payload})
   })
 );

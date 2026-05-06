@@ -6,10 +6,10 @@
   ],
   "compilerOptions": {
     "types": ["node"],
-    "moduleResolution": "node",
-    "baseUrl": "./",
+    // "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "paths": {
-      "@/*": ["src/*", "src/@types"]
+      "@/*": ["./src/*", "./src/@types"]
     }
   }
 }

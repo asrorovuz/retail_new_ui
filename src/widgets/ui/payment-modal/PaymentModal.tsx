@@ -84,6 +84,7 @@ const PaymentModal = ({
     if (!typeButton) {
       setIsLoading(true);
     }
+    
     let subtracted = false;
     onSubmitPaymentHandler(
       (type === "sale"
