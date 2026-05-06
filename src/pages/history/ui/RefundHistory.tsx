@@ -20,8 +20,8 @@ const RefundHistory = () => {
     const navigate = useNavigate();
     const [isOpenFilter, setIsOpenFilter] = useState(false);
     const [params, setParams] = useState({
-        skip: 0,
-        limit: 10,
+        pageIndex: 1,
+        pageSize: 20,
     });
     const [viewModal, setViewModal] = useState({
         isOpen: false,
@@ -64,7 +64,7 @@ const RefundHistory = () => {
     }, [dateStart, dateEnd]);
 
     return (
-        <div className="bg-white h-full rounded-2xl p-4">
+        <div className="bg-white h-screen rounded-lg p-3 flex flex-col">
             <div className="flex justify-between mb-3">
                 <NavigateButton content="История возвратов" />
                 <div className="flex gap-x-2">
@@ -136,7 +136,6 @@ const RefundHistory = () => {
                 data={data ?? []}
                 count={count}
                 loading={isLoading}
-                isOpenFilter={isOpenFilter}
                 setParams={setParams}
                 setViewModal={setViewModal}
                 pay={true}

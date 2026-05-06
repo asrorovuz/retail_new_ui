@@ -42,12 +42,12 @@ const AllReport = ({ data }: { data: any }) => {
     return (
         <div
             className={classNames(
-                "flex flex-col mb-3 h-[78vh] overflow-y-auto",
+                "flex flex-col mb-3 h-full flex-1 overflow-y-auto",
             )}
         >
             <div className="grid grid-cols-3 gap-x-3">
                 <div className="flex flex-col gap-4 col-span-1">
-                    <div className="border border-slate-200 rounded-xl p-4">
+                    <div className="border border-slate-200 rounded-lg p-4">
                         <h3 className="text-sm font-medium mb-3">
                             Отчёты по продажам
                         </h3>
@@ -102,7 +102,7 @@ const AllReport = ({ data }: { data: any }) => {
                             </div>
                         </div>
                     </div>
-                    <div className="border border-slate-200 rounded-xl p-4">
+                    <div className="border border-slate-200 rounded-lg p-4">
                         <h3 className="text-sm font-medium mb-3">
                             Отчёты по приходу и возвратам
                         </h3>
@@ -147,7 +147,7 @@ const AllReport = ({ data }: { data: any }) => {
                             </div>
                         </div>
                     </div>
-                    <div className="border border-slate-200 rounded-xl p-4">
+                    <div className="border border-slate-200 rounded-lg p-4">
                         <h3 className="text-sm font-medium mb-3">
                             Отчёты по платежам
                         </h3>
@@ -196,7 +196,7 @@ const AllReport = ({ data }: { data: any }) => {
                         <h3 className="text-sm font-medium mb-3">
                             Топ-10 самых прибыльных товаров
                         </h3>
-                        <div className="border border-slate-200 rounded-xl">
+                        <div className="border border-slate-200 rounded-lg">
                             <Table
                                 className="table-fixed border-separate border-spacing-0"
                                 overflow={false}
@@ -319,7 +319,7 @@ const AllReport = ({ data }: { data: any }) => {
                         <h3 className="text-sm font-medium mb-3">
                             Топ-10 самых продаваемых товаров
                         </h3>
-                        <div className="border border-slate-200 rounded-xl">
+                        <div className="border border-slate-200 rounded-lg">
                             <Table
                                 className="table-fixed border-separate border-spacing-0"
                                 overflow={false}
@@ -435,7 +435,7 @@ const AllReport = ({ data }: { data: any }) => {
                         <h3 className="text-sm font-medium mb-3">
                             Топ-10 самых прибыльных клиентов
                         </h3>
-                        <div className="border border-slate-200 rounded-xl">
+                        <div className="border border-slate-200 rounded-lg">
                             <Table
                                 className="table-fixed border-separate border-spacing-0"
                                 overflow={false}

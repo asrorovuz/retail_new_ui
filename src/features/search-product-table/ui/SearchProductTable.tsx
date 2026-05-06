@@ -118,6 +118,7 @@ const SearchProductTable = ({
                 priceAmount: packagePrice?.amount,
                 priceAmoutBulk: packagePriceBulk?.amount,
                 quantity: quantity + 1,
+                isMark: type === "sale" ? (item?.is_marked || false) : false,
                 totalAmount:
                     (quantity + 1) *
                     (isSelectedBulk && type === "sale"

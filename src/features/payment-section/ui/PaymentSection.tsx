@@ -185,7 +185,7 @@ const PaymentSection = ({
     return (
         <>
             {activeType === "numeric" && (
-                <div className="rounded-2xl bg-slate-200 p-1 h-full">
+                <div className="rounded-lg bg-slate-200 p-1 h-full">
                     <div className="flex flex-col gap-y-2 mb-1">
                         <div className="py-3 px-4 flex justify-between">
                             <div className="w-full">

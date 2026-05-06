@@ -309,6 +309,7 @@ const ProductForm: FC<ProductFormType> = ({
                         const newItem = {
                             productId: res?.id,
                             productName: res?.name,
+                            isMark: res?.is_marked || false,
                             productPackageName: res?.measurement_name || "",
                             priceTypeId: packagePrice?.product_price_type?.id,
                             priceAmount: packagePrice?.amount,

@@ -20,8 +20,8 @@ const SaleHistory = () => {
     const navigate = useNavigate();
     const [isOpenFilter, setIsOpenFilter] = useState<boolean>(false);
     const [params, setParams] = useState({
-        skip: 0,
-        limit: 10,
+        pageIndex: 1,
+        pageSize: 20,
     });
     const [viewModal, setViewModal] = useState({
         isOpen: false,
@@ -39,10 +39,10 @@ const SaleHistory = () => {
     const canCreate = checkPermissionByAction("sale", "create");
 
     const { data, isLoading } = useSellApi(params);
+    const { data: count } = useOperationCountApi(params, "sale");
     const { data: dataId, isPending: isLoadingId } = useSellIdApi(
         viewModal?.id,
     );
-    const { data: count } = useOperationCountApi(params, "sale");
 
     const closeModal = () => {
         setViewModal({ isOpen: false, id: null });
@@ -64,7 +64,7 @@ const SaleHistory = () => {
     }, [dateStart, dateEnd]);
 
     return (
-        <div className="bg-white h-full rounded-2xl p-4">
+        <div className="bg-white h-screen rounded-lg p-3 flex flex-col">
             <div className="flex justify-between mb-3">
                 <NavigateButton content="История продаж" />
                 <div className="flex gap-x-2">
@@ -134,7 +134,6 @@ const SaleHistory = () => {
                 data={data ?? []}
                 count={count}
                 loading={isLoading}
-                isOpenFilter={isOpenFilter}
                 setParams={setParams}
                 pay={true}
                 setViewModal={setViewModal}

@@ -137,6 +137,7 @@ const SalePage = () => {
         showErrorLocalMessage("Товар не найден");
         setBarcode(null);
     }, [isError]);
+console.log(activeDraft);
 
     return (
         <div className="flex gap-x-2 bg-white h-screen overflow-hidden p-2">
@@ -214,7 +215,7 @@ const SalePage = () => {
                         </>
                 )}
                 {activeType === "numeric" && (
-                    <div className="rounded-2xl bg-slate-200 p-1 flex gap-x-1">
+                    <div className="rounded-lg bg-slate-200 p-1 flex gap-x-1">
                         <>
                             <Button
                                 onClick={() => navigate("/sales-history")}

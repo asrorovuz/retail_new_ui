@@ -63,7 +63,7 @@ const PurchaseHistory = () => {
     }, [dateStart, dateEnd]);
 
     return (
-        <div className="bg-white h-full rounded-2xl p-4">
+        <div className="bg-white h-screen rounded-lg p-3 flex flex-col">
             <div className="flex justify-between mb-3">
                 <NavigateButton content="История поступлений" />
                 <div className="flex gap-x-2">
@@ -134,7 +134,6 @@ const PurchaseHistory = () => {
                 count={count}
                 loading={isLoading}
                 setParams={setParams}
-                isOpenFilter={isOpenFilter}
                 setViewModal={setViewModal}
                 pay={true}
                 payKey={"payout"}

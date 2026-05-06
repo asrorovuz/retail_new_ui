@@ -37,7 +37,7 @@
 
     .tr {
       .th {
-        @apply px-2 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-100;
+        @apply px-2 py-1 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-100;
       }
     }
   }
@@ -47,7 +47,7 @@
 
     .tr {
       .td {
-        @apply px-2 py-4;
+        @apply px-2 py-2;
       }
     }
   }
@@ -55,7 +55,7 @@
   .tfoot {
     .tr {
       .td {
-        @apply px-2 py-3 border-t dark:border-slate-700;
+        @apply px-2 py-2 border-t dark:border-slate-700;
       }
     }
   }

@@ -376,6 +376,11 @@ const OrderActions = ({
             }
         }
 
+        const isMarked = activeDraft?.items?.some(
+            (item) =>
+                item?.isMark || item?.marks?.length !== Number(item?.quantity),
+        );
+
         const registerMutate =
             type === "sale"
                 ? registerSaleMutate
@@ -392,6 +397,15 @@ const OrderActions = ({
 
         // register sale
         if (activeDraft?.id) {
+            if (
+                isMarked &&
+                typeButton &&
+                (type === "sale" || type === "refund")
+            ) {
+                showErrorLocalMessage("Маркировка заполнена не полностью");
+                callback(true);
+                return;
+            }
             updateRegister(
                 { id: activeDraft?.id, payload },
                 {
@@ -430,6 +444,15 @@ const OrderActions = ({
                 showErrorLocalMessage(
                     "У вас нет прав для выполнения данного действия",
                 );
+                return;
+            }
+            if (
+                isMarked &&
+                typeButton &&
+                (type === "sale" || type === "refund")
+            ) {
+                showErrorLocalMessage("Маркировка заполнена не полностью");
+                callback(true);
                 return;
             }
             registerMutate(payload, {

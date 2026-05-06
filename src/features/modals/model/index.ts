@@ -104,6 +104,7 @@ export interface ProductDefaultValues {
   category: any;
   is_legal: boolean;
   isActive?: boolean;
+  isMark: boolean;
   sku: string | null;
   code: string | null;
   measurement_name: string;

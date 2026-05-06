@@ -9,7 +9,6 @@ export const handleScannedProduct = (
     setExpandedId: any,
     selectedRows?: any,
     barcodeMark?: string,
-    
 ) => {
     const { draftSales, updateDraftSaleItem } = useDraftSaleStore.getState();
     const { draftRefunds, updateDraftRefundItem } =
@@ -72,7 +71,6 @@ export const handleScannedProduct = (
     } else {
         quantity += 1;
     }
-    console.log(product, barcodeMark, marks, "product");
 
     const newItem = {
         productId: product?.id,
@@ -83,7 +81,7 @@ export const handleScannedProduct = (
         priceAmount: packagePrice?.amount,
         priceAmoutBulk: packagePriceBulk?.amount,
         quantity: quantity,
-        isMark: product?.is_marked,
+        isMark: type === "sale" ? product?.is_marked || false : false,
         totalAmount:
             quantity *
             (isSelectedBulk && type === "sale"

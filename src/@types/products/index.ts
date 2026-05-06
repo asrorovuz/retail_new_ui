@@ -66,6 +66,7 @@ export interface Product {
   measurement_name?: string | null;
   measurement_code: number;
   count: number;
+  is_marked: boolean;
   state?: number;
   is_legal: boolean;
   package?: any;

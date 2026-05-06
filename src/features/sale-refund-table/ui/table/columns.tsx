@@ -55,7 +55,7 @@ export const columns = (
 
                 return <FormattedNumber value={reallyPrice ?? 0} scale={2} />;
             },
-            maxSize: 90
+            maxSize: 90,
         },
         {
             header: () => (
@@ -70,7 +70,7 @@ export const columns = (
             cell: ({ row }) => (
                 <FormattedNumber value={row.original.quantity} scale={2} />
             ),
-            maxSize: 80
+            maxSize: 80,
         },
         {
             header: () => (
@@ -86,7 +86,7 @@ export const columns = (
                     scale={2}
                 />
             ),
-            maxSize: 110
+            maxSize: 110,
         },
         {
             header: () => "",
@@ -96,15 +96,18 @@ export const columns = (
             },
             cell: ({ row }) =>
                 row.original.marks?.length ? (
-                    <Button
-                        variant="solid"
-                        size="xs"
-                        className="bg-blue-700 hover:bg-blue-700 hover:opacity-85 text-white"
-                        onClick={() => setMark(row.original.productId)}
-                        icon={<BsQrCodeScan size={23} />}
-                    />
+                    <div className="flex items-center gap-x-1">
+                        <span className="text-lg">{row.original.marks?.length}</span>
+                        <Button
+                            variant="solid"
+                            size="xs"
+                            className="bg-blue-700 hover:bg-blue-700 hover:opacity-85 text-white"
+                            onClick={() => setMark(row.original.productId)}
+                            icon={<BsQrCodeScan size={23} />}
+                        />
+                    </div>
                 ) : null,
-                maxSize: 60
+            maxSize: 60,
         },
     ];
 

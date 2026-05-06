@@ -46,6 +46,7 @@ const columns: ColumnDef<any>[] = [
                     row?.original?.contractor_period_report
                         ?.sales_profit_by_purchase_price,
                 )}
+                scale={2}
             />
         ),
     },
@@ -66,7 +67,7 @@ const columns: ColumnDef<any>[] = [
                 0,
             );
 
-            return <FormattedNumber value={quantity} />;
+            return <FormattedNumber value={quantity} scale={2} />;
         },
     },
 
@@ -77,6 +78,7 @@ const columns: ColumnDef<any>[] = [
                 value={safeAmount(
                     row?.original?.contractor_period_report?.sales_net_price,
                 )}
+                scale={2}
             />
         ),
     },
@@ -89,6 +91,7 @@ const columns: ColumnDef<any>[] = [
                     row?.original?.contractor_period_report
                         ?.purchases_net_price,
                 )}
+                scale={2}
             />
         ),
     },
@@ -100,6 +103,7 @@ const columns: ColumnDef<any>[] = [
                 value={safeAmount(
                     row?.original?.contractor_period_report?.refunds_net_price,
                 )}
+                scale={2}
             />
         ),
     },
@@ -111,6 +115,7 @@ const columns: ColumnDef<any>[] = [
                 value={safeAmount(
                     row?.original?.contractor_period_report?.returns_net_price,
                 )}
+                scale={2}
             />
         ),
     },
@@ -122,6 +127,7 @@ const columns: ColumnDef<any>[] = [
                 value={safeAmount(
                     row?.original?.contractor_period_report?.payments_net_price,
                 )}
+                scale={2}
             />
         ),
     },
@@ -133,6 +139,7 @@ const columns: ColumnDef<any>[] = [
                 value={safeAmount(
                     row?.original?.contractor_period_report?.payouts_net_price,
                 )}
+                scale={2}
             />
         ),
     },
@@ -142,6 +149,7 @@ const columns: ColumnDef<any>[] = [
         cell: ({ row }) => (
             <FormattedNumber
                 value={safeAmount(row?.original?.contractor?.before_debts)}
+                scale={2}
             />
         ),
     },
@@ -151,6 +159,7 @@ const columns: ColumnDef<any>[] = [
         cell: ({ row }) => (
             <FormattedNumber
                 value={safeAmount(row?.original?.contractor?.debts_net_price)}
+                scale={2}
             />
         ),
     },
@@ -179,17 +188,20 @@ const ContractorReport = ({ data }: any) => {
                                             key={header.id}
                                             colSpan={header.colSpan}
                                             className={classNames(
-                                                "border border-slate-300 px-2 py-3 text-sm font-semibold text-slate-800",
+                                                "border border-slate-300 text-sm font-semibold text-slate-800",
                                                 header.column.columnDef.meta
                                                     ?.headerClassName,
                                                 isGroupHeader &&
                                                     "text-center bg-slate-50",
                                             )}
                                         >
-                                            {flexRender(
-                                                header.column.columnDef.header,
-                                                header.getContext(),
-                                            )}
+                                            <div className="px-2 py-3">
+                                                {flexRender(
+                                                    header.column.columnDef
+                                                        .header,
+                                                    header.getContext(),
+                                                )}
+                                            </div>
                                         </Th>
                                     );
                                 })}
@@ -208,22 +220,31 @@ const ContractorReport = ({ data }: any) => {
                                         "hover:bg-slate-100 transition-colors",
                                     )}
                                 >
-                                    {row.getVisibleCells().map((cell, index) => (
-                                        <Td
-                                            key={cell.id}
-                                            className={classNames(
-                                                "border border-slate-300 px-2 py-2.5 text-sm text-slate-700",
-                                                index === 0 ? "text-center" : index === 1 ? "text-left" : "text-right",
-                                                cell.column.columnDef.meta
-                                                    ?.bodyCellClassName,
-                                            )}
-                                        >
-                                            {flexRender(
-                                                cell.column.columnDef.cell,
-                                                cell.getContext(),
-                                            )}
-                                        </Td>
-                                    ))}
+                                    {row
+                                        .getVisibleCells()
+                                        .map((cell, index) => (
+                                            <Td
+                                                key={cell.id}
+                                                className={classNames(
+                                                    "border border-slate-300 text-sm text-slate-700",
+                                                    index === 0
+                                                        ? "text-center"
+                                                        : index === 1
+                                                          ? "text-left"
+                                                          : "text-right",
+                                                    cell.column.columnDef.meta
+                                                        ?.bodyCellClassName,
+                                                )}
+                                            >
+                                                <div className="py-3 px-2">
+                                                    {flexRender(
+                                                        cell.column.columnDef
+                                                            .cell,
+                                                        cell.getContext(),
+                                                    )}
+                                                </div>
+                                            </Td>
+                                        ))}
                                 </Tr>
                             );
                         })}

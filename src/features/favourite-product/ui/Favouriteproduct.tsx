@@ -69,6 +69,8 @@ const FavouriteProduct = ({
       ) || item.product.prices[1];
     const quantity = operationItem?.quantity ?? 0;
 
+    console.log(item, "item");
+    
     const newItem = {
       productId: item?.product?.id,
       productName: item?.product.name,
@@ -78,6 +80,7 @@ const FavouriteProduct = ({
       priceAmount: packagePrice?.amount,
       priceAmoutBulk: packagePriceBulk?.amount,
       quantity: quantity + 1,
+      isMark: type === "sale" ? (item?.product?.is_marked || false) : false,
       totalAmount:
         (quantity + 1) *
         (isSelectedBulk && type === "sale"

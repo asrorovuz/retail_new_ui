@@ -189,7 +189,7 @@ const RevisiyaPage = () => {
     });
 
     return (
-        <div className="bg-white h-full rounded-2xl p-3">
+        <div className="bg-white h-screen p-3 flex flex-col">
             <div className="flex justify-between mb-4 items-center">
                 <NavigateButton content="Ревизия" />
                 <div className="flex gap-x-2">
@@ -249,7 +249,7 @@ const RevisiyaPage = () => {
                 </div>
             </div>
             {data && data?.length > 0 && !isPending ? (
-                <div className="h-[80vh] mb-3 border border-slate-300 rounded-xl overflow-auto">
+                <div className="h-full flex-1 mb-3 border border-slate-300 rounded-lg overflow-auto">
                     <Table className="min-w-full table-fixed border-separate border-spacing-0">
                         <THead className="sticky top-0">
                             {table.getHeaderGroups().map((headerGroup) => (
@@ -302,7 +302,9 @@ const RevisiyaPage = () => {
                     </Table>
                 </div>
             ) : (
-                <Empty size={150} textSize="32px" />
+                <div className="h-full flex-1 flex items-center justify-center mb-3 border border-slate-300 rounded-lg overflow-auto">
+                    <Empty size={150} textSize="32px" />
+                </div>
             )}
 
             <Pagination
