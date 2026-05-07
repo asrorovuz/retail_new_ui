@@ -68,7 +68,7 @@ const PaymeTypeCards = ({
             {count >= 3 && (
                 <Button
                     className={classNames(
-                        "w-full flex flex-col justify-center items-center overflow-hidden h-full",
+                        "w-full flex flex-col justify-center items-center overflow-hidden h-full !min-h-10",
                     )}
                     onClick={onBackType}
                     icon={<IoIosArrowBack />}
@@ -93,7 +93,7 @@ const PaymeTypeCards = ({
                             }
                             onClick={() => onSetType(payment.paymentType)}
                             className={classNames(
-                                "flex flex-col justify-center items-center overflow-hidden h-full",
+                                "flex flex-col justify-center items-center overflow-hidden h-full !min-h-10",
                                 isActive && "bg-blue-200",
                                 +payment?.amount > 0 &&
                                     !isActive &&
@@ -101,7 +101,7 @@ const PaymeTypeCards = ({
                             )}
                         >
                             <img
-                                className="w-full object-cover h-[50px]"
+                                className="w-full object-contain h-[50px]"
                                 src={GetPaymentImageSrc(payment.paymentType)}
                                 alt={GetPaymentLabel(payment.paymentType)}
                             />
@@ -113,7 +113,7 @@ const PaymeTypeCards = ({
                     onClick={onShowOtherType}
                     disabled={type === "revision" || type === "refund"}
                     className={classNames(
-                        "flex flex-col justify-center items-center overflow-hidden h-full",
+                        "flex flex-col justify-center items-center overflow-hidden h-full !min-h-10",
                     )}
                 >
                     Другие

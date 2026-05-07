@@ -214,9 +214,7 @@ const OrderActions = ({
 
     const handleCancelPrint = () => {
         setPrintSelect(false);
-        if (settings?.fiscalization_enabled && type === "sale") {
-            setFiscalizedModal(true);
-        } else setSaleId(null);
+        setSaleId(null);
     };
 
     const handleCancelFiscalization = () => {
@@ -281,7 +279,7 @@ const OrderActions = ({
     function onSubmitPaymentHandler(
         paymentAmounts: PaymentAmount[],
         callback: (success: boolean) => void,
-        typeButton: boolean,
+        typeButton: number,
     ) {
         // init payload
         const payload: RegisterSaleModel &
@@ -378,7 +376,7 @@ const OrderActions = ({
 
         const isMarked = activeDraft?.items?.some(
             (item) =>
-                item?.isMark || item?.marks?.length !== Number(item?.quantity),
+                item?.isMark && item?.marks?.length !== Number(item?.quantity),
         );
 
         const registerMutate =
@@ -399,7 +397,7 @@ const OrderActions = ({
         if (activeDraft?.id) {
             if (
                 isMarked &&
-                typeButton &&
+                typeButton === 3 &&
                 (type === "sale" || type === "refund")
             ) {
                 showErrorLocalMessage("Маркировка заполнена не полностью");
@@ -448,7 +446,7 @@ const OrderActions = ({
             }
             if (
                 isMarked &&
-                typeButton &&
+                typeButton === 3 &&
                 (type === "sale" || type === "refund")
             ) {
                 showErrorLocalMessage("Маркировка заполнена не полностью");
@@ -467,8 +465,14 @@ const OrderActions = ({
                                 data?.purchase?.id ||
                                 data?.refund?.id,
                         );
-                        if (typeButton) {
+                        if (typeButton === 2) {
                             onPrintCheck(data);
+                        }
+                        if (
+                            typeButton === 3 &&
+                            (type === "sale" || type === "refund")
+                        ) {
+                            setFiscalizedModal(true);
                         }
                     }
 
@@ -489,12 +493,14 @@ const OrderActions = ({
     }
 
     const onPrintCheck = (data: any) => {
-        if (settings?.auto_print_receipt && settings?.printer_name) {
-            onPrint(data?.sale?.id || data?.purchase?.id || data?.refund?.id);
-        } else if (!settings?.auto_print_receipt && settings?.printer_name) {
-            setPrintSelect(true);
-        } else {
-            handleCancelPrint();
+        if (settings?.printer_name) {
+            if (settings?.auto_print_receipt) {
+                onPrint(
+                    data?.sale?.id || data?.purchase?.id || data?.refund?.id,
+                );
+            } else {
+                setPrintSelect(true);
+            }
         }
     };
 

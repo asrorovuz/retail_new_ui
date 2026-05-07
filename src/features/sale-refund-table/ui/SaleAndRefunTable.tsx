@@ -117,7 +117,7 @@ const SaleAndRefunTable = ({
             setExpandedRow(itemId!);
         }
     }, [expendedId]);
-
+    
     const table = useReactTable({
         data: activeDraft?.items ?? [],
         columns: columns(setMark, type, selectedRows),

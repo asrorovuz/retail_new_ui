@@ -185,7 +185,7 @@ const PaymentSection = ({
     return (
         <>
             {activeType === "numeric" && (
-                <div className="rounded-lg bg-slate-200 p-1 h-full">
+                <div className="rounded-lg bg-slate-200 p-1 h-full flex flex-col justify-between">
                     <div className="flex flex-col gap-y-2 mb-1">
                         <div className="py-3 px-4 flex justify-between">
                             <div className="w-full">
@@ -197,7 +197,7 @@ const PaymentSection = ({
                                             : 0}
                                     </span>
                                 </div>
-                                <div className="flex justify-between text-slate-700 border-b text-lg">
+                                <div className="flex justify-between text-slate-700 border-b text-[17px]">
                                     <span>Оюшая сумма</span>
                                     <span>
                                         {totalPaymentAmount
@@ -207,7 +207,7 @@ const PaymentSection = ({
                                             : 0}
                                     </span>
                                 </div>
-                                <div className="flex justify-between text-slate-700 border-b text-lg">
+                                <div className="flex justify-between text-slate-700 border-b text-[17px]">
                                     <span>Скидка</span>
                                     <span>
                                         {activeDraft?.discountAmount
@@ -217,11 +217,11 @@ const PaymentSection = ({
                                             : 0}
                                     </span>
                                 </div>
-                                <div className="flex justify-between text-slate-700 border-b text-lg">
+                                <div className="flex justify-between text-slate-700 border-b text-[17px]">
                                     <span>В долг</span>
                                     <span>{debetAmount ? debetAmount : 0}</span>
                                 </div>
-                                <div className="flex justify-between text-slate-700 border-b text-lg">
+                                <div className="flex justify-between text-slate-700 border-b text-[17px]">
                                     <span>Сдача</span>
                                     <span>
                                         {cashBackAmount

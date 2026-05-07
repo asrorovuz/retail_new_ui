@@ -177,7 +177,7 @@ console.log(activeDraft);
 
             <div className="bg-white w-[35%] flex flex-col gap-y-2">
                 <Header />
-                <div className={classNames("rounded-lg p-1 flex flex-col gap-2", activeType === "qwerty" && "h-full")}>
+                <div className={classNames("rounded-lg flex flex-col gap-2", activeType === "qwerty" && "h-full")}>
                     <SearchProduct
                         search={search}
                         activeType={activeType}
@@ -215,13 +215,13 @@ console.log(activeDraft);
                         </>
                 )}
                 {activeType === "numeric" && (
-                    <div className="rounded-lg bg-slate-200 p-1 flex gap-x-1">
+                    <div className="rounded-lg flex gap-x-1">
                         <>
                             <Button
                                 onClick={() => navigate("/sales-history")}
                                 size="sm"
                                 className={classNames(
-                                    "flex flex-col justify-center items-center overflow-hidden",
+                                    "flex flex-col justify-center items-center overflow-hidden !h-10",
                                 )}
                             >
                                 История
@@ -233,7 +233,7 @@ console.log(activeDraft);
                                     onClick={() => navigate("/products")}
                                     size="sm"
                                     className={classNames(
-                                        "flex flex-col justify-center items-center overflow-hidden",
+                                        "flex flex-col justify-center items-center overflow-hidden !h-10",
                                     )}
                                 >
                                     Товары
@@ -243,7 +243,7 @@ console.log(activeDraft);
                                 onClick={() => navigate("/refund")}
                                 size="sm"
                                 className={classNames(
-                                    "flex flex-col justify-center items-center overflow-hidden",
+                                    "flex flex-col justify-center items-center overflow-hidden !h-10",
                                 )}
                             >
                                 Возвраты
@@ -252,10 +252,10 @@ console.log(activeDraft);
                                 onClick={() => setDebtModal(true)}
                                 size="sm"
                                 className={classNames(
-                                    "flex flex-col justify-center items-center overflow-hidden",
+                                    "flex flex-col justify-center items-center overflow-hidden !h-10",
                                 )}
                             >
-                                Оплатить долг
+                                Опл. долг
                             </Button>
                         </>
                     </div>

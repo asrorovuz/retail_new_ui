@@ -17,8 +17,8 @@ const Header = () => {
                 <div className="flex items-center">
                     В: <span>{versions ? versions : "-"}</span>
                 </div>
-                <div className="flex gap-2 items-center">
-                    <div className="flex items-end gap-x-2">
+                <div className="flex gap-1 items-center">
+                    <div className="flex items-end flex-wrap gap-x-2">
                         <p className="capitalize">
                             {user?.type === 1 ? "админ" : "сотрудник"}:
                         </p>

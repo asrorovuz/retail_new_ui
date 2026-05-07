@@ -95,14 +95,14 @@ export const columns = (
                 bodyCellClassName: "text-right",
             },
             cell: ({ row }) =>
-                row.original.marks?.length ? (
+                row.original.isMark || row.original?.marks?.length ? (
                     <div className="flex items-center gap-x-1">
-                        <span className="text-lg">{row.original.marks?.length}</span>
+                        <span className="text-lg">{row.original.marks?.length || 0}</span>
                         <Button
                             variant="solid"
                             size="xs"
                             className="bg-blue-700 hover:bg-blue-700 hover:opacity-85 text-white"
-                            onClick={() => setMark(row.original.productId)}
+                            onClick={() => row.original.isMark ? setMark(row.original.productId) : null}
                             icon={<BsQrCodeScan size={23} />}
                         />
                     </div>
