@@ -217,7 +217,7 @@ const ProductForm: FC<ProductFormType> = ({
                 : {}),
             ...{
                 name: values?.name,
-                measurement_name: values?.measurement_name,
+                measurement_name: values?.measurement_name ?? "шт",
                 code: values?.code,
                 sku: values?.sku,
                 vat_rate: values?.vat_rate,
@@ -525,6 +525,84 @@ const ProductForm: FC<ProductFormType> = ({
                                 />
                             </div>
 
+                            <div className="grid grid-cols-3 gap-x-3">
+                                <Controller
+                                    name="prices.0.amount"
+                                    control={control}
+                                    rules={{
+                                        required:
+                                            "Розничная цена обязательна к заполнению",
+                                        min: {
+                                            value: 1,
+                                            message:
+                                                "Цена должна быть больше 0",
+                                        },
+                                    }}
+                                    render={({ field, fieldState }) => (
+                                        <FormItem
+                                            asterisk
+                                            className="!mb-0"
+                                            label="Розничный цена"
+                                        >
+                                            <Input
+                                                {...field}
+                                                autoFocus={!!fieldState?.error}
+                                                type="number"
+                                                size="sm"
+                                                invalid={!!fieldState?.error}
+                                                autoComplete="off"
+                                                placeholder="Сумма"
+                                                space={false}
+                                                replaceLeadingZero={true}
+                                                className="w-full"
+                                            />
+                                        </FormItem>
+                                    )}
+                                />
+                                <Controller
+                                    name="prices.1.amount"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <FormItem
+                                            label="Оптовая цена"
+                                            className="!mb-0"
+                                        >
+                                            <Input
+                                                {...field}
+                                                type="number"
+                                                size="sm"
+                                                autoComplete="off"
+                                                placeholder="Сумма"
+                                                space={false}
+                                                replaceLeadingZero={true}
+                                                className="w-full"
+                                            />
+                                        </FormItem>
+                                    )}
+                                />
+                                <Controller
+                                    name="purchase_price.amount"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <FormItem
+                                            label="Закупочная цена"
+                                            className="!mb-0"
+                                        >
+                                            <Input
+                                                {...field}
+                                                type="number"
+                                                autoComplete="off"
+                                                placeholder="Сумма"
+                                                size="sm"
+                                                replaceLeadingZero={true}
+                                                space={false}
+                                                className="w-full"
+                                            />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
+
                             <div className="grid grid-cols-5 gap-x-3">
                                 <FormItem className={"!mb-0"} label="Остаток">
                                     <Input
@@ -653,89 +731,6 @@ const ProductForm: FC<ProductFormType> = ({
                                     )}
                                 />
                             </div>
-                        </div>
-                    </section>
-
-                    <section className="rounded-lg mb-2 bg-slate-200 overflow-hidden">
-                        <h3 className="text-lg text-slate-700 mb-2 bg-slate-300 p-2">
-                            Цены
-                        </h3>
-                        <div className="grid grid-cols-3 gap-x-3 p-2">
-                            <Controller
-                                name="prices.0.amount"
-                                control={control}
-                                rules={{
-                                    required:
-                                        "Розничная цена обязательна к заполнению",
-                                    min: {
-                                        value: 1,
-                                        message: "Цена должна быть больше 0",
-                                    },
-                                }}
-                                render={({ field, fieldState }) => (
-                                    <FormItem
-                                        asterisk
-                                        className="!mb-0"
-                                        label="Розничный цена"
-                                    >
-                                        <Input
-                                            {...field}
-                                            autoFocus={!!fieldState?.error}
-                                            type="number"
-                                            size="sm"
-                                            invalid={!!fieldState?.error}
-                                            autoComplete="off"
-                                            placeholder="Сумма"
-                                            space={false}
-                                            replaceLeadingZero={true}
-                                            className="w-full"
-                                        />
-                                    </FormItem>
-                                )}
-                            />
-                            <Controller
-                                name="prices.1.amount"
-                                control={control}
-                                render={({ field }) => (
-                                    <FormItem
-                                        label="Оптовая цена"
-                                        className="!mb-0"
-                                    >
-                                        <Input
-                                            {...field}
-                                            type="number"
-                                            size="sm"
-                                            autoComplete="off"
-                                            placeholder="Сумма"
-                                            space={false}
-                                            replaceLeadingZero={true}
-                                            className="w-full"
-                                        />
-                                    </FormItem>
-                                )}
-                            />
-                            <Controller
-                                name="purchase_price.amount"
-                                control={control}
-                                render={({ field }) => (
-                                    <FormItem
-                                        label="Закупочная цена"
-                                        className="!mb-0"
-                                    >
-                                        <Input
-                                            {...field}
-                                            type="number"
-                                            // disabled={type === "edit"}
-                                            autoComplete="off"
-                                            placeholder="Сумма"
-                                            size="sm"
-                                            replaceLeadingZero={true}
-                                            space={false}
-                                            className="w-full"
-                                        />
-                                    </FormItem>
-                                )}
-                            />
                         </div>
                     </section>
 

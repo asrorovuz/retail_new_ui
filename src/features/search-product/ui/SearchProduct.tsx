@@ -65,6 +65,7 @@ const SearchProduct = ({
                     className="max-h-[40px] !bg-transparent"
                     onFocus={onFocusedSearch}
                     onBlur={onBlurSearch}
+                    onChange={(e) => setSearch(e.target.value)}
                     placeholder={placeholder ?? "Поиск "}
                 />
             </div>

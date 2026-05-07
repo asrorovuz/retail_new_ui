@@ -126,7 +126,7 @@ const PaymentModal = ({
                     // } else {
                     //     return;
                     // }
-                } 
+                }
             },
             typeButton,
         );
@@ -221,17 +221,15 @@ const PaymentModal = ({
                 >
                     Чек
                 </Button>
-                {type !== "refund" && (
-                    <Button
-                        loading={loadingFiscal}
-                        onClick={() => onSubmitPayment(3)}
-                        variant="default"
-                        disabled={!settings?.fiscalization_enabled}
-                        className="w-full"
-                    >
-                        Кэшбэк
-                    </Button>
-                )}
+                <Button
+                    loading={loadingFiscal}
+                    onClick={() => onSubmitPayment(3)}
+                    variant="default"
+                    disabled={!settings?.fiscalization_enabled}
+                    className="w-full"
+                >
+                    Кэшбэк
+                </Button>
             </div>
             <Button
                 loading={loading}

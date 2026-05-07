@@ -137,7 +137,6 @@ const SalePage = () => {
         showErrorLocalMessage("Товар не найден");
         setBarcode(null);
     }, [isError]);
-console.log(activeDraft);
 
     return (
         <div className="flex gap-x-2 bg-white h-screen overflow-hidden p-2">
