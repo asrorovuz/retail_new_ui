@@ -10,14 +10,12 @@ import { showErrorMessage, showSuccessMessage } from "@/shared/lib/showMessage";
 import {
     Button,
     DatePicker,
-    Dropdown,
     Pagination,
     Table,
 } from "@/shared/ui/kit";
 import ConfirmDialog from "@/shared/ui/kit-pro/confirm-dialog/ConfirmDialog";
 import Empty from "@/shared/ui/kit-pro/empty/Empty";
 import NavigateButton from "@/shared/ui/kit-pro/navigate-button/NavigateButton";
-import DropdownItem from "@/shared/ui/kit/Dropdown/DropdownItem";
 import TBody from "@/shared/ui/kit/Table/TBody";
 import Td from "@/shared/ui/kit/Table/Td";
 import Th from "@/shared/ui/kit/Table/Th";
@@ -32,8 +30,7 @@ import {
 import dayjs from "dayjs";
 import { useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { FaPlus } from "react-icons/fa";
-import { HiOutlineDotsHorizontal } from "react-icons/hi";
+import { FaEye, FaPlus } from "react-icons/fa";
 import { IoTrashOutline } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 
@@ -120,33 +117,36 @@ const WriteOffPage = () => {
 
     const columns = useMemo<ColumnDef<any>[]>(
         () => [
+            // {
+            //     id: "№",
+            //     enableSorting: false,
+            //     header: () => "№",
+            //     cell: (info) =>
+            //         (pagination?.pageIndex - 1) * pagination?.pageSize +
+            //         (info?.row?.index + 1),
+            //     meta: { bodyCellClassName: "text-center min-w-[50px]" },
+            // },
             {
-                id: "№",
-                enableSorting: false,
-                header: () => "№",
-                cell: (info) =>
-                    (pagination?.pageIndex - 1) * pagination?.pageSize +
-                    (info?.row?.index + 1),
-                meta: { bodyCellClassName: "text-center min-w-[50px]" },
+                accessorKey: "number",
+                header: "Номер",
+                meta: {
+                    headerClassName: "w-[60px]",
+                    bodyCellClassName: "w-[60px]",
+                },
             },
-            {
-                accessorKey: "id",
-                header: "ID",
-                meta: { bodyCellClassName: "text-center min-w-[60px]" },
-            },
-            {
-                accessorKey: "seller",
-                header: "Продавец",
-                cell: ({ row }) => row.original.employee || "-",
-            },
+            // {
+            //     accessorKey: "seller",
+            //     header: "Продавец",
+            //     cell: ({ row }) => row.original.employee || "-",
+            // },
             {
                 accessorKey: "employee",
                 header: "Сотрудник",
             },
-            {
-                accessorKey: "info",
-                header: "Данные",
-            },
+            // {
+            //     accessorKey: "info",
+            //     header: "Данные",
+            // },
             {
                 accessorKey: "date",
                 header: "Дата",
@@ -155,28 +155,30 @@ const WriteOffPage = () => {
             },
             {
                 id: "actions",
-                header: "Действия",
+                meta: {
+                    headerClassName: "w-[80px]",
+                    bodyCellClassName: "w-[80px] text-center",
+                },
                 cell: ({ row }) => (
-                    <Dropdown
-                        renderTitle={
-                            <div className="flex justify-center text-2xl text-slate-800">
-                                <HiOutlineDotsHorizontal />
-                            </div>
-                        }
-                    >
-                        <DropdownItem
+                    <div className="flex gap-x-5 text-lg">
+                        <div
+                            onClick={() =>
+                                navigate(`/revisiya/${row.original.id}`)
+                            }
+                            className="flex items-center gap-2 text-blue-500 py-3 cursor-pointer"
+                        >
+                            <FaEye />
+                        </div>
+                        <div
                             onClick={() => {
                                 setItemId(row.original.id);
                                 setIsOpenDeleteModal(true);
                             }}
-                            className="h-auto!"
+                            className="flex items-center gap-2 text-red-500 py-3 cursor-pointer"
                         >
-                            <div className="w-full flex items-center gap-2 text-red-500 py-3 px-5 rounded-xl">
-                                <IoTrashOutline />
-                                Удалить
-                            </div>
-                        </DropdownItem>
-                    </Dropdown>
+                            <IoTrashOutline />
+                        </div>
+                    </div>
                 ),
             },
         ],
@@ -259,19 +261,24 @@ const WriteOffPage = () => {
                     </Button>
                 </div>
             </div>
-            {data && data?.length > 0 && !isPending ? (
-                <div className="h-full flex-1 mb-3 border border-slate-300 rounded-lg overflow-auto">
-                    <Table className="min-w-full table-fixed border-separate border-spacing-0">
+            <div className="h-full mb-3 border-slate-300 rounded-lg overflow-auto">
+                {data && data?.length > 0 && !isPending ? (
+                    <Table className="rounded-lg">
                         <THead className="sticky top-0">
                             {table.getHeaderGroups().map((headerGroup) => (
                                 <Tr key={headerGroup.id}>
                                     {headerGroup.headers.map((header) => (
-                                        <Th key={header.id}>
+                                        <Th
+                                            className={classNames(
+                                                "border border-slate-200 bg-slate-200 py-2",
+                                                header.column.columnDef.meta
+                                                    ?.headerClassName,
+                                            )}
+                                            key={header.id}
+                                        >
                                             <div
                                                 className={classNames(
                                                     "px-4 text-left font-medium text-xs xl:text-sm text-slate-800",
-                                                    header.column.columnDef.meta
-                                                        ?.headerClassName,
                                                 )}
                                             >
                                                 {flexRender(
@@ -286,18 +293,18 @@ const WriteOffPage = () => {
                             ))}
                         </THead>
                         <TBody>
-                            {table.getRowModel().rows.map((row, index) => (
+                            {table.getRowModel().rows.map((row) => (
                                 <Tr
                                     key={row.id}
-                                    className={`${
-                                        index % 2 ? "bg-white" : "bg-slate-100"
-                                    } hover:bg-slate-100 transition`}
+                                    className={`hover:bg-slate-100 transition`}
                                 >
                                     {row.getVisibleCells().map((cell) => (
-                                        <Td key={cell.id}>
+                                        <Td className="border" key={cell.id}>
                                             <div
                                                 className={classNames(
-                                                    "py-3 text-xs xl:text-sm px-4",
+                                                    "text-xs xl:text-sm px-1",
+                                                    cell.column.columnDef.meta
+                                                        ?.bodyCellClassName,
                                                 )}
                                             >
                                                 {flexRender(
@@ -311,12 +318,12 @@ const WriteOffPage = () => {
                             ))}
                         </TBody>
                     </Table>
-                </div>
-            ) : (
-                <div className="h-full flex-1 flex items-center justify-center mb-3 border border-slate-300 rounded-lg overflow-auto">
-                    <Empty size={150} textSize="32px" />
-                </div>
-            )}
+                ) : (
+                    <div className="border border-slate-300 flex justify-center items-center h-full">
+                        <Empty size={150} textSize="32px" />
+                    </div>
+                )}
+            </div>
 
             <Pagination
                 total={count ?? 0}

@@ -480,8 +480,6 @@ const TableHistory = ({
             },
             {
                 id: "action",
-                enableSorting: false,
-                enableHiding: false,
                 meta: {
                     cellClassName:
                         "text-center sticky right-0 z-999 !bg-white dark:!bg-slate-800 hover:!bg-white dark:hover:!bg-slate-800 shadow-[inset_0_1px_0_#e5e7eb] dark:shadow-[inset_0_1px_0_#374151]",

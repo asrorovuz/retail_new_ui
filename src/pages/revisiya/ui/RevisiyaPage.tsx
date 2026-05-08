@@ -8,7 +8,13 @@ import {
 import classNames from "@/shared/lib/classNames";
 import { usePermission } from "@/shared/lib/controlActionWithPermission";
 import { showErrorMessage, showSuccessMessage } from "@/shared/lib/showMessage";
-import { Button, DatePicker, Pagination, Table } from "@/shared/ui/kit";
+import {
+    Button,
+    DatePicker,
+    Dialog,
+    Pagination,
+    Table,
+} from "@/shared/ui/kit";
 import ConfirmDialog from "@/shared/ui/kit-pro/confirm-dialog/ConfirmDialog";
 import Empty from "@/shared/ui/kit-pro/empty/Empty";
 import NavigateButton from "@/shared/ui/kit-pro/navigate-button/NavigateButton";
@@ -26,7 +32,7 @@ import {
 import dayjs from "dayjs";
 import { useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { FaPlus } from "react-icons/fa";
+import { FaEye, FaPlus } from "react-icons/fa";
 import { IoTrashOutline } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 
@@ -38,6 +44,9 @@ const RevisiyaPage = () => {
     const [params, setParams] = useState({});
     const [itemId, setItemId] = useState(null);
     const [isOpenDeleteModal, setIsOpenDeleteModal] = useState(false);
+    const [itemModal, setItemModal] = useState<null | Record<string, any>>(
+        null,
+    );
     const navigate = useNavigate();
     const { checkPermissionByAction } = usePermission();
     const canCreate = checkPermissionByAction("revision", "create");
@@ -116,56 +125,70 @@ const RevisiyaPage = () => {
 
     const columns = useMemo<ColumnDef<any>[]>(() => {
         const baseColumns: ColumnDef<any>[] = [
+            // {
+            //     id: "№",
+            //     enableSorting: false,
+            //     header: () => "№",
+            //     cell: (info) =>
+            //         (pagination?.pageIndex - 1) * pagination?.pageSize +
+            //         (info?.row?.index + 1),
+            //     meta: { bodyCellClassName: "text-center min-w-[50px]" },
+            // },
             {
-                id: "№",
-                enableSorting: false,
-                header: () => "№",
-                cell: (info) =>
-                    (pagination?.pageIndex - 1) * pagination?.pageSize +
-                    (info?.row?.index + 1),
-                meta: { bodyCellClassName: "text-center min-w-[50px]" },
+                accessorKey: "number",
+                header: "№",
+                meta: {
+                    headerClassName: "w-[60px]",
+                    bodyCellClassName: "w-[60px]",
+                },
             },
-            {
-                accessorKey: "id",
-                header: "ID",
-                meta: { bodyCellClassName: "text-center min-w-[60px]" },
-            },
-            {
-                accessorKey: "seller",
-                header: "Продавец",
-            },
+            // {
+            //     accessorKey: "seller",
+            //     header: "Продавец",
+            // },
             {
                 accessorKey: "employee",
                 header: "Сотрудник",
             },
-            {
-                accessorKey: "info",
-                header: "Данные",
-            },
+            // {
+            //     accessorKey: "info",
+            //     header: "Данные",
+            // },
             {
                 accessorKey: "date",
                 header: "Дата",
                 cell: ({ row }) =>
                     dayjs(row.original.date).format("DD-MM-YYYY HH:mm"),
             },
-        ];
-
-        if (canDelete) {
-            baseColumns.push({
+            {
                 id: "actions",
+                meta: {
+                    headerClassName: "w-[80px]",
+                    bodyCellClassName: "w-[80px] text-center",
+                },
                 cell: ({ row }) => (
-                    <div
-                        onClick={() => {
-                            setItemId(row.original.id);
-                            setIsOpenDeleteModal(true);
-                        }}
-                        className="w-full flex items-center gap-2 text-red-500 py-3 px-5 rounded-xl cursor-pointer"
-                    >
-                        <IoTrashOutline />
+                    <div className="flex gap-x-5 text-lg">
+                        <div
+                            onClick={() => setItemModal(row.original || null)}
+                            className="flex items-center gap-2 text-blue-500 py-3 cursor-pointer"
+                        >
+                            <FaEye />
+                        </div>
+                        {canDelete && (
+                            <div
+                                onClick={() => {
+                                    setItemId(row.original.id);
+                                    setIsOpenDeleteModal(true);
+                                }}
+                                className="flex items-center gap-2 text-red-500 py-3 cursor-pointer"
+                            >
+                                <IoTrashOutline />
+                            </div>
+                        )}
                     </div>
                 ),
-            });
-        }
+            },
+        ];
 
         return baseColumns;
     }, [pagination, canDelete]);
@@ -248,19 +271,24 @@ const RevisiyaPage = () => {
                     )}
                 </div>
             </div>
-            {data && data?.length > 0 && !isPending ? (
-                <div className="h-full flex-1 mb-3 border border-slate-300 rounded-lg overflow-auto">
-                    <Table className="min-w-full table-fixed border-separate border-spacing-0">
+            <div className="h-full mb-3 border-slate-300 rounded-lg overflow-auto">
+                {data && data?.length > 0 && !isPending ? (
+                    <Table className="rounded-lg">
                         <THead className="sticky top-0">
                             {table.getHeaderGroups().map((headerGroup) => (
                                 <Tr key={headerGroup.id}>
                                     {headerGroup.headers.map((header) => (
-                                        <Th key={header.id}>
+                                        <Th
+                                            className={classNames(
+                                                "border border-slate-200 bg-slate-200 py-2",
+                                                header.column.columnDef.meta
+                                                    ?.headerClassName,
+                                            )}
+                                            key={header.id}
+                                        >
                                             <div
                                                 className={classNames(
-                                                    "px-4 text-left font-medium text-xs xl:text-sm text-slate-800",
-                                                    header.column.columnDef.meta
-                                                        ?.headerClassName,
+                                                    "px-4 py-2 text-left font-medium text-xs xl:text-sm text-slate-800",
                                                 )}
                                             >
                                                 {flexRender(
@@ -275,18 +303,26 @@ const RevisiyaPage = () => {
                             ))}
                         </THead>
                         <TBody>
-                            {table.getRowModel().rows.map((row, index) => (
+                            {table.getRowModel().rows.map((row) => (
                                 <Tr
                                     key={row.id}
-                                    className={`${
-                                        index % 2 ? "bg-white" : "bg-slate-100"
-                                    } hover:bg-slate-100 transition`}
+                                    className={`hover:bg-slate-100 transition`}
                                 >
                                     {row.getVisibleCells().map((cell) => (
-                                        <Td key={cell.id}>
+                                        <Td
+                                            className={classNames(
+                                                cell.column.columnDef.meta
+                                                    ?.bodyCellClassName ||
+                                                    "#fff",
+                                                "border !py-0",
+                                            )}
+                                            key={cell.id}
+                                        >
                                             <div
                                                 className={classNames(
-                                                    "py-3 text-xs xl:text-sm px-4",
+                                                    cell.column.columnDef.meta
+                                                        ?.bodyCellClassName,
+                                                    "text-xs xl:text-sm px-1",
                                                 )}
                                             >
                                                 {flexRender(
@@ -300,12 +336,12 @@ const RevisiyaPage = () => {
                             ))}
                         </TBody>
                     </Table>
-                </div>
-            ) : (
-                <div className="h-full flex-1 flex items-center justify-center mb-3 border border-slate-300 rounded-lg overflow-auto">
-                    <Empty size={150} textSize="32px" />
-                </div>
-            )}
+                ) : (
+                    <div className="h-full flex-1 flex items-center justify-center mb-3 border border-slate-300 rounded-lg overflow-auto">
+                        <Empty size={150} textSize="32px" />
+                    </div>
+                )}
+            </div>
 
             <Pagination
                 total={count ?? 0}
@@ -339,6 +375,23 @@ const RevisiyaPage = () => {
                     После удаления, восстановить ревизия будет невозможно.
                 </p>
             </ConfirmDialog>
+
+            {!!itemModal && (
+                <Dialog
+                    width={"80vw"}
+                    title={
+                        <div className="flex gap-x-2 items-center">
+                            Ревизия{" "}
+                            <p className="bg-blue-300 rounded-lg h-10 w-10 p-x-1 flex justify-center items-center">
+                                {itemModal?.number}
+                            </p>
+                        </div>
+                    }
+                    isOpen={!!itemModal}
+                >
+                    <div>{itemModal?.number}</div>
+                </Dialog>
+            )}
         </div>
     );
 };
