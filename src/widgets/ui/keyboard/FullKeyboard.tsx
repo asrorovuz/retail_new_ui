@@ -150,18 +150,15 @@ const FullKeyboard = ({ setSearch }: FullKeyboardProps) => {
         "relative overflow-hidden w-full h-[38px] " +
         "text-[14px] font-medium text-black " +
         "rounded " +
-        "bg-[#ffffff] " +
-        "shadow-[0_1px_0_rgba(0,0,0,0.25),0_2px_6px_rgba(0,0,0,0.18)] " +
-        "active:translate-y-[2px] active:shadow-[inset_0_2px_6px_rgba(0,0,0,0.25)] " +
-        "hover:bg-[#f2f2f2] " +
-        "transition-all duration-100";
+        "!bg-[#ffffff] " +
+        "hover:bg-blue-200 active:!bg-blue-300 "
 
     return (
         <div className="bg-[#d1d5db] p-2 rounded-2xl shadow-inner">
             {/* Keys */}
             <div
                 className={classNames(
-                    "grid grid-rows-3 gap-1 mb-2",
+                    "grid grid-rows-3 gap-0.5 mb-0.5",
                     lang === "en" ? "grid-cols-10" : "grid-cols-12",
                 )}
             >
@@ -220,7 +217,7 @@ const FullKeyboard = ({ setSearch }: FullKeyboardProps) => {
             </div>
 
             {/* Bottom */}
-            <div className="grid grid-cols-6 gap-1">
+            <div className="grid grid-cols-6 gap-0.5">
                 <Button
                     variant="solid"
                     type="button"

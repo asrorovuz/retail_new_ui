@@ -220,7 +220,7 @@ const SalePage = () => {
                                 onClick={() => navigate("/sales-history")}
                                 size="sm"
                                 className={classNames(
-                                    "flex flex-col justify-center items-center overflow-hidden !h-10",
+                                    "flex flex-col justify-center items-center overflow-hidden !h-10 w-full",
                                 )}
                             >
                                 История
@@ -232,7 +232,7 @@ const SalePage = () => {
                                     onClick={() => navigate("/products")}
                                     size="sm"
                                     className={classNames(
-                                        "flex flex-col justify-center items-center overflow-hidden !h-10",
+                                        "flex flex-col justify-center items-center overflow-hidden !h-10 w-full",
                                     )}
                                 >
                                     Товары
@@ -242,7 +242,7 @@ const SalePage = () => {
                                 onClick={() => navigate("/refund")}
                                 size="sm"
                                 className={classNames(
-                                    "flex flex-col justify-center items-center overflow-hidden !h-10",
+                                    "flex flex-col justify-center items-center overflow-hidden !h-10 w-full",
                                 )}
                             >
                                 Возвраты
@@ -251,10 +251,10 @@ const SalePage = () => {
                                 onClick={() => setDebtModal(true)}
                                 size="sm"
                                 className={classNames(
-                                    "flex flex-col justify-center items-center overflow-hidden !h-10",
+                                    "flex flex-col justify-center items-center overflow-hidden !h-10 w-full",
                                 )}
                             >
-                                Опл. долг
+                                Погашения
                             </Button>
                         </>
                     </div>

@@ -186,19 +186,21 @@ const PaymentSection = ({
         <>
             {activeType === "numeric" && (
                 <div className="rounded-lg bg-slate-200 p-1 h-full flex flex-col justify-between">
-                    <div className="flex flex-col gap-y-2 mb-1">
+                    <div className="flex flex-col justify-between flex-1 gap-y-2 mb-3">
                         <div className="py-3 px-4 flex justify-between">
                             <div className="w-full">
                                 <div className="flex justify-between text-slate-900 border-b text-2xl">
                                     <span>ОПЛАТA</span>
                                     <span>
-                                        {value
-                                            ? Number(value)?.toLocaleString("ru-RU")
+                                        {value && activeSelectPaymetype
+                                            ? Number(value)?.toLocaleString(
+                                                  "ru-RU",
+                                              )
                                             : 0}
                                     </span>
                                 </div>
                                 <div className="flex justify-between text-slate-700 border-b text-[17px]">
-                                    <span>Оюшая сумма</span>
+                                    <span>Сумма к оплате</span>
                                     <span>
                                         {totalPaymentAmount
                                             ? totalPaymentAmount?.toLocaleString(
@@ -207,20 +209,26 @@ const PaymentSection = ({
                                             : 0}
                                     </span>
                                 </div>
-                                <div className="flex justify-between text-slate-700 border-b text-[17px]">
-                                    <span>Скидка</span>
-                                    <span>
-                                        {activeDraft?.discountAmount
-                                            ? Number(
-                                                  activeDraft?.discountAmount,
-                                              )?.toLocaleString("ru-RU")
-                                            : 0}
-                                    </span>
-                                </div>
-                                <div className="flex justify-between text-slate-700 border-b text-[17px]">
-                                    <span>В долг</span>
-                                    <span>{debetAmount ? debetAmount : 0}</span>
-                                </div>
+                                {type !== "refund" && (
+                                    <>
+                                        <div className="flex justify-between text-slate-700 border-b text-[17px]">
+                                            <span>Скидка</span>
+                                            <span>
+                                                {activeDraft?.discountAmount
+                                                    ? Number(
+                                                          activeDraft?.discountAmount,
+                                                      )?.toLocaleString("ru-RU")
+                                                    : 0}
+                                            </span>
+                                        </div>
+                                        <div className="flex justify-between text-slate-700 border-b text-[17px]">
+                                            <span>В долг</span>
+                                            <span>
+                                                {debetAmount ? debetAmount : 0}
+                                            </span>
+                                        </div>
+                                    </>
+                                )}
                                 <div className="flex justify-between text-slate-700 border-b text-[17px]">
                                     <span>Сдача</span>
                                     <span>
@@ -308,7 +316,7 @@ const PaymentSection = ({
                                     backspace(onBackSpace);
                                 }}
                                 className="w-full bg-slate-300 text-slate-700"
-                                icon={<LuDelete size={"22"}/>}
+                                icon={<LuDelete size={"22"} />}
                             ></Button>
                         </div>
                     </div>

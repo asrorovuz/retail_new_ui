@@ -26,7 +26,7 @@ const TableRow = ({
       <td className="px-4 py-3 text-center text-sm text-slate-600 ">
         {index + 1}
       </td>
-      <td className="px-4 py-3 text-sm font-medium text-slate-900">
+      <td className="px-4 py-3 text-sm font-medium text-slate-900 line-clamp-3 w-[200px] ">
         {productPackage?.name ?? "-"}
       </td>
       <td className="px-4 py-3 text-center text-sm font-semibold text-slate-700">
@@ -38,7 +38,7 @@ const TableRow = ({
         </div>
       </td>
       <td className="px-4 py-3 text-center text-sm font-medium text-slate-900">
-        <div className="flex items-center gap-x-1 w-[150px]">
+        <div className="flex items-center whitespace-nowrap gap-x-1 w-[150px]">
           <FormattedNumber value={item?.price_amount ?? 0} />
           <CurrencyName currency={item?.price_currency} />
         </div>
@@ -62,7 +62,7 @@ const TableRow = ({
         </>
       )}
       <td className="px-4 py-3 text-center text-sm font-bold text-blue-700">
-        <div className="flex items-center justify-center gap-x-1 text-nowrap">
+        <div className="flex items-center justify-center gap-x-1 text-nowrap whitespace-nowrap">
           <FormattedNumber value={item?.price_amount * item?.quantity || 0} />
           <CurrencyName currency={item?.price_currency} />
         </div>

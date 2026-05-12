@@ -280,7 +280,7 @@ const RefundPage = () => {
                     </>
                 )}
                 {activeType === "numeric" && (
-                    <div className="rounded-2xl bg-slate-200 p-1 flex gap-x-1">
+                    <div className="rounded-lg flex gap-x-1">
                         <>
                             <Button
                                 onClick={() => navigate("/refund-history")}

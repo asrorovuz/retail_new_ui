@@ -256,12 +256,12 @@ const SaleAndRefunTable = ({
                     </Table>
                     <div className="w-full sticky bottom-0 bg-white border-t border-slate-200">
                         <div className="flex justify-end gap-x-2 items-center px-2 py-2.5">
-                            <div className="text-sm font-medium text-slate-500">
+                            <div className="text-2xl font-medium text-slate-700">
                                 Итого:{" "}
                             </div>{" "}
                             <div
                                 className={classNames(
-                                    "text-sm font-semibold",
+                                    "font-semibold text-2xl",
                                     type === "sale"
                                         ? "text-primary"
                                         : type === "refund"

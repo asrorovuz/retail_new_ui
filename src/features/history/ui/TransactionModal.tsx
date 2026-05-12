@@ -4,7 +4,7 @@ import { FaEdit, FaPrint } from "react-icons/fa";
 // import InfoGrid from "./InfoGrid";
 import ProductTable from "./ProductTable";
 // import TotalsBlock from "./TotalsBlock";
-import DeletedTable from "./DeletedTable";
+// import DeletedTable from "./DeletedTable";
 import { useCreatePrintApi } from "@/entities/init/repository";
 import { messages } from "@/app/constants/message.request";
 import { showErrorMessage, showSuccessMessage } from "@/shared/lib/showMessage";
@@ -37,21 +37,21 @@ const TransactionModal = ({ data, payKey, type, viewModal }: any) => {
   const { mutate: printerMutate, isPending: printLoading } =
     useCreatePrintApi();
 
-  const calculateTotals = (items: any[], filterDeleted = false) => {
-    const filteredItems = filterDeleted
-      ? items.filter((i) => !i?.is_deleted)
-      : items.filter((i) => i?.is_deleted);
+  // const calculateTotals = (items: any[], filterDeleted = false) => {
+  //   const filteredItems = filterDeleted
+  //     ? items.filter((i) => !i?.is_deleted)
+  //     : items.filter((i) => i?.is_deleted);
 
-    return {
-      quantity: filteredItems.reduce(
-        (acc, cur) => acc + (cur?.quantity ?? 0),
-        0
-      ),
-    };
-  };
+  //   return {
+  //     quantity: filteredItems.reduce(
+  //       (acc, cur) => acc + (cur?.quantity ?? 0),
+  //       0
+  //     ),
+  //   };
+  // };
 
   // const { quantity: packagesCount } = calculateTotals(data?.items ?? [], true);
-  const { quantity: deletedTotals } = calculateTotals(data?.items ?? [], false);
+  // const { quantity: deletedTotals } = calculateTotals(data?.items ?? [], false);
 
   const { mutateAsync: overheadTrigger, isPending: isOverheadMutating } =
     useMutation({
@@ -297,12 +297,12 @@ const TransactionModal = ({ data, payKey, type, viewModal }: any) => {
         discount={data?.exact_discounts?.[0] ?? 0}
       />
       {/* <TotalsBlock data={data} payKey={payKey} /> */}
-      {deletedTotals > 0 && (
+      {/* {deletedTotals > 0 && (
         <DeletedTable
           items={data.items?.filter((i: any) => i?.is_deleted) ?? []}
           deletedTotals={deletedTotals}
         />
-      )}
+      )} */}
       <PrinterModal
         type={type}
         isOpen={!!viewModal?.id && printerStatus?.isOpen}

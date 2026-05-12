@@ -234,13 +234,13 @@ const TableHistory = ({
                     const totals = row?.original?.totals;
 
                     return (
-                        <div className="text-nowrap">
+                        <div className="whitespace-nowrap">
                             {totals ? (
                                 totals?.map((item: any, index: number) => (
                                     <p
                                         key={index}
                                         className={
-                                            "heading-text font-bold text-nowrap flex gap-x-1"
+                                            "heading-text font-bold whitespace-nowrap flex gap-x-1"
                                         }
                                     >
                                         <FormattedNumber value={item?.amount} />
@@ -278,7 +278,7 @@ const TableHistory = ({
                               const { cash_box_states } = pay || {};
 
                               return (
-                                  <div>
+                                  <div className="whitespace-nowrap text-nowrap">
                                       {cash_box_states ? (
                                           payment
                                               ?.calculateToPay(cash_box_states)
@@ -291,7 +291,7 @@ const TableHistory = ({
                                                           <p
                                                               key={index}
                                                               className={
-                                                                  "heading-text font-bold text-nowrap flex gap-x-1"
+                                                                  "heading-text font-bold whitespace-nowrap flex gap-x-1"
                                                               }
                                                           >
                                                               <FormattedNumber
@@ -390,7 +390,7 @@ const TableHistory = ({
                                                       <p
                                                           key={index}
                                                           className={
-                                                              "heading-text font-bold text-nowrap flex gap-x-1"
+                                                              "heading-text font-bold text-nowrap whitespace-nowrap flex gap-x-1"
                                                           }
                                                       >
                                                           <FormattedNumber
@@ -503,7 +503,7 @@ const TableHistory = ({
                                     onClick={() =>
                                         setViewModal({
                                             isOpen: true,
-                                            id: row?.id,
+                                            id: row?.original?.id,
                                         })
                                     }
                                     className="h-auto!"

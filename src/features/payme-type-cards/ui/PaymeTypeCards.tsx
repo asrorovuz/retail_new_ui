@@ -75,7 +75,7 @@ const PaymeTypeCards = ({
                 />
             )}
             {paymentSource.amounts
-                .slice(count, count + 3)
+                .slice(count, type === "refund" ? 1 : count + 3 )
                 ?.map((payment, index) => {
                     if (payment?.paymentType === 0) return null;
 
@@ -108,10 +108,10 @@ const PaymeTypeCards = ({
                         </Button>
                     );
                 })}
-            {count < 3 && (
+            {count < 3 && type !== "refund" && (
                 <Button
                     onClick={onShowOtherType}
-                    disabled={type === "revision" || type === "refund"}
+                    disabled={type === "revision"}
                     className={classNames(
                         "flex flex-col justify-center items-center overflow-hidden h-full !min-h-10",
                     )}

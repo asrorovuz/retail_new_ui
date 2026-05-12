@@ -2,6 +2,7 @@ import { useAuthContext } from "@/app/providers/AuthProvider";
 import { useGetAllAcounts } from "@/entities/auth/repository";
 import { AccountsSections } from "@/features/account";
 import ChangePassowdModal from "@/features/account/ui/ChangePassowdModal";
+import { formattedPhone } from "@/shared/lib/formatedPhone";
 import { getRole } from "@/shared/lib/getRole";
 import { Button, Dialog } from "@/shared/ui/kit";
 import NavigateButton from "@/shared/ui/kit-pro/navigate-button/NavigateButton";
@@ -56,7 +57,7 @@ const AccountPage = () => {
                                     Имя пользователя:
                                 </span>
                                 <span className="font-medium text-gray-800">
-                                    {user?.username || "-"}
+                                    {formattedPhone(user?.username || "-")}
                                 </span>
                             </li>
 
