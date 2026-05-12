@@ -6,7 +6,7 @@ import {
     createColumnHelper,
 } from "@tanstack/react-table";
 import { useDeleteProduct } from "@/entities/products/repository";
-import { Dropdown, Pagination, Table } from "@/shared/ui/kit";
+import { Dropdown, Pagination, Table, Tooltip } from "@/shared/ui/kit";
 import THead from "@/shared/ui/kit/Table/THead";
 import Tr from "@/shared/ui/kit/Table/Tr";
 import Th from "@/shared/ui/kit/Table/Th";
@@ -128,22 +128,30 @@ const ProductTable = ({
                             <div className="flex gap-x-2 text-[11px] mt-0.5">
                                 {item?.category && (
                                     <span className="bg-green-200 px-0.5 rounded-md text-black">
-                                        {item?.category?.name}
+                                        <Tooltip title="Категория">
+                                            {item?.category?.name}
+                                        </Tooltip>
                                     </span>
                                 )}
                                 {(item?.barcodes?.length ?? 0) > 0 && (
                                     <span className="bg-slate-300 px-0.5 rounded-md text-black">
-                                        {item?.barcodes?.[0]?.value}
+                                        <Tooltip title="Штрих-код">
+                                            {item?.barcodes?.[0]?.value}
+                                        </Tooltip>
                                     </span>
                                 )}
                                 {item?.sku && (
                                     <span className="bg-slate-300 px-0.5 rounded-md text-black">
-                                        {item?.sku}
+                                        <Tooltip title="Артикул">
+                                            {item?.sku}
+                                        </Tooltip>
                                     </span>
                                 )}
                                 {item?.code && (
                                     <span className="bg-slate-300 px-0.5 rounded-md text-black">
-                                        {item?.code}
+                                        <Tooltip title="Код">
+                                            {item?.code}
+                                        </Tooltip>
                                     </span>
                                 )}
                             </div>
@@ -365,7 +373,7 @@ const ProductTable = ({
                                     className="!h-auto !px-0"
                                 >
                                     <div className="w-full flex items-center gap-2 text-red-500 py-2 px-3 rounded-lg">
-                                        <IoTrashOutline size={20}/>
+                                        <IoTrashOutline size={20} />
                                         Удалить
                                     </div>
                                 </DropdownItem>

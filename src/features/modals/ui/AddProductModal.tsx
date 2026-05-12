@@ -55,7 +55,7 @@ const AddProductModal: FC<ProductModalProps> = ({
                     rate: CurrencyRateUZS,
                 },
             },
-            is_legal: true,
+            is_legal: false,
             images: [],
             category: null,
             isActive: true,

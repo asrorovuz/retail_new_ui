@@ -925,7 +925,7 @@ const ProductForm: FC<ProductFormType> = ({
                                     )}
                                 />
                             </>
-                            <div className="w-full flex gap-x-2 text-nowrap grid-cols-2">
+                            <div className="w-full flex gap-x-2 text-nowrap grid-cols-2 ">
                                 <Controller
                                     name="is_legal"
                                     control={control}
