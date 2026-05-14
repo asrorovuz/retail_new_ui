@@ -20,7 +20,7 @@ const NavigateModal = ({ isOpenNavigate, setIsOpenNavigate }: any) => {
     const checkPermission = useCheckPermission();
 
     const linkClass =
-        "text-sm font-medium py-4 flex justify-center items-center gap-x-2 bg-slate-200 hover:bg-slate-300 transition text-slate-800 rounded-lg";
+        "text-xs font-medium py-4 flex justify-center items-center gap-x-2 bg-slate-200 hover:bg-slate-300 transition text-slate-800 rounded-lg";
 
     const NavItem = ({ to, icon, children }: any) => (
         <Link className={linkClass} to={to} onClick={onClose}>
@@ -37,7 +37,7 @@ const NavigateModal = ({ isOpenNavigate, setIsOpenNavigate }: any) => {
             onClose={onClose}
         >
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 uppercase">
-                <div className="flex flex-col gap-y-5">
+                <div className="flex flex-col gap-y-4">
                     <NavItem className={linkClass} to={"/sales"}>
                         <MdOutlinePointOfSale size={20} />
                         ПРОДАЖА
@@ -94,7 +94,11 @@ const NavigateModal = ({ isOpenNavigate, setIsOpenNavigate }: any) => {
                     </NavItem>
                     <NavItem className={linkClass} to={"/category"}>
                         <TbCategoryPlus size={20} />
-                        КАТЕГОРИИ
+                        Категории товаров
+                    </NavItem>
+                    <NavItem className={linkClass} to={"/cashbox-category"}>
+                        <TbCategoryPlus size={20} />
+                        Категории кассовых операций
                     </NavItem>
                 </div>
 

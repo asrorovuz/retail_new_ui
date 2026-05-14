@@ -1,13 +1,6 @@
 import { apiRequest } from "@/app/config/axios";
 import { pathServices } from "@/entities/path";
 
-export const getOperationCategoryApi = async (): Promise<any> => {
-  return await apiRequest<any>({
-    url: pathServices.cashbox.getCashboxOperationsCategoy,
-    method: "GET",
-  });
-};
-
 export const getCashboxIdApi = async (
   id: number | null,
   type: number

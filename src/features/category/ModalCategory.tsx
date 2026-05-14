@@ -11,7 +11,7 @@ import { messages } from "@/app/constants/message.request";
 import {
     useCreateCategory,
     useUpdateCategory,
-} from "@/entities/products/repository";
+} from "@/entities/categories/repository";
 import type { CategoryResponse } from "@/@types/products";
 import FullKeyboard from "@/widgets/ui/keyboard/FullKeyboard";
 

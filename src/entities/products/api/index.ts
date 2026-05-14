@@ -1,8 +1,6 @@
 import type {
     AlertOntype,
     AlertOntypeResponse,
-    CategoryResponse,
-    CategoryTypeModal,
     Currency,
     FavouriteProductType,
     Product,
@@ -121,27 +119,6 @@ export const getPriceTypeApi = async (): Promise<ProductPriceType[]> => {
     });
 };
 
-export const getCategoryApi = async (): Promise<CategoryResponse[]> => {
-    return await apiRequest<CategoryResponse[]>({
-        url: pathServices.products.getCategory,
-        method: "GET",
-    });
-};
-
-export const getCategoryTreeApi = async (): Promise<any[]> => {
-    return await apiRequest<any[]>({
-        url: pathServices.products.getCategoryTree,
-        method: "GET",
-    });
-};
-
-export const deleteCategoryApi = async (id: number): Promise<any> => {
-    return await apiRequest<any>({
-        url: `${pathServices.products.deleteCategoryPath}/${id}`,
-        method: "POST",
-    });
-};
-
 export const getCatalogSearchApi = async (query: string): Promise<any> => {
     return await apiRequest<any>({
         url: pathServices.products.catalogSearch,
@@ -199,9 +176,7 @@ export const updateTableSettingsApi = async (
     });
 };
 
-export const updateProductCatalogCodeApi = async (
-    id: number,
-): Promise<any> => {
+export const updateProductCatalogCodeApi = async (id: number): Promise<any> => {
     return await apiRequest<any>({
         url: `${pathServices.products.updateProductCatalogCode}/${id}`,
         method: "POST",
@@ -230,17 +205,6 @@ export const updateProductApi = async (
     });
 };
 
-export const updateCategoryApi = async (
-    id: number,
-    payload: CategoryTypeModal,
-): Promise<CategoryResponse> => {
-    return await apiRequest<CategoryResponse>({
-        url: `${pathServices.products.updateCategory}${id}`,
-        method: "POST",
-        data: payload,
-    });
-};
-
 /* ------------------------------ CREATE APIs ------------------------------ */
 
 export const createFavouriteProductApi = async (
@@ -248,16 +212,6 @@ export const createFavouriteProductApi = async (
 ): Promise<FavouriteProduct> => {
     return await apiRequest<FavouriteProduct>({
         url: pathServices.products.createFavouriteProductPath,
-        method: "POST",
-        data: payload,
-    });
-};
-
-export const createCategoryApi = async (
-    payload: CategoryTypeModal,
-): Promise<CategoryResponse> => {
-    return await apiRequest<CategoryResponse>({
-        url: pathServices.products.addCategory,
         method: "POST",
         data: payload,
     });

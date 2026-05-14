@@ -15,20 +15,12 @@ import {
   getCashOutCount,
   getCloseZReportApi,
   getOpenZReportApi,
-  getOperationCategoryApi,
   getPrintXReportApi,
   getSyncReportApi,
   updateCashExpenseApi,
   updateCashInApi,
   updateCashOutApi,
 } from "../api";
-
-export const useOperationCategoryApi = () => {
-  return useQuery({
-    queryKey: ["operation-category"],
-    queryFn: getOperationCategoryApi,
-  });
-};
 
 export const useCashboxByIdApi = (
   id: number | null,

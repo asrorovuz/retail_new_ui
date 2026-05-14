@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { Controller } from "react-hook-form";
 import ModalCategory from "./ModalCategory";
 import { showErrorLocalMessage } from "@/shared/lib/showMessage";
-import { useCategoryApi } from "@/entities/products/repository";
+import { useCategoryApi } from "@/entities/categories/repository";
 import { FaPlus } from "react-icons/fa";
 import classNames from "@/shared/lib/classNames";
 

@@ -11,7 +11,7 @@ import {
     useCategoryApi,
     useCategoryTreeApi,
     useDeleteCategory,
-} from "@/entities/products/repository";
+} from "@/entities/categories/repository";
 import NavigateButton from "@/shared/ui/kit-pro/navigate-button/NavigateButton";
 import { BiChevronDown, BiChevronRight } from "react-icons/bi";
 import { Button, Table } from "@/shared/ui/kit";

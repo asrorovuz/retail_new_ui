@@ -1,10 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-  createCategoryApi,
   createFavouriteProductApi,
   createProductApi,
   createProductWithExcel,
-  deleteCategoryApi,
   deleteFavoritProductApi,
   deleteProductApi,
   exportProductScaleApi,
@@ -16,8 +14,6 @@ import {
   getAllProductIKPUApi,
   getCatalogSearchApi,
   getCatalogSearchFiscalApi,
-  getCategoryApi,
-  getCategoryTreeApi,
   getCurrencyApi,
   getPriceTypeApi,
   getProductBarcodeApi,
@@ -25,14 +21,12 @@ import {
   getProductByIdApi,
   getTableSettingsApi,
   updateAlertOnApi,
-  updateCategoryApi,
   updateProductApi,
   updateProductCatalogCodeApi,
   updateTableSettingsApi,
 } from "../api";
 import type {
   AlertOntype,
-  CategoryTypeModal,
   ProductColumnVisibility,
 } from "@/@types/products";
 import type { FavouriteProduct } from "@/features/modals/model";
@@ -125,31 +119,7 @@ export const useCurrancyApi = () => {
   });
 };
 
-export const useCategoryApi = () => {
-  return useQuery({
-    queryKey: ["category"],
-    queryFn: getCategoryApi,
-  });
-};
 
-export const useCategoryTreeApi = () => {
-  return useQuery({
-    queryKey: ["category-tree"],
-    queryFn: getCategoryTreeApi,
-  });
-};
-
-export const useDeleteCategory = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (id: number) => deleteCategoryApi(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["category"] });
-      queryClient.invalidateQueries({ queryKey: ["category-tree"] });
-    },
-  });
-};
 
 export const useCatalogSearchApi = (query: string, isOpen: boolean) => {
   return useQuery({
@@ -228,18 +198,6 @@ export const useUpdateProduct = () => {
   });
 };
 
-export const useUpdateCategory = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: ({ id, payload }: { id: number; payload: CategoryTypeModal }) =>
-      updateCategoryApi(id, payload),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["category"] });
-      queryClient.invalidateQueries({ queryKey: ["category-tree"] });
-    },
-  });
-};
 
 // CREATE
 export const useAddFavouriteProduct = () => {
@@ -253,17 +211,7 @@ export const useAddFavouriteProduct = () => {
   });
 };
 
-export const useCreateCategory = () => {
-  const queryClient = useQueryClient();
 
-  return useMutation({
-    mutationFn: (data: CategoryTypeModal) => createCategoryApi(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["category"] });
-      queryClient.invalidateQueries({ queryKey: ["category-tree"] });
-    },
-  });
-};
 
 export const useCreateProduct = () => {
   const queryClient = useQueryClient();

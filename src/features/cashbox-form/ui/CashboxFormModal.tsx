@@ -13,11 +13,11 @@ import {
     useCreateCashExpense,
     useCreateCashIn,
     useCreateCashOut,
-    useOperationCategoryApi,
     useUpdateCashExpense,
     useUpdateCashIn,
     useUpdateCashOut,
 } from "@/entities/cashbox/repository";
+import { useCashboxCategoryApi } from "@/entities/categories/repository";
 import { useCurrancyApi } from "@/entities/products/repository";
 import classNames from "@/shared/lib/classNames";
 import { showErrorMessage, showSuccessMessage } from "@/shared/lib/showMessage";
@@ -52,7 +52,7 @@ const CashboxFormModal = ({
     cashbox: CashboxType[];
     modalType?: "add" | "edit";
 }) => {
-    const { data: categoryData } = useOperationCategoryApi();
+    const { data: categoryData } = useCashboxCategoryApi();
     const { data: currencies } = useCurrancyApi();
     const { data: cashboxDataById } = useCashboxByIdApi(
         cashId ?? null,
@@ -248,7 +248,9 @@ const CashboxFormModal = ({
         >
             <Form onSubmit={handleSubmit(onSubmit)}>
                 <div className="max-h-[35vh] overflow-y-auto">
-                    <div className="grid grid-cols-3 gap-x-2">
+                    <div
+                        className={`grid ${type === 3 ? "grid-cols-3" : "grid-cols-2"} gap-x-2`}
+                    >
                         <Controller
                             name="date"
                             control={control}
@@ -299,26 +301,32 @@ const CashboxFormModal = ({
                             }}
                         />
 
-                        <Controller
-                            name="expenseCategory"
-                            control={control}
-                            render={({ field, fieldState }) => (
-                                <FormItem label={"Категория расходов"}>
-                                    <Select
-                                        {...field}
-                                        size={"sm"}
-                                        isClearable={false}
-                                        options={categoryData || []}
-                                        isSearchable={false}
-                                        className={"w-full"}
-                                        invalid={Boolean(fieldState.error)}
-                                        getOptionLabel={(option) => option.name}
-                                        getOptionValue={(option) => option.id}
-                                        placeholder={"Категория расходов"}
-                                    />
-                                </FormItem>
-                            )}
-                        />
+                        {type === 3 && (
+                            <Controller
+                                name="expenseCategory"
+                                control={control}
+                                render={({ field, fieldState }) => (
+                                    <FormItem label={"Категория расходов"}>
+                                        <Select
+                                            {...field}
+                                            size={"sm"}
+                                            isClearable={false}
+                                            options={categoryData || []}
+                                            isSearchable={false}
+                                            className={"w-full"}
+                                            invalid={Boolean(fieldState.error)}
+                                            getOptionLabel={(option) =>
+                                                option.name
+                                            }
+                                            getOptionValue={(option) =>
+                                                option.id
+                                            }
+                                            placeholder={"Категория расходов"}
+                                        />
+                                    </FormItem>
+                                )}
+                            />
+                        )}
                     </div>
 
                     <div className="grid grid-cols-3 gap-x-2">

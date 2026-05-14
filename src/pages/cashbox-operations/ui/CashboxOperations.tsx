@@ -15,7 +15,7 @@ import CashboxFormModal from "@/features/cashbox-form";
 import classNames from "@/shared/lib/classNames";
 import { usePermission } from "@/shared/lib/controlActionWithPermission";
 import CurrencyName from "@/shared/lib/CurrencyName";
-import { Button, DatePicker, Pagination, Table } from "@/shared/ui/kit";
+import { Button, DatePicker, Dialog, Pagination, Table } from "@/shared/ui/kit";
 import Empty from "@/shared/ui/kit-pro/empty/Empty";
 import TBody from "@/shared/ui/kit/Table/TBody";
 import Td from "@/shared/ui/kit/Table/Td";
@@ -31,7 +31,7 @@ import {
 } from "@tanstack/react-table";
 import dayjs from "dayjs";
 import { useMemo, useState } from "react";
-import { FaRegEdit } from "react-icons/fa";
+import { FaRegEdit, FaRegEye } from "react-icons/fa";
 import { IoIosArrowRoundBack } from "react-icons/io";
 import { IoTrashOutline } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
@@ -48,6 +48,10 @@ const CashboxOperations = () => {
         defaultStart.toDate(),
     );
     const [endDate, setEndDate] = useState<Date | null>(defaultStart.toDate());
+    const [showComment, setShowComment] = useState({
+        isOpen: false,
+        comment: "",
+    });
     const { type, setType } = useCashboxStore((state) => state);
 
     const { data } = useCashboxApi();
@@ -182,16 +186,17 @@ const CashboxOperations = () => {
                     );
                 },
             },
+
             {
-                id: "type",
-                header: "Тип",
-                cell: (info: any) => info.row.original.type?.text || "-",
+                id: "category",
+                header: "Категории",
+                cell: (info: any) => info.row.original.category?.name || "-",
             },
-            {
-                id: "notes",
-                header: "Примечание",
-                cell: (info: any) => info.row.original.notes || "-",
-            },
+            // {
+            //     id: "notes",
+            //     header: "Примечание",
+            //     cell: (info: any) => info.row.original.notes || "-",
+            // },
             {
                 id: "date",
                 header: "Дата",
@@ -207,7 +212,18 @@ const CashboxOperations = () => {
                 id: "actions",
                 header: "Действие",
                 cell: (info: any) => (
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 w-[100px]">
+                        <Button
+                            variant="plain"
+                            onClick={() =>
+                                setShowComment({
+                                    isOpen: true,
+                                    comment: info.row.original.notes || "",
+                                })
+                            }
+                            className="bg-transparent text-blue-500 hover:text-blue-400"
+                            icon={<FaRegEye />}
+                        />
                         {canUpdate && (
                             <Button
                                 variant="plain"
@@ -281,14 +297,14 @@ const CashboxOperations = () => {
         );
 
     return (
-        <div className="bg-white p-4 h-screen flex flex-col">
-            <div className="flex items-center justify-between mb-6">
+        <div className="bg-white p-2 h-screen flex flex-col">
+            <div className="flex items-center justify-between mb-2">
                 <Button
                     onClick={() => {
                         (setType(0), navigate(-1));
                     }}
                     variant="plain"
-                    className="bg-transparent"
+                    className="bg-transparent p-0 uppercase"
                     icon={<IoIosArrowRoundBack size={28} />}
                 >
                     <h2 className="text-lg font-semibold text-slate-800 ">
@@ -339,12 +355,19 @@ const CashboxOperations = () => {
 
             <div className="flex-1 mb-3 border border-slate-300 rounded-lg overflow-y-auto">
                 {selectedData && selectedData.length > 0 && !isPending ? (
-                    <Table className="w-full table-fixed">
-                        <THead className="bg-white sticky top-0 z-10">
+                    <Table className="rounded-lg">
+                        <THead className="sticky top-0">
                             {table.getHeaderGroups().map((headerGroup) => (
                                 <Tr key={headerGroup.id}>
                                     {headerGroup.headers.map((header) => (
-                                        <Th key={header.id}>
+                                        <Th
+                                            className={classNames(
+                                                header.column.columnDef.meta
+                                                    ?.color,
+                                                "border border-slate-200 bg-slate-200",
+                                            )}
+                                            key={header.id}
+                                        >
                                             <div
                                                 className={classNames(
                                                     "px-4 py-3 text-left font-medium text-xs xl:text-sm text-slate-800",
@@ -374,12 +397,15 @@ const CashboxOperations = () => {
                                             className={classNames(
                                                 cell.column.columnDef.meta
                                                     ?.color || "#fff",
+                                                "border !py-0",
                                             )}
                                             key={cell.id}
                                         >
                                             <div
                                                 className={classNames(
-                                                    "px-4 py-3 text-xs xl:text-sm",
+                                                    cell.column.columnDef.meta
+                                                        ?.bodyCellClassName,
+                                                    "text-xs xl:text-sm px-1",
                                                 )}
                                             >
                                                 {flexRender(
@@ -424,6 +450,18 @@ const CashboxOperations = () => {
                 cashbox={data || []}
                 modalType={modalType}
             />
+
+            <Dialog
+                width={"460px"}
+                title={"Примечание"}
+                isOpen={showComment?.isOpen}
+                onClose={() => setShowComment({ isOpen: false, comment: "" })}
+                onRequestClose={() =>
+                    setShowComment({ isOpen: false, comment: "" })
+                }
+            >
+                <p className="">{showComment?.comment || "Нет комментария"}</p>
+            </Dialog>
         </div>
     );
 };

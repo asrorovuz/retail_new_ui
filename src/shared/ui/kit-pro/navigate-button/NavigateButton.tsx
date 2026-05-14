@@ -15,7 +15,7 @@ const NavigateButton = ({
 
   return (
     <Button
-      className="p-0 h-7 bg-transparent text-xl font-semibold text-slate-800"
+      className="p-0 h-7 bg-transparent text-xl font-semibold text-slate-800 uppercase"
       size="sm"
       variant="plain"
       icon={<FaArrowLeft />}
