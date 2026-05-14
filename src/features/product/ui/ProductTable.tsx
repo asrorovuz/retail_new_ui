@@ -166,7 +166,7 @@ const ProductTable = ({
             }),
             columnHelper.display({
                 id: "totalRemainder",
-                header: () => <div className="text-center">ОСТ.</div>,
+                header: () => <div className="text-center">ОСТАТОК</div>,
                 cell: (info) => {
                     const total = info.row.original.warehouse_items?.[0]?.state;
 
@@ -188,7 +188,7 @@ const ProductTable = ({
                 ? [
                       columnHelper.display({
                           id: "price",
-                          header: () => <div className="text-center">ЦЕНА</div>,
+                          header: () => <div className="text-center">РОЗ.ЦЕНА</div>,
                           cell: (info) => {
                               const price =
                                   info.row.original.prices?.[0]?.amount;
@@ -217,7 +217,7 @@ const ProductTable = ({
                           id: "bulkPrice",
                           header: () => (
                               <div className="text-nowrap text-center">
-                                  ОПТ. ЦЕНА
+                                  ОПТ.ЦЕНА
                               </div>
                           ),
                           cell: (info) => {
@@ -249,7 +249,7 @@ const ProductTable = ({
                           id: "purchesPrice",
                           header: () => (
                               <div className="text-nowrap text-center">
-                                  При. цена
+                                  ЗАК.ЦЕНА
                               </div>
                           ),
                           cell: (info) => {

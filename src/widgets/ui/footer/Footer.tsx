@@ -6,8 +6,9 @@ import { Button } from "@/shared/ui/kit";
 import Alert from "@/shared/ui/kit-pro/alert/Alert";
 import { LogoutSvg } from "@/shared/ui/svg/LogoutSvg";
 import { useEffect, useState } from "react";
+import { MdOutlineSettings } from "react-icons/md";
 import { TfiReload } from "react-icons/tfi";
-import { useOutletContext } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
 
 const Footer = ({ deleteDraft, draft }: any) => {
     const [showAlert, setShowAlert] = useState(false);
@@ -18,6 +19,8 @@ const Footer = ({ deleteDraft, draft }: any) => {
     const { logout } = useAuthContext();
     const setIsOpenNavigate =
         useOutletContext<React.Dispatch<React.SetStateAction<boolean>>>();
+
+    const navigate = useNavigate();
 
     const { activeShift, setActiveShift } = useSettingsStore();
 
@@ -56,6 +59,12 @@ const Footer = ({ deleteDraft, draft }: any) => {
                 </Button>
             </div>
             <div className="flex items-center gap-x-2">
+                <Button
+                    size="xs"
+                    onClick={() => navigate("/settings")}
+                    icon={<MdOutlineSettings />}
+                />
+
                 <Button
                     onClick={() => setIsOpenNavigate(true)}
                     className="h-8 py-0"

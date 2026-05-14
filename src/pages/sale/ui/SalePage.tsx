@@ -176,42 +176,40 @@ const SalePage = () => {
 
             <div className="bg-white w-[35%] flex flex-col gap-y-2">
                 <Header />
-                <div className={classNames("rounded-lg flex flex-col gap-2", activeType === "qwerty" && "h-full")}>
-                    <SearchProduct
-                        search={search}
-                        activeType={activeType}
-                        setSearch={setSearch}
-                        setActiveType={setActiveType}
-                    />
-                    {activeType === "qwerty" && (
-                        <>
-                            <SearchProductTable
-                                type="sale"
-                                debouncedSearch={debouncedSearch}
-                                selectedRows={selectedRows}
-                                data={data ?? []}
-                                setActiveType={setActiveType}
-                                setExpandedRow={setExpandedRow}
-                                setExpandedId={setExpandedId}
-                            />
-                            <QuertyKeyboard
-                                setActiveType={setActiveType}
-                                setSearch={setSearch}
-                            />
-                        </>
-                    )}
-                </div>
+                <SearchProduct
+                    search={search}
+                    activeType={activeType}
+                    setSearch={setSearch}
+                    setActiveType={setActiveType}
+                />
+                {activeType === "qwerty" && (
+                    <>
+                        <SearchProductTable
+                            type="sale"
+                            debouncedSearch={debouncedSearch}
+                            selectedRows={selectedRows}
+                            data={data ?? []}
+                            setActiveType={setActiveType}
+                            setExpandedRow={setExpandedRow}
+                            setExpandedId={setExpandedId}
+                        />
+                        <QuertyKeyboard
+                            setActiveType={setActiveType}
+                            setSearch={setSearch}
+                        />
+                    </>
+                )}
                 {activeType === "numeric" && (
-                        <>
-                            <PaymeTypeCards
-                                type={"sale"}
-                                activeDraft={activeDraft}
-                                activeSelectPaymetype={activeSelectPaymetype}
-                                setActivePaymentSelectType={
-                                    setActivePaymentSelectType
-                                }
-                            />
-                        </>
+                    <>
+                        <PaymeTypeCards
+                            type={"sale"}
+                            activeDraft={activeDraft}
+                            activeSelectPaymetype={activeSelectPaymetype}
+                            setActivePaymentSelectType={
+                                setActivePaymentSelectType
+                            }
+                        />
+                    </>
                 )}
                 {activeType === "numeric" && (
                     <div className="rounded-lg flex gap-x-1">

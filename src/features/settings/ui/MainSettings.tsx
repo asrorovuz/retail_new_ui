@@ -138,7 +138,7 @@ const MainSettingsPage = () => {
 
   return (
     <div className="p-6 rounded-3xl bg-white w-full">
-      <NavigateButton content="Общие настройки" />
+      <div className="mb-2"><NavigateButton content="Общие настройки" /></div>
 
       <FormProvider {...form}>
         <Form onSubmit={form.handleSubmit(onSubmit)}>

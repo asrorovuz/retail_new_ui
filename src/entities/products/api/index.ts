@@ -128,6 +128,20 @@ export const getCategoryApi = async (): Promise<CategoryResponse[]> => {
     });
 };
 
+export const getCategoryTreeApi = async (): Promise<any[]> => {
+    return await apiRequest<any[]>({
+        url: pathServices.products.getCategoryTree,
+        method: "GET",
+    });
+};
+
+export const deleteCategoryApi = async (id: number): Promise<any> => {
+    return await apiRequest<any>({
+        url: `${pathServices.products.deleteCategoryPath}/${id}`,
+        method: "POST",
+    });
+};
+
 export const getCatalogSearchApi = async (query: string): Promise<any> => {
     return await apiRequest<any>({
         url: pathServices.products.catalogSearch,

@@ -4,7 +4,6 @@ import { useRevisionStore } from "@/app/store/useRevision";
 import { useSettingsStore } from "@/app/store/useSettingsStore";
 import { useAllProductApi } from "@/entities/products/repository";
 import { useCreateregister } from "@/entities/revision/repository";
-import PaymeTypeCards from "@/features/payme-type-cards";
 import RevisionTable from "@/features/revision/RevisionTable";
 import SearchProduct from "@/features/search-product";
 import SearchProductTable from "@/features/search-product-table";
@@ -98,7 +97,7 @@ const RevisyaOperation = () => {
                     <span className="bg-white flex items-center p-2 rounded-md">
                         Окно
                     </span>
-                    <span>Ревизия</span>
+                    <span className="text-xl ">Ревизия</span>
                 </div>
                 <RevisionTable
                     type="revision"
@@ -122,12 +121,6 @@ const RevisyaOperation = () => {
             </div>
             <div className="bg-white w-[35%] flex flex-col h-full gap-y-2">
                 <Header />
-                <div
-                    className={classNames(
-                        "rounded-lg flex flex-col gap-2",
-                        activeType === "qwerty" && "h-full",
-                    )}
-                >
                     <SearchProduct
                         search={search}
                         activeType={activeType}
@@ -150,8 +143,7 @@ const RevisyaOperation = () => {
                             />
                         </>
                     )}
-                </div>
-                {activeType === "numeric" && (
+                {/* {activeType === "numeric" && (
                     <>
                         <PaymeTypeCards
                             type={"revision"}
@@ -160,7 +152,7 @@ const RevisyaOperation = () => {
                             setActivePaymentSelectType={() => {}}
                         />
                     </>
-                )}
+                )} */}
                 {activeType === "numeric" && (
                     <div className="rounded-lg bg-slate-200 p-1 flex gap-x-1">
                         <>

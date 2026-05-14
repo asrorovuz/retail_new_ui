@@ -23,7 +23,7 @@ const AccountPage = () => {
         <div className="flex flex-col gap-4">
             <div className="bg-white p-6 rounded-2xl shadow-sm">
                 {/* Header */}
-                <div className="mb-4">
+                <div className="mb-2">
                     <NavigateButton content="Аккаунт" />
                 </div>
 

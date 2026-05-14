@@ -228,8 +228,10 @@ const Counterparty = () => {
   });
 
   return (
-    <div className="bg-white h-screen p-4">
-      <NavigateButton content="Контрагенты" />
+    <div className="bg-white h-screen p-2">
+      <div className="mb-2">
+        <NavigateButton content="Контрагенты" />
+      </div>
       <div className="mb-3 flex items-center justify-between">
         <Input
           value={search ?? ""}

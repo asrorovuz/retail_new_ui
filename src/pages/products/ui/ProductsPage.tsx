@@ -115,7 +115,7 @@ const ProductsPage = () => {
 
     return (
         <div className="bg-white h-screen p-2 flex flex-col">
-            <div>
+            <div className="mb-2">
                 <NavigateButton content={"Товары"} />
             </div>
             <ProductHeader

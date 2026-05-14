@@ -14,6 +14,7 @@ export const CashboxPage = lazy(() => import("@/pages/cashbox"));
 export const CashboxOperations = lazy(
     () => import("@/pages/cashbox-operations"),
 );
+export const CategoryPage = lazy(() => import("@/pages/category"));
 
 // history transaction
 export const HistorySalePage = lazy(

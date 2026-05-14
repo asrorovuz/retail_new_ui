@@ -20,8 +20,8 @@ const PurchaseHistory = () => {
     const navigate = useNavigate();
     const [isOpenFilter, setIsOpenFilter] = useState(false);
     const [params, setParams] = useState({
-        skip: 0,
-        limit: 10,
+        pageIndex: 1,
+        pageSize: 20,
     });
     const [viewModal, setViewModal] = useState({
         isOpen: false,

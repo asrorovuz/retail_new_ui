@@ -157,16 +157,16 @@ const PurchaseTable = ({
     return (
         <>
             <div className="overflow-hidden flex-1 rounded-lg">
-                <div className="border-2 border-slate-200 overflow-y-auto rounded-t-lg h-full">
+                <div className="border-2 border-slate-200 overflow-y-auto rounded-lg h-full">
                     <div className="h-full flex flex-col justify-between">
                         <Table
-                            className="table-fixed border-separate border-spacing-0"
+                            className="table-fixed"
                             tabIndex={Number(expandedRow)}
                             key={activeDraft?.id}
                             overflow={false}
                             compact={true}
                         >
-                            <THead className={"sticky top-0 bg-white"}>
+                            <THead className={"sticky top-0"}>
                                 {table?.getHeaderGroups().map((headerGroup) => (
                                     <Tr key={headerGroup.id}>
                                         {headerGroup.headers.map(
@@ -179,6 +179,7 @@ const PurchaseTable = ({
                                                             width: header.column.getSize(),
                                                         }}
                                                         className={classNames(
+                                                            "border",
                                                             header.column
                                                                 .columnDef.meta
                                                                 ?.headerClassName,
@@ -223,7 +224,7 @@ const PurchaseTable = ({
                                                 >
                                                     {row
                                                         .getVisibleCells()
-                                                        .map((cell) => (
+                                                        .map((cell, index) => (
                                                             <Td
                                                                 key={cell.id}
                                                                 style={{
@@ -237,12 +238,21 @@ const PurchaseTable = ({
                                                                     "p-2 text-xs",
                                                                 )}
                                                             >
-                                                                {flexRender(
-                                                                    cell.column
-                                                                        .columnDef
-                                                                        .cell,
-                                                                    cell.getContext(),
-                                                                )}
+                                                                <div
+                                                                    className={
+                                                                        !index
+                                                                            ? "min-w-[220px]"
+                                                                            : ""
+                                                                    }
+                                                                >
+                                                                    {flexRender(
+                                                                        cell
+                                                                            .column
+                                                                            .columnDef
+                                                                            .cell,
+                                                                        cell.getContext(),
+                                                                    )}
+                                                                </div>
                                                             </Td>
                                                         ))}
                                                 </Tr>
@@ -267,74 +277,20 @@ const PurchaseTable = ({
                             </TBody>
                         </Table>
                         <div className="w-full sticky bottom-0 bg-white border-t border-slate-200">
-                            <div className="flex items-center justify-between gap-x-2">
-                                <div className="flex justify-end gap-x-2 items-center px-2 py-2.5">
-                                    <div className="text-sm font-medium text-slate-500">
-                                        Итого:{" "}
-                                    </div>{" "}
-                                    <div
-                                        className={classNames(
-                                            "text-sm font-semibold text-green-600",
-                                        )}
-                                    >
-                                        <FormattedNumber
-                                            value={totalPrice}
-                                            scale={2}
-                                        />
-                                    </div>
+                            <div className="flex justify-end gap-x-2 items-center px-2 py-2.5">
+                                <div className="text-2xl font-medium text-slate-500">
+                                    Итого:{" "}
+                                </div>{" "}
+                                <div
+                                    className={classNames(
+                                        "text-2xl font-semibold text-green-600",
+                                    )}
+                                >
+                                    <FormattedNumber
+                                        value={totalPrice}
+                                        scale={2}
+                                    />
                                 </div>
-
-                                {/* {type === "sale" && activeDraft?.discountAmount ? (
-                <div className="flex justify-end gap-x-2 items-center px-2 py-2.5">
-                  <div className="text-sm font-medium text-slate-500">
-                    Скидка:{" "}
-                  </div>{" "}
-                  <div
-                    className={classNames(
-                      "text-sm font-semibold",
-                      type === "sale"
-                        ? "text-primary"
-                        : type === "refund"
-                          ? "text-red-500"
-                          : "text-green-600",
-                    )}
-                  >
-                    <FormattedNumber
-                      value={activeDraft?.discountAmount ?? 0}
-                      scale={2}
-                    />{" "}
-                  </div>
-                </div>
-              ) : (
-                ""
-              )} */}
-
-                                {/* {type === "sale" && activeDraft?.discountAmount ? (
-                <div className="flex justify-end gap-x-2 items-center px-2 py-2.5">
-                  <div className="text-sm font-medium text-slate-500">
-                    Со скидкой:{" "}
-                  </div>{" "}
-                  <div
-                    className={classNames(
-                      "text-sm font-semibold",
-                      type === "sale"
-                        ? "text-primary"
-                        : type === "refund"
-                          ? "text-red-500"
-                          : "text-green-600",
-                    )}
-                  >
-                    <FormattedNumber
-                      value={
-                        totalPrice - Number(activeDraft?.discountAmount ?? 0)
-                      }
-                      scale={2}
-                    />{" "}
-                  </div>
-                </div>
-              ) : (
-                ""
-              )} */}
                             </div>
 
                             <div
@@ -358,7 +314,7 @@ const PurchaseTable = ({
                                                 ? "int"
                                                 : "float"
                                         }
-                                        className="!w-[145px] h-8"
+                                        className="!w-[35%] h-8"
                                         value={currentItem?.priceAmount ?? 0}
                                         onFocus={() =>
                                             setActiveTypeKeyboard("numeric")
@@ -410,23 +366,18 @@ const PurchaseTable = ({
                                                 type: "price",
                                             })
                                         }
-                                        className="!w-[145px] h-8 bg-white p-2 flex items-center justify-between rounded-lg"
+                                        className="bg-white h-8 w-[35%] p-2 flex items-center justify-between gap-2 rounded-lg"
                                     >
-                                        <span className="text-xs font-normal">
-                                            Цена:
-                                        </span>
-                                        <div className="text-xs text-nowrap font-medium text-slate-800">
-                                            <FormattedNumber
-                                                value={
-                                                    currentItem?.priceAmount ??
-                                                    0
-                                                }
-                                            />
-                                        </div>
+                                        Цена:
+                                        <FormattedNumber
+                                            value={
+                                                currentItem?.priceAmount ?? 0
+                                            }
+                                        />
                                     </div>
                                 )}
 
-                                <div className="flex items-center gap-x-1 w-[125px]">
+                                <div className="flex items-center gap-x-1 w-1/4">
                                     {isEditing?.type !== "quantity" &&
                                         (() => {
                                             const showDeleteDialog = !(
@@ -438,7 +389,7 @@ const PurchaseTable = ({
                                             const minusButton = (
                                                 <Button
                                                     variant="solid"
-                                                    className="w-8 h-8 p-2 flex items-center justify-center !bg-white hover:bg-slate-100 rounded-lg active:!bg-slate-200 text-slate-800"
+                                                    className="w-8 h-8 flex items-center justify-center !bg-white hover:bg-slate-100 rounded-lg active:!bg-slate-200 text-slate-800"
                                                     onClick={decrease}
                                                 >
                                                     -
@@ -462,7 +413,7 @@ const PurchaseTable = ({
                                         <Input
                                             size="md"
                                             type="number"
-                                            className="!w-[125px] h-8"
+                                            className="h-8"
                                             autoFocus={true}
                                             space={false}
                                             numberMode={
@@ -519,7 +470,7 @@ const PurchaseTable = ({
                                                     type: "quantity",
                                                 })
                                             }
-                                            className="w-[53px] h-8 text-xs font-medium text-slate-800 flex items-center justify-center bg-white rounded-lg"
+                                            className="w-full h-8 text-xs font-medium text-slate-800 flex items-center justify-center bg-white rounded-lg"
                                         >
                                             <FormattedNumber
                                                 value={currentItem?.quantity}
@@ -532,7 +483,7 @@ const PurchaseTable = ({
                                         <Button
                                             variant="solid"
                                             className={classNames(
-                                                "w-8 h-8 p-2 flex items-center justify-center !bg-white hover:bg-slate-100 rounded-lg active:!bg-slate-200 text-slate-800",
+                                                "w-10 h-8 flex items-center justify-center !bg-white hover:bg-slate-100 rounded-lg active:!bg-slate-200 text-slate-800",
                                             )}
                                             onClick={increase}
                                         >
@@ -548,7 +499,7 @@ const PurchaseTable = ({
                                         type="number"
                                         space={false}
                                         autoFocus
-                                        className="!w-[145px] h-8"
+                                        className="!w-[35%] h-8"
                                         value={currentItem?.totalAmount}
                                         onFocus={() =>
                                             setActiveTypeKeyboard("numeric")
@@ -594,17 +545,13 @@ const PurchaseTable = ({
                                         //   if (currentItem?.productPackageName?.toLowerCase() !== "шт")
                                         //     setIsEditing({ isOpen: true, type: "totalPrice" });
                                         // }}
-                                        className="bg-white h-8 w-[145px] p-2 flex items-center justify-between gap-2 rounded-lg"
+                                        className="bg-white h-8 w-[35%] p-2 flex items-center justify-between gap-2 rounded-lg"
                                     >
-                                        <span className="text-xs font-normal">
-                                            Сумма:
-                                        </span>
-                                        <div className="text-xs font-medium text-slate-800">
-                                            <FormattedNumber
-                                                value={currentItem?.totalAmount}
-                                                scale={2}
-                                            />
-                                        </div>
+                                        Сумма:
+                                        <FormattedNumber
+                                            value={currentItem?.totalAmount}
+                                            scale={2}
+                                        />
                                     </div>
                                 )}
 
@@ -782,3 +729,58 @@ const PurchaseTable = ({
 };
 
 export default PurchaseTable;
+{
+    /* {type === "sale" && activeDraft?.discountAmount ? (
+                <div className="flex justify-end gap-x-2 items-center px-2 py-2.5">
+                  <div className="text-sm font-medium text-slate-500">
+                    Скидка:{" "}
+                  </div>{" "}
+                  <div
+                    className={classNames(
+                      "text-sm font-semibold",
+                      type === "sale"
+                        ? "text-primary"
+                        : type === "refund"
+                          ? "text-red-500"
+                          : "text-green-600",
+                    )}
+                  >
+                    <FormattedNumber
+                      value={activeDraft?.discountAmount ?? 0}
+                      scale={2}
+                    />{" "}
+                  </div>
+                </div>
+              ) : (
+                ""
+              )} */
+}
+
+{
+    /* {type === "sale" && activeDraft?.discountAmount ? (
+                <div className="flex justify-end gap-x-2 items-center px-2 py-2.5">
+                  <div className="text-sm font-medium text-slate-500">
+                    Со скидкой:{" "}
+                  </div>{" "}
+                  <div
+                    className={classNames(
+                      "text-sm font-semibold",
+                      type === "sale"
+                        ? "text-primary"
+                        : type === "refund"
+                          ? "text-red-500"
+                          : "text-green-600",
+                    )}
+                  >
+                    <FormattedNumber
+                      value={
+                        totalPrice - Number(activeDraft?.discountAmount ?? 0)
+                      }
+                      scale={2}
+                    />{" "}
+                  </div>
+                </div>
+              ) : (
+                ""
+              )} */
+}

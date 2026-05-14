@@ -4,7 +4,6 @@ import { useSettingsStore } from "@/app/store/useSettingsStore";
 import { useWriteOfStore } from "@/app/store/useWriteofStroe";
 import { useAllProductApi } from "@/entities/products/repository";
 import { useCreateWriteoff } from "@/entities/revision/repository";
-import PaymeTypeCards from "@/features/payme-type-cards";
 import RevisionTable from "@/features/revision/RevisionTable";
 import SearchProduct from "@/features/search-product";
 import SearchProductTable from "@/features/search-product-table";
@@ -80,7 +79,7 @@ const WriteOffOperation = () => {
                     <span className="bg-white flex items-center p-2 rounded-md">
                         Окно
                     </span>
-                    <span>Списать товар</span>
+                    <span className="text-xl">Списать товар</span>
                 </div>
                 <RevisionTable
                     type="writeof"
@@ -104,36 +103,29 @@ const WriteOffOperation = () => {
             </div>
             <div className="bg-white w-[35%] flex flex-col h-full gap-y-2">
                 <Header />
-                <div
-                    className={classNames(
-                        "rounded-lg flex flex-col gap-2",
-                        activeType === "qwerty" && "h-full",
-                    )}
-                >
-                    <SearchProduct
-                        search={search}
-                        activeType={activeType}
-                        setSearch={setSearch}
-                        setActiveType={setActiveType}
-                    />
-                    {activeType === "qwerty" && (
-                        <>
-                            <SearchProductTable
-                                type="writeof"
-                                data={data ?? []}
-                                setActiveType={setActiveType}
-                                debouncedSearch={debouncedSearch}
-                                setExpandedRow={setExpandedRow}
-                                setExpandedId={setExpandedId}
-                            />
-                            <QuertyKeyboard
-                                setActiveType={setActiveType}
-                                setSearch={setSearch}
-                            />
-                        </>
-                    )}
-                </div>
-                {activeType === "numeric" && (
+                <SearchProduct
+                    search={search}
+                    activeType={activeType}
+                    setSearch={setSearch}
+                    setActiveType={setActiveType}
+                />
+                {activeType === "qwerty" && (
+                    <>
+                        <SearchProductTable
+                            type="writeof"
+                            data={data ?? []}
+                            setActiveType={setActiveType}
+                            debouncedSearch={debouncedSearch}
+                            setExpandedRow={setExpandedRow}
+                            setExpandedId={setExpandedId}
+                        />
+                        <QuertyKeyboard
+                            setActiveType={setActiveType}
+                            setSearch={setSearch}
+                        />
+                    </>
+                )}
+                {/* {activeType === "numeric" && (
                     <>
                         <PaymeTypeCards
                             type={"revision"}
@@ -142,7 +134,7 @@ const WriteOffOperation = () => {
                             setActivePaymentSelectType={() => {}}
                         />
                     </>
-                )}
+                )} */}
                 {activeType === "numeric" && (
                     <div className="rounded-lg bg-slate-200 p-1 flex gap-x-1">
                         <>

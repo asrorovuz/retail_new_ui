@@ -4,6 +4,7 @@ import {
   createFavouriteProductApi,
   createProductApi,
   createProductWithExcel,
+  deleteCategoryApi,
   deleteFavoritProductApi,
   deleteProductApi,
   exportProductScaleApi,
@@ -16,6 +17,7 @@ import {
   getCatalogSearchApi,
   getCatalogSearchFiscalApi,
   getCategoryApi,
+  getCategoryTreeApi,
   getCurrencyApi,
   getPriceTypeApi,
   getProductBarcodeApi,
@@ -130,6 +132,25 @@ export const useCategoryApi = () => {
   });
 };
 
+export const useCategoryTreeApi = () => {
+  return useQuery({
+    queryKey: ["category-tree"],
+    queryFn: getCategoryTreeApi,
+  });
+};
+
+export const useDeleteCategory = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: number) => deleteCategoryApi(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["category"] });
+      queryClient.invalidateQueries({ queryKey: ["category-tree"] });
+    },
+  });
+};
+
 export const useCatalogSearchApi = (query: string, isOpen: boolean) => {
   return useQuery({
     queryKey: ["catalog", query, isOpen],
@@ -215,6 +236,7 @@ export const useUpdateCategory = () => {
       updateCategoryApi(id, payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["category"] });
+      queryClient.invalidateQueries({ queryKey: ["category-tree"] });
     },
   });
 };
@@ -238,6 +260,7 @@ export const useCreateCategory = () => {
     mutationFn: (data: CategoryTypeModal) => createCategoryApi(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["category"] });
+      queryClient.invalidateQueries({ queryKey: ["category-tree"] });
     },
   });
 };

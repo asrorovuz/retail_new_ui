@@ -1,36 +1,13 @@
-import { Button } from "@/shared/ui/kit";
 import { type FC } from "react";
 import type { CashboxPropsType } from "../model";
-import { BsChevronLeft, BsChevronRight } from "react-icons/bs";
 import Tabs from "@/shared/ui/kit-pro/tabs/Tabs";
 
 const Cashbox: FC<CashboxPropsType> = (props) => {
-  const { drafts, activateDraft } = props;
-  const activeIndex = drafts?.findIndex((item) => item?.isActive);
-
-  return (
-    <div className="p-1 rounded-lg flex items-center justify-between gap-x-2 bg-slate-200">
-      <Button
-        disabled={!activeIndex}
-        className="bg-white disabled:bg-white h-8"
-        variant="plain"
-        icon={<BsChevronLeft />}
-        size="sm"
-        onClick={() => activateDraft(activeIndex - 1)}
-      />
-
-      <Tabs {...props} />
-
-      <Button
-        size="sm"
-        className="h-8"
-        disabled={drafts?.length === activeIndex + 1}
-        onClick={() => activateDraft(activeIndex + 1)}
-      >
-        <BsChevronRight />
-      </Button>
-    </div>
-  );
+    return (
+        <div className="p-1 rounded-lg flex items-center justify-between gap-x-2 bg-slate-200">
+            <Tabs {...props} />
+        </div>
+    );
 };
 
 export default Cashbox;

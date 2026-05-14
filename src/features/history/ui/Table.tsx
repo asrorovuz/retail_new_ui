@@ -48,7 +48,7 @@ const TableHistory = ({
     data: any[];
     count: number;
     setParams: any;
-    setViewModal: any; 
+    setViewModal: any;
     params: any;
     loading: boolean;
     pay: boolean;
@@ -190,7 +190,7 @@ const TableHistory = ({
             },
             {
                 id: "number",
-                header: "Номер",
+                header: "ID",
                 cell: ({ row }) => {
                     const number = row?.original.number;
                     return (
@@ -435,33 +435,33 @@ const TableHistory = ({
                       },
                   ]
                 : []),
-            {
-                id: "employee",
-                accessorKey: "employees.name",
-                enableSorting: false,
-                enableHiding: false,
-                meta: {
-                    cellClassName: "font-bold truncate text-center",
-                },
-                header: () => {
-                    return "Сотрудник";
-                },
-            },
-            {
-                id: "note",
-                accessorKey: "note",
-                enableSorting: false,
-                enableHiding: false,
-                meta: {
-                    cellClassName: "font-bold truncate text-center",
-                },
-                header: () => {
-                    return "Примечание";
-                },
-                cell: ({ row }) => {
-                    return <div>{row?.original?.comment}</div>;
-                },
-            },
+            // {
+            //     id: "employee",
+            //     accessorKey: "employees.name",
+            //     enableSorting: false,
+            //     enableHiding: false,
+            //     meta: {
+            //         cellClassName: "font-bold truncate text-center",
+            //     },
+            //     header: () => {
+            //         return "Сотрудник";
+            //     },
+            // },
+            // {
+            //     id: "note",
+            //     accessorKey: "note",
+            //     enableSorting: false,
+            //     enableHiding: false,
+            //     meta: {
+            //         cellClassName: "font-bold truncate text-center",
+            //     },
+            //     header: () => {
+            //         return "Примечание";
+            //     },
+            //     cell: ({ row }) => {
+            //         return <div>{row?.original?.comment}</div>;
+            //     },
+            // },
             {
                 id: "date",
                 accessorKey: "date",
@@ -713,7 +713,7 @@ const TableHistory = ({
                                     {/* 🔹 ИТОГО */}
                                     <Td>
                                         <div className="px-4 text-end">
-                                            <p className="flex justify-end text-nowrap gap-1">
+                                            <p className="flex justify-end text-nowrap whitespace-nowrap gap-1">
                                                 <FormattedNumber
                                                     value={
                                                         summary?.totalsAmount
@@ -731,7 +731,7 @@ const TableHistory = ({
                                             {/* 🔹 ОПЛАТА */}
                                             <Td>
                                                 <div className="px-4 text-end">
-                                                    <p className="flex justify-end text-nowrap gap-1">
+                                                    <p className="flex justify-end text-nowrap h-full whitespace-nowrap gap-1">
                                                         <FormattedNumber
                                                             value={
                                                                 summary?.payAmount
@@ -749,7 +749,7 @@ const TableHistory = ({
                                             {/* 🔹 ДОЛГ */}
                                             <Td>
                                                 <div className="px-4 text-end">
-                                                    <p className="flex justify-end text-nowrap gap-1">
+                                                    <p className="flex justify-end text-nowrap whitespace-nowrap gap-1">
                                                         <FormattedNumber
                                                             value={
                                                                 summary?.debtAmount

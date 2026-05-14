@@ -136,7 +136,7 @@ const SearchProductTable = ({
     };
 
     return (
-        <div className="h-full flex-1 bg-white w-full rounded-md">
+        <div className="flex-1 h-full overflow-y-auto bg-white w-full rounded-md">
             {data?.map((item, index) => {
                 const price = item?.prices?.find(
                     (el) => el?.product_price_type?.is_primary,

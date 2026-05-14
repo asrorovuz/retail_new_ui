@@ -171,36 +171,29 @@ const PurchasePrice = () => {
             </div>
             <div className="bg-white w-[35%] flex flex-col gap-y-2">
                 <Header />
-                <div
-                    className={classNames(
-                        "rounded-lg p-1 flex flex-col gap-2",
-                        activeType === "qwerty" && "h-full",
-                    )}
-                >
-                    <SearchProduct
-                        search={search}
-                        activeType={activeType}
-                        setSearch={setSearch}
-                        setActiveType={setActiveType}
-                    />
-                    {activeType === "qwerty" && (
-                        <>
-                            <SearchProductTable
-                                type="purchase"
-                                debouncedSearch={debouncedSearch}
-                                selectedRows={selectedRows}
-                                data={data ?? []}
-                                setActiveType={setActiveType}
-                                setExpandedRow={setExpandedRow}
-                                setExpandedId={setExpandedId}
-                            />
-                            <QuertyKeyboard
-                                setActiveType={setActiveType}
-                                setSearch={setSearch}
-                            />
-                        </>
-                    )}
-                </div>
+                <SearchProduct
+                    search={search}
+                    activeType={activeType}
+                    setSearch={setSearch}
+                    setActiveType={setActiveType}
+                />
+                {activeType === "qwerty" && (
+                    <>
+                        <SearchProductTable
+                            type="purchase"
+                            debouncedSearch={debouncedSearch}
+                            selectedRows={selectedRows}
+                            data={data ?? []}
+                            setActiveType={setActiveType}
+                            setExpandedRow={setExpandedRow}
+                            setExpandedId={setExpandedId}
+                        />
+                        <QuertyKeyboard
+                            setActiveType={setActiveType}
+                            setSearch={setSearch}
+                        />
+                    </>
+                )}
                 {activeType === "numeric" && (
                     <>
                         <PaymeTypeCards
@@ -238,6 +231,15 @@ const PurchasePrice = () => {
                                     Товары
                                 </Button>
                             )}
+                            <Button
+                                onClick={() => navigate("/sales")}
+                                size="sm"
+                                className={classNames(
+                                    "flex flex-col justify-center items-center overflow-hidden",
+                                )}
+                            >
+                                Продажи
+                            </Button>
                         </>
                     </div>
                 )}

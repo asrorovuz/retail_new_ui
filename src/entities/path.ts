@@ -88,6 +88,8 @@ export const pathServices = {
     getPriceTypesList: "/api/product/price-type/get",
     getCurrencyPath: "/api/currency/get",
     getCategory: `/api/product/product-category/get`,
+    getCategoryTree: `/api/product/product-category-tree/get`,
+    deleteCategoryPath: "/api/product/product-category/delete",
     addCategory: `/api/product/product-category/create`,
     updateCategory: `/api/product/product-category/update/`,
     catalogSearch: "/api/product/catalog/search",

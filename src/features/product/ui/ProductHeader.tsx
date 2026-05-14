@@ -132,7 +132,7 @@ const ProductHeader = ({
                     className="text-sm font-medium"
                     onClick={() => setShowInformation(true)}
                 >
-                    Отчеть
+                    Отчёт
                 </Button>
                 <Button
                     size="sm"

@@ -82,7 +82,9 @@ const Cashbox = () => {
     return (
         <div className="bg-white h-screen flex flex-col p-4">
             <div className="flex justify-between items-center mb-4">
-                <NavigateButton content={"Касса"} />
+                <div className="mb-2">
+                    <NavigateButton content={"Касса"} />
+                </div>
                 <div className="flex gap-x-2">
                     <Dropdown
                         renderTitle={
