@@ -6,7 +6,7 @@ interface SearchProductProps {
     search: string;
     activeType: "numeric" | "qwerty" | "fullkey";
     setSearch: (val: string) => void;
-    setActiveType: (type: "numeric" | "qwerty" | "fullkey") => void;
+    setActiveType?: (type: "numeric" | "qwerty" | "fullkey") => void;
     setSearchFocus?: (val: boolean) => void;
     placeholder?: string;
     pageType?: boolean;
@@ -34,7 +34,9 @@ const SearchProduct = ({
             onChange: (val) => setSearch(val),
         });
 
-        setActiveType("qwerty");
+        if (setActiveType) {
+            setActiveType("qwerty");
+        }
     };
 
     const onBlurSearch = () => {
@@ -45,7 +47,9 @@ const SearchProduct = ({
     };
 
     const buttonABC = () => {
-        setActiveType("numeric");
+        if (setActiveType) {
+            setActiveType("numeric");
+        }
         setSearch("");
     };
 

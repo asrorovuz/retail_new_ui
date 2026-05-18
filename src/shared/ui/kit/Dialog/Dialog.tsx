@@ -100,7 +100,7 @@ const Dialog = (props: DialogProps) => {
         {(title || closable) && (
           <div className={`w-full flex items-start ${title ? "justify-between mb-4" : "justify-end"} pb-2 relative`}>
             {title && (
-              <h2 className="text-xl font-semibold text-slate-800 m-0">
+              <h2 className={`${!closable && "w-full"} text-xl font-semibold text-slate-800 m-0`}>
                 {title}
               </h2>
             )}

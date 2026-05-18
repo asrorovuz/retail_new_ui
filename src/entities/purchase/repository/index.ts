@@ -1,11 +1,22 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
+  getContractorByIdApi,
   registerPurchaseApi,
   updateOtherPurchasePriceApi,
   updatePurchaseApi,
   updatePurchasePriceApi,
 } from "../api";
 import type { RegisterPurchaseModel } from "@/@types/purchase";
+
+export const useContractorByIdApi = (
+  id: number | null,
+) => {
+  return useQuery({
+    queryKey: ["contractor-products-id", id],
+    queryFn: () => getContractorByIdApi(id),
+    enabled: !!id,
+  });
+};
 
 export const useRegisterPurchaseApi = () => {
   return useMutation({

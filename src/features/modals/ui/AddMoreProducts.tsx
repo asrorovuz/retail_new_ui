@@ -28,9 +28,11 @@ const AddMoreProducts = ({
 }) => {
     const [products, setProducts] = useState<ProductDefaultValues[]>([]);
 
-    const { data: catalogData } = useCatalogSearchApi(
-        (isOpen && (catalogCode || barcode)) || "",
-        isOpen,
+    const queryKey = catalogCode || barcode || "";
+
+    const { data: catalogData = [] } = useCatalogSearchApi(
+        queryKey,
+        isOpen && !!queryKey,
     );
 
     /* 🔹 default product */
@@ -100,7 +102,7 @@ const AddMoreProducts = ({
             <Dialog
                 width="100vw"
                 height="100vh"
-                contentClassName="!my-0 !rounded-none"
+                contentClassName="!my-0 !rounded-none flex flex-col gap-y-4"
                 closable={false}
                 isOpen={isOpen}
             >
@@ -112,7 +114,7 @@ const AddMoreProducts = ({
                     }}
                     content="Добавить большое количество товаров"
                 />
-                <div className="mb-4">
+                <div className="flex-1 h-[calc(100vh-280px)]">
                     <ProductFormMultiple
                         name="products"
                         products={products}

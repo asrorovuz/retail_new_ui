@@ -2,7 +2,7 @@ import { FormItem, Input } from "@/shared/ui/kit";
 import { useMemo } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 import ReactSelect from "react-select";
-import { useCategoryApi } from "@/entities/products/repository";
+import { useCategoryApi } from "@/entities/categories/repository";
 
 const t = (text: string) => text;
 

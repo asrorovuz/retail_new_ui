@@ -1,5 +1,5 @@
 import { Button, Input } from "@/shared/ui/kit";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Controller, useFieldArray } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { FaPlus } from "react-icons/fa";
@@ -24,38 +24,27 @@ const BarcodeForm = ({
     multiplay,
 }: BarcodeFormProps) => {
     const { t } = useTranslation();
-    const countRefs = useRef<(HTMLInputElement | null)[]>([]);
     const { fields, append, remove } = useFieldArray({
         name: fieldName,
         control,
     });
 
     const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
+    const [autoFocusIndex, setAutoFocusIndex] = useState<number | null>(null);
 
     const addBarcode = () => {
         const newIndex = fields.length;
-
         append({
             value: new Date().getTime().toString().slice(5, 13),
             count: 1,
         });
-        setFocusedIndex(newIndex);
+        setAutoFocusIndex(newIndex);
     };
 
     const deleteBarcode = (index: number) => {
         remove(index);
+        setAutoFocusIndex(null);
     };
-
-    // Count inputga fokus berish
-    useEffect(() => {
-        if (focusedIndex === null) return;
-
-        const el = countRefs.current[focusedIndex];
-        if (el) {
-            el.focus();
-            el.select();
-        }
-    }, [focusedIndex, fields.length]);
 
     useEffect(() => {
         if (!barcode || focusedIndex === null) return;
@@ -70,19 +59,8 @@ const BarcodeForm = ({
         setValue(fieldName, [...values], { shouldDirty: true });
     }, [barcode]);
 
-    useEffect(() => {
-        if (focusedIndex === null) return;
-
-        const input = countRefs.current[focusedIndex];
-        if (input) {
-            input.focus();
-            input.select();
-        }
-    }, [fields.length]);
-
     return (
         <div className="flex flex-col">
-            {/* <div> */}
             {!multiplay && (
                 <div className="form-label flex justify-between mb-1 min-w-44">
                     <span className="whitespace-nowrap">Штрих-коды</span>
@@ -98,7 +76,7 @@ const BarcodeForm = ({
                 </div>
             )}
             <div className="flex gap-x-2 justify-end">
-                <div className="flex flex-col gap-y-1">
+                <div className="flex flex-col gap-y-1 w-full">
                     {fields?.map((fieldItem, index) => {
                         return (
                             <div
@@ -116,13 +94,18 @@ const BarcodeForm = ({
                                             className={
                                                 multiplay
                                                     ? "!w-[160px]"
-                                                    : "min-w-max"
+                                                    : "!w-full"
                                             }
                                             size="sm"
                                             placeholder={t("Введите код")}
+                                            autoFocus={autoFocusIndex === index}
                                             onFocus={() =>
                                                 setFocusedIndex(index)
                                             }
+                                            onBlur={() => {
+                                                setAutoFocusIndex(null);
+                                                setFocusedIndex(null);
+                                            }}
                                         />
                                     )}
                                 />
@@ -134,9 +117,6 @@ const BarcodeForm = ({
                                     render={({ field }) => (
                                         <Input
                                             {...field}
-                                            ref={(el: any) =>
-                                                (countRefs.current[index] = el)
-                                            }
                                             type="number"
                                             size="sm"
                                             min={1}

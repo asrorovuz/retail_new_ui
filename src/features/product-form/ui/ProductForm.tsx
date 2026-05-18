@@ -70,6 +70,9 @@ const ProductForm: FC<ProductFormType> = ({
         defaultValue?.state || 0,
     );
     const [alertOn, setAlertOn] = useState<string | number>(0);
+    const [autoFocusedPackage, setAutoFocusPackage] = useState<number | null>(
+        null,
+    );
     // const [isShow, setIsShow] = useState(false);
     const [packageNames, setPackageNames] = useState<Package[] | []>();
     const [measurmentsPackages, setMeasurmentPackages] = useState<
@@ -157,6 +160,7 @@ const ProductForm: FC<ProductFormType> = ({
             ...prev,
             { id: Date.now(), name: "", amount: 1 },
         ]);
+        setAutoFocusPackage(measurmentsPackages.length);
     };
 
     const removePackage = (id: number) => {
@@ -762,7 +766,7 @@ const ProductForm: FC<ProductFormType> = ({
                                     </Button>
                                 </div>
                                 <div className="flex flex-col gap-y-1">
-                                    {measurmentsPackages?.map((item) => (
+                                    {measurmentsPackages?.map((item, ind) => (
                                         <div
                                             key={item.id}
                                             className="flex items-center gap-x-2"
@@ -784,6 +788,9 @@ const ProductForm: FC<ProductFormType> = ({
                                                 placeholder="Количество в упаковке"
                                                 value={item.amount}
                                                 space={false}
+                                                autoFocus={
+                                                    autoFocusedPackage === ind
+                                                }
                                                 className="!w-[100px]"
                                                 onChange={(e) =>
                                                     updatePackage(

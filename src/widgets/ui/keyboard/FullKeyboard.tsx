@@ -11,7 +11,7 @@ interface FullKeyboardProps {
 }
 
 const FullKeyboard = ({ setSearch }: FullKeyboardProps) => {
-    const [upperLater, setUpperLater] = useState(false);
+    const [upperLater, setUpperLater] = useState(true);
     const [lang, setLang] = useState("en");
     const { insert, backspace, clear } = useKeyboard();
 
@@ -154,7 +154,7 @@ const FullKeyboard = ({ setSearch }: FullKeyboardProps) => {
         "hover:bg-blue-200 active:!bg-blue-300 "
 
     return (
-        <div className="bg-[#d1d5db] p-2 rounded-2xl shadow-inner">
+        <div className="bg-[#d1d5db] p-2 rounded-lg shadow-inner">
             {/* Keys */}
             <div
                 className={classNames(

@@ -16,7 +16,6 @@ export const useContragentApi = (isOpen?: boolean) => {
   return useQuery({
     queryKey: ["contragent", isOpen],
     queryFn: getContragentApi,
-    enabled: isOpen,
   });
 };
 

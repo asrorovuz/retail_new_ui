@@ -64,6 +64,7 @@ const Input = (props: InputProps) => {
         value,
         onChange,
         onFocus,
+        onBlur,
         autoFocus = false,
         replaceLeadingZero = false,
         space = true,
@@ -233,7 +234,8 @@ const Input = (props: InputProps) => {
         registerField(fieldObj);
     };
 
-    const handleBlur = () => {
+    const handleBlur = (e: any) => {
+        onBlur?.(e);  
         if (fieldObjRef.current) {
             // provider unregisterField signature'iga qarab yuqoridagi object-ni uzatamiz
             unregisterField(fieldObjRef.current);

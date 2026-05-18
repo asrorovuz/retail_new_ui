@@ -6,7 +6,7 @@ import { LuArrowBigUp } from "react-icons/lu";
 import { RiDeleteBack2Line, RiSpace } from "react-icons/ri";
 
 const QuertyKeyboard = ({ setActiveType, setSearch }: any) => {
-    const [upperLater, setUpperLater] = useState(false);
+    const [upperLater, setUpperLater] = useState(true);
     const [lang, setLang] = useState("en");
 
     // 🍏 iOS key style

@@ -1,11 +1,13 @@
 import { messages } from "@/app/constants/message.request";
 import { useDeleteContractor } from "@/entities/auth/repository";
+import { useAllProductApi } from "@/entities/products/repository";
 import { useContractorApi } from "@/entities/sale/repository";
 import ContragentModal from "@/features/modals/ui/ContragentModal";
 import PaymentDebtsModal from "@/features/modals/ui/PaymentDebtsModal";
+import SearchProduct from "@/features/search-product";
 import classNames from "@/shared/lib/classNames";
 import { showErrorMessage, showSuccessMessage } from "@/shared/lib/showMessage";
-import { Button, Dropdown, Input, Pagination, Table } from "@/shared/ui/kit";
+import { Button, Dialog, Dropdown, Pagination, Table } from "@/shared/ui/kit";
 import ConfirmDialog from "@/shared/ui/kit-pro/confirm-dialog/ConfirmDialog";
 import Empty from "@/shared/ui/kit-pro/empty/Empty";
 import NavigateButton from "@/shared/ui/kit-pro/navigate-button/NavigateButton";
@@ -18,373 +20,573 @@ import THead from "@/shared/ui/kit/Table/THead";
 import Tr from "@/shared/ui/kit/Table/Tr";
 import FullKeyboard from "@/widgets/ui/keyboard/FullKeyboard";
 import {
-  createColumnHelper,
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
+    createColumnHelper,
+    flexRender,
+    getCoreRowModel,
+    useReactTable,
 } from "@tanstack/react-table";
 import dayjs from "dayjs";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { FaPlus, FaRegEdit } from "react-icons/fa";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { IoTrashOutline } from "react-icons/io5";
 
 export type ContragentType = {
-  id: number;
-  name: string;
-  is_customer: boolean;
-  is_supplier: boolean;
-  is_default: boolean;
-  debts: {
-    amount: number;
-    currency_code: number;
-  }[];
-  contacts?: {
-    value: string;
-  }[];
+    id: number;
+    name: string;
+    is_customer: boolean;
+    is_supplier: boolean;
+    is_default: boolean;
+    debts: {
+        amount: number;
+        currency_code: number;
+    }[];
+    contacts?: {
+        value: string;
+    }[];
 };
 
 const Counterparty = () => {
-  const [search, setSearch] = useState("");
-  const [searchFocus, setSearchFocus] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
-  const [pagination, setPagination] = useState({
-    pageIndex: 1,
-    pageSize: 20,
-  });
-  const [type, setType] = useState<"add" | "edit">("add");
-  const [deleteModal, setDeleteModal] = useState(false);
-  const [dobtModal, setDebitModal] = useState(false);
-  const [contractorId, setContractorId] = useState<number | null>(null);
-  const [contragent, setContragent] = useState<ContragentType | null>(null);
+    const [search, setSearch] = useState("");
+    const [searchFocus, setSearchFocus] = useState(false);
+    const [searchContractor, setSearchContractor] = useState("");
+    const [isOpen, setIsOpen] = useState(false);
+    const [isOpenProducts, setIsOpenProduct] = useState(false);
+    const [pagination, setPagination] = useState({
+        pageIndex: 1,
+        pageSize: 20,
+    });
+    const [type, setType] = useState<"add" | "edit">("add");
+    const [deleteModal, setDeleteModal] = useState(false);
+    const [dobtModal, setDebitModal] = useState(false);
+    const [contractorId, setContractorId] = useState<number | null>(null);
+    const [contragent, setContragent] = useState<ContragentType | null>(null);
+    const [products, setProducts] = useState<any>(null);
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  const columnHelper = createColumnHelper<any>();
+    // Ref for detecting outside click on search dropdown
+    const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const { data, isPending } = useContractorApi(true, search);
-  const { mutate: deleteMutate, isPending: isDeletePending } =
-    useDeleteContractor();
-  // const [filterItems, setFilterItems] = useState({
-  //   type: null,
-  //   debit: null,
-  // });
+    const columnHelper = createColumnHelper<any>();
 
-  const onDeleteContragent = () => {
-    if (contragent) {
-      deleteMutate(contragent?.id, {
-        onSuccess() {
-          showSuccessMessage(
-            messages.uz.SUCCESS_MESSAGE,
-            messages.ru.SUCCESS_MESSAGE,
-          );
-          setContragent(null);
-          setDeleteModal(false);
-        },
-        onError(err) {
-          showErrorMessage(err);
-        },
-      });
-    }
-  };
+    const { data, isPending } = useContractorApi(true, search);
+    const { mutate: deleteMutate, isPending: isDeletePending } =
+        useDeleteContractor();
+    const { data: productsData, isPending: productsPending } = useAllProductApi(
+        20,
+        1,
+        searchContractor,
+    );
+    // const [filterItems, setFilterItems] = useState({
+    //   type: null,
+    //   debit: null,
+    // });
 
-  const columns = useMemo(
-    () => [
-      columnHelper.display({
-        id: "index",
-        header: "№",
-        cell: (info) =>
-          (pagination?.pageIndex - 1) * pagination?.pageSize +
-          (info?.row?.index + 1),
-        size: 60,
-      }),
-      columnHelper.display({
-        id: "name",
-        header: "НАЗВАНИЕ",
-        cell: ({ row }) => (
-          <p className="w-[250px]">{row.original.name || "-"}</p>
-        ),
-      }),
-      columnHelper.display({
-        id: "type",
-        header: "Тип",
-        cell: ({ row }) => {
-          const type = row.original.is_customer
-            ? "Клиент"
-            : row.original.is_supplier
-              ? "Поставшик"
-              : "-";
-          return <p className="w-[180px]">{type || "-"}</p>;
-        },
-      }),
-      columnHelper.display({
-        id: "price",
-        header: "Задолжность",
-        cell: ({ row }) => {
-          const totalPrice =
-            row.original?.debts?.reduce(
-              (acc: number, item: { amount: number }) => acc + item.amount,
-              0,
-            ) ?? 0;
-          return (
-            <p className="w-[200px]">
-              <FormattedNumber value={totalPrice} scale={2} />
-            </p>
-          );
-        },
-      }),
-      columnHelper.display({
-        id: "date",
-        header: "Дата операцы",
-        cell: ({ row }) => (
-          <p className="w-[120px]">
-            {dayjs(row.original.created_at).format("YYYY-MM-DD HH:mm") || "-"}
-          </p>
-        ),
-      }),
-      columnHelper.display({
-        id: "phone",
-        header: "Тел. номер",
-        cell: ({ row }) => {
-          const contacts = row.original?.contacts || [];
+    useEffect(() => {
+        if (searchContractor.trim().length > 0) {
+            setIsDropdownOpen(true);
+        } else {
+            setIsDropdownOpen(false);
+        }
+    }, [searchContractor]);
 
-          if (contacts.length === 0) return <span>-</span>;
+    useEffect(() => {
+        const handleClickOutside = (e: MouseEvent) => {
+            if (
+                dropdownRef.current &&
+                !dropdownRef.current.contains(e.target as Node)
+            ) {
+                setIsDropdownOpen(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () =>
+            document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
 
-          return (
-            <div className="flex flex-col gap-1">
-              {contacts.map((item: any, index: number) => {
-                const value = item?.value || "";
+    const onDeleteContragent = () => {
+        if (contragent) {
+            deleteMutate(contragent?.id, {
+                onSuccess() {
+                    showSuccessMessage(
+                        messages.uz.SUCCESS_MESSAGE,
+                        messages.ru.SUCCESS_MESSAGE,
+                    );
+                    setContragent(null);
+                    setDeleteModal(false);
+                },
+                onError(err) {
+                    showErrorMessage(err);
+                },
+            });
+        }
+    };
 
-                // +998 XX XXX XX XX format
-                const formatted =
-                  value.length === 12
-                    ? `+${value.slice(0, 3)} ${value.slice(3, 5)} ${value.slice(5, 8)} ${value.slice(8, 10)} ${value.slice(10)}`
-                    : value;
+    const columns = useMemo(
+        () => [
+            columnHelper.display({
+                id: "index",
+                header: "№",
+                cell: (info) =>
+                    (pagination?.pageIndex - 1) * pagination?.pageSize +
+                    (info?.row?.index + 1),
+                size: 60,
+            }),
+            columnHelper.display({
+                id: "name",
+                header: "НАЗВАНИЕ",
+                cell: ({ row }) => (
+                    <p className="w-[250px]">{row.original.name || "-"}</p>
+                ),
+            }),
+            columnHelper.display({
+                id: "type",
+                header: "Тип",
+                cell: ({ row }) => {
+                    const type = row.original.is_customer
+                        ? "Клиент"
+                        : row.original.is_supplier
+                          ? "Поставшик"
+                          : "-";
+                    return <p className="w-[180px]">{type || "-"}</p>;
+                },
+            }),
+            columnHelper.display({
+                id: "price",
+                header: "Задолжность",
+                cell: ({ row }) => {
+                    const totalPrice =
+                        row.original?.debts?.reduce(
+                            (acc: number, item: { amount: number }) =>
+                                acc + item.amount,
+                            0,
+                        ) ?? 0;
+                    return (
+                        <p className="w-[200px]">
+                            <FormattedNumber value={totalPrice} scale={2} />
+                        </p>
+                    );
+                },
+            }),
+            columnHelper.display({
+                id: "date",
+                header: "Дата операцы",
+                cell: ({ row }) => (
+                    <p className="w-[120px]">
+                        {dayjs(row.original.created_at).format(
+                            "YYYY-MM-DD HH:mm",
+                        ) || "-"}
+                    </p>
+                ),
+            }),
+            columnHelper.display({
+                id: "phone",
+                header: "Тел. номер",
+                cell: ({ row }) => {
+                    const contacts = row.original?.contacts || [];
 
-                return (
-                  <span key={index} className="w-[180px]">
-                    {formatted || "-"}
-                  </span>
-                );
-              })}
-            </div>
-          );
-        },
-      }),
-      // columnHelper.display({
-      //   id: "comment",
-      //   header: "Коментарие",
-      //   cell: ({ row }) => (
-      //     <p className="w-[280px]">{row.original.name || "-"}</p>
-      //   ),
-      // }),
-      columnHelper.display({
-        id: "action",
-        header: "",
-        cell: ({ row }) => (
-          <Dropdown renderTitle={<HiDotsHorizontal size={22} />}>
-            <DropdownItem
-              onClick={() => {
-                setDebitModal(true);
-                setContractorId(row.original?.id);
-              }}
-            >
-              <div className="w-full flex items-center gap-2 text-slate-700 rounded-xl">
-                💰 Погасить долг
-              </div>
-            </DropdownItem>
-            <DropdownItem
-              onClick={() => {
-                setType("edit");
-                setContragent(row.original);
-                setIsOpen(true);
-              }}
-            >
-              <div className="w-full flex items-center gap-2 text-slate-700 rounded-xl">
-                <FaRegEdit />
-                Редактировать
-              </div>
-            </DropdownItem>
-            <DropdownItem
-              onClick={() => {
-                setDeleteModal(true);
-                setContragent(row.original);
-              }}
-            >
-              <div className="w-full flex items-center gap-2 text-red-500 rounded-xl">
-                <IoTrashOutline />
-                Удалить
-              </div>
-            </DropdownItem>
-          </Dropdown>
-        ),
-      }),
-    ],
-    [pagination, search],
-  );
+                    if (contacts.length === 0) return <span>-</span>;
 
-  const table = useReactTable({
-    data: (data as unknown as any) || [],
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-  });
+                    return (
+                        <div className="flex flex-col gap-1">
+                            {contacts.map((item: any, index: number) => {
+                                const value = item?.value || "";
 
-  return (
-    <div className="bg-white h-screen p-2">
-      <div className="mb-2">
-        <NavigateButton content="Контрагенты" />
-      </div>
-      <div className="mb-3 flex items-center justify-between">
-        <Input
-          value={search ?? ""}
-          size="sm"
-          inputMode="none"
-          className="max-w-[332px]"
-          onFocus={() => setSearchFocus(true)}
-          onBlur={() => setSearchFocus(false)}
-          placeholder="Поиск по любому товару"
-        />
-        <Button
-          onClick={() => setIsOpen(true)}
-          variant="solid"
-          size="sm"
-          icon={<FaPlus />}
-        >
-          Добавить контрагента
-        </Button>
-      </div>
+                                // +998 XX XXX XX XX format
+                                const formatted =
+                                    value.length === 12
+                                        ? `+${value.slice(0, 3)} ${value.slice(3, 5)} ${value.slice(5, 8)} ${value.slice(8, 10)} ${value.slice(10)}`
+                                        : value;
 
-      <div
-        className={classNames(
-          "h-[46vh] flex flex-col mb-3",
-          !searchFocus ? "h-[82vh]" : "h-[47vh]",
-        )}
-      >
-        <div className="h-full mb-3 border border-slate-300 rounded-lg overflow-auto">
-          {data && data?.length > 0 && !isPending ? (
-            <Table className="min-w-full table-fixed border-separate border-spacing-0">
-              <THead className="sticky top-0">
-                {table.getHeaderGroups().map((headerGroup) => {
-                  return (
-                    <Tr key={headerGroup.id}>
-                      {headerGroup.headers.map((header) => {
-                        const isActionsColumn = header.column.id === "actions";
-                        return (
-                          <Th
-                            className={isActionsColumn ? " bg-white" : ""}
-                            key={header.id}
-                          >
-                            <div
-                              className={classNames(
-                                "px-4 py-2 text-left font-medium text-xs xl:text-sm text-slate-800",
-                                header.column.columnDef.meta?.headerClassName,
-                              )}
-                            >
-                              {flexRender(
-                                header.column.columnDef.header,
-                                header.getContext(),
-                              )}
-                            </div>
-                          </Th>
-                        );
-                      })}
-                    </Tr>
-                  );
-                })}
-              </THead>
-              <TBody>
-                {table.getRowModel().rows.map((row, index) => (
-                  <Tr
-                    key={row.id}
-                    className={`${index % 2 ? "bg-white" : "bg-slate-100"} hover:bg-slate-100 transition`}
-                  >
-                    {row.getVisibleCells().map((cell) => {
-                      return (
-                        <Td
-                          key={cell.id}
-                          className={classNames(
-                            cell.column.columnDef.meta?.bodyCellClassName,
-                          )}
+                                return (
+                                    <span key={index} className="w-[180px]">
+                                        {formatted || "-"}
+                                    </span>
+                                );
+                            })}
+                        </div>
+                    );
+                },
+            }),
+            // columnHelper.display({
+            //   id: "comment",
+            //   header: "Коментарие",
+            //   cell: ({ row }) => (
+            //     <p className="w-[280px]">{row.original.name || "-"}</p>
+            //   ),
+            // }),
+            columnHelper.display({
+                id: "action",
+                header: "",
+                cell: ({ row }) => (
+                    <Dropdown renderTitle={<HiDotsHorizontal size={22} />}>
+                        <DropdownItem
+                            onClick={() => {
+                                setDebitModal(true);
+                                setContractorId(row.original?.id);
+                            }}
                         >
-                          <div
-                            className={classNames(
-                              "py-3 text-xs xl:text-sm px-4",
-                            )}
-                          >
-                            {flexRender(
-                              cell.column.columnDef.cell,
-                              cell.getContext(),
-                            )}
-                          </div>
-                        </Td>
-                      );
-                    })}
-                  </Tr>
-                ))}
-              </TBody>
-            </Table>
-          ) : (
-            <div>
-              <Empty />
+                            <div className="w-full flex items-center gap-2 text-slate-700 rounded-xl">
+                                💰 Погасить долг
+                            </div>
+                        </DropdownItem>
+                        <DropdownItem
+                            onClick={() => {
+                                setType("edit");
+                                setContragent(row.original);
+                                setIsOpen(true);
+                            }}
+                        >
+                            <div className="w-full flex items-center gap-2 text-slate-700 rounded-xl">
+                                <FaRegEdit />
+                                Редактировать
+                            </div>
+                        </DropdownItem>
+                        <DropdownItem
+                            onClick={() => {
+                                setDeleteModal(true);
+                                setContragent(row.original);
+                            }}
+                        >
+                            <div className="w-full flex items-center gap-2 text-red-500 rounded-xl">
+                                <IoTrashOutline />
+                                Удалить
+                            </div>
+                        </DropdownItem>
+                    </Dropdown>
+                ),
+            }),
+        ],
+        [pagination, search],
+    );
+
+    const onSelect = (id: number) => {
+        const selected = productsData?.find((el: any) => el?.id === id);
+        if (!selected) return;
+
+        setProducts((prev: any) => {
+            const safeList = Array.isArray(prev) ? prev : [];
+            const alreadyAdded = safeList.some((p: any) => p?.id === id);
+            if (alreadyAdded) return safeList;
+            return [...safeList, { id: selected.id, name: selected.name }];
+        });
+
+        setSearchContractor("");
+        setIsDropdownOpen(false);
+    };
+
+    const onSave = () => {
+        const payload = products?.map((item: any) => {
+            return {
+                product_id: item?.id,
+            };
+        });
+
+        console.log(payload);
+    };
+
+    const closeContractorProductModal = () => {
+        setSearchContractor("");
+        setIsDropdownOpen(false);
+        setIsOpenProduct(false);
+        setProducts(null);
+    };
+
+    const table = useReactTable({
+        data: (data as unknown as any) || [],
+        columns,
+        getCoreRowModel: getCoreRowModel(),
+    });
+
+    return (
+        <div className="bg-white h-screen p-2 flex flex-col">
+            <div className="mb-2">
+                <NavigateButton content="Контрагенты" />
             </div>
-          )}
+            <div className="mb-3 flex items-center justify-between">
+                <SearchProduct
+                    search={search}
+                    pageType={false}
+                    activeType="fullkey"
+                    setSearch={setSearch}
+                    setSearchFocus={setSearchFocus}
+                />
+                <div className="flex gap-x-2">
+                    <Button
+                        onClick={() => setIsOpenProduct(true)}
+                        variant="solid"
+                        size="sm"
+                        icon={<FaPlus />}
+                    >
+                        Назначение товаров поставщику
+                    </Button>
+                    <Button
+                        onClick={() => setIsOpen(true)}
+                        variant="solid"
+                        size="sm"
+                        icon={<FaPlus />}
+                    >
+                        Добавить контрагента
+                    </Button>
+                </div>
+            </div>
+
+            <div
+                className={classNames(
+                    "h-[46vh] flex flex-1 flex-col mb-3",
+                    !searchFocus ? "h-[82vh]" : "h-[47vh]",
+                )}
+            >
+                <div className="h-full mb-3 border border-slate-300 rounded-lg overflow-auto">
+                    {data && data?.length > 0 && !isPending ? (
+                        <Table className="min-w-full table-fixed border-separate border-spacing-0">
+                            <THead className="sticky top-0">
+                                {table.getHeaderGroups().map((headerGroup) => {
+                                    return (
+                                        <Tr key={headerGroup.id}>
+                                            {headerGroup.headers.map(
+                                                (header) => {
+                                                    const isActionsColumn =
+                                                        header.column.id ===
+                                                        "actions";
+                                                    return (
+                                                        <Th
+                                                            className={
+                                                                isActionsColumn
+                                                                    ? " bg-white"
+                                                                    : ""
+                                                            }
+                                                            key={header.id}
+                                                        >
+                                                            <div
+                                                                className={classNames(
+                                                                    "px-4 py-2 text-left font-medium text-xs xl:text-sm text-slate-800",
+                                                                    header
+                                                                        .column
+                                                                        .columnDef
+                                                                        .meta
+                                                                        ?.headerClassName,
+                                                                )}
+                                                            >
+                                                                {flexRender(
+                                                                    header
+                                                                        .column
+                                                                        .columnDef
+                                                                        .header,
+                                                                    header.getContext(),
+                                                                )}
+                                                            </div>
+                                                        </Th>
+                                                    );
+                                                },
+                                            )}
+                                        </Tr>
+                                    );
+                                })}
+                            </THead>
+                            <TBody>
+                                {table.getRowModel().rows.map((row, index) => (
+                                    <Tr
+                                        key={row.id}
+                                        className={`${index % 2 ? "bg-white" : "bg-slate-100"} hover:bg-slate-100 transition`}
+                                    >
+                                        {row.getVisibleCells().map((cell) => {
+                                            return (
+                                                <Td
+                                                    key={cell.id}
+                                                    className={classNames(
+                                                        cell.column.columnDef
+                                                            .meta
+                                                            ?.bodyCellClassName,
+                                                    )}
+                                                >
+                                                    <div
+                                                        className={classNames(
+                                                            "py-3 text-xs xl:text-sm px-4",
+                                                        )}
+                                                    >
+                                                        {flexRender(
+                                                            cell.column
+                                                                .columnDef.cell,
+                                                            cell.getContext(),
+                                                        )}
+                                                    </div>
+                                                </Td>
+                                            );
+                                        })}
+                                    </Tr>
+                                ))}
+                            </TBody>
+                        </Table>
+                    ) : (
+                        <div>
+                            <Empty />
+                        </div>
+                    )}
+                </div>
+                {/* 🔹 Pagination */}
+                <Pagination
+                    total={20}
+                    pageSize={pagination.pageSize}
+                    pageSizeOptions={[20, 50, 100, 1000]}
+                    currentPage={pagination.pageIndex}
+                    onChange={(page, size) =>
+                        setPagination({
+                            pageIndex: page,
+                            pageSize: size || pagination.pageSize,
+                        })
+                    }
+                />
+            </div>
+
+            {searchFocus && <FullKeyboard setSearch={setSearch} />}
+
+            <ContragentModal
+                isOpen={isOpen}
+                type={type}
+                contragent={contragent}
+                setContragent={setContragent}
+                setIsOpen={setIsOpen}
+                setType={setType}
+            />
+
+            <PaymentDebtsModal
+                dobtModal={dobtModal}
+                setDebitModal={setDebitModal}
+                contractorId={contractorId}
+                setContragentId={setContractorId}
+            />
+
+            <Dialog
+                title={
+                    <div className="w-full flex justify-between">
+                        <span>Привязка товаров к поставщику</span>{" "}
+                        <div className="flex gap-x-2">
+                            <Button
+                                size="sm"
+                                onClick={closeContractorProductModal}
+                            >
+                                Отменить
+                            </Button>
+                            <Button size="sm" variant="solid">
+                                Сохранить
+                            </Button>
+                        </div>
+                    </div>
+                }
+                width={"80vw"}
+                height={"90vh"}
+                closable={false}
+                isOpen={isOpenProducts}
+            >
+                <div className="flex flex-col h-[calc(90vh-110px)]">
+                    {/* Search with dropdown */}
+                    <div className="mb-2 relative" ref={dropdownRef}>
+                        <SearchProduct
+                            search={searchContractor}
+                            pageType={false}
+                            activeType="fullkey"
+                            setSearch={setSearchContractor}
+                        />
+
+                        {/* Dropdown: only when search is active */}
+                        {isDropdownOpen && (
+                            <div className="w-full bg-white border absolute z-30 shadow rounded-lg flex flex-col gap-y-1 p-2 max-h-60 overflow-y-auto">
+                                {productsPending ? (
+                                    <p className="text-sm text-slate-400 px-2 py-1">
+                                        Загрузка...
+                                    </p>
+                                ) : productsData && productsData.length > 0 ? (
+                                    productsData.map((el: any) => (
+                                        <p
+                                            key={el?.id}
+                                            onClick={() => onSelect(el?.id)}
+                                            className="px-2 py-2 text-sm rounded hover:bg-slate-100 cursor-pointer transition"
+                                        >
+                                            {el?.name}
+                                        </p>
+                                    ))
+                                ) : (
+                                    <p className="text-sm text-slate-400 px-2 py-1">
+                                        Товар не найден
+                                    </p>
+                                )}
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Assigned products list or empty state */}
+                    <div className="flex-1 flex flex-col h-full mb-5 overflow-y-auto">
+                        {products?.length > 0 ? (
+                            <>
+                                <div className="flex flex-col gap-y-2">
+                                    {products
+                                        ?.filter((el: any) =>
+                                            el?.name
+                                                ?.toLowerCase()
+                                                ?.includes(
+                                                    searchContractor?.toLowerCase(),
+                                                ),
+                                        )
+                                        ?.map((product: any) => (
+                                            <div
+                                                key={product.id}
+                                                className="flex items-center justify-between gap-x-5 border border-slate-300 rounded-lg px-4 py-2 bg-slate-200"
+                                            >
+                                                <span className="text-sm text-slate-800">
+                                                    {product.name}
+                                                </span>
+                                                <button
+                                                    onClick={() =>
+                                                        setProducts(
+                                                            (prev: any) =>
+                                                                prev.filter(
+                                                                    (p: any) =>
+                                                                        p.id !==
+                                                                        product.id,
+                                                                ),
+                                                        )
+                                                    }
+                                                    className="text-red-400 hover:text-red-600 transition"
+                                                >
+                                                    <IoTrashOutline size={18} />
+                                                </button>
+                                            </div>
+                                        ))}
+                                </div>
+                            </>
+                        ) : (
+                            <div className="flex justify-center items-center h-full">
+                                <Empty size={150} />
+                            </div>
+                        )}
+                    </div>
+
+                    <FullKeyboard setSearch={setSearchContractor} />
+                </div>
+            </Dialog>
+
+            <ConfirmDialog
+                type="danger"
+                className={"w-[600px]"}
+                title="Вы уверены, что хотите удалить этого контрагента?"
+                isOpen={deleteModal}
+                confirmButtonProps={{
+                    loading: isDeletePending,
+                    onClick: onDeleteContragent,
+                }}
+                cancelText="Отмена"
+                confirmText="Удалить"
+                onClose={() => setDeleteModal(false)}
+                onRequestClose={() => setDeleteModal(false)}
+                onCancel={() => setDeleteModal(false)}
+            >
+                <p className="text-gray-600">
+                    После удаления восстановить контрагента будет невозможно.
+                </p>
+            </ConfirmDialog>
         </div>
-        {/* 🔹 Pagination */}
-        <Pagination
-          total={20}
-          pageSize={pagination.pageSize}
-          pageSizeOptions={[20, 50, 100, 1000]}
-          currentPage={pagination.pageIndex}
-          onChange={(page, size) =>
-            setPagination({
-              pageIndex: page,
-              pageSize: size || pagination.pageSize,
-            })
-          }
-        />
-      </div>
-
-      {searchFocus && (
-        <div className="rounded-2xl bg-slate-200 mb-3 p-1">
-          <FullKeyboard setSearch={setSearch} />
-        </div>
-      )}
-
-      <ContragentModal
-        isOpen={isOpen}
-        type={type}
-        contragent={contragent}
-        setContragent={setContragent}
-        setIsOpen={setIsOpen}
-        setType={setType}
-      />
-
-      <PaymentDebtsModal
-        dobtModal={dobtModal}
-        setDebitModal={setDebitModal}
-        contractorId={contractorId}
-        setContragentId={setContractorId}
-      />
-
-      <ConfirmDialog
-        type="danger"
-        className={"w-[600px]"}
-        title="Вы уверены, что хотите удалить этого контрагента?"
-        isOpen={deleteModal}
-        confirmButtonProps={{
-          loading: isDeletePending,
-          onClick: onDeleteContragent,
-        }}
-        cancelText="Отмена"
-        confirmText="Удалить"
-        onClose={() => setDeleteModal(false)}
-        onRequestClose={() => setDeleteModal(false)}
-        onCancel={() => setDeleteModal(false)}
-      >
-        <p className="text-gray-600">
-          После удаления восстановить контрагента будет невозможно.
-        </p>
-      </ConfirmDialog>
-    </div>
-  );
+    );
 };
 
 export default Counterparty;

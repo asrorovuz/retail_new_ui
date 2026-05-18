@@ -21,7 +21,6 @@ import {
 import { useMemo, useState } from "react";
 import {
     useAllInfoProductApi,
-    useCategoryApi,
     useExportProductWithExcel,
 } from "@/entities/products/repository";
 import InfoModal from "./InfoModal";
@@ -36,6 +35,7 @@ import UpdateCatalogCode from "@/features/update-catalog-code/ui/UpdateCatalogCo
 import { FiRefreshCw } from "react-icons/fi";
 import { AccountPermissions } from "@/app/constants/permissions";
 import { useCheckPermission } from "@/shared/lib/checkPermission";
+import { useCategoryApi } from "@/entities/categories/repository";
 
 const ProductHeader = ({
     search,
@@ -63,11 +63,16 @@ const ProductHeader = ({
         search,
         filterParams,
     );
-    const { mutate: exportProductWithExcel, isPending } =
-        useExportProductWithExcel();
+    const { mutate: exportProductWithExcel } = useExportProductWithExcel();
 
     const handleExport = () => {
-        exportProductWithExcel(filterParams, {
+        const cleanedParams = Object.fromEntries(
+            Object.entries(filterParams || {}).filter(
+                ([_, value]) => value !== null && value !== undefined,
+            ),
+        );
+
+        exportProductWithExcel(cleanedParams, {
             onSuccess(data) {
                 exportToExcelApi(data, "products");
             },
@@ -87,7 +92,7 @@ const ProductHeader = ({
 
     return (
         <div className="mb-3 flex items-center justify-between gap-x-1">
-            <div className="w-[433px] flex items-center gap-x-1">
+            <div className=" flex items-center gap-x-1">
                 <SearchProduct
                     search={search}
                     pageType={false}
@@ -115,6 +120,28 @@ const ProductHeader = ({
                     menuPosition="fixed"
                     styles={selectStyles}
                 />
+                <Select
+                    options={categoryItemOptions}
+                    placeholder="Выберите категорию"
+                    value={
+                        categoryItemOptions.find(
+                            (opt) => opt.value === filterParams.category_id,
+                        ) ?? null
+                    }
+                    onChange={(option: SelectOption | null) =>
+                        setFilterParams((prev: FilterParams) => ({
+                            ...prev,
+                            category_id: option?.value
+                                ? Number(option.value)
+                                : null,
+                        }))
+                    }
+                    isSearchable={false}
+                    menuPortalTarget={document.body}
+                    menuPosition="fixed"
+                    isClearable
+                    styles={selectStyles}
+                />
             </div>
             <div className="flex items-center gap-x-1">
                 <Button
@@ -134,22 +161,16 @@ const ProductHeader = ({
                 >
                     Отчёт
                 </Button>
-                <Button
-                    size="sm"
-                    variant="default"
-                    type="button"
-                    loading={isPending}
-                    icon={<i className="ri-filter-line text-lg" />}
-                    onClick={handleExport}
-                >
-                    Экспорт в Excel
-                </Button>
 
-                <DownloadFileForScales />
+                <DownloadFileForScales handleExport={handleExport} />
 
                 <Dropdown
                     toggleClassName="text-base text-slate-600 flex justify-center"
-                    renderTitle={<Button variant="solid" size="sm">+ Добавить</Button>}
+                    renderTitle={
+                        <Button variant="solid" size="sm">
+                            + Добавить
+                        </Button>
+                    }
                 >
                     {checkPermission(
                         AccountPermissions.AccountPermissionProductCreate,
@@ -279,34 +300,12 @@ const ProductHeader = ({
                     </div>
 
                     {/* Категория товара */}
-                    <div className="flex flex-col col-span-2 gap-1">
+                    {/* <div className="flex flex-col col-span-2 gap-1">
                         <label className="text-sm text-slate-600">
                             Категория товара
                         </label>
-                        <Select
-                            options={categoryItemOptions}
-                            placeholder="Выберите категорию"
-                            value={
-                                categoryItemOptions.find(
-                                    (opt) =>
-                                        opt.value === filterParams.category_id,
-                                ) ?? null
-                            }
-                            onChange={(option: SelectOption | null) =>
-                                setFilterParams((prev: FilterParams) => ({
-                                    ...prev,
-                                    category_id: option?.value
-                                        ? Number(option.value)
-                                        : null,
-                                }))
-                            }
-                            isSearchable={false}
-                            menuPortalTarget={document.body}
-                            menuPosition="fixed"
-                            isClearable
-                            styles={selectStyles}
-                        />
-                    </div>
+                        
+                    </div> */}
 
                     {/* Единица измерения */}
                     <div className="flex flex-col gap-1">

@@ -1,7 +1,6 @@
 import { messages } from "@/app/constants/message.request";
 import {
     useAllProductApi,
-    useCategoryApi,
     useCreateProduct,
     useCreateProductWithExcel,
     useCurrancyApi,
@@ -41,6 +40,7 @@ import { handleError } from "@/shared/lib/handleErrorExcel";
 import Empty from "@/shared/ui/kit-pro/empty/Empty";
 import { showMeasurmentName } from "@/shared/lib/showMeausermentName";
 import { useCreateregister } from "@/entities/revision/repository";
+import { useCategoryApi } from "@/entities/categories/repository";
 
 interface InitialState {
     rowsCount: number;
@@ -87,14 +87,12 @@ const INITIAL_STATUS: StatusState = {
     status: true,
 };
 
-const generateBarcode = (): string[] => {
-    return [
-        (
-            Date.now().toString() +
-            Math.floor(Math.random() * 1_000_000).toString()
-        ).slice(-13),
-    ];
-};
+// const generateBarcode = (): string => {
+//     return (
+//         Date.now().toString() +
+//         Math.floor(Math.random() * 1_000_000).toString()
+//     ).slice(-13);
+// };
 
 const UploadExcelFile = ({ isOpen, setIsOpen }: any) => {
     const { data: productData } = useAllProductApi();
@@ -311,6 +309,7 @@ const UploadExcelFile = ({ isOpen, setIsOpen }: any) => {
             });
             return obj;
         });
+console.log(noSelectData);
 
         const resultData = noSelectData?.map((elem) => {
             let product: any = productData?.find(
@@ -360,16 +359,16 @@ const UploadExcelFile = ({ isOpen, setIsOpen }: any) => {
                                 elem.barcodeCount,
                             )
                           : [
-                                {
-                                    value: generateBarcode(),
-                                    count: 1,
-                                },
+                                // {
+                                //     value: generateBarcode(),
+                                //     count: 1,
+                                // },
                             ],
                 vat_rate: elem?.taxRate ?? null,
                 category_name:
-                    initialState?.edit && !elem?.categoryName
+                    initialState?.edit && !elem?.category
                         ? product?.category_name
-                        : elem?.categoryName,
+                        : elem?.category,
                 category_id:
                     initialState?.edit && !elem?.categoryName
                         ? product?.category_id
@@ -382,9 +381,9 @@ const UploadExcelFile = ({ isOpen, setIsOpen }: any) => {
                     initialState?.edit && !elem?.taxCatalogName
                         ? product?.catalog_name
                         : elem?.taxCatalogName || null,
-                count: elem?.packageMeasurementQuantity
-                    ? Number(elem?.packageMeasurementQuantity)
-                    : 1,
+                // count: elem?.packageMeasurementQuantity
+                //     ? Number(elem?.packageMeasurementQuantity)
+                //     : 1,
                 prices: [
                     {
                         amount:
@@ -737,6 +736,7 @@ const ProductHeader = ({
                             className="bg-orange-500 hover:bg-orange-600"
                             icon={<FaRegEdit />}
                             variant="solid"
+                            size="sm"
                             type="button"
                         >
                             Редактировать
@@ -746,6 +746,7 @@ const ProductHeader = ({
                             onClick={addProduct}
                             variant="solid"
                             type="button"
+                            size="sm"
                             icon={<LiaHourglassEndSolid />}
                         >
                             Загрузить

@@ -92,14 +92,7 @@ const Tabs: FC<CashboxPropsType> = ({
     }, [drafts]);
 
     return (
-        <div className="w-full  flex items-center gap-x-2">
-            <span className="uppercase font-semibold text-slate-900">
-                {type === "sale"
-                    ? "Продажа"
-                    : type === "refund"
-                      ? "Возврат"
-                      : "Приход"}
-            </span>
+        <>
             {/* Tabs */}
             <div
                 ref={scrollRef}
@@ -146,7 +139,7 @@ const Tabs: FC<CashboxPropsType> = ({
                 icon={<FaPlus className="text-sm" />}
                 className="bg-white h-8 text-xs font-medium rounded-lg text-slate-900"
             ></Button>
-        </div>
+        </>
     );
 };
 

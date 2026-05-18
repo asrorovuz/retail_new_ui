@@ -2,6 +2,13 @@ import { apiRequest } from "@/app/config/axios";
 import { pathServices } from "@/entities/path";
 import type { RegisterPurchaseModel } from "@/@types/purchase";
 
+export const getContractorByIdApi = async (id: number | null) => {
+  return await apiRequest({
+    url: pathServices.purchase.getContractorProductsById + id,
+    method: "GET",
+  });
+};
+
 export const registerPurchaseApi = async (payload: RegisterPurchaseModel) => {
   return await apiRequest({
     url: pathServices.purchase.register,

@@ -296,7 +296,7 @@ const ContragentModal = ({
                                     checked={field.value}
                                     onChange={field.onChange}
                                 >
-                                    Доставшик
+                                    Поставщик
                                 </Checkbox>
                             )}
                         />

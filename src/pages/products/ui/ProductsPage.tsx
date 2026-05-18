@@ -99,8 +99,13 @@ const ProductsPage = () => {
 
     // 3. findBarcodeData kelganda catalogCode set qilish
     useEffect(() => {
-        if (!barcode) return;
-        if (findBarcodeData) {
+        if (!barcode) {
+            setCatalogCode(null);
+            return;
+        }
+        console.log(findBarcodeData, "555");
+
+        if (findBarcodeData?.catalog_code) {
             setCatalogCode(findBarcodeData.catalog_code);
         } else {
             setCatalogCode(barcode);

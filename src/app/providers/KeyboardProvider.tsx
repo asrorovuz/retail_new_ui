@@ -40,35 +40,91 @@ export const KeyboardProvider: React.FC<{ children: React.ReactNode }> = ({
         }
     };
 
+    // const insert = (key: string, onClickNumber?: () => void) => {
+    //     const activeField = activeFieldRef.current;
+
+    //     // 🔥 Fokus yo'q bo'lsa
+    //     if (!activeField || !activeField.ref.current) {
+    //         onClickNumber?.();
+    //         return;
+    //     }
+
+    //     const input = activeField.ref.current;
+    //     const start = input.selectionStart ?? 0;
+    //     const end = input.selectionEnd ?? 0;
+    //     const currentValue = input.value;
+
+    //     if (activeField.type === "numeric" && !/[\d.]/.test(key)) return;
+
+    //     let newValue =
+    //         currentValue.substring(0, start) +
+    //         key +
+    //         currentValue.substring(end);
+
+    //     if (activeField.type === "numeric") {
+    //         if (newValue.split(".").length > 2) return;
+    //     }
+
+    //     activeField.onChange(newValue);
+
+    //     requestAnimationFrame(() => {
+    //         input.setSelectionRange(start + key.length, start + key.length);
+    //     });
+    // };
+
     const insert = (key: string, onClickNumber?: () => void) => {
         const activeField = activeFieldRef.current;
 
-        // 🔥 Fokus yo'q bo'lsa
         if (!activeField || !activeField.ref.current) {
             onClickNumber?.();
             return;
         }
 
         const input = activeField.ref.current;
+
         const start = input.selectionStart ?? 0;
         const end = input.selectionEnd ?? 0;
-        const currentValue = input.value;
 
-        if (activeField.type === "numeric" && !/[\d.]/.test(key)) return;
+        const currentValue = input.value ?? "";
+
+        // 🔥 numeric validation
+        if (activeField.type === "numeric" && !/^[0-9.]$/.test(key)) {
+            return;
+        }
+
+        let insertValue = key;
+
+        // 🔥 "." bosilganda va input bo'sh bo'lsa
+        if (
+            activeField.type === "numeric" &&
+            key === "." &&
+            currentValue === ""
+        ) {
+            insertValue = "0.";
+        }
 
         let newValue =
-            currentValue.substring(0, start) +
-            key +
-            currentValue.substring(end);
+            currentValue.slice(0, start) +
+            insertValue +
+            currentValue.slice(end);
 
+        // 🔥 faqat bitta "." mumkin
         if (activeField.type === "numeric") {
-            if (newValue.split(".").length > 2) return;
+            if ((newValue.match(/\./g) || []).length > 1) {
+                return;
+            }
         }
+
+        // 🔥 controlled input sync
+        input.value = newValue;
 
         activeField.onChange(newValue);
 
         requestAnimationFrame(() => {
-            input.setSelectionRange(start + key.length, start + key.length);
+            const pos = start + insertValue.length;
+
+            input.focus();
+            input.setSelectionRange(pos, pos);
         });
     };
 

@@ -127,28 +127,35 @@ const ProductTable = ({
                             <p>{item?.name || "-"}</p>
                             <div className="flex gap-x-2 text-[11px] mt-0.5">
                                 {item?.category && (
-                                    <span className="bg-green-200 px-0.5 rounded-md text-black">
+                                    <span className="bg-blue-200 p-0.5 rounded-md text-black">
                                         <Tooltip title="Категория">
                                             {item?.category?.name}
                                         </Tooltip>
                                     </span>
                                 )}
                                 {(item?.barcodes?.length ?? 0) > 0 && (
-                                    <span className="bg-slate-300 px-0.5 rounded-md text-black">
+                                    <span className="bg-purple-300 p-0.5 rounded-md text-black">
                                         <Tooltip title="Штрих-код">
                                             {item?.barcodes?.[0]?.value}
                                         </Tooltip>
                                     </span>
                                 )}
+                                {item?.catalog_code && (
+                                    <span className="bg-green-300 p-0.5 rounded-md text-black">
+                                        <Tooltip title="ИКПУ-код">
+                                            {item?.catalog_code}
+                                        </Tooltip>
+                                    </span>
+                                )}
                                 {item?.sku && (
-                                    <span className="bg-slate-300 px-0.5 rounded-md text-black">
+                                    <span className="bg-orange-300 p-0.5 rounded-md text-black">
                                         <Tooltip title="Артикул">
                                             {item?.sku}
                                         </Tooltip>
                                     </span>
                                 )}
                                 {item?.code && (
-                                    <span className="bg-slate-300 px-0.5 rounded-md text-black">
+                                    <span className="bg-amber-300 p-0.5 rounded-md text-black">
                                         <Tooltip title="Код">
                                             {item?.code}
                                         </Tooltip>
@@ -273,22 +280,22 @@ const ProductTable = ({
                       }),
                   ]
                 : []),
-            columnHelper.display({
-                id: "catalogCode",
-                header: () => (
-                    <div className="text-nowrap text-center">ИКПУ-код</div>
-                ),
-                cell: (info) => (
-                    <p className="w-[250px]">
-                        {info.row.original.catalog_name || "-"}
-                    </p>
-                ),
-                meta: {
-                    color:
-                        tableSettings?.find((i) => i.key === "catalogCode")
-                            ?.color || "#fff",
-                },
-            }),
+            // columnHelper.display({
+            //     id: "catalogCode",
+            //     header: () => (
+            //         <div className="text-nowrap text-center">ИКПУ-код</div>
+            //     ),
+            //     cell: (info) => (
+            //         <p className="w-[250px]">
+            //             {info.row.original.catalog_name || "-"}
+            //         </p>
+            //     ),
+            //     meta: {
+            //         color:
+            //             tableSettings?.find((i) => i.key === "catalogCode")
+            //                 ?.color || "#fff",
+            //     },
+            // }),
             columnHelper.display({
                 id: "totalRemainderMin",
                 header: () => (
