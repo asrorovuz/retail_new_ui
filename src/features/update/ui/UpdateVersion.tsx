@@ -14,10 +14,16 @@ const UpdateVersion = () => {
     } = useUpdateProject();
 
     const hasUpdates = updates.length > 0;
+    console.log(updates);
 
     return (
         <>
-            <Button className="relative w-14" icon={<IoNotificationsOutline />} size="sm" onClick={() => setUpdateDialogOpen(true)}>
+            <Button
+                className="relative w-14"
+                icon={<IoNotificationsOutline />}
+                size="sm"
+                onClick={() => setUpdateDialogOpen(true)}
+            >
                 {/* Badge */}
                 {hasUpdates && (
                     <span className="absolute -top-2 -right-2 flex h-5 w-5">
@@ -77,6 +83,12 @@ const UpdateVersion = () => {
                         />
                     )}
                 </ul>
+
+                {/* <div className="list-disc pl-5 overflow-y-auto max-h-[20vh] flex flex-col gap-y-2">
+                    {updates?.map((text) => (
+                        <span>{text?.release_notes}</span>
+                    ))}
+                </div> */}
 
                 <div className="flex justify-end mt-6">
                     <Button loading={loading} onClick={onSendUpdates}>

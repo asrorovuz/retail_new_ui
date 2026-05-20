@@ -94,11 +94,11 @@ const NavigateModal = ({ isOpenNavigate, setIsOpenNavigate }: any) => {
                     </NavItem>
                     <NavItem className={linkClass} to={"/category"}>
                         <TbCategoryPlus size={20} />
-                        Категории товаров
+                        Категория товаров
                     </NavItem>
                     <NavItem className={linkClass} to={"/cashbox-category"}>
                         <TbCategoryPlus size={20} />
-                        Категории кассовых операций
+                        История кассы
                     </NavItem>
                 </div>
 

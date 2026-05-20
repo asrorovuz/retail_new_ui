@@ -90,11 +90,13 @@ const OrderActions = ({
     const [selectFiscalized, setSelectFiscalized] =
         useState<FizcalResponsetype | null>(null);
     const [sellDebit, setSellDebit] = useState(false);
+    // const [isOpenContractModal, setIsOpenContractModal] = useState(false);
     const [contractorId, setContractorId] = useState<number | null>(null);
     const [shiftAlert, setShiftAlert] = useState(false);
     const [pendingAction, setPendingAction] = useState<(() => void) | null>(
         null,
     );
+
     const [paymeType, setPaymeType] = useState<number[]>([]);
     const [openContragentModal, setOpenContragentModal] = useState(false);
     const [sellModal, setSellModal] = useState(false);
@@ -543,6 +545,10 @@ const OrderActions = ({
     };
 
     const onSubmit = () => {
+        if (type === "purchase") {
+            setSellDebit(true);
+            return;
+        }
         const debit =
             totalAmount -
                 Number(activeDraft?.discountAmount ?? 0) -
@@ -574,12 +580,31 @@ const OrderActions = ({
         contractor_id: number;
         comment: string;
     }) => {
+        console.log(contragentData);
+
         const debit =
             totalAmount -
                 Number(activeDraft?.discountAmount ?? 0) -
                 totalPaymentAmount || 0;
 
-        if (debit > 0) {
+        if (debit > 0 && type !== "purchase") {
+            if (activeDraft) {
+                // 🟢 copy qilib yangilaymiz
+                const updatedDraft = {
+                    ...activeDraft,
+                    contractor_id: contragentData.contractor_id,
+                    comment: contragentData.comment,
+                };
+
+                // 🔹 draft update qilish uchun addNewDraft yoki setActiveDraft funksiyasini chaqirish kerak
+                addNewDraft(updatedDraft); // yoki sizning state update funksiyangiz
+            }
+
+            setIsOpenPayment(true);
+            setSellDebit(false);
+        }
+
+        if (type === "purchase") {
             if (activeDraft) {
                 // 🟢 copy qilib yangilaymiz
                 const updatedDraft = {
@@ -606,7 +631,7 @@ const OrderActions = ({
     return keyType === "numeric" ? (
         <>
             <div className="flex gap-x-1">
-                {(type === "sale" || type === "purchase") && (
+                {type === "sale" && (
                     <Button
                         size="sm"
                         onClick={() =>
@@ -628,19 +653,18 @@ const OrderActions = ({
                     Оформить
                 </Button>
 
-                {sellDebit && (
-                    <SellDebetModal
-                        onCancel={() => {
-                            setSellDebit(false);
-                            setContractorId(null);
-                        }}
-                        onSubmit={onSubmitDebit}
-                        isOpen={sellDebit}
-                        setOpenContragentModal={setOpenContragentModal}
-                        contractorId={contractorId}
-                        setContractorId={setContractorId}
-                    />
-                )}
+                <SellDebetModal
+                    onCancel={() => {
+                        setSellDebit(false);
+                        setContractorId(null);
+                    }}
+                    onSubmit={onSubmitDebit}
+                    isOpen={sellDebit}
+                    setOpenContragentModal={setOpenContragentModal}
+                    contractorId={contractorId}
+                    setContractorId={setContractorId}
+                    type={type}
+                />
 
                 {sellDebit && (
                     <ContragentModal
@@ -650,6 +674,19 @@ const OrderActions = ({
                         setContractorId={setContractorId}
                     />
                 )}
+
+                {/* {isOpenContractModal && (
+                    <PurchaseContractorModal
+                        onCancel={() => {
+                            setIsOpenContractModal(false);
+                        }}
+                        onSubmit={onSubmitDebit}
+                        isOpen={isOpenContractModal}
+                        setOpenContragentModal={setOpenContragentModal}
+                        contractorId={contractorId}
+                        setContractorId={setContractorId}
+                    />
+                )} */}
 
                 <PaymentModal
                     type={type}

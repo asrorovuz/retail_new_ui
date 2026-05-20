@@ -1,6 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
+  deleteContractorProductApi,
   getContractorByIdApi,
+  registerContractorProductApi,
   registerPurchaseApi,
   updateOtherPurchasePriceApi,
   updatePurchaseApi,
@@ -21,6 +23,12 @@ export const useContractorByIdApi = (
 export const useRegisterPurchaseApi = () => {
   return useMutation({
     mutationFn: (data: RegisterPurchaseModel) => registerPurchaseApi(data),
+  });
+};
+
+export const useContractorProductApi = () => {
+  return useMutation({
+    mutationFn: (data: any) => registerContractorProductApi(data),
   });
 };
 
@@ -47,6 +55,16 @@ export const useOtherUpdatePurchasedPriceApi = () => {
       updateOtherPurchasePriceApi(payload, id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["all-products"] });
+    },
+  });
+};
+
+export const useDeleteProductContractorApi = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: any) => deleteContractorProductApi(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["contractor-products-id"] });
     },
   });
 };

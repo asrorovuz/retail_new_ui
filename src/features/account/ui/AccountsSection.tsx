@@ -139,7 +139,7 @@ const AccountsSection = ({ users }: { users: User[] }) => {
                 ),
             }),
             columnHelper.accessor("username", {
-                header: "Имя пользователя",
+                header: "номер пользователя",
                 cell: (info) => (
                     <span className="font-mono text-sm text-gray-500">
                         {formattedPhone(info.getValue())}
@@ -231,7 +231,7 @@ const AccountsSection = ({ users }: { users: User[] }) => {
             <div className="mb-5 flex justify-between">
                 <div>
                     <h2 className="text-xl font-bold text-gray-900">
-                        Аккоунти
+                        Список пользователей
                     </h2>
                     <p className="text-sm text-gray-500 mt-0.5">
                         {users?.length ?? 0} пользователей
@@ -269,7 +269,7 @@ const AccountsSection = ({ users }: { users: User[] }) => {
                                     colSpan={columns?.length}
                                     className="text-center py-12 text-gray-400"
                                 >
-                                    Пользователи не найдены
+                                    Пользователь не найден
                                 </td>
                             </tr>
                         ) : (

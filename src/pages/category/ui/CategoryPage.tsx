@@ -60,7 +60,7 @@ const CategoryPage = () => {
     const columns = useMemo(
         () => [
             columnHelper.accessor("name", {
-                header: "Название категории",
+                header: "Наименование ",
                 cell: ({ row, getValue }) => {
                     const depth = row.depth;
                     const hasChildren = row.original.children?.length > 0;
@@ -213,7 +213,7 @@ const CategoryPage = () => {
         <div className="bg-white h-screen p-2 flex flex-col gap-y-2">
             {/* Header */}
             <div className="flex items-center justify-between">
-                <NavigateButton content={"КАТЕГОРИИ"} />
+                <NavigateButton content={"КАТЕГОРИЯ ТОВАРОВ"} />
                 <Button
                     onClick={() =>
                         handleShowAdd({

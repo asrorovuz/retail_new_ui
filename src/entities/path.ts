@@ -150,6 +150,8 @@ export const pathServices = {
         // GET
         getContractorProductsById: "/api/contractor/products/",
         register: "/api/purchase/register",
+        registerProduct: "/api/contractor/product/create",
+        deleteContractorProduct: "/api/contractor/product/delete/",
         updatePurchasePath: "/api/purchase/update/",
         updatePurchasePricePath: "/api/warehouse-item/update-purchase-price",
         updateOtherPurchasePricePath: "/api/product/price/update/",

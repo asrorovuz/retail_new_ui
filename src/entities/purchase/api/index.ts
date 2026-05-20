@@ -17,6 +17,14 @@ export const registerPurchaseApi = async (payload: RegisterPurchaseModel) => {
   });
 };
 
+export const registerContractorProductApi = async (payload: RegisterPurchaseModel) => {
+  return await apiRequest({
+    url: pathServices.purchase.registerProduct,
+    method: "POST",
+    data: payload,
+  });
+};
+
 // Update
 export const updatePurchaseApi = async (id: number | null, payload: any) => {
   return await apiRequest({
@@ -39,5 +47,12 @@ export const updateOtherPurchasePriceApi = async (payload: any, id: number) => {
     url: pathServices.purchase.updateOtherPurchasePricePath + id,
     method: "POST",
     data: payload,
+  });
+};
+
+export const deleteContractorProductApi = async (id: any) => {
+  return await apiRequest({
+    url: pathServices.purchase.deleteContractorProduct + id,
+    method: "POST",
   });
 };

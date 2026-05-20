@@ -309,7 +309,7 @@ const UploadExcelFile = ({ isOpen, setIsOpen }: any) => {
             });
             return obj;
         });
-console.log(noSelectData);
+        console.log(noSelectData);
 
         const resultData = noSelectData?.map((elem) => {
             let product: any = productData?.find(
@@ -349,7 +349,8 @@ console.log(noSelectData);
                     elem?.state ??
                     baseProduct?.warehouse_items?.[0]?.state ??
                     null,
-                is_legal: elem?.isLegal ?? true,
+                is_legal:
+                    elem?.isLegal?.toLowerCase() === "белый" ? true : false,
                 barcodes:
                     initialState?.edit && !elem?.barcode
                         ? (product?.barcodes ?? [])

@@ -243,7 +243,7 @@ const SalePage = () => {
                                     "flex flex-col justify-center items-center overflow-hidden !h-10 w-full",
                                 )}
                             >
-                                Возвраты
+                                Возврат
                             </Button>
                             <Button
                                 onClick={() => setDebtModal(true)}

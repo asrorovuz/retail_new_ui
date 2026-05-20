@@ -103,7 +103,6 @@ const ProductsPage = () => {
             setCatalogCode(null);
             return;
         }
-        console.log(findBarcodeData, "555");
 
         if (findBarcodeData?.catalog_code) {
             setCatalogCode(findBarcodeData.catalog_code);

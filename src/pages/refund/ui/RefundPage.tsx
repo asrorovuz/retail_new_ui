@@ -311,7 +311,7 @@ const RefundPage = () => {
                                     "flex flex-col justify-center items-center overflow-hidden",
                                 )}
                             >
-                                Продажи
+                                Продажа
                             </Button>
                         </>
                     </div>

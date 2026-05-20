@@ -1,14 +1,19 @@
-import { useMemo, type FC } from "react";
+import { useEffect, useMemo, useRef, type FC } from "react";
 import type { CashboxPropsType } from "../model";
 import Tabs from "@/shared/ui/kit-pro/tabs/Tabs";
 import { Select } from "@/shared/ui/kit";
 import { useContragentApi } from "@/entities/history/repository";
 import { useContractorByIdApi } from "@/entities/purchase/repository";
 import { useDraftPurchaseStore } from "@/app/store/usePurchaseDraftStore";
+import { showMeasurmentName } from "@/shared/lib/showMeausermentName";
 
 const Cashbox: FC<CashboxPropsType> = (props) => {
-    const { draftPurchases, setContractorId, completeActiveDraftPurchase } =
-        useDraftPurchaseStore();
+    const {
+        draftPurchases,
+        setContractorId,
+        addProducts,
+        updateDraftPurchaseItem,
+    } = useDraftPurchaseStore();
 
     const activeDraft = draftPurchases?.find((item) => item?.isActive);
     const { data } = useContragentApi();
@@ -18,21 +23,104 @@ const Cashbox: FC<CashboxPropsType> = (props) => {
             : null,
     );
 
+    const contractor = useMemo(() => {
+        return data?.find((el: any) => el?.id === activeDraft?.contractor_id);
+    }, [activeDraft?.contractor_id]);
+
     const selectOption = useMemo(() => {
-        return data?.map((item: any) => {
-            return {
-                value: item?.id,
-                label: item?.name,
-            };
-        });
+        return data
+            ?.filter((el: any) => el?.is_supplier)
+            ?.map((item: any) => {
+                return {
+                    value: item?.id,
+                    label: item?.name,
+                };
+            });
     }, [data]);
 
-    const onUpdateProduct = () => {
-        completeActiveDraftPurchase();
-        if (dataById) {
-            console.log("salom");
+    // console.log(data, dataById);
+
+    // const onUpdateProduct = () => {
+    //     console.log(dataById, "data");
+
+    //     if (!dataById?.length) return;
+
+    //     dataById?.forEach((itemPa: any) => {
+    //         const item = itemPa?.product;
+
+    //         // 1) store ichida product ni ro'yxatga qo'sh
+    //         addProducts(item);
+
+    //         // 2) draft item sifatida yangilash
+    //         const existingItem = activeDraft?.items?.find(
+    //             (p) => p.productId === item?.id,
+    //         );
+    //         const quantity = existingItem?.quantity ?? 0;
+
+    //         const purchasePrice = {
+    //             amount: item?.warehouse_items?.[0]?.purchase_price_amount,
+    //             currency: item?.warehouse_items?.[0]?.purchase_price_currency,
+    //         };
+
+    //         const newItem = {
+    //             productId: item?.id,
+    //             productName: item?.name,
+    //             productPackageName: showMeasurmentName(item?.measurement_code),
+    //             priceTypeId: 0,
+    //             priceAmount: purchasePrice?.amount,
+    //             priceAmoutBulk: item?.prices?.[1]?.amount,
+    //             quantity: quantity + 1,
+    //             isMark: false,
+    //             totalAmount: (quantity + 1) * (purchasePrice?.amount ?? 0),
+    //             catalogCode: item?.catalog_code,
+    //             catalogName: item?.catalog_name,
+    //         };
+
+    //         updateDraftPurchaseItem(newItem);
+    //     });
+    // };
+    const isFirstRender = useRef(true);
+
+    useEffect(() => {
+        // Mount bo'lganda ishlamasin
+        if (isFirstRender.current) {
+            isFirstRender.current = false;
+            return;
         }
-    };
+
+        // dataById yangilanganda avtomatik chaqiriladi
+        if (!dataById?.length) return;
+
+        dataById?.forEach((item: any) => {
+            addProducts(item);
+
+            const existingItem = activeDraft?.items?.find(
+                (p) => p.productId === item?.product?.id,
+            );
+            const quantity = existingItem?.quantity ?? 0;
+
+            const purchasePrice = {
+                amount: item?.product?.warehouse_items?.[0]?.purchase_price_amount,
+                currency: item?.product?.warehouse_items?.[0]?.purchase_price_currency,
+            };
+
+            const newItem = {
+                productId: item?.product?.id,
+                productName: item?.product?.name,
+                productPackageName: showMeasurmentName(item?.product?.measurement_code),
+                priceTypeId: 0,
+                priceAmount: purchasePrice?.amount,
+                priceAmoutBulk: item?.product?.prices?.[1]?.amount,
+                quantity: quantity + 1,
+                isMark: false,
+                totalAmount: (quantity + 1) * (purchasePrice?.amount ?? 0),
+                catalogCode: item?.product?.catalog_code,
+                catalogName: item?.product?.catalog_name,
+            };
+
+            updateDraftPurchaseItem(newItem);
+        });
+    }, [dataById]);
 
     return (
         <div className="p-1 rounded-lg flex items-center justify-between gap-x-2 bg-slate-200">
@@ -45,25 +133,31 @@ const Cashbox: FC<CashboxPropsType> = (props) => {
                           : "Приход"}
                 </span>
                 {props?.type === "purchase" && (
+                    <p className="w-max flex gap-x-2 uppercase font-semibold text-orange-400">
+                        <span>долг:</span>{" "}
+                        {contractor?.debts?.[0]?.amount ?? "0"}
+                    </p>
+                )}
+                {props?.type === "purchase" && (
                     <Select
                         size="sm"
                         options={selectOption}
                         placeholder="Поставщик"
                         value={
                             selectOption?.find(
-                                (opt: any) => opt.value === activeDraft?.contractor_id,
+                                (opt: any) =>
+                                    opt.value === activeDraft?.contractor_id,
                             ) ?? null
                         }
                         isClearable
                         onChange={(val: any) => {
                             setContractorId(val ? val.value : null);
-                            onUpdateProduct();
                         }}
                         styles={{
                             control: (base) => ({
                                 ...base,
                                 height: "32px",
-                                width: "150px",
+                                width: "180px",
                                 minHeight: "32px",
                                 borderRadius: "8px",
                             }),

@@ -54,7 +54,7 @@ const AccountPage = () => {
 
                             <li className="flex justify-between border-b pb-1">
                                 <span className="text-gray-500">
-                                    Имя пользователя:
+                                    Номер пользователя:
                                 </span>
                                 <span className="font-medium text-gray-800">
                                     {formattedPhone(user?.username || "-")}

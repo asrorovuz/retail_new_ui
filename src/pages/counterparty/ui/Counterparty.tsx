@@ -1,6 +1,11 @@
 import { messages } from "@/app/constants/message.request";
 import { useDeleteContractor } from "@/entities/auth/repository";
 import { useAllProductApi } from "@/entities/products/repository";
+import {
+    useContractorByIdApi,
+    useContractorProductApi,
+    useDeleteProductContractorApi,
+} from "@/entities/purchase/repository";
 import { useContractorApi } from "@/entities/sale/repository";
 import ContragentModal from "@/features/modals/ui/ContragentModal";
 import PaymentDebtsModal from "@/features/modals/ui/PaymentDebtsModal";
@@ -30,6 +35,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { FaPlus, FaRegEdit } from "react-icons/fa";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { IoTrashOutline } from "react-icons/io5";
+import { MdOutlinePostAdd } from "react-icons/md";
 
 export type ContragentType = {
     id: number;
@@ -63,6 +69,8 @@ const Counterparty = () => {
     const [contragent, setContragent] = useState<ContragentType | null>(null);
     const [products, setProducts] = useState<any>(null);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const [loading, setLoading] = useState(false);
+    // const [errors, setErrors] = useState<any>(null);
 
     // Ref for detecting outside click on search dropdown
     const dropdownRef = useRef<HTMLDivElement>(null);
@@ -77,10 +85,30 @@ const Counterparty = () => {
         1,
         searchContractor,
     );
+    const { data: contractorProductData } = useContractorByIdApi(contractorId);
+    const { mutateAsync: contractorProductCreateAsync } =
+        useContractorProductApi();
+    const { mutate: deleteProductMutate } = useDeleteProductContractorApi();
     // const [filterItems, setFilterItems] = useState({
     //   type: null,
     //   debit: null,
     // });
+
+    useEffect(() => {
+        if (isOpenProducts) {
+            const newProducts = contractorProductData?.map((elem: any) => {
+                return {
+                    id: elem?.id,
+                    product: {
+                        id: elem?.product?.id,
+                        name: elem?.product?.name,
+                    },
+                };
+            });
+
+            setProducts(newProducts);
+        }
+    }, [isOpenProducts, contractorProductData]);
 
     useEffect(() => {
         if (searchContractor.trim().length > 0) {
@@ -119,6 +147,27 @@ const Counterparty = () => {
                     showErrorMessage(err);
                 },
             });
+        }
+    };
+
+    const onDeleteContractorProduct = (product: any) => {
+        if (product?.id) {
+            deleteProductMutate(product?.id, {
+                onSuccess() {
+                    setProducts((prev: any) =>
+                        prev.filter(
+                            (p: any) => p.product?.id !== product?.product?.id,
+                        ),
+                    );
+                },
+                onError(err) {
+                    showErrorMessage(err);
+                },
+            });
+        } else {
+            setProducts((prev: any) =>
+                prev.filter((p: any) => p.product?.id !== product?.product?.id),
+            );
         }
     };
 
@@ -242,6 +291,18 @@ const Counterparty = () => {
                                 Редактировать
                             </div>
                         </DropdownItem>
+                        {row?.original?.is_supplier && (
+                            <DropdownItem
+                                onClick={() =>
+                                    openProductModal(row?.original?.id)
+                                }
+                            >
+                                <div className="w-full flex items-center gap-2 text-slate-700 rounded-xl">
+                                    <MdOutlinePostAdd />
+                                    Товары поставщика
+                                </div>
+                            </DropdownItem>
+                        )}
                         <DropdownItem
                             onClick={() => {
                                 setDeleteModal(true);
@@ -268,21 +329,53 @@ const Counterparty = () => {
             const safeList = Array.isArray(prev) ? prev : [];
             const alreadyAdded = safeList.some((p: any) => p?.id === id);
             if (alreadyAdded) return safeList;
-            return [...safeList, { id: selected.id, name: selected.name }];
+            return [
+                ...safeList,
+                { id: null, product: { id: selected.id, name: selected.name } },
+            ];
         });
 
         setSearchContractor("");
         setIsDropdownOpen(false);
     };
 
-    const onSave = () => {
-        const payload = products?.map((item: any) => {
-            return {
-                product_id: item?.id,
-            };
-        });
+    const onSave = async () => {
+        if (!contractorId) return;
 
-        console.log(payload);
+        try {
+            setLoading(true);
+            const filterData = products?.filter((item: any) => !item?.id);
+
+            await Promise.allSettled(
+                filterData.map(async (item: any) => {
+                    const payload = {
+                        contractor_id: contractorId,
+                        product_id: item?.product?.id,
+                    };
+
+                    try {
+                        await contractorProductCreateAsync(payload);
+                    } catch (err) {
+                        console.log(err);
+                        
+                        // setErrors((prev: any) => [...prev, item?.name]);
+                    }
+                }),
+            );
+            showSuccessMessage(
+                messages.uz.SUCCESS_MESSAGE,
+                messages.ru.SUCCESS_MESSAGE,
+            );
+        } catch (err) {
+            showErrorMessage(err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const openProductModal = (id: number) => {
+        setIsOpenProduct(true);
+        setContractorId(id);
     };
 
     const closeContractorProductModal = () => {
@@ -312,14 +405,6 @@ const Counterparty = () => {
                     setSearchFocus={setSearchFocus}
                 />
                 <div className="flex gap-x-2">
-                    <Button
-                        onClick={() => setIsOpenProduct(true)}
-                        variant="solid"
-                        size="sm"
-                        icon={<FaPlus />}
-                    >
-                        Назначение товаров поставщику
-                    </Button>
                     <Button
                         onClick={() => setIsOpen(true)}
                         variant="solid"
@@ -466,20 +551,26 @@ const Counterparty = () => {
                                 size="sm"
                                 onClick={closeContractorProductModal}
                             >
-                                Отменить
+                                Назад
                             </Button>
-                            <Button size="sm" variant="solid">
+                            <Button
+                                onClick={onSave}
+                                loading={loading}
+                                size="sm"
+                                variant="solid"
+                            >
                                 Сохранить
                             </Button>
                         </div>
                     </div>
                 }
-                width={"80vw"}
-                height={"90vh"}
+                width={"100vw"}
+                height={"100vh"}
+                contentClassName={"!p-2 !m-0 !rounded-none"}
                 closable={false}
                 isOpen={isOpenProducts}
             >
-                <div className="flex flex-col h-[calc(90vh-110px)]">
+                <div className="flex flex-col h-[calc(100vh-80px)]">
                     {/* Search with dropdown */}
                     <div className="mb-2 relative" ref={dropdownRef}>
                         <SearchProduct
@@ -491,13 +582,13 @@ const Counterparty = () => {
 
                         {/* Dropdown: only when search is active */}
                         {isDropdownOpen && (
-                            <div className="w-full bg-white border absolute z-30 shadow rounded-lg flex flex-col gap-y-1 p-2 max-h-60 overflow-y-auto">
+                            <div className="w-1/2 bg-white border absolute z-30 shadow rounded-lg flex flex-col gap-y-1 p-2 max-h-60 overflow-y-auto">
                                 {productsPending ? (
                                     <p className="text-sm text-slate-400 px-2 py-1">
                                         Загрузка...
                                     </p>
                                 ) : productsData && productsData.length > 0 ? (
-                                    productsData.map((el: any) => (
+                                    productsData?.map((el: any) => (
                                         <p
                                             key={el?.id}
                                             onClick={() => onSelect(el?.id)}
@@ -522,29 +613,24 @@ const Counterparty = () => {
                                 <div className="flex flex-col gap-y-2">
                                     {products
                                         ?.filter((el: any) =>
-                                            el?.name
+                                            el?.product?.name
                                                 ?.toLowerCase()
                                                 ?.includes(
                                                     searchContractor?.toLowerCase(),
                                                 ),
                                         )
-                                        ?.map((product: any) => (
+                                        ?.map((product: any, index: number) => (
                                             <div
-                                                key={product.id}
+                                                key={index}
                                                 className="flex items-center justify-between gap-x-5 border border-slate-300 rounded-lg px-4 py-2 bg-slate-200"
                                             >
                                                 <span className="text-sm text-slate-800">
-                                                    {product.name}
+                                                    {product?.product?.name}
                                                 </span>
                                                 <button
                                                     onClick={() =>
-                                                        setProducts(
-                                                            (prev: any) =>
-                                                                prev.filter(
-                                                                    (p: any) =>
-                                                                        p.id !==
-                                                                        product.id,
-                                                                ),
+                                                        onDeleteContractorProduct(
+                                                            product,
                                                         )
                                                     }
                                                     className="text-red-400 hover:text-red-600 transition"

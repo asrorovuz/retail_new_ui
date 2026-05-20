@@ -1,46 +1,32 @@
+import { useDraftPurchaseStore } from "@/app/store/usePurchaseDraftStore";
 import { useContractorApi } from "@/entities/sale/repository";
 import { showErrorLocalMessage } from "@/shared/lib/showMessage";
 import { Button, Dialog, FormItem, Select } from "@/shared/ui/kit";
 import { useEffect, useMemo, useState } from "react";
 import { FaPlus } from "react-icons/fa";
-import FullKeyboard from "../keyboard/FullKeyboard";
 
-interface SellDebetModalProps {
-    isOpen: boolean;
-    contractorId: number | null;
-    onCancel: () => void;
-    onSubmit: (data: { contractor_id: any; comment: string }) => void;
-    setOpenContragentModal: (val: boolean) => void;
-    setContractorId: (val: number | null) => void;
-    type: string;
-}
-
-const SellDebetModal = ({
+const PurchaseContractorModal = ({
     onCancel,
     onSubmit,
     isOpen,
     contractorId,
     setOpenContragentModal,
-    type,
-}: SellDebetModalProps) => {
+}: any) => {
     const [contractorIdState, setContractorIdState] = useState<any>(null);
-    const [comment, setComment] = useState("");
+    const comment = "";
+
+    const { setContractorId } = useDraftPurchaseStore();
 
     const { data, isPending } = useContractorApi(isOpen, "");
 
-    useEffect(() => {
-        setContractorIdState(contractorId);
-    }, [contractorId]);
-
-    const filterData =
-        type === "purchase" ? data?.filter((el: any) => el?.is_supplier) : data;
-
     const contractorOptions = useMemo(() => {
         return (
-            filterData?.map((item: any) => ({
-                label: item?.name,
-                value: item?.id,
-            })) ?? []
+            data
+                ?.filter((el: any) => el?.is_supplier)
+                ?.map((item: any) => ({
+                    label: item?.name,
+                    value: item?.id,
+                })) ?? []
         );
     }, [data]);
 
@@ -49,18 +35,24 @@ const SellDebetModal = ({
             showErrorLocalMessage("Выберите клиента");
             return;
         }
-
-        onSubmit({ contractor_id: contractorIdState, comment });
+        const contragent = {
+            contractor_id: contractorIdState,
+            comment,
+        };
+        onSubmit(contragent);
+        setContractorId(contractorId)
+        setContractorIdState(null);
     };
 
+    useEffect(() => {
+        if (contractorId) {
+            setContractorIdState(contractorId);
+        }
+    }, [contractorId]);
+
     return (
-        <Dialog
-            width={"60vw"}
-            title="Выбор клиента"
-            isOpen={isOpen}
-            onClose={onCancel}
-        >
-            <FormItem labelClass="mb-1" className="!mb-3" label="Клиент">
+        <Dialog width={"360px"} closable={false} isOpen={isOpen}>
+            <FormItem labelClass="mb-1" className="!mb-3" label="Поставщик">
                 <div className="flex gap-x-1">
                     <Select
                         options={contractorOptions}
@@ -68,7 +60,7 @@ const SellDebetModal = ({
                         isSearchable={false}
                         isLoading={isPending}
                         className="w-full bg-white"
-                        placeholder="Клиент"
+                        placeholder="Поставщик"
                         value={contractorOptions.find(
                             (opt: any) => opt.value === contractorIdState,
                         )}
@@ -83,17 +75,6 @@ const SellDebetModal = ({
                     />
                 </div>
             </FormItem>
-
-            <FormItem label="Комментарий" className="!mb-3">
-                <textarea
-                    className="w-full border rounded-xl resize-none h-32 px-3 py-2 outline-none focus:ring-1 focus:ring-blue-400"
-                    placeholder="Введите комментарий"
-                    value={comment}
-                    inputMode="none"
-                    onChange={(e) => setComment(e.target.value)}
-                />
-            </FormItem>
-
             <div className="flex gap-x-2 my-2">
                 <Button
                     onClick={onCancel}
@@ -113,9 +94,8 @@ const SellDebetModal = ({
                     Сохранить
                 </Button>
             </div>
-            <FullKeyboard setSearch={setComment} />
         </Dialog>
     );
 };
 
-export default SellDebetModal;
+export default PurchaseContractorModal;
