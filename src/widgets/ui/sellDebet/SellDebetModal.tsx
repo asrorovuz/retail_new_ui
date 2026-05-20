@@ -51,6 +51,8 @@ const SellDebetModal = ({
         }
 
         onSubmit({ contractor_id: contractorIdState, comment });
+        setComment("")
+        setContractorIdState(null)
     };
 
     return (

@@ -94,6 +94,7 @@ const SalePage = () => {
     const completeActiveDraftSale = useDraftSaleStore(
         (store) => store.completeActiveDraftSale,
     );
+    const setContractorId = useDraftSaleStore((store) => store.setContragentId)
     const activeDraft: DraftSaleSchema =
         draftSales?.find((s) => s.isActive) ?? draftSales[0];
 
@@ -278,12 +279,12 @@ const SalePage = () => {
                     activeDraft={activeDraft}
                     payModal={payModal}
                     selectedRows={selectedRows}
-                    addNewDraft={addDraftSale}
                     setPayModal={setPayModal}
                     activeSelectPaymetype={activeSelectPaymetype}
                     updateDraftSaleDiscount={updateDraftSaleDiscount}
                     setActivePaymentSelectType={setActivePaymentSelectType}
                     complateActiveDraft={completeActiveDraftSale}
+                    setContractorIDStore={setContractorId}
                 />
             </div>
             {mark ? (

@@ -80,6 +80,7 @@ const PurchasePrice = () => {
     const completeActiveDraftPurchase = useDraftPurchaseStore(
         (store) => store.completeActiveDraftPurchase,
     );
+    const setContractorId = useDraftPurchaseStore((store) => store.setContractorId)
     // const deleteDraftPurchaseMark = useDraftPurchaseStore(
     //     (store) => store.deleteDraftPurchaseMark,
     // );
@@ -263,11 +264,11 @@ const PurchasePrice = () => {
                     activeDraft={activeDraft}
                     payModal={payModal}
                     selectedRows={selectedRows}
-                    addNewDraft={addDraftPurchase}
                     setPayModal={setPayModal}
                     activeSelectPaymetype={activeSelectPaymetype}
                     setActivePaymentSelectType={setActivePaymentSelectType}
                     complateActiveDraft={completeActiveDraftPurchase}
+                    setContractorIDStore={setContractorId}
                 />
             </div>
             {mark ? (

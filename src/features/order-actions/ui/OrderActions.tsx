@@ -53,6 +53,7 @@ import SellDebetModal from "@/widgets/ui/sellDebet/SellDebetModal";
 import ContragentModal from "@/features/modals/ui/ContragentModal";
 import Alert from "@/shared/ui/kit-pro/alert/Alert";
 import { usePermission } from "@/shared/lib/controlActionWithPermission";
+// import { useDraftPurchaseStore } from "@/app/store/usePurchaseDraftStore";
 
 type OrderActionType = {
     type: "sale" | "refund" | "purchase";
@@ -61,12 +62,15 @@ type OrderActionType = {
     activeDraft: DraftSaleSchema & DraftRefundSchema;
     activeSelectPaymetype: number;
     payModal: boolean;
-    addNewDraft: any;
     selectedRows?: any;
     updateDraftSaleDiscount?: any;
     setPayModal: (open: boolean) => void;
     setActivePaymentSelectType: (val: number) => void;
     complateActiveDraft: () => void;
+    setContractorIDStore?: (
+        contragentId: number | null,
+        comment: string,
+    ) => void;
 };
 
 const OrderActions = ({
@@ -77,10 +81,10 @@ const OrderActions = ({
     payModal,
     selectedRows,
     setPayModal,
-    addNewDraft,
     updateDraftSaleDiscount,
     setActivePaymentSelectType,
     complateActiveDraft,
+    setContractorIDStore,
 }: OrderActionType) => {
     const [ipOpenPayment, setIsOpenPayment] = useState(false);
     const [saleId, setSaleId] = useState<number | null>(null);
@@ -106,6 +110,7 @@ const OrderActions = ({
     );
     const warehouseId = useSettingsStore((s) => s.wareHouseId);
     const { activeShift, setActiveShift } = useSettingsStore();
+    // const { draftPurchases } = useDraftPurchaseStore()
 
     const { data: cashboxData } = useCashboxApi();
     const { data: paymentData = [] } = usePaymentProviderApi();
@@ -277,7 +282,7 @@ const OrderActions = ({
         const backAmount = totalPaymentAmount - netPrice;
         return backAmount > 0 ? backAmount : 0;
     }, [netPrice, totalPaymentAmount]);
-    
+
     function onSubmitPaymentHandler(
         paymentAmounts: PaymentAmount[],
         callback: (success: boolean) => void,
@@ -425,9 +430,12 @@ const OrderActions = ({
                             }
                         }
 
+                        // addDrafts();
                         callback(true);
                         complateActiveDraft();
-                        // addDrafts();
+                        if (setContractorIDStore) {
+                            setContractorIDStore(null, "");
+                        }
                         showSuccessMessage(
                             messages.uz.SUCCESS_MESSAGE,
                             messages.ru.SUCCESS_MESSAGE,
@@ -455,8 +463,7 @@ const OrderActions = ({
                 callback(true);
                 return;
             }
-            console.log(payload, "payload");
-            
+
             registerMutate(payload, {
                 onSuccess: (data: any) => {
                     if (
@@ -482,6 +489,9 @@ const OrderActions = ({
 
                     callback(true);
                     complateActiveDraft();
+                    if (setContractorIDStore) {
+                        setContractorIDStore(null, "");
+                    }
                     // addDrafts();
                     showSuccessMessage(
                         messages.uz.SUCCESS_MESSAGE,
@@ -582,24 +592,20 @@ const OrderActions = ({
         contractor_id: number;
         comment: string;
     }) => {
-        console.log(contragentData);
-
         const debit =
             totalAmount -
                 Number(activeDraft?.discountAmount ?? 0) -
                 totalPaymentAmount || 0;
 
         if (debit > 0 && type !== "purchase") {
-            if (activeDraft) {
+            if (activeDraft && setContractorIDStore) {
                 // 🟢 copy qilib yangilaymiz
-                const updatedDraft = {
-                    ...activeDraft,
-                    contractor_id: contragentData.contractor_id,
-                    comment: contragentData.comment,
-                };
 
                 // 🔹 draft update qilish uchun addNewDraft yoki setActiveDraft funksiyasini chaqirish kerak
-                addNewDraft(updatedDraft); // yoki sizning state update funksiyangiz
+                setContractorIDStore(
+                    contragentData.contractor_id,
+                    contragentData.comment,
+                ); // yoki sizning state update funksiyangiz
             }
 
             setIsOpenPayment(true);
@@ -607,16 +613,12 @@ const OrderActions = ({
         }
 
         if (type === "purchase") {
-            if (activeDraft) {
+            if (activeDraft && setContractorIDStore) {
                 // 🟢 copy qilib yangilaymiz
-                const updatedDraft = {
-                    ...activeDraft,
-                    contractor_id: contragentData.contractor_id,
-                    comment: contragentData.comment,
-                };
-
-                // 🔹 draft update qilish uchun addNewDraft yoki setActiveDraft funksiyasini chaqirish kerak
-                addNewDraft(updatedDraft); // yoki sizning state update funksiyangiz
+                setContractorIDStore(
+                    contragentData.contractor_id,
+                    contragentData.comment,
+                );
             }
 
             setIsOpenPayment(true);
@@ -676,19 +678,6 @@ const OrderActions = ({
                         setContractorId={setContractorId}
                     />
                 )}
-
-                {/* {isOpenContractModal && (
-                    <PurchaseContractorModal
-                        onCancel={() => {
-                            setIsOpenContractModal(false);
-                        }}
-                        onSubmit={onSubmitDebit}
-                        isOpen={isOpenContractModal}
-                        setOpenContragentModal={setOpenContragentModal}
-                        contractorId={contractorId}
-                        setContractorId={setContractorId}
-                    />
-                )} */}
 
                 <PaymentModal
                     type={type}

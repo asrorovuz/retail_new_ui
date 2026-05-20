@@ -251,6 +251,15 @@ export const useDraftSaleStore = create<
                     }
                 }
             }),
+        setContragentId: (contragentId: number | null, comment: string) =>
+            set((state) => {
+                const activeSale = state.draftSales.find((s) => s.isActive);
+                if (activeSale) {
+                    activeSale.contractor_id = contragentId;
+                    activeSale.comment = comment;
+                }
+            }),
+
         // addDraftSaleItem: (draftItem) =>
         //     set((state) => {
         //         const activeSale = state.draftSales.find((s) => s.isActive);

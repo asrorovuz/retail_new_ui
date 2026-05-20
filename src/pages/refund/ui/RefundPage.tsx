@@ -336,7 +336,6 @@ const RefundPage = () => {
                     activeDraft={activeDraft}
                     payModal={payModal}
                     selectedRows={selectedRows}
-                    addNewDraft={addDraftRefund}
                     setPayModal={setPayModal}
                     activeSelectPaymetype={activeSelectPaymetype}
                     setActivePaymentSelectType={setActivePaymentSelectType}
