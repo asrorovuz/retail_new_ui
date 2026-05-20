@@ -13,6 +13,7 @@ const Cashbox: FC<CashboxPropsType> = (props) => {
         setContractorId,
         addProducts,
         updateDraftPurchaseItem,
+        // completeActiveDraftPurchase  ← bu kerak emas
     } = useDraftPurchaseStore();
 
     const activeDraft = draftPurchases?.find((item) => item?.isActive);
@@ -25,73 +26,28 @@ const Cashbox: FC<CashboxPropsType> = (props) => {
 
     const contractor = useMemo(() => {
         return data?.find((el: any) => el?.id === activeDraft?.contractor_id);
-    }, [activeDraft?.contractor_id]);
+    }, [data, activeDraft?.contractor_id]);
 
     const selectOption = useMemo(() => {
         return data
             ?.filter((el: any) => el?.is_supplier)
-            ?.map((item: any) => {
-                return {
-                    value: item?.id,
-                    label: item?.name,
-                };
-            });
+            ?.map((item: any) => ({
+                value: item?.id,
+                label: item?.name,
+            }));
     }, [data]);
 
-    // console.log(data, dataById);
-
-    // const onUpdateProduct = () => {
-    //     console.log(dataById, "data");
-
-    //     if (!dataById?.length) return;
-
-    //     dataById?.forEach((itemPa: any) => {
-    //         const item = itemPa?.product;
-
-    //         // 1) store ichida product ni ro'yxatga qo'sh
-    //         addProducts(item);
-
-    //         // 2) draft item sifatida yangilash
-    //         const existingItem = activeDraft?.items?.find(
-    //             (p) => p.productId === item?.id,
-    //         );
-    //         const quantity = existingItem?.quantity ?? 0;
-
-    //         const purchasePrice = {
-    //             amount: item?.warehouse_items?.[0]?.purchase_price_amount,
-    //             currency: item?.warehouse_items?.[0]?.purchase_price_currency,
-    //         };
-
-    //         const newItem = {
-    //             productId: item?.id,
-    //             productName: item?.name,
-    //             productPackageName: showMeasurmentName(item?.measurement_code),
-    //             priceTypeId: 0,
-    //             priceAmount: purchasePrice?.amount,
-    //             priceAmoutBulk: item?.prices?.[1]?.amount,
-    //             quantity: quantity + 1,
-    //             isMark: false,
-    //             totalAmount: (quantity + 1) * (purchasePrice?.amount ?? 0),
-    //             catalogCode: item?.catalog_code,
-    //             catalogName: item?.catalog_name,
-    //         };
-
-    //         updateDraftPurchaseItem(newItem);
-    //     });
-    // };
     const isFirstRender = useRef(true);
 
     useEffect(() => {
-        // Mount bo'lganda ishlamasin
         if (isFirstRender.current) {
             isFirstRender.current = false;
             return;
         }
 
-        // dataById yangilanganda avtomatik chaqiriladi
         if (!dataById?.length) return;
 
-        dataById?.forEach((item: any) => {
+        dataById.forEach((item: any) => {
             addProducts(item);
 
             const existingItem = activeDraft?.items?.find(
@@ -100,14 +56,19 @@ const Cashbox: FC<CashboxPropsType> = (props) => {
             const quantity = existingItem?.quantity ?? 0;
 
             const purchasePrice = {
-                amount: item?.product?.warehouse_items?.[0]?.purchase_price_amount,
-                currency: item?.product?.warehouse_items?.[0]?.purchase_price_currency,
+                amount: item?.product?.warehouse_items?.[0]
+                    ?.purchase_price_amount,
+                currency:
+                    item?.product?.warehouse_items?.[0]
+                        ?.purchase_price_currency,
             };
 
             const newItem = {
                 productId: item?.product?.id,
                 productName: item?.product?.name,
-                productPackageName: showMeasurmentName(item?.product?.measurement_code),
+                productPackageName: showMeasurmentName(
+                    item?.product?.measurement_code,
+                ),
                 priceTypeId: 0,
                 priceAmount: purchasePrice?.amount,
                 priceAmoutBulk: item?.product?.prices?.[1]?.amount,

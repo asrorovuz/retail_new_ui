@@ -14,11 +14,13 @@ import dayjs from "dayjs";
 import { useEffect, useMemo, useState } from "react";
 
 const PaymentDebtsModal = ({
+    pageType,
     dobtModal,
     contractorId,
     setContragentId,
     setDebitModal,
 }: {
+    pageType?: string;
     dobtModal: boolean;
     contractorId?: number | null;
     setContragentId?: (val: number | null) => void;
@@ -39,10 +41,11 @@ const PaymentDebtsModal = ({
     const wareHouseId = useSettingsStore((s) => s.wareHouseId);
     const contractor = data?.find((item: any) => item?.id === contractorId);
     const isSupplier = contractor?.is_supplier;
+    const filterData = data?.filter((item: any) => item?.is_customer)
 
     const contractorOptions = useMemo(() => {
         return (
-            data?.map((item: any) => ({
+            (pageType === "sale" ? filterData : data)?.map((item: any) => ({
                 label: item?.name,
                 value: item?.id,
                 item: item,
@@ -181,6 +184,14 @@ const PaymentDebtsModal = ({
                             }));
                             setDebts(debts);
                         }}
+                        styles={{
+                            menuPortal: (base) => ({
+                                ...base,
+                                zIndex: 9999,
+                            }),
+                        }}
+                        menuPortalTarget={document.body}
+                        menuPosition="fixed"
                     />
                 </FormItem>
 

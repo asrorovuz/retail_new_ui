@@ -21,8 +21,12 @@ export const useContractorByIdApi = (
 };
 
 export const useRegisterPurchaseApi = () => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data: RegisterPurchaseModel) => registerPurchaseApi(data),
+    onSuccess(){
+      queryClient.invalidateQueries({queryKey: ["contragent"]})
+    }
   });
 };
 

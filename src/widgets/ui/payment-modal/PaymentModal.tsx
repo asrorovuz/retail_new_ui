@@ -115,17 +115,6 @@ const PaymentModal = ({
                 }
                 if (success) {
                     setIsOpenPayment(false);
-
-                    // if (type === "sale") {
-                    //     setIsOpenPayment(false);
-                    //     if (!settings?.fiscalization_enabled) {
-                    //         setIsOpenPayment(false);
-                    //     }
-                    // } else if (type === "refund" || type === "purchase") {
-                    //     setIsOpenPayment(false);
-                    // } else {
-                    //     return;
-                    // }
                 }
             },
             typeButton,

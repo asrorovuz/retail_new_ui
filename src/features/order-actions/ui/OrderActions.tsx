@@ -45,10 +45,10 @@ import {
     useUpdatePurchasedApi,
 } from "@/entities/purchase/repository";
 import type {
-    DraftPurchaseSchema,
+    // DraftPurchaseSchema,
     RegisterPurchaseModel,
 } from "@/@types/purchase";
-import { PaymentTypes } from "@/app/constants/payment.types";
+// import { PaymentTypes } from "@/app/constants/payment.types";
 import SellDebetModal from "@/widgets/ui/sellDebet/SellDebetModal";
 import ContragentModal from "@/features/modals/ui/ContragentModal";
 import Alert from "@/shared/ui/kit-pro/alert/Alert";
@@ -129,24 +129,24 @@ const OrderActions = ({
 
     const canCreate = checkPermissionByAction(type, "create");
 
-    const addDrafts = () => {
-        const newDraftSale:
-            | DraftSaleSchema
-            | DraftRefundSchema
-            | DraftPurchaseSchema = {
-            items: [],
-            isActive: true,
-            discountAmount: "0",
-            [type === "sale" ? "payment" : "payout"]: {
-                amounts: PaymentTypes?.map((paymentType) => ({
-                    amount: 0,
-                    paymentType: paymentType?.type,
-                })),
-            },
-        };
+    // const addDrafts = () => {
+    //     const newDraftSale:
+    //         | DraftSaleSchema
+    //         | DraftRefundSchema
+    //         | DraftPurchaseSchema = {
+    //         items: [],
+    //         isActive: true,
+    //         discountAmount: "0",
+    //         [type === "sale" ? "payment" : "payout"]: {
+    //             amounts: PaymentTypes?.map((paymentType) => ({
+    //                 amount: 0,
+    //                 paymentType: paymentType?.type,
+    //             })),
+    //         },
+    //     };
 
-        addNewDraft(newDraftSale);
-    };
+    //     addNewDraft(newDraftSale);
+    // };
 
     const checkShiftAndRun = (callback: () => void) => {
         if (activeShift) {
@@ -277,7 +277,7 @@ const OrderActions = ({
         const backAmount = totalPaymentAmount - netPrice;
         return backAmount > 0 ? backAmount : 0;
     }, [netPrice, totalPaymentAmount]);
-
+    
     function onSubmitPaymentHandler(
         paymentAmounts: PaymentAmount[],
         callback: (success: boolean) => void,
@@ -427,7 +427,7 @@ const OrderActions = ({
 
                         callback(true);
                         complateActiveDraft();
-                        addDrafts();
+                        // addDrafts();
                         showSuccessMessage(
                             messages.uz.SUCCESS_MESSAGE,
                             messages.ru.SUCCESS_MESSAGE,
@@ -455,6 +455,8 @@ const OrderActions = ({
                 callback(true);
                 return;
             }
+            console.log(payload, "payload");
+            
             registerMutate(payload, {
                 onSuccess: (data: any) => {
                     if (
@@ -480,7 +482,7 @@ const OrderActions = ({
 
                     callback(true);
                     complateActiveDraft();
-                    addDrafts();
+                    // addDrafts();
                     showSuccessMessage(
                         messages.uz.SUCCESS_MESSAGE,
                         messages.ru.SUCCESS_MESSAGE,

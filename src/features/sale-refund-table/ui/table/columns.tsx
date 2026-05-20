@@ -98,7 +98,7 @@ export const columns = (
             },
             cell: ({ row }) =>
                 row.original.isMark || row.original?.marks?.length ? (
-                    <div className="flex items-center gap-x-1">
+                    <div className="flex items-end justify-end gap-x-1">
                         <span className="text-lg">
                             {row.original.marks?.length || 0}
                         </span>

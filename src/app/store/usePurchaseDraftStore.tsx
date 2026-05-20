@@ -203,50 +203,76 @@ export const useDraftPurchaseStore = create<
                     activePurchase.discountAmount = discountAmount;
                 }
             }),
-        completeActiveDraftPurchase: () =>
+        // completeActiveDraftPurchase: () =>
+
+        //     set((state) => {
+        //         const activePurchaseIndex = state.draftPurchases.findIndex(
+        //             (s) => s.isActive,
+        //         );
+
+        //         if (state.draftPurchases.length > 1) {
+        //             state.draftPurchases.splice(activePurchaseIndex, 1);
+
+        //             const previousPurchaseIndex =
+        //                 state.draftPurchases.length - 1;
+        //             state.draftPurchases[previousPurchaseIndex].isActive = true;
+        //         } else {
+        //             const activePurchase = state.draftPurchases.find(
+        //                 (s) => s.isActive,
+        //             );
+        //             if (activePurchase) {
+        //                 if (activePurchase.id) {
+        //                     const newDraftPurchase: DraftPurchaseSchema = {
+        //                         items: [],
+        //                         isActive: true,
+        //                         discountAmount: "0",
+        //                         payout: {
+        //                             amounts: PaymentTypes.map((paymentType) => {
+        //                                 return {
+        //                                     amount: "0",
+        //                                     paymentType: paymentType.type,
+        //                                 };
+        //                             }),
+        //                         },
+        //                     };
+        //                     state.draftPurchases = [newDraftPurchase];
+        //                 } else {
+        //                     activePurchase.items = [];
+        //                     activePurchase.discountAmount = "0";
+        //                     if (activePurchase.payout) {
+        //                         activePurchase.payout.amounts.forEach(
+        //                             (a) => (a.amount = "0"),
+        //                         );
+        //                     }
+        //                 }
+        //             }
+        //         }
+        //     }),
+        completeActiveDraftPurchase: () => {
             set((state) => {
-                const activePurchaseIndex = state.draftPurchases.findIndex(
-                    (s) => s.isActive,
-                );
+                const freshDraft: DraftPurchaseSchema = {
+                    id: undefined,
+                    isActive: true,
+                    contractor_id: null,
+                    discountAmount: "0",
+                    items: [],
+                    payout: {
+                        amounts: PaymentTypes?.map((paymentType) => ({
+                            amount: "0",
+                            paymentType: paymentType.type,
+                        })),
+                    },
+                };
 
-                if (state.draftPurchases.length > 1) {
-                    state.draftPurchases.splice(activePurchaseIndex, 1);
-
-                    const previousPurchaseIndex =
-                        state.draftPurchases.length - 1;
-                    state.draftPurchases[previousPurchaseIndex].isActive = true;
-                } else {
-                    const activePurchase = state.draftPurchases.find(
-                        (s) => s.isActive,
-                    );
-                    if (activePurchase) {
-                        if (activePurchase.id) {
-                            const newDraftPurchase: DraftPurchaseSchema = {
-                                items: [],
-                                isActive: true,
-                                discountAmount: "0",
-                                payout: {
-                                    amounts: PaymentTypes.map((paymentType) => {
-                                        return {
-                                            amount: "0",
-                                            paymentType: paymentType.type,
-                                        };
-                                    }),
-                                },
-                            };
-                            state.draftPurchases = [newDraftPurchase];
-                        } else {
-                            activePurchase.items = [];
-                            activePurchase.discountAmount = "0";
-                            if (activePurchase.payout) {
-                                activePurchase.payout.amounts.forEach(
-                                    (a) => (a.amount = "0"),
-                                );
-                            }
-                        }
-                    }
-                }
-            }),
+                return {
+                    // active draftni yangi bilan almashtir, qolganlarni saqla
+                    draftPurchases: state.draftPurchases.map((draft) =>
+                        draft.isActive ? freshDraft : draft,
+                    ),
+                    products: [],
+                };
+            });
+        },
         deleteDraftPurchaseMark: (item) =>
             set((state) => {
                 const activePurchase = state.draftPurchases.find(
