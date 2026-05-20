@@ -125,38 +125,28 @@ const RevisiyaPage = () => {
 
     const columns = useMemo<ColumnDef<any>[]>(() => {
         const baseColumns: ColumnDef<any>[] = [
-            // {
-            //     id: "№",
-            //     enableSorting: false,
-            //     header: () => "№",
-            //     cell: (info) =>
-            //         (pagination?.pageIndex - 1) * pagination?.pageSize +
-            //         (info?.row?.index + 1),
-            //     meta: { bodyCellClassName: "text-center min-w-[50px]" },
-            // },
             {
                 accessorKey: "number",
                 header: "№",
                 meta: {
-                    headerClassName: "w-[60px]",
-                    bodyCellClassName: "w-[60px]",
+                    headerClassName: "w-[80px]",
+                    bodyCellClassName: "w-[80px] font-semibold",
                 },
             },
-            // {
-            //     accessorKey: "seller",
-            //     header: "Продавец",
-            // },
             {
-                accessorKey: "employee",
+                id: "account",
+                accessorKey: "account.name",
                 header: "Сотрудник",
+                cell: ({ row }) => row.original.account?.name ?? "—",
             },
-            // {
-            //     accessorKey: "info",
-            //     header: "Данные",
-            // },
+
             {
                 accessorKey: "date",
                 header: "Дата",
+                meta: {
+                    headerClassName: "w-[150px]",
+                    bodyCellClassName: "w-[150px]",
+                },
                 cell: ({ row }) =>
                     dayjs(row.original.date).format("DD-MM-YYYY HH:mm"),
             },

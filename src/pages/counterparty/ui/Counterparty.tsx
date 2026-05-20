@@ -82,7 +82,11 @@ const Counterparty = () => {
         is_supplier: false,
     });
     // const [errors, setErrors] = useState<any>(null);
-    const isFilter = filter?.is_customer || filter?.is_supplier ? filter : "";
+    const isFilter = filter.is_customer
+        ? { is_customer: true }
+        : filter.is_supplier
+          ? { is_supplier: true }
+          : undefined;
 
     // Ref for detecting outside click on search dropdown
     const dropdownRef = useRef<HTMLDivElement>(null);
@@ -204,12 +208,29 @@ const Counterparty = () => {
                 id: "type",
                 header: "Тип",
                 cell: ({ row }) => {
-                    const type = row.original.is_customer
-                        ? "Клиент"
-                        : row.original.is_supplier
-                          ? "Поставшик"
-                          : "-";
-                    return <p className="w-[180px]">{type || "-"}</p>;
+                    const types: string[] = [];
+                    if (row.original.is_customer) types.push("Клиент");
+                    if (row.original.is_supplier) types.push("Поставщик");
+
+                    if (!types.length)
+                        return <p className="w-[180px]">-</p>;
+
+                    return (
+                        <div className="flex flex-col gap-1 w-[180px]">
+                            {types.map((t) => (
+                                <span
+                                    key={t}
+                                    className={`text-xs px-2 py-0.5 rounded-full w-fit font-medium ${
+                                        t === "Клиент"
+                                            ? "bg-blue-100 text-blue-700"
+                                            : "bg-orange-100 text-orange-700"
+                                    }`}
+                                >
+                                    {t}
+                                </span>
+                            ))}
+                        </div>
+                    );
                 },
             }),
             columnHelper.display({
@@ -391,6 +412,7 @@ const Counterparty = () => {
                 messages.uz.SUCCESS_MESSAGE,
                 messages.ru.SUCCESS_MESSAGE,
             );
+            setIsOpenProduct(false);
         } catch (err) {
             showErrorMessage(err);
         } finally {
@@ -489,12 +511,11 @@ const Counterparty = () => {
                                                         header.column.id ===
                                                         "actions";
                                                     return (
-                                                        <Th
-                                                            className={
-                                                                isActionsColumn
-                                                                    ? " bg-white"
-                                                                    : ""
-                                                            }
+                                                                        <Th
+                                                            className={classNames(
+                                                                "border border-slate-200 bg-slate-100",
+                                                                isActionsColumn ? "bg-slate-100" : "",
+                                                            )}
                                                             key={header.id}
                                                         >
                                                             <div
@@ -527,13 +548,14 @@ const Counterparty = () => {
                                 {table.getRowModel().rows.map((row) => (
                                     <Tr
                                         key={row.id}
-                                        className={`${row.original?.is_supplier && row.original?.is_customer ? "bg-green-100" : row.original?.is_supplier ? "bg-orange-100" : "bg-white"} hover:bg-blue-100 transition`}
+                                        className="hover:bg-blue-100 transition"
                                     >
                                         {row.getVisibleCells().map((cell) => {
                                             return (
                                                 <Td
                                                     key={cell.id}
                                                     className={classNames(
+                                                        "border border-slate-200",
                                                         cell.column.columnDef
                                                             .meta
                                                             ?.bodyCellClassName,

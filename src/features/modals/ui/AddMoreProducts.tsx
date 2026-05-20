@@ -7,7 +7,7 @@ import {
     CurrencyCodeUZSText,
     CurrencyRateUZS,
 } from "@/app/constants/paymentType";
-import { useCatalogSearchApi } from "@/entities/products/repository";
+import { useCatalogByBarcode } from "@/entities/products/repository";
 import NavigateButton from "@/shared/ui/kit-pro/navigate-button/NavigateButton";
 import FullKeyboard from "@/widgets/ui/keyboard/FullKeyboard";
 
@@ -28,11 +28,9 @@ const AddMoreProducts = ({
 }) => {
     const [products, setProducts] = useState<ProductDefaultValues[]>([]);
 
-    const queryKey = catalogCode || barcode || "";
-
-    const { data: catalogData = [] } = useCatalogSearchApi(
-        queryKey,
-        isOpen && !!queryKey,
+    const { data: catalogData = [] } = useCatalogByBarcode(
+        isOpen ? (barcode || catalogCode) : null,
+        isOpen,
     );
 
     /* 🔹 default product */
