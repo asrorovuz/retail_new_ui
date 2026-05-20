@@ -35,7 +35,7 @@ export const pathServices = {
 
         // UPDATE
         settingsUpdata: "/api/settings/organization/update",
-        settingsShiftUpdat: "/api/settings/organization/shift/update",
+        // settingsShiftUpdat: "/api/settings/organization/shift/update",
 
         // TELEGRAM BOT
         getAllBot: "/api/bot/get",
@@ -135,6 +135,7 @@ export const pathServices = {
         getContractorPath: "/api/contractor/get",
         updateSellPath: "/api/sale/update/",
         getPaymentDebts: "/api/payment/register",
+        getPayoutDebts: "/api/payout/register",
 
         // CREATE
         createFiscalized: "/api/fiscalization/sale/register",

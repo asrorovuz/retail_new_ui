@@ -12,7 +12,14 @@ import PaymentDebtsModal from "@/features/modals/ui/PaymentDebtsModal";
 import SearchProduct from "@/features/search-product";
 import classNames from "@/shared/lib/classNames";
 import { showErrorMessage, showSuccessMessage } from "@/shared/lib/showMessage";
-import { Button, Dialog, Dropdown, Pagination, Table } from "@/shared/ui/kit";
+import {
+    Button,
+    Dialog,
+    Dropdown,
+    Pagination,
+    Select,
+    Table,
+} from "@/shared/ui/kit";
 import ConfirmDialog from "@/shared/ui/kit-pro/confirm-dialog/ConfirmDialog";
 import Empty from "@/shared/ui/kit-pro/empty/Empty";
 import NavigateButton from "@/shared/ui/kit-pro/navigate-button/NavigateButton";
@@ -70,14 +77,19 @@ const Counterparty = () => {
     const [products, setProducts] = useState<any>(null);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [filter, setFilter] = useState({
+        is_customer: false,
+        is_supplier: false,
+    });
     // const [errors, setErrors] = useState<any>(null);
+    const isFilter = filter?.is_customer || filter?.is_supplier ? filter : "";
 
     // Ref for detecting outside click on search dropdown
     const dropdownRef = useRef<HTMLDivElement>(null);
 
     const columnHelper = createColumnHelper<any>();
 
-    const { data, isPending } = useContractorApi(true, search);
+    const { data, isPending } = useContractorApi(true, search, isFilter);
     const { mutate: deleteMutate, isPending: isDeletePending } =
         useDeleteContractor();
     const { data: productsData, isPending: productsPending } = useAllProductApi(
@@ -292,17 +304,30 @@ const Counterparty = () => {
                             </div>
                         </DropdownItem>
                         {row?.original?.is_supplier && (
-                            <DropdownItem
-                                onClick={() =>
-                                    openProductModal(row?.original?.id)
-                                }
-                            >
-                                <div className="w-full flex items-center gap-2 text-slate-700 rounded-xl">
-                                    <MdOutlinePostAdd />
-                                    Товары поставщика
-                                </div>
-                            </DropdownItem>
+                            <>
+                                <DropdownItem
+                                    onClick={() => {
+                                        setDebitModal(true);
+                                        setContractorId(row.original?.id);
+                                    }}
+                                >
+                                    <div className="w-full flex items-center gap-2 text-slate-700 rounded-xl">
+                                        💰 Оплата поставщику
+                                    </div>
+                                </DropdownItem>
+                                <DropdownItem
+                                    onClick={() =>
+                                        openProductModal(row?.original?.id)
+                                    }
+                                >
+                                    <div className="w-full flex items-center gap-2 text-slate-700 rounded-xl">
+                                        <MdOutlinePostAdd />
+                                        Товары поставщика
+                                    </div>
+                                </DropdownItem>
+                            </>
                         )}
+
                         <DropdownItem
                             onClick={() => {
                                 setDeleteModal(true);
@@ -357,7 +382,7 @@ const Counterparty = () => {
                         await contractorProductCreateAsync(payload);
                     } catch (err) {
                         console.log(err);
-                        
+
                         // setErrors((prev: any) => [...prev, item?.name]);
                     }
                 }),
@@ -397,13 +422,42 @@ const Counterparty = () => {
                 <NavigateButton content="Контрагенты" />
             </div>
             <div className="mb-3 flex items-center justify-between">
-                <SearchProduct
-                    search={search}
-                    pageType={false}
-                    activeType="fullkey"
-                    setSearch={setSearch}
-                    setSearchFocus={setSearchFocus}
-                />
+                <div className="flex gap-x-2">
+                    <SearchProduct
+                        search={search}
+                        pageType={false}
+                        activeType="fullkey"
+                        setSearch={setSearch}
+                        setSearchFocus={setSearchFocus}
+                    />
+
+                    <Select
+                        isClearable
+                        isSearchable={false}
+                        placeholder="Тип контрагента"
+                        options={[
+                            { value: "is_customer", label: "Клиент" },
+                            { value: "is_supplier", label: "Поставщик" },
+                        ]}
+                        value={
+                            filter.is_customer
+                                ? { value: "is_customer", label: "Клиент" }
+                                : filter.is_supplier
+                                  ? { value: "is_supplier", label: "Поставщик" }
+                                  : null
+                        }
+                        onChange={(opt) => {
+                            setFilter({
+                                is_customer: opt?.value === "is_customer",
+                                is_supplier: opt?.value === "is_supplier",
+                            });
+                        }}
+                        styles={{
+                            control: (base) => ({ ...base, minWidth: 160 }),
+                        }}
+                    />
+                </div>
+
                 <div className="flex gap-x-2">
                     <Button
                         onClick={() => setIsOpen(true)}
@@ -470,10 +524,10 @@ const Counterparty = () => {
                                 })}
                             </THead>
                             <TBody>
-                                {table.getRowModel().rows.map((row, index) => (
+                                {table.getRowModel().rows.map((row) => (
                                     <Tr
                                         key={row.id}
-                                        className={`${index % 2 ? "bg-white" : "bg-slate-100"} hover:bg-slate-100 transition`}
+                                        className={`${row.original?.is_supplier && row.original?.is_customer ? "bg-green-100" : row.original?.is_supplier ? "bg-orange-100" : "bg-white"} hover:bg-blue-100 transition`}
                                     >
                                         {row.getVisibleCells().map((cell) => {
                                             return (

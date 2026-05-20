@@ -105,9 +105,29 @@ const PaymentSection = ({
         updateDraftPayment(updatedAmounts);
     };
 
+    // const onClickNumber = (num: string) => {
+    //     const current = getCurrentAmount();
+    //     console.log(current, "fff");
+
+    //     const newValue = current === "0" ? num : current + num;
+
+    //     setValue(newValue);
+    //     onPaymentChanged(activeSelectPaymetype, newValue);
+    // };
     const onClickNumber = (num: string) => {
         const current = getCurrentAmount();
-        const newValue = current === "0" ? num : current + num;
+
+        // Ikki marta "." bosilmasligi uchun
+        if (num === "." && current.includes(".")) return;
+
+        // "0." → ruxsat, "05" → ruxsat emas
+        let newValue: string;
+
+        if (current === "0" || current === "") {
+            newValue = num === "." ? "0." : num;
+        } else {
+            newValue = current + num;
+        }
 
         setValue(newValue);
         onPaymentChanged(activeSelectPaymetype, newValue);

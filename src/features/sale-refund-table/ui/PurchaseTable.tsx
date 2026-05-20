@@ -63,6 +63,12 @@ const PurchaseTable = ({
     });
     const currentItem = activeDraft?.items?.[Number(expandedRow)] ?? null;
     const { updatePrices, products } = useDraftPurchaseStore();
+    const [localValue, setLocalValue] = useState<string>(
+        String(getActivePrice(currentItem, type, selectedRows) ?? 0),
+    );
+    const [localQuantity, setLocalQuantity] = useState<string>(
+        String(currentItem?.quantity ?? 0),
+    );
 
     const onDeleteDraftItem = () => {
         if (expandedRow) {
@@ -130,6 +136,16 @@ const PurchaseTable = ({
         selectedType === 1
             ? Number(retailPrice?.amount)
             : Number(bulkPrice?.amount);
+
+    useEffect(() => {
+        setLocalQuantity(String(currentItem?.quantity ?? 0));
+    }, [currentItem, type, selectedRows]);
+
+    useEffect(() => {
+        setLocalValue(
+            String(getActivePrice(currentItem, type, selectedRows) ?? 0),
+        );
+    }, [currentItem, type, selectedRows]);
 
     useEffect(() => {
         if (expendedId) {
@@ -315,14 +331,16 @@ const PurchaseTable = ({
                                                 : "float"
                                         }
                                         className="!w-[35%] h-8"
-                                        value={currentItem?.priceAmount ?? 0}
+                                        value={localValue ?? 0}
                                         onFocus={() =>
                                             setActiveTypeKeyboard("numeric")
                                         }
                                         onChange={(val) => {
-                                            const newPrice = Number(
-                                                val?.target?.value,
-                                            );
+                                            const raw = val?.target?.value;
+                                            setLocalValue(raw);
+
+                                            const newPrice = Number(raw);
+                                            if (isNaN(newPrice)) return;
                                             const price = getActivePrice(
                                                 {
                                                     ...currentItem,
@@ -422,14 +440,19 @@ const PurchaseTable = ({
                                                     ? "int"
                                                     : "float"
                                             }
-                                            value={currentItem?.quantity}
+                                            value={localQuantity}
                                             onFocus={() =>
                                                 setActiveTypeKeyboard("numeric")
                                             }
                                             onChange={(val) => {
-                                                const qty = Number(
-                                                    val?.target?.value,
-                                                );
+                                                const raw = val?.target?.value;
+                                                setLocalQuantity(raw);
+                                                {
+                                                    /* ← avval local state */
+                                                }
+
+                                                const qty = Number(raw);
+                                                if (isNaN(qty)) return;
                                                 const price = getActivePrice(
                                                     currentItem,
                                                     type,

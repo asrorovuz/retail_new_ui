@@ -24,7 +24,7 @@ import {
   updatePaymentClick,
   updatePaymentPayme,
   updateSettings,
-  updateSettingsShift,
+  // updateSettingsShift,
 } from "../api";
 
 export const usePermissionIdApi = (id: string | null) => {
@@ -130,18 +130,18 @@ export const useUpdateSettings = () => {
   });
 };
 
-export const useUpdateSettingsShift = () => {
-  const queryClient = useQueryClient();
+// export const useUpdateSettingsShift = () => {
+//   const queryClient = useQueryClient();
 
-  return useMutation({
-    mutationFn: (payload: any) => updateSettingsShift(payload),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["init-settings"] });
-      queryClient.invalidateQueries({ queryKey: ["last-shift"] });
-      queryClient.invalidateQueries({ queryKey: ["shift"] });
-    },
-  });
-};
+//   return useMutation({
+//     mutationFn: (payload: any) => updateSettingsShift(payload),
+//     onSuccess: () => {
+//       queryClient.invalidateQueries({ queryKey: ["init-settings"] });
+//       queryClient.invalidateQueries({ queryKey: ["last-shift"] });
+//       queryClient.invalidateQueries({ queryKey: ["shift"] });
+//     },
+//   });
+// };
 
 export const useUpdateFiscalizationWhite = () => {
   // const queryClient = useQueryClient();

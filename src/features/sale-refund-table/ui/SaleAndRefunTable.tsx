@@ -65,6 +65,12 @@ const SaleAndRefunTable = ({
         type: "price",
     });
     const currentItem = activeDraft?.items?.[Number(expandedRow)] ?? null;
+    const [localValue, setLocalValue] = useState<string>(
+        String(getActivePrice(currentItem, type, selectedRows) ?? 0),
+    );
+    const [localQuantity, setLocalQuantity] = useState<string>(
+        String(currentItem?.quantity ?? 0),
+    );
 
     const onDeleteDraftItem = () => {
         if (expandedRow) {
@@ -107,6 +113,16 @@ const SaleAndRefunTable = ({
     }, [activeDraft]);
 
     useEffect(() => {
+        setLocalQuantity(String(currentItem?.quantity ?? 0));
+    }, [currentItem]);
+
+    useEffect(() => {
+        setLocalValue(
+            String(getActivePrice(currentItem, type, selectedRows) ?? 0),
+        );
+    }, [currentItem, type, selectedRows]);
+
+    useEffect(() => {
         if (expendedId) {
             let itemId = table
                 .getRowModel()
@@ -117,7 +133,7 @@ const SaleAndRefunTable = ({
             setExpandedRow(itemId!);
         }
     }, [expendedId]);
-    
+
     const table = useReactTable({
         data: activeDraft?.items ?? [],
         columns: columns(setMark, type, selectedRows),
@@ -374,20 +390,16 @@ const SaleAndRefunTable = ({
                                             : "float"
                                     }
                                     className="!w-1/4 h-8"
-                                    value={
-                                        getActivePrice(
-                                            currentItem,
-                                            type,
-                                            selectedRows,
-                                        ) ?? 0
-                                    }
+                                    value={localValue}
                                     onFocus={() =>
                                         setActiveTypeKeyboard("numeric")
                                     }
                                     onChange={(val) => {
-                                        const newPrice = Number(
-                                            val?.target?.value,
-                                        );
+                                        const raw = val?.target?.value;
+                                        setLocalValue(raw);
+
+                                        const newPrice = Number(raw);
+                                        if (isNaN(newPrice)) return;
                                         // const price = getActivePrice(
                                         //     {
                                         //         ...currentItem,
@@ -401,7 +413,10 @@ const SaleAndRefunTable = ({
                                                 currentItem?.productId
                                             ];
 
-                                        if (isOptom && updateDraftItemPriceBulk) {
+                                        if (
+                                            isOptom &&
+                                            updateDraftItemPriceBulk
+                                        ) {
                                             updateDraftItemPriceBulk(
                                                 Number(expandedRow),
                                                 newPrice,
@@ -502,14 +517,19 @@ const SaleAndRefunTable = ({
                                                 ? "int"
                                                 : "float"
                                         }
-                                        value={currentItem?.quantity}
+                                        value={localQuantity}
                                         onFocus={() =>
                                             setActiveTypeKeyboard("numeric")
                                         }
                                         onChange={(val) => {
-                                            const qty = Number(
-                                                val?.target?.value,
-                                            );
+                                            const raw = val?.target?.value;
+                                            setLocalQuantity(raw);
+                                            {
+                                                /* ← avval local state */
+                                            }
+
+                                            const qty = Number(raw);
+                                            if (isNaN(qty)) return;
                                             const price = getActivePrice(
                                                 currentItem,
                                                 type,

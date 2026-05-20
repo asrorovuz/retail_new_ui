@@ -78,6 +78,7 @@ const CatalogSelectorFiscal = ({
       isLoading={isLoading}
       options={options}
       value={selected}
+      size="sm"
       inputValue={inputValue}
       onInputChange={handleInputChange}
       onChange={handleChange}

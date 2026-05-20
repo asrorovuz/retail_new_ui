@@ -15,7 +15,6 @@ import {
 } from "@/shared/lib/showMessage";
 import { messages } from "@/app/constants/message.request";
 import { Button, Card, Dialog, Form, FormItem, Input } from "@/shared/ui/kit";
-import dayjs from "dayjs";
 import { CommonDeleteDialog } from "@/widgets";
 import { AccountPermissions } from "@/app/constants/permissions";
 import { useCheckPermission } from "@/shared/lib/checkPermission";
@@ -123,17 +122,7 @@ const Report = ({ item, telegramBotConfig }: any) => {
     return (
         <>
             <Card
-                className="p-6 rounded-lg bg-white w-full select-none"
-                header={{
-                    content: "Отчет",
-                    extra: (
-                        <p>
-                            {item?.created_at
-                                ? dayjs(item?.created_at).format("DD-MM-YYYY")
-                                : null}
-                        </p>
-                    ),
-                }}
+                className="p-3 rounded-lg bg-white w-full select-none"
             >
                 <h2 className="text-lg font-semibold text-slate-800 my-6">
                     Телеграм боты

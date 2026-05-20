@@ -85,13 +85,13 @@ export const updateSettings = async (payload: any) => {
   });
 };
 
-export const updateSettingsShift = async (payload: any) => {
-  return await apiRequest({
-    method: "POST",
-    data: payload,
-    url: pathServices.settings.settingsShiftUpdat,
-  });
-};
+// export const updateSettingsShift = async (payload: any) => {
+//   return await apiRequest({
+//     method: "POST",
+//     data: payload,
+//     url: pathServices.settings.settingsShiftUpdat,
+//   });
+// };
 
 export const updateFiscalizationWhite = (data: any) => {
   return apiRequest({

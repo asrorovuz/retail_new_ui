@@ -120,9 +120,9 @@ const Input = (props: InputProps) => {
                     raw = raw.replace(/\s+/g, "");
 
                     if (numberMode === "int") {
-                        raw = raw.replace(/[^0-9]/g, "");
+                        raw = raw.replace(/[^0-9\-]/g, "");
                     } else {
-                        raw = raw.replace(/[^0-9.]/g, "");
+                        raw = raw.replace(/[^0-9.\-]/g, "");
                         const parts = raw.split(".");
                         if (parts.length > 2) {
                             raw = parts[0] + "." + parts.slice(1).join("");
@@ -142,10 +142,10 @@ const Input = (props: InputProps) => {
         };
     };
 
-    const onlyValidNumbers = (val: string) => val.replace(/[^0-9.]/g, "");
-    const onlyInt = (val: string) => val.replace(/[^0-9]/g, "");
+    const onlyValidNumbers = (val: string) => val.replace(/[^0-9.\-]/g, "");
+    const onlyInt = (val: string) => val.replace(/[^0-9\-]/g, "");
 
-    const onlyFloat = (val: string) => val.replace(/[^0-9.]/g, "");
+    const onlyFloat = (val: string) => val.replace(/[^0-9.\-]/g, "");
 
     const formatValue = (val: string) => {
         if (val.includes(".")) {

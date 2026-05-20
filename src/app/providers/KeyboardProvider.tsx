@@ -88,7 +88,7 @@ export const KeyboardProvider: React.FC<{ children: React.ReactNode }> = ({
         const currentValue = input.value ?? "";
 
         // 🔥 numeric validation
-        if (activeField.type === "numeric" && !/^[0-9.]$/.test(key)) {
+        if (activeField.type === "numeric" && !/^[0-9.\-]$/.test(key)) {
             return;
         }
 
@@ -110,9 +110,10 @@ export const KeyboardProvider: React.FC<{ children: React.ReactNode }> = ({
 
         // 🔥 faqat bitta "." mumkin
         if (activeField.type === "numeric") {
-            if ((newValue.match(/\./g) || []).length > 1) {
-                return;
-            }
+            if ((newValue.match(/\./g) || []).length > 1) return;
+        // minus faqat boshida bo'lishi kerak
+        if ((newValue.match(/-/g) || []).length > 1) return;
+        if (newValue.indexOf("-") > 0) return;
         }
 
         // 🔥 controlled input sync

@@ -53,7 +53,7 @@ const ForgotPassord = ({ onClear }: any) => {
                 rules={{ required: "Введите пароль" }}
                 render={({ field, fieldState }) => (
                     <FormItem
-                        label="Пароль"
+                        label="Новый пароль"
                         labelClass="text-gray-700 text-base font-medium"
                         className="mb-6"
                         errorClassName="text-red-500"

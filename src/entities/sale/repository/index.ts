@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createFiscalizedApi, fiscalDeviceApi, getAllContractorApi, getTransferApi, paymentDebtsApi, paymentProviderApi, registerSaleApi, updateSellApi } from "../api";
+import { createFiscalizedApi, fiscalDeviceApi, getAllContractorApi, getTransferApi, paymentDebtsApi, paymentProviderApi, payoutDebtsApi, registerSaleApi, updateSellApi } from "../api";
 import type { RegisterSaleModel } from "@/@types/sale";
 
 export const useRegisterSellApi = () => {
@@ -23,10 +23,10 @@ export const usePaymentProviderApi = () => {
   });
 };
 
-export const useContractorApi = (isOpen: boolean, search: string) => {
+export const useContractorApi = (isOpen: boolean, search: string, params?: any) => {
   return useQuery({
-    queryKey: ["contractor-all", isOpen, search],
-    queryFn: () => getAllContractorApi(search),
+    queryKey: ["contractor-all", isOpen, search, params],
+    queryFn: () => getAllContractorApi(search, params),
     enabled: !!isOpen
   });
 };
@@ -54,6 +54,18 @@ export const usePaymentDebtsApi = () => {
     },
   });
 };
+
+export const usePayoutDebtsApi = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: any) => payoutDebtsApi(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["contractor-all"] });
+    },
+  });
+};
+
 
 export const useUpdateSellApi = () => {
   return useMutation({

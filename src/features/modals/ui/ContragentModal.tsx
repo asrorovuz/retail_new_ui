@@ -8,7 +8,7 @@ import {
     useUpdateContractor,
 } from "@/entities/auth/repository";
 import type { ContragentType } from "@/pages/counterparty/ui/Counterparty";
-import { showErrorMessage, showSuccessMessage } from "@/shared/lib/showMessage";
+import { showErrorLocalMessage, showErrorMessage, showSuccessMessage } from "@/shared/lib/showMessage";
 import {
     Button,
     Checkbox,
@@ -32,9 +32,8 @@ type FormType = {
 };
 
 const initialForm = {
-    is_customer: true,
+    is_customer: false,
     is_supplier: false,
-    is_default: false,
     name: "",
     phones: ["998"],
     debt: "",
@@ -81,9 +80,15 @@ const ContragentModal = ({
     };
 
     const onSubmit = (payload: FormType) => {
+        if (!payload.is_customer && !payload.is_supplier) {
+            showErrorLocalMessage(
+                "Выберите тип контрагента: Клиент или Поставщик",
+            );
+            return;
+        }
         const data = {
             is_customer: payload?.is_customer,
-            is_default: payload?.is_default,
+            is_default: false,
             is_supplier: payload?.is_supplier,
             name: payload?.name,
             debt_state: {
@@ -146,7 +151,7 @@ const ContragentModal = ({
             reset({
                 is_customer: contragent.is_customer,
                 is_supplier: contragent.is_supplier,
-                is_default: contragent.is_default,
+                is_default: false,
                 name: contragent.name,
                 debt: String(
                     contragent.debts?.reduce(
@@ -282,7 +287,9 @@ const ContragentModal = ({
                             render={({ field }) => (
                                 <Checkbox
                                     checked={field.value}
-                                    onChange={field.onChange}
+                                    onChange={(val) => {
+                                        field.onChange(val);
+                                    }}
                                 >
                                     Клиент
                                 </Checkbox>
@@ -294,13 +301,15 @@ const ContragentModal = ({
                             render={({ field }) => (
                                 <Checkbox
                                     checked={field.value}
-                                    onChange={field.onChange}
+                                    onChange={(val) => {
+                                        field.onChange(val);
+                                    }}
                                 >
                                     Поставщик
                                 </Checkbox>
                             )}
                         />
-                        <Controller
+                        {/* <Controller
                             name="is_default"
                             control={control}
                             render={({ field }) => (
@@ -311,7 +320,7 @@ const ContragentModal = ({
                                     Постоянный контрагент
                                 </Checkbox>
                             )}
-                        />
+                        /> */}
                     </div>
                 </div>
                 <div className="flex justify-end items-center gap-x-2 mb-4">

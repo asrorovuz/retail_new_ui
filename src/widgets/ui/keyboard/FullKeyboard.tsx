@@ -45,7 +45,7 @@ const FullKeyboard = ({ setSearch }: FullKeyboardProps) => {
         "j",
         "k",
         "l",
-        ";",
+        "-",
         <LuArrowBigUp />,
         "z",
         "x",
