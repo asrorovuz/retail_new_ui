@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import {
   createFavouriteProductApi,
   createProductApi,
@@ -137,6 +138,91 @@ export const useCatalogSearchFiscalApi = (query: string) => {
     queryFn: () => getCatalogSearchFiscalApi(query),
     enabled: !!query,
   });
+};
+
+/**
+ * Ketma-ket catalog qidirish:
+ * 1. /catalog/search?query={barcode}  → topilsa tayyor
+ * 2. Topilmasa → /product-dictionary/find-by-barcode/{barcode} → catalogCode
+ * 3. /catalog/search?query={catalogCode} → tayyor
+ */
+export const useCatalogByBarcode = (
+  query: string | null,
+  isOpen: boolean,
+) => {
+  const [data, setData] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (!query || !isOpen) {
+      setData([]);
+      return;
+    }
+
+    let cancelled = false;
+    setIsLoading(true);
+
+    const run = async () => {
+      try {
+        // 1-qadam: barcode bilan to'g'ridan catalog search
+        let direct: any[] = [];
+        try {
+          const res = await getCatalogSearchApi(query);
+          if (Array.isArray(res)) direct = res;
+        } catch {
+          // endpoint barcode uchun ishlamadi — 2-qadamga o'tamiz
+        }
+
+        if (cancelled) return;
+
+        if (direct.length > 0) {
+          setData(direct);
+          return;
+        }
+
+        // 2-qadam: local file (product-dictionary) dan catalogCode olish
+        let catalogCode: string | null = null;
+        try {
+          const dict = await getProductBarcodeProductApi(query);
+          if (dict?.catalog_code) {
+            catalogCode = dict.catalog_code;
+          }
+        } catch {
+          // local dictionary da topilmadi
+        }
+
+        if (!catalogCode) {
+          // Ne barcode, ne dictionary — catalog topilmadi
+          if (!cancelled) setData([]);
+          return;
+        }
+
+        // 3-qadam: catalogCode bilan catalog search
+        if (cancelled) return;
+        try {
+          const result = await getCatalogSearchApi(catalogCode);
+          if (!cancelled) {
+            setData(Array.isArray(result) ? result : []);
+          }
+        } catch {
+          // catalog server ishlamayapti, lekin catalogCode topilgani saqlansin
+          if (!cancelled) setData([]);
+        }
+      } catch {
+        if (!cancelled) setData([]);
+      } finally {
+        if (!cancelled) setIsLoading(false);
+      }
+    };
+
+    run();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [query, isOpen]);
+
+  return { data, isLoading };
 };
 
 export const usePriceTypeApi = () => {

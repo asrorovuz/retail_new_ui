@@ -422,15 +422,15 @@ const TableHistory = ({
                           minSize: 150,
                       },
                       {
-                          id: "cashbox",
-                          accessorKey: "cash_box.name",
+                          id: "account",
+                          accessorKey: "account.name",
                           enableSorting: false,
                           enableHiding: false,
                           meta: {
                               cellClassName: "font-bold truncate text-center",
                           },
                           header: () => {
-                              return "Касса";
+                              return "Сотрудник";
                           },
                       },
                   ]

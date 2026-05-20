@@ -4,7 +4,7 @@ import { useAuthContext } from "@/app/providers/AuthProvider";
 import { useNavigate, useOutletContext } from "react-router";
 import { Button, Dialog, Form, FormItem, Input } from "@/shared/ui/kit";
 import type { LoginPayload } from "@/@types/auth/login";
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { showErrorMessage, showSuccessMessage } from "@/shared/lib/showMessage";
 import { messages } from "@/app/constants/message.request";
 import PhoneInput from "@/shared/ui/kit-pro/phone-input/PhoneInput";
@@ -31,10 +31,15 @@ const Login = () => {
     const { mutate: confirmCode, isPending } = useConfirmCode();
     const { mutate: resetPassord, isPending: isPendingReset } = useResetPass();
 
+    const [otpValues, setOtpValues] = useState(["", "", "", "", "", ""]);
+    const otpRefs = useRef<(HTMLInputElement | null)[]>([]);
+
     const form = useForm({
         defaultValues: {
             username: "",
             password: "",
+            new_password: "",
+            confirm_new_password: "",
             certificate: null,
             confirm_code: "",
             confirm_ticket: "",
@@ -43,16 +48,55 @@ const Login = () => {
 
     const confirmCodeValue = form.watch("confirm_code");
 
+    const handleOtpChange = (index: number, value: string) => {
+        const digit = value.replace(/\D/g, "").slice(-1);
+        const next = [...otpValues];
+        next[index] = digit;
+        setOtpValues(next);
+        form.setValue("confirm_code", next.join(""));
+        if (digit && index < 5) {
+            otpRefs.current[index + 1]?.focus();
+        }
+    };
+
+    const handleOtpKeyDown = (
+        index: number,
+        e: React.KeyboardEvent<HTMLInputElement>,
+    ) => {
+        if (e.key === "Backspace" && !otpValues[index] && index > 0) {
+            otpRefs.current[index - 1]?.focus();
+        }
+    };
+
+    const handleOtpPaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+        e.preventDefault();
+        const pasted = e.clipboardData
+            .getData("text")
+            .replace(/\D/g, "")
+            .slice(0, 6);
+        const next = [...otpValues];
+        pasted.split("").forEach((ch, i) => {
+            next[i] = ch;
+        });
+        setOtpValues(next);
+        form.setValue("confirm_code", next.join(""));
+        const lastFilled = Math.min(pasted.length, 5);
+        otpRefs.current[lastFilled]?.focus();
+    };
+
     const onSubmitForgot = (values: any) => {
         confirmCode(values?.username, {
             onSuccess(res: any) {
                 const payload = {
                     username: values?.username,
-                    new_password: values?.password,
+                    new_password: values?.new_password,
                     confirm_code: confirmCodeValue,
                     confirm_ticket: res?.confirm_ticket,
                 };
                 setResponse(payload);
+                setOtpValues(["", "", "", "", "", ""]);
+                form.setValue("confirm_code", "");
+                setTimeout(() => otpRefs.current[0]?.focus(), 150);
             },
             onError(err) {
                 showErrorMessage(err);
@@ -149,62 +193,61 @@ const Login = () => {
                     >
                         {forgotPass ? (
                             <>
-                                <ForgotPassord onClear={onClear} />
+                                {!isOpenCode && (
+                                    <ForgotPassord onClear={onClear} />
+                                )}
+
                                 <Dialog
-                                    width={"60vw"}
+                                    width={400}
                                     isOpen={isOpenCode}
                                     onClose={() => setIsOpenCode(false)}
                                 >
-                                    <div className="p-6">
-                                        <h3 className="text-lg font-semibold mb-4 text-center">
-                                            Введите SMS-код
-                                        </h3>
+                                    <div className="flex flex-col items-center gap-6 px-6 pt-2 pb-6">
+                                        <div className="text-center">
+                                            <p className="text-base text-gray-500 mt-1">
+                                                Введите 6-значный код,
+                                                отправленный на ваш номер
+                                            </p>
+                                        </div>
 
-                                        <div className="flex justify-center gap-2 mb-6">
-                                            <Controller
-                                                name="confirm_code"
-                                                control={form.control}
-                                                rules={{
-                                                    required: "Введите код",
-                                                    minLength: {
-                                                        value: 6,
-                                                        message:
-                                                            "Код должен состоять из 6 цифр",
-                                                    },
-                                                }}
-                                                render={({
-                                                    field,
-                                                    fieldState,
-                                                }) => (
-                                                    <FormItem
-                                                        invalid={
-                                                            !!fieldState.error
-                                                        }
-                                                        errorMessage={
-                                                            fieldState.error
-                                                                ?.message
-                                                        }
-                                                    >
-                                                        <Input
-                                                            {...field}
-                                                            placeholder="Введите SMS-код"
-                                                            maxLength={6}
-                                                            inputMode="numeric"
-                                                            className="text-center text-2xl tracking-[10px]"
-                                                            onChange={(e) => {
-                                                                const val =
-                                                                    e.target.value.replace(
-                                                                        /\D/g,
-                                                                        "",
-                                                                    );
-                                                                field.onChange(
-                                                                    val,
-                                                                );
-                                                            }}
-                                                        />
-                                                    </FormItem>
-                                                )}
-                                            />
+                                        <div className="flex gap-3">
+                                            {otpValues.map((val, index) => (
+                                                <input
+                                                    key={index}
+                                                    ref={(el) => {
+                                                        otpRefs.current[index] =
+                                                            el;
+                                                    }}
+                                                    type="text"
+                                                    inputMode="numeric"
+                                                    maxLength={1}
+                                                    value={val}
+                                                    onChange={(e) =>
+                                                        handleOtpChange(
+                                                            index,
+                                                            e.target.value,
+                                                        )
+                                                    }
+                                                    onKeyDown={(e) =>
+                                                        handleOtpKeyDown(
+                                                            index,
+                                                            e,
+                                                        )
+                                                    }
+                                                    onPaste={
+                                                        index === 0
+                                                            ? handleOtpPaste
+                                                            : undefined
+                                                    }
+                                                    className={[
+                                                        "w-12 h-14 text-center text-2xl font-bold rounded-xl border-2 outline-none transition-colors",
+                                                        val
+                                                            ? "border-blue-500 bg-blue-50 text-blue-700"
+                                                            : "border-gray-300 bg-white text-gray-800",
+                                                        "focus:border-blue-500",
+                                                    ].join(" ")}
+                                                />
+                                            ))}
                                         </div>
 
                                         <Button
@@ -214,10 +257,9 @@ const Login = () => {
                                                 isPendingReset || isPending
                                             }
                                             disabled={
-                                                (confirmCodeValue?.length ||
-                                                    0) !== 6
+                                                confirmCodeValue?.length !== 6
                                             }
-                                            className="w-full bg-blue-500 hover:bg-blue-600 text-white rounded-xl"
+                                            className="w-full h-11 bg-blue-500 hover:bg-blue-600 text-white rounded-xl"
                                             onClick={onResetPass}
                                         >
                                             Подтвердить

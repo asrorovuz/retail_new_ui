@@ -6,21 +6,33 @@ import { FiEye, FiEyeOff } from "react-icons/fi";
 
 const ForgotPassord = ({ onClear }: any) => {
     const [showPassword, setShowPassword] = useState(false);
-    const { control } = useFormContext();
+    const [showConfirm, setShowConfirm] = useState(false);
+    const { control, watch } = useFormContext();
     const timeoutRef = useRef<number | null>(null);
+    const confirmTimeoutRef = useRef<number | null>(null);
+
+    const newPassword = watch("new_password");
 
     const togglePasswordVisibility = () => {
         setShowPassword((prev) => !prev);
         if (timeoutRef.current) clearTimeout(timeoutRef.current);
-        timeoutRef.current = window.setTimeout(
-            () => setShowPassword(false),
+        timeoutRef.current = window.setTimeout(() => setShowPassword(false), 3000);
+    };
+
+    const toggleConfirmVisibility = () => {
+        setShowConfirm((prev) => !prev);
+        if (confirmTimeoutRef.current) clearTimeout(confirmTimeoutRef.current);
+        confirmTimeoutRef.current = window.setTimeout(
+            () => setShowConfirm(false),
             3000,
         );
     };
 
     return (
         <>
-            <h3 className="mb-3 text-slate-700 font-medium">Восстановление пароля</h3>
+            <h3 className="mb-3 text-slate-700 font-medium">
+                Восстановление пароля
+            </h3>
 
             <Controller
                 name="username"
@@ -48,9 +60,9 @@ const ForgotPassord = ({ onClear }: any) => {
             />
 
             <Controller
-                name="password"
+                name="new_password"
                 control={control}
-                rules={{ required: "Введите пароль" }}
+                rules={{ required: "Введите новый пароль" }}
                 render={({ field, fieldState }) => (
                     <FormItem
                         label="Новый пароль"
@@ -65,7 +77,7 @@ const ForgotPassord = ({ onClear }: any) => {
                             <Input
                                 {...field}
                                 type={showPassword ? "text" : "password"}
-                                placeholder="Пароль"
+                                placeholder="Новый пароль"
                             />
                             <Button
                                 type="button"
@@ -84,12 +96,53 @@ const ForgotPassord = ({ onClear }: any) => {
                 )}
             />
 
+            <Controller
+                name="confirm_new_password"
+                control={control}
+                rules={{
+                    required: "Подтвердите пароль",
+                    validate: (value) =>
+                        value === newPassword || "Пароли не совпадают",
+                }}
+                render={({ field, fieldState }) => (
+                    <FormItem
+                        label="Повторите пароль"
+                        labelClass="text-gray-700 text-base font-medium"
+                        className="mb-6"
+                        errorClassName="text-red-500"
+                        invalid={!!fieldState.error}
+                        errorMessage={fieldState.error?.message}
+                        asterisk
+                    >
+                        <div className="relative">
+                            <Input
+                                {...field}
+                                type={showConfirm ? "text" : "password"}
+                                placeholder="Повторите пароль"
+                            />
+                            <Button
+                                type="button"
+                                icon={
+                                    showConfirm ? (
+                                        <FiEyeOff size={20} />
+                                    ) : (
+                                        <FiEye size={20} />
+                                    )
+                                }
+                                onClick={toggleConfirmVisibility}
+                                className="absolute border-0 right-0 top-1/2 -translate-y-1/2 bg-transparent cursor-pointer text-gray-700"
+                            />
+                        </div>
+                    </FormItem>
+                )}
+            />
+
             <div className="grid grid-cols-2 gap-x-2 w-full">
                 <Button onClick={onClear} type="button">
                     Отменить
                 </Button>
                 <Button className="w-full" variant="solid" type="submit">
-                    Сохранить
+                    Продолжить
                 </Button>
             </div>
         </>

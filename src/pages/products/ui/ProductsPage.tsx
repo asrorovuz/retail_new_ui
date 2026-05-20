@@ -3,7 +3,6 @@ import { useSettingsStore } from "@/app/store/useSettingsStore";
 import {
     useAllProductApi,
     useAllProductCountApi,
-    useFindBarcodeProduct,
     usePriceTypeApi,
 } from "@/entities/products/repository";
 import { AddMoreProducts, AddProductModal } from "@/features/modals";
@@ -53,8 +52,6 @@ const ProductsPage = () => {
         debouncedSearch || "",
         filterParams,
     );
-    const { data: findBarcodeData } = useFindBarcodeProduct(barcode);
-
     const { settings } = useSettingsStore((s) => s);
 
     useEffect(() => {
@@ -96,20 +93,6 @@ const ProductsPage = () => {
             }
         }
     }, [barcode, data, isPending, settings, isAddOpen, isOpen]);
-
-    // 3. findBarcodeData kelganda catalogCode set qilish
-    useEffect(() => {
-        if (!barcode) {
-            setCatalogCode(null);
-            return;
-        }
-
-        if (findBarcodeData?.catalog_code) {
-            setCatalogCode(findBarcodeData.catalog_code);
-        } else {
-            setCatalogCode(barcode);
-        }
-    }, [findBarcodeData, barcode]);
 
     useEffect(() => {
         if (isAddOpen) {

@@ -6,7 +6,7 @@ import {
     CurrencyCodeUZSText,
     CurrencyRateUZS,
 } from "@/app/constants/paymentType";
-import { useCatalogSearchApi } from "@/entities/products/repository";
+import { useCatalogByBarcode } from "@/entities/products/repository";
 
 const AddProductModal: FC<ProductModalProps> = ({
     type,
@@ -21,8 +21,8 @@ const AddProductModal: FC<ProductModalProps> = ({
 }) => {
     const [defaultValues, setDefaultValues] =
         useState<ProductDefaultValues | null>(null);
-    const { data: catalogData, isLoading } = useCatalogSearchApi(
-        (isOpen && (catalogCode || barcode)) || "",
+    const { data: catalogData, isLoading } = useCatalogByBarcode(
+        isOpen ? (barcode || catalogCode) : null,
         isOpen,
     );
 
