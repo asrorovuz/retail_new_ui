@@ -138,7 +138,6 @@ export const useColumns = (num: number) => {
                 ),
                 accessorKey: "amount",
                 cell: ({ row }) => {
-                    console.log(row?.original?.contractor_period_report);
 
                     return (
                         <FormattedNumber

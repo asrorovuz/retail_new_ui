@@ -76,7 +76,6 @@ const CreateAccount = () => {
                 showErrorMessage(err);
             },
         });
-        console.log(payload, "response");
     };
 
     return (

@@ -2,7 +2,6 @@ import { Dialog } from "@/shared/ui/kit";
 import FormattedNumber from "@/shared/ui/kit-pro/numeric-format/NumericFormat";
 
 const InfoModal = ({ isOpen, setIsOpen, infoData }: any) => {
-  console.log(infoData);
 
   return (
     <Dialog

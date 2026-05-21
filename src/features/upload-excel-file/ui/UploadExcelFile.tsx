@@ -309,7 +309,6 @@ const UploadExcelFile = ({ isOpen, setIsOpen }: any) => {
             });
             return obj;
         });
-        console.log(noSelectData);
 
         const resultData = noSelectData?.map((elem) => {
             let product: any = productData?.find(

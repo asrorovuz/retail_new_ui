@@ -40,8 +40,6 @@ const ReportPage = () => {
         );
     }, [contragentData]);
 
-    console.log(data, "data");
-
     const columns = useMemo(
         () => [
             columnHelper.display({

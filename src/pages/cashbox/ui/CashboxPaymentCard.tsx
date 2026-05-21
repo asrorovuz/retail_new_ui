@@ -3,7 +3,6 @@ import FormattedNumber from "@/shared/ui/kit-pro/numeric-format/NumericFormat";
 import { useMemo } from "react";
 
 const CashboxPaymentCard = ({ data }: any) => {
-    console.log(data, "data 8888");
 
     const totalSumCash = useMemo(() => {
         return (

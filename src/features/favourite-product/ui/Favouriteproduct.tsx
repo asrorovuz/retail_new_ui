@@ -68,8 +68,6 @@ const FavouriteProduct = ({
         (p: PriceType) => p.product_price_type.is_bulk,
       ) || item.product.prices[1];
     const quantity = operationItem?.quantity ?? 0;
-
-    console.log(item, "item");
     
     const newItem = {
       productId: item?.product?.id,

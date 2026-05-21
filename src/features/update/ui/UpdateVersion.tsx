@@ -14,7 +14,6 @@ const UpdateVersion = () => {
     } = useUpdateProject();
 
     const hasUpdates = updates.length > 0;
-    console.log(updates);
 
     return (
         <>

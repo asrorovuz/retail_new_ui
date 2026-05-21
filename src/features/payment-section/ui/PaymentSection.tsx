@@ -107,7 +107,6 @@ const PaymentSection = ({
 
     // const onClickNumber = (num: string) => {
     //     const current = getCurrentAmount();
-    //     console.log(current, "fff");
 
     //     const newValue = current === "0" ? num : current + num;
 
