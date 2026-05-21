@@ -296,28 +296,6 @@ const ProductTable = ({
             //                 ?.color || "#fff",
             //     },
             // }),
-            columnHelper.display({
-                id: "totalRemainderMin",
-                header: () => (
-                    <div className="text-nowrap text-center">МИН. ОСТ.</div>
-                ),
-                cell: (info) => {
-                    const total =
-                        info.row.original.warehouse_items?.[0]?.alert_on;
-
-                    return (
-                        <p className="w-[80px] text-center">{`${total ? total?.toLocaleString() : "0"} ${showMeasurmentName(
-                            info.row.original.measurement_code,
-                        )}`}</p>
-                    );
-                },
-                meta: {
-                    color:
-                        tableSettings?.find(
-                            (i) => i.key === "totalRemainderMin",
-                        )?.color || "#fff",
-                },
-            }),
             // 🧩 Actions ustuni
             columnHelper.display({
                 id: "actions",

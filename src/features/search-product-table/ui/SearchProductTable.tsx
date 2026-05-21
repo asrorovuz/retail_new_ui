@@ -118,7 +118,7 @@ const SearchProductTable = ({
                 priceAmount: packagePrice?.amount,
                 priceAmoutBulk: packagePriceBulk?.amount,
                 quantity: quantity + 1,
-                isMark: type === "sale" ? (item?.is_marked || false) : false,
+                isMark: type === "sale" ? item?.is_marked || false : false,
                 totalAmount:
                     (quantity + 1) *
                     (isSelectedBulk && type === "sale"
@@ -141,6 +141,15 @@ const SearchProductTable = ({
                 const price = item?.prices?.find(
                     (el) => el?.product_price_type?.is_primary,
                 );
+                const bulkPrice = item?.prices?.find(
+                    (el) => el?.product_price_type?.is_bulk,
+                );
+                const purchasePrice =
+                    item?.warehouse_items?.[0]?.purchase_price_amount;
+                const state = item?.warehouse_items?.reduce(
+                    (sum, acc) => sum + acc?.state,
+                    0,
+                );
 
                 return (
                     <div
@@ -152,12 +161,25 @@ const SearchProductTable = ({
                         )}
                     >
                         {highlightText(item?.name, debouncedSearch)}
-                        <span className="text-nowrap">
-                            <FormattedNumber
-                                value={Number(price?.amount || 0)}
-                            />{" "}
-                            сум
-                        </span>
+                        <div className="flex">
+                            <span className="text-nowrap border-r-2 border-slate-600 px-1">
+                                <FormattedNumber
+                                    value={Number(
+                                        type === "purchase"
+                                            ? purchasePrice
+                                            : price?.amount || 0,
+                                    )}
+                                />
+                            </span>
+                            {(type === "sale" || type === "refund") && <span className="text-nowrap border-r-2 border-slate-600 px-1">
+                                <FormattedNumber
+                                    value={Number(bulkPrice?.amount || 0)}
+                                />
+                            </span>}
+                            <span className="text-nowrap px-1">
+                                <FormattedNumber value={Number(state || 0)} />
+                            </span>
+                        </div>
                     </div>
                 );
             })}

@@ -33,7 +33,11 @@ const SellDebetModal = ({
     }, [contractorId]);
 
     const filterData =
-        type === "purchase" ? data?.filter((el: any) => el?.is_supplier) : data;
+        type === "purchase"
+            ? data?.filter((el: any) => el?.is_supplier)
+            : type === "sale"
+              ? data?.filter((el: any) => el?.is_customer)
+              : data;
 
     const contractorOptions = useMemo(() => {
         return (
@@ -46,23 +50,31 @@ const SellDebetModal = ({
 
     const handleSave = () => {
         if (!contractorIdState) {
-            showErrorLocalMessage("Выберите клиента");
+            showErrorLocalMessage(
+                type === "purchase"
+                    ? "Выберите поставщика"
+                    : "Выберите клиента",
+            );
             return;
         }
 
         onSubmit({ contractor_id: contractorIdState, comment });
-        setComment("")
-        setContractorIdState(null)
+        setComment("");
+        setContractorIdState(null);
     };
 
     return (
         <Dialog
             width={"60vw"}
-            title="Выбор клиента"
+            title={type === "purchase" ? "Выбор поставщика" : "Выбор клиента"}
             isOpen={isOpen}
             onClose={onCancel}
         >
-            <FormItem labelClass="mb-1" className="!mb-3" label="Клиент">
+            <FormItem
+                labelClass="mb-1"
+                className="!mb-3"
+                label={type === "purchase" ? "Поставщик" : "Клиент"}
+            >
                 <div className="flex gap-x-1">
                     <Select
                         options={contractorOptions}
@@ -70,7 +82,9 @@ const SellDebetModal = ({
                         isSearchable={false}
                         isLoading={isPending}
                         className="w-full bg-white"
-                        placeholder="Клиент"
+                        placeholder={
+                            type === "purchase" ? "Поставщик" : "Клиент"
+                        }
                         value={contractorOptions.find(
                             (opt: any) => opt.value === contractorIdState,
                         )}
