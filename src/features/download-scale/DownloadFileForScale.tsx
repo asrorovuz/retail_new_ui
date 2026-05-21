@@ -16,6 +16,20 @@ const DownloadFileForScales = ({ handleExport }: any) => {
     const handleDownload = async (type: TypeScales) => {
         try {
             const res = await mutateAsync({ format: type });
+            console.log("res type:", typeof res);
+            console.log("res constructor:", res?.constructor?.name);
+            console.log(
+                "res length:",
+                res?.length || res?.byteLength || res?.size,
+            );
+            console.log(
+                "res first bytes:",
+                Array.from(
+                    new Uint8Array(
+                        res instanceof ArrayBuffer ? res : res?.data || res,
+                    ),
+                ).slice(0, 10),
+            );
 
             let fileName = "Файл"; // default nom
 
