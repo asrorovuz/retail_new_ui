@@ -5,7 +5,11 @@ const MessageDispatcher = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const handler = ({ name, payload }: any) => {
       if (name === NOTIFY_NEW_VERSION) {
-        EventBus.dispatch(NOTIFY_NEW_VERSION, payload);
+        let parsed = payload;
+        if (typeof payload === "string") {
+          try { parsed = JSON.parse(payload); } catch { /* keep raw */ }
+        }
+        EventBus.dispatch(NOTIFY_NEW_VERSION, parsed);
       }
     };
 

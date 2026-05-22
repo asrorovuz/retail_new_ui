@@ -283,6 +283,29 @@ export const getBulkCreateStatusApi = async (
 
 /* ------------------------------ DELETE APIs ------------------------------ */
 
+export interface BulkDeleteFailure {
+    id: number;
+    error_code: string;
+    error_message: string;
+}
+
+export interface BulkDeleteResult {
+    success_count: number;
+    failure_count: number;
+    total: number;
+    failures: BulkDeleteFailure[];
+}
+
+export const bulkDeleteProductApi = async (payload: {
+    product_ids: number[];
+}): Promise<BulkDeleteResult> => {
+    return await apiRequest<BulkDeleteResult>({
+        url: pathServices.products.bulkDeleteProductPath,
+        method: "POST",
+        data: payload,
+    });
+};
+
 export const deleteProductApi = async (id: number): Promise<any> => {
     return await apiRequest<any>({
         url: `${pathServices.products.deleteProductPath}/${id}`,

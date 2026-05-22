@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import {
+  bulkDeleteProductApi,
   createFavouriteProductApi,
   createProductApi,
   createProductWithExcel,
@@ -322,6 +323,18 @@ export const useExportProductWithExcel = () => {
     mutationFn: (params: any) => exportProductWithExcel(params)
   })
 }
+
+export const useBulkDeleteProduct = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (payload: { product_ids: number[] }) =>
+      bulkDeleteProductApi(payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["all-products"] });
+      queryClient.invalidateQueries({ queryKey: ["all-products-count"] });
+    },
+  });
+};
 
 // DELETE
 export const useDeleteProduct = () => {

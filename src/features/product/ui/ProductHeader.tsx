@@ -32,10 +32,12 @@ import DropdownItem from "@/shared/ui/kit/Dropdown/DropdownItem";
 import { CiSquarePlus } from "react-icons/ci";
 import { PiMicrosoftExcelLogo } from "react-icons/pi";
 import UpdateCatalogCode from "@/features/update-catalog-code/ui/UpdateCatalogCode";
+import BulkDeleteModal from "./BulkDeleteModal";
 import { FiRefreshCw } from "react-icons/fi";
 import { AccountPermissions } from "@/app/constants/permissions";
 import { useCheckPermission } from "@/shared/lib/checkPermission";
 import { useCategoryApi } from "@/entities/categories/repository";
+import { IoTrashOutline } from "react-icons/io5";
 
 const ProductHeader = ({
     search,
@@ -53,6 +55,7 @@ const ProductHeader = ({
     const [showInformation, setShowInformation] = useState(false);
     const [isUpdateCatalogCodeOpen, setIsUpdateCatalogCodeOpen] =
         useState(false);
+    const [isBulkDeleteOpen, setIsBulkDeleteOpen] = useState(false);
 
     const checkPermission = useCheckPermission();
 
@@ -215,6 +218,22 @@ const ProductHeader = ({
                                     Импорт из Excel
                                 </div>
                             </DropdownItem>
+
+                            {checkPermission(
+                                AccountPermissions.AccountPermissionProductDelete,
+                            ) && (
+                                <DropdownItem
+                                    onClick={() => setIsBulkDeleteOpen(true)}
+                                    className="h-auto! text-red-500 hover:text-red-600"
+                                >
+                                    <div className="w-full flex items-center gap-2  py-3 px-5 rounded-xl">
+                                        <span className="text-red-500">
+                                            <IoTrashOutline size={20} />
+                                        </span>{" "}
+                                        Массовое удаление
+                                    </div>
+                                </DropdownItem>
+                            )}
                         </>
                     )}
 
@@ -241,6 +260,11 @@ const ProductHeader = ({
             <UpdateCatalogCode
                 isOpen={isUpdateCatalogCodeOpen}
                 setIsOpen={setIsUpdateCatalogCodeOpen}
+            />
+
+            <BulkDeleteModal
+                isOpen={isBulkDeleteOpen}
+                setIsOpen={setIsBulkDeleteOpen}
             />
 
             <Dialog

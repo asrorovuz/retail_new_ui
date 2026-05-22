@@ -111,6 +111,7 @@ export const pathServices = {
 
         // DELETE
         deleteProductPath: `/api/product/delete`,
+        bulkDeleteProductPath: `/api/product/bulk-delete`,
         deleteFavoritProductPath: "/api/favorite-product/delete",
     },
 
