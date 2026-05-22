@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   deleteTransactionsApi,
   getContragentApi,
+  getContragentByIdApi,
   getEmployeeApi,
   getOperationCountApi,
   getPurchaseApi,
@@ -16,6 +17,14 @@ export const useContragentApi = (isOpen?: boolean) => {
   return useQuery({
     queryKey: ["contragent", isOpen],
     queryFn: getContragentApi,
+  });
+};
+
+export const useContragentByIdApi = (id: number | null) => {
+  return useQuery({
+    queryKey: ["contragent", id],
+    queryFn: () => getContragentByIdApi(id),
+    enabled: !!id
   });
 };
 

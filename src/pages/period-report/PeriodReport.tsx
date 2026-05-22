@@ -4,13 +4,13 @@ import { useState } from "react";
 import dayjs from "dayjs";
 import { useSellTransferApi } from "@/entities/sale/repository";
 import ProductReport from "./ProductReport";
-import ContractorReport from "./ContractorReport";
+// import ContractorReport from "./ContractorReport";
 import Loading from "@/shared/ui/loading";
 
 const tabs = [
     { value: "tab1", label: "Общие отчёты" },
     { value: "tab2", label: "Отчёт по товарам за период" },
-    { value: "tab3", label: "Отчёт по контрагентам за период" },
+    // { value: "tab3", label: "Отчёт по контрагентам за период" },
 ];
 
 const PeriodReport = () => {
@@ -36,13 +36,15 @@ const PeriodReport = () => {
         if (activeTab === "tab1") return <AllReport data={data?.report} />;
         if (activeTab === "tab2")
             return <ProductReport data={data?.report ?? []} />;
-        if (activeTab === "tab3")
-            return <ContractorReport data={data?.report ?? []} />;
+        // if (activeTab === "tab3")
+        //     return <ContractorReport data={data?.report ?? []} />;
     };
 
     return (
         <div className="bg-white h-screen p-3">
-            <NavigateButton content="Отчет за период" />
+            <div className="mb-3">
+                <NavigateButton content="Отчет за период" />
+            </div>
 
             {/* Tab List */}
             <div className="flex gap-2 mb-4 flex-wrap">

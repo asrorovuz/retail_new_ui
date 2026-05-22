@@ -15,7 +15,9 @@ export const CashboxOperations = lazy(
     () => import("@/pages/cashbox-operations"),
 );
 export const CategoryPage = lazy(() => import("@/pages/category"));
-export const CashboxCategory = lazy(() => import("@/pages/category/ui/CashboxCategory"))
+export const CashboxCategory = lazy(
+    () => import("@/pages/category/ui/CashboxCategory"),
+);
 
 // history transaction
 export const HistorySalePage = lazy(
@@ -44,3 +46,6 @@ export const PeriodReport = lazy(
     () => import("@/pages/period-report/PeriodReport"),
 );
 export const AccountPage = lazy(() => import("@/pages/accounts"));
+export const ContractorById = lazy(
+    () => import("@/pages/counterparty/ui/ContractorById"),
+);

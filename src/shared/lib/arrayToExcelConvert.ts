@@ -35,12 +35,15 @@ export const exportToExcelApi = (
                 XLSX.writeFile(workbook, `${fileName}.xlsx`);
             });
             return;
+        } else if (Array.isArray(file)) {
+            // Astilectron IPC: plain number[]
+            uint8Array = new Uint8Array(file as number[]);
         } else if (
             file !== null &&
             typeof file === "object" &&
             "data" in (file as object)
         ) {
-            // Electron IPC: { data: number[] }
+            // Astilectron IPC: { data: number[] }
             uint8Array = new Uint8Array((file as { data: number[] }).data);
         } else {
             console.error("Kutilmagan ma'lumot turi:", typeof file, file);

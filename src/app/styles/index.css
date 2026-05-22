@@ -4,46 +4,46 @@
 @import "./loading.css";
 
 .input-suffix-end {
-  right: 0.625rem !important;
+    right: 0.625rem !important;
 }
 
 .close-button {
-  right: 1.5rem !important;
+    right: 1.5rem !important;
 }
 
 .menu-horizontal {
-  @apply flex  items-center;
+    @apply flex  items-center;
 }
 
 /* scrollbar hide */
 .no-scrollbar::-webkit-scrollbar {
-  height: 0; /* horizontal scrollbar uchun */
-  width: 0; /* vertical scrollbar uchun */
+    height: 0; /* horizontal scrollbar uchun */
+    width: 0; /* vertical scrollbar uchun */
 }
 .no-scrollbar {
-  -ms-overflow-style: none; /* IE, Edge */
-  scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE, Edge */
+    scrollbar-width: none; /* Firefox */
 }
 
 /* Har bir scroll uchun */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+    width: 8px;
+    height: 8px;
 }
 
 /* Scroll fon qismi */
 ::-webkit-scrollbar-track {
-  background: #f1f5f9; /* slate-100 */
-  border-radius: 8px;
+    background: #f1f5f9; /* slate-100 */
+    border-radius: 8px;
 }
 
 /* Scroll harakatlanuvchi thumb qismi */
 ::-webkit-scrollbar-thumb {
-  background: #94a3b8; /* slate-400 */
-  border-radius: 8px;
+    background: #94a3b8; /* slate-400 */
+    border-radius: 8px;
 }
 
 /* Hover holat */
 ::-webkit-scrollbar-thumb:hover {
-  background: #64748b; /* slate-500 */
+    background: #64748b; /* slate-500 */
 }

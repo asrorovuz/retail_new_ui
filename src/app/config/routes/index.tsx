@@ -27,6 +27,7 @@ import {
   AccountPage,
   CategoryPage,
   CashboxCategory,
+  ContractorById,
 } from "./RoutePath";
 import { PrivateRoute, PublicRoute } from "./PrivateRoute";
 import Counterparty from "@/pages/counterparty";
@@ -77,6 +78,7 @@ export const AppRouter = () => (
             <Route path="/purchase-history" element={<HistoryPurchasePage />} />
 
             <Route path="/counterparties" element={<Counterparty />}></Route>
+            <Route path="/counterparties/:id" element={<ContractorById />}></Route>
             <Route path="/revisiya" element={<RevisyaPage />} />
             <Route
               path="/revisiya/operation"

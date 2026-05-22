@@ -1,11 +1,15 @@
-import { messages } from "@/app/constants/message.request";
+import { messages, ERROR_MESSAGES } from "@/app/constants/message.request";
 import {
     useAllProductApi,
-    useCreateProduct,
     useCreateProductWithExcel,
     useCurrancyApi,
-    useUpdateProduct,
 } from "@/entities/products/repository";
+import { useQueryClient } from "@tanstack/react-query";
+import {
+    bulkCreateProductApi,
+    getBulkCreateStatusApi,
+    type BulkJobFailure,
+} from "@/entities/products/api";
 import { convertFilesToBase64 } from "@/shared/lib/convertFilesToBase64";
 import {
     showErrorLocalMessage,
@@ -33,14 +37,18 @@ import { BsFillTrashFill } from "react-icons/bs";
 import { FaCloudDownloadAlt, FaRegEdit } from "react-icons/fa";
 import { MdOutlineFileDownload } from "react-icons/md";
 import { LiaHourglassEndSolid } from "react-icons/lia";
-import { useSettingsStore } from "@/app/store/useSettingsStore";
 import StatusBar from "@/widgets/ui/status-bar/StatusBar";
 import { exportToExcel } from "@/shared/lib/arrayToExcelConvert";
-import { handleError } from "@/shared/lib/handleErrorExcel";
 import Empty from "@/shared/ui/kit-pro/empty/Empty";
 import { showMeasurmentName } from "@/shared/lib/showMeausermentName";
-import { useCreateregister } from "@/entities/revision/repository";
 import { useCategoryApi } from "@/entities/categories/repository";
+
+function chunkArray<T>(arr: T[], size: number): T[][] {
+    const chunks: T[][] = [];
+    for (let i = 0; i < arr.length; i += size)
+        chunks.push(arr.slice(i, i + size));
+    return chunks;
+}
 
 interface InitialState {
     rowsCount: number;
@@ -54,6 +62,8 @@ interface StatusState {
     total: number;
     totalData: number;
     status: boolean;
+    cancelled: boolean;
+    failures: BulkJobFailure[];
 }
 
 const optionSelect = [
@@ -85,34 +95,23 @@ const INITIAL_STATUS: StatusState = {
     total: 0,
     totalData: 0,
     status: true,
+    cancelled: false,
+    failures: [],
 };
 
-// const generateBarcode = (): string => {
-//     return (
-//         Date.now().toString() +
-//         Math.floor(Math.random() * 1_000_000).toString()
-//     ).slice(-13);
-// };
-
 const UploadExcelFile = ({ isOpen, setIsOpen }: any) => {
+    const queryClient = useQueryClient();
     const { data: productData } = useAllProductApi();
     const { data: currencies } = useCurrancyApi();
     const { data: categoryData } = useCategoryApi();
     const { mutate: createWithExcel, isPending: loadingExcel } =
         useCreateProductWithExcel();
-    const { mutate: createRegister } = useCreateregister();
-    const { mutateAsync: createProduct } = useCreateProduct();
-    const { mutateAsync: updateProduct } = useUpdateProduct();
 
-    const warhouseId = useSettingsStore((s) => s.wareHouseId);
     const [file, setFile] = useState<File | null>(null);
     const [selectedSelect, setSelectedSelect] = useState<
         Record<number, string>
     >({});
     const [loadData, setLoadData] = useState(false);
-    const [faildData, setFaildData] = useState<
-        Array<{ index: number; row: (string | number | null)[] }>
-    >([]);
     const [data, setData] = useState([]);
     const [pagination, setPagination] = useState(INITIAL_PAGINATION);
     const [initialState, setInitialState] = useState<InitialState>({
@@ -121,33 +120,41 @@ const UploadExcelFile = ({ isOpen, setIsOpen }: any) => {
         currency: currencies?.[0]?.code ?? 0,
     });
     const [status, setStatus] = useState(INITIAL_STATUS);
-    const [errorStatus, setErrorStatus] = useState<any[]>([]);
-    const [successIndex, setSuccessIndex] = useState<number[]>([]);
-    const [rememberData, setRememberData] = useState<any[]>([]);
     const [openStatusBar, setOpenStatusBar] = useState(false);
+    const [rowErrors, setRowErrors] = useState<(string | null)[]>([]);
 
     const fileInputRef = useRef<HTMLInputElement | null>(null);
+    const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+    const isCancelledRef = useRef(false);
+    const cancelResolveRef = useRef<(() => void) | null>(null);
 
     const handleCloseBar = useCallback(() => {
         setOpenStatusBar(false);
-        const filterData = data
-            ?.slice(initialState?.rowsCount)
-            ?.filter((_, idx) => !successIndex.includes(idx));
-        setData(filterData);
-        setSuccessIndex([]);
         setStatus(INITIAL_STATUS);
-    }, [data, initialState?.rowsCount, successIndex]);
+    }, []);
+
+    const handleCancel = useCallback(() => {
+        isCancelledRef.current = true;
+        if (intervalRef.current) clearInterval(intervalRef.current);
+        cancelResolveRef.current?.();
+        setStatus((prev) => ({ ...prev, status: false, cancelled: true }));
+        queryClient.invalidateQueries({ queryKey: ["all-products"] });
+        queryClient.invalidateQueries({ queryKey: ["all-products-count"] });
+    }, [queryClient]);
 
     const clearFile = useCallback(() => {
         setSelectedSelect({});
         setInitialState({ rowsCount: 1, edit: false, currency: 0 });
         setData([]);
-        setFaildData([]);
-        setErrorStatus([]);
+        setRowErrors([]);
         setFile(null);
-        setSuccessIndex([]);
-        setRememberData([]);
         if (fileInputRef.current) fileInputRef.current.value = "";
+    }, []);
+
+    useEffect(() => {
+        return () => {
+            if (intervalRef.current) clearInterval(intervalRef.current);
+        };
     }, []);
 
     const parseBarcodesWithCount = (
@@ -172,29 +179,6 @@ const UploadExcelFile = ({ isOpen, setIsOpen }: any) => {
             count: counts[index] ?? counts[0] ?? 1,
         }));
     };
-
-    // const parseMeasurmentsWithCount = (
-    //     measurment?: string,
-    //     measurmentCount?: string | number,
-    // ) => {
-    //     const measurments = String(measurment || "")
-    //         .trim()
-    //         .split(/[\s,:]+/)
-    //         .filter(Boolean);
-
-    //     // agar count ham string bo‘lib kelsa
-    //     const counts = measurmentCount
-    //         ? String(measurmentCount)
-    //               .trim()
-    //               .split(/[\s,:]+/)
-    //               .map((c) => Number(c) || 1)
-    //         : [];
-
-    //     return measurments.map((code, index) => ({
-    //         name: code,
-    //         quantity: counts[index] ?? counts[0] ?? 1,
-    //     }));
-    // };
 
     const onClose = useCallback(() => {
         setLoadData(true);
@@ -223,7 +207,7 @@ const UploadExcelFile = ({ isOpen, setIsOpen }: any) => {
                             messages.uz.SUCCESS_MESSAGE,
                             messages.ru.SUCCESS_MESSAGE,
                         );
-                        setFaildData([]);
+                        // setFaildData([]);
                     },
                     onError(err) {
                         showErrorMessage(err);
@@ -236,35 +220,34 @@ const UploadExcelFile = ({ isOpen, setIsOpen }: any) => {
 
     const downloadFailedExcel = () => {
         try {
-            const failedRows = faildData?.map(({ index, row }) => {
-                const selectedCols = Object.keys(selectedSelect)
-                    .map(Number)
-                    .sort((a, b) => a - b)
-                    .map((colIndex) => row[colIndex] ?? "");
-                return [
-                    ...selectedCols,
-                    errorStatus[index] || "Неизвестная ошибка",
-                ];
-            });
-
-            if (failedRows.length === 0) {
+            const remainingSourceRows = (data as any[]).slice(
+                initialState.rowsCount,
+            );
+            if (!remainingSourceRows.length) {
                 showErrorLocalMessage("Ошибочных данных нет");
                 return;
             }
 
-            const headers = Object.keys(selectedSelect)
+            const selectedCols = Object.keys(selectedSelect)
                 .map(Number)
-                .sort((a, b) => a - b)
-                .map(
+                .sort((a, b) => a - b);
+
+            const headers = [
+                ...selectedCols.map(
                     (i) =>
                         optionSelect.find(
                             (opt) => opt.value === selectedSelect[i],
-                        )?.label ?? null,
-                );
+                        )?.label ?? "",
+                ),
+                "Ошибка",
+            ];
 
-            headers.push("Ошибка"); // oxirgi ustun
+            const rows = remainingSourceRows.map((row: any, i: number) => [
+                ...selectedCols.map((colIndex) => row[colIndex] ?? ""),
+                rowErrors[i] ?? "",
+            ]);
 
-            exportToExcel([headers, ...failedRows], "Ошибочные файлы");
+            exportToExcel([headers, ...rows], "Ошибочные файлы");
             showSuccessMessage(
                 messages.uz.SUCCESS_MESSAGE,
                 messages.ru.SUCCESS_MESSAGE,
@@ -290,11 +273,6 @@ const UploadExcelFile = ({ isOpen, setIsOpen }: any) => {
             }
         }
 
-        setFaildData([]);
-        setErrorStatus([]);
-        setSuccessIndex([]);
-        setRememberData([]);
-
         const sendData = data?.slice(initialState?.rowsCount);
         const sourceData = sendData && sendData.length > 0 ? sendData : data;
 
@@ -311,10 +289,10 @@ const UploadExcelFile = ({ isOpen, setIsOpen }: any) => {
         });
 
         const resultData = noSelectData?.map((elem) => {
-            let product: any = productData?.find(
+            const product: any = productData?.find(
                 (p: any) => p?.name === elem?.name,
             );
-            let category: any = categoryData?.find(
+            const category: any = categoryData?.find(
                 (p: any) => p?.name === elem?.category_name,
             );
 
@@ -323,7 +301,7 @@ const UploadExcelFile = ({ isOpen, setIsOpen }: any) => {
                 Number(initialState?.currency) ||
                 product?.prices?.[0]?.currency?.code ||
                 product?.purchase_price?.currency_code ||
-                860; // fallback (UZS)
+                860;
 
             return {
                 id: initialState?.edit ? product?.id : undefined,
@@ -337,7 +315,6 @@ const UploadExcelFile = ({ isOpen, setIsOpen }: any) => {
                               : null,
                     currency_code: currencyCode,
                 },
-
                 measurement_name:
                     initialState?.edit && !elem?.packageMeasurementName
                         ? showMeasurmentName(product?.measurement_code)
@@ -358,12 +335,7 @@ const UploadExcelFile = ({ isOpen, setIsOpen }: any) => {
                                 elem.barcode,
                                 elem.barcodeCount,
                             )
-                          : [
-                                // {
-                                //     value: generateBarcode(),
-                                //     count: 1,
-                                // },
-                            ],
+                          : [],
                 vat_rate: elem?.taxRate ?? null,
                 category_name:
                     initialState?.edit && !elem?.category
@@ -381,9 +353,6 @@ const UploadExcelFile = ({ isOpen, setIsOpen }: any) => {
                     initialState?.edit && !elem?.taxCatalogName
                         ? product?.catalog_name
                         : elem?.taxCatalogName || null,
-                // count: elem?.packageMeasurementQuantity
-                //     ? Number(elem?.packageMeasurementQuantity)
-                //     : 1,
                 prices: [
                     {
                         amount:
@@ -409,133 +378,112 @@ const UploadExcelFile = ({ isOpen, setIsOpen }: any) => {
             };
         });
 
+        const chunks = chunkArray(resultData, 1000);
+
+        isCancelledRef.current = false;
         setOpenStatusBar(true);
+        setStatus({ ...INITIAL_STATUS, totalData: resultData.length });
 
-        setStatus((prev) => ({
-            ...prev,
-            totalData: resultData?.length,
-        }));
+        let cumulativeSuccess = 0;
+        let cumulativeFail = 0;
+        let cumulativeProcessed = 0;
+        let allFailures: BulkJobFailure[] = [];
+        let chunkOffset = 0;
+        const successfulIndices = new Set<number>();
+        const errorBySourceIndex = new Map<number, string>();
 
-        const startGlobalIndex =
-            sendData && sendData.length > 0
-                ? Number(initialState?.rowsCount)
-                : 0;
-        let localSuccess = 0;
-        let localFail = 0;
-        const remData: any[] = [];
+        for (const chunk of chunks) {
+            if (isCancelledRef.current) break;
 
-        // ✅ Har bir so'rovni ketma-ket yuborish uchun
-        for (let i = 0; i < resultData?.length; i++) {
-            const item: any = resultData[i];
-            const globalIndex = startGlobalIndex + i;
-            const { state, ...sendItem } = item;
-
-            if (initialState?.edit && !sendItem?.id) {
-                localFail++;
-
-                handleError("notID", globalIndex, setErrorStatus);
-                setFaildData((prev) => [
-                    ...prev,
-                    {
-                        index: globalIndex,
-                        row: sourceData[i],
-                    },
-                ]);
-
-                setStatus((prev) => ({
-                    ...prev,
-                    success: localSuccess,
-                    faild: localFail,
-                    total: localSuccess + localFail,
-                    totalData: resultData.length,
-                    status: true,
-                }));
-
-                continue;
-            }
-
-            // ✅ React Query mutateAsync ishlatamiz
             try {
-                let res;
+                const { job_id } = await bulkCreateProductApi({
+                    products: chunk,
+                });
 
-                if (initialState?.edit) {
-                    // updateProduct mutateAsync bilan
-                    res = await updateProduct({
-                        productId: item?.id,
-                        data: sendItem,
-                    });
-                } else {
-                    // createProduct mutateAsync bilan
-                    res = await createProduct(sendItem);
-                }
+                await new Promise<void>((resolve, reject) => {
+                    cancelResolveRef.current = resolve;
+                    intervalRef.current = setInterval(async () => {
+                        if (isCancelledRef.current) {
+                            clearInterval(intervalRef.current!);
+                            resolve();
+                            return;
+                        }
+                        try {
+                            const res = await getBulkCreateStatusApi(job_id);
 
-                // ✅ Muvaffaqiyatli bo'lsa
-                setSuccessIndex((prev) => [...prev, globalIndex]);
-                localSuccess++;
+                            const newSuccess =
+                                cumulativeSuccess + res.success_count;
+                            const newFail = cumulativeFail + res.failure_count;
+                            const newProcessed =
+                                cumulativeProcessed + res.processed;
 
-                setStatus((prev) => ({
-                    ...prev,
-                    success: localSuccess,
-                    faild: localFail,
-                    total: localSuccess + localFail,
-                    totalData: resultData.length,
-                    status: true,
-                }));
+                            setStatus({
+                                success: newSuccess,
+                                faild: newFail,
+                                total: newProcessed,
+                                totalData: resultData.length,
+                                status: true,
+                                cancelled: false,
+                                failures: [...allFailures, ...res.failures],
+                            });
 
-                if (state) {
-                    remData.push({
-                        quantity: +state,
-                        warehouse_id: warhouseId,
-                        product_id: res?.id,
-                    });
-                }
+                            if (res.status === "completed") {
+                                clearInterval(intervalRef.current!);
+
+                                const failedInChunk = new Map(
+                                    res.failures.map((f) => [f.index, f]),
+                                );
+                                for (let j = 0; j < chunk.length; j++) {
+                                    const failure = failedInChunk.get(j);
+                                    if (failure) {
+                                        errorBySourceIndex.set(
+                                            chunkOffset + j,
+                                            ERROR_MESSAGES[failure.error_code] ||
+                                                failure.error_message ||
+                                                "Неизвестная ошибка",
+                                        );
+                                    } else {
+                                        successfulIndices.add(chunkOffset + j);
+                                    }
+                                }
+
+                                cumulativeSuccess += res.success_count;
+                                cumulativeFail += res.failure_count;
+                                cumulativeProcessed += res.processed;
+                                allFailures = [...allFailures, ...res.failures];
+                                chunkOffset += chunk.length;
+                                resolve();
+                            }
+                        } catch (err) {
+                            clearInterval(intervalRef.current!);
+                            reject(err);
+                        }
+                    }, 1000);
+                });
             } catch (err) {
-                // ✅ Xato bo'lsa
-                localFail++;
-                handleError(err, globalIndex, setErrorStatus);
-                setFaildData((prev) => [
-                    ...prev,
-                    { index: globalIndex, row: sourceData[i] },
-                ]);
-                setStatus((prev) => ({
-                    ...prev,
-                    success: localSuccess,
-                    faild: localFail,
-                    total: localSuccess + localFail,
-                    totalData: resultData.length,
-                    status: true,
-                }));
+                showErrorMessage(err);
+                break;
             }
         }
 
-        // ✅ Barcha so'rovlar tugagandan keyin
-        setStatus((prev) => ({
-            ...prev,
-            status: false,
-        }));
+        // Muvaffaqiyatli yuborilganlarni tabladan olib tashlash
+        const remainingSourceRows = sourceData.filter(
+            (_, i) => !successfulIndices.has(i),
+        );
+        const remainingErrors = sourceData
+            .map((_, i) => errorBySourceIndex.get(i) ?? null)
+            .filter((_, i) => !successfulIndices.has(i));
+        const headerRows = (data as any[]).slice(0, initialState.rowsCount);
+        setData([...headerRows, ...remainingSourceRows] as any);
+        setRowErrors(remainingErrors);
 
-        setRememberData(remData);
+        queryClient.invalidateQueries({ queryKey: ["all-products"] });
+        queryClient.invalidateQueries({ queryKey: ["all-products-count"] });
 
-        if (localSuccess === 0) {
-            showErrorLocalMessage("Ошибка");
+        if (!isCancelledRef.current) {
+            setStatus((prev) => ({ ...prev, status: false, cancelled: false }));
         }
     };
-
-    useEffect(() => {
-        if (rememberData?.length > 0) {
-            createRegister(
-                {
-                    is_approved: true,
-                    items: rememberData,
-                },
-                {
-                    onSuccess() {
-                        setRememberData([]);
-                    },
-                },
-            );
-        }
-    }, [rememberData]);
 
     return (
         <>
@@ -588,10 +536,8 @@ const UploadExcelFile = ({ isOpen, setIsOpen }: any) => {
                             <ProductHeader
                                 count={data?.length - initialState?.rowsCount}
                                 initialState={initialState}
-                                faildData={faildData}
+                                hasFailures={rowErrors.some((e) => e !== null)}
                                 setInitialState={setInitialState}
-                                // warehouseIds={warehouseIds}
-                                // setWarehouseIds={setWarehouseIds}
                                 downloadFailedExcel={downloadFailedExcel}
                                 addProduct={addProduct}
                                 clearFile={clearFile}
@@ -627,6 +573,7 @@ const UploadExcelFile = ({ isOpen, setIsOpen }: any) => {
             </Dialog>
             <StatusBar
                 handleCloseBar={handleCloseBar}
+                handleCancel={handleCancel}
                 openStatusBar={openStatusBar}
                 status={status}
             />
@@ -641,15 +588,13 @@ const ProductHeader = ({
     setInitialState,
     initialState,
     addProduct,
-    faildData,
-    // warehouseIds,
+    hasFailures,
     downloadFailedExcel,
     clearFile,
-}: // setWarehouseIds
-{
+}: {
     count: number;
     initialState: InitialState;
-    faildData: any;
+    hasFailures: boolean;
     setInitialState: (
         state: InitialState | ((prev: InitialState) => InitialState),
     ) => void;
@@ -699,7 +644,7 @@ const ProductHeader = ({
             </div>
             <div className="flex justify-between items-center mb-5 px-0.5">
                 <InputGroup className="px-0.5 flex w-[350px]">
-                    <Button className="z-10" onClick={() => handleIncDec("-")}>
+                    <Button size="sm" className="z-10" onClick={() => handleIncDec("-")}>
                         -
                     </Button>
                     <Input
@@ -710,19 +655,21 @@ const ProductHeader = ({
                                 isNaN(value) ? 0 : value,
                             );
                         }}
+                        size="sm"
                         className="w-full text-center shadow-inner bg-white -mx-5"
                         value={initialState?.rowsCount}
                     />
-                    <Button className="z-10" onClick={() => handleIncDec("+")}>
+                    <Button size="sm" className="z-10" onClick={() => handleIncDec("+")}>
                         +
                     </Button>
                 </InputGroup>
                 <div className="flex items-center gap-x-2">
-                    {faildData?.length ? (
+                    {hasFailures ? (
                         <Button
                             onClick={downloadFailedExcel}
-                            className="bg-green-500 hover:bg-green-600"
+                            className="bg-teal-500 hover:bg-teal-600"
                             variant="solid"
+                            size="sm"
                             icon={<MdOutlineFileDownload size={20} />}
                         >
                             Скачать неудачные файлы

@@ -103,6 +103,8 @@ export const pathServices = {
 
         // CREATE
         createProductPath: "/api/product/create",
+        bulkCreateProduct: "/api/product/bulk-create",
+        bulkCreateProductStatus: "/api/product/bulk-create/status/",
         createFavouriteProductPath: "/api/favorite-product/add",
         createExcelFileProduct: `/api/excel/parse`,
         exportExcelFileProduct: `/api/excel/products`,
@@ -203,6 +205,7 @@ export const pathServices = {
         sellTransferPath: "/api/report/period/get",
         getEmployePath: "/api/employee/get",
         getContragentPath: "/api/contractor/get",
+        getContractorByIdPath: "/api/contractor/",
         getSellPath: "/api/sale/get",
         getSellIdPath: "/api/sale/",
         getRefundPath: "/api/refund/get",

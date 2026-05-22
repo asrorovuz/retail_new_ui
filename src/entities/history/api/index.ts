@@ -15,6 +15,13 @@ export const getContragentApi = async (): Promise<any> => {
     });
 };
 
+export const getContragentByIdApi = async (id: number | null): Promise<any> => {
+    return await apiRequest<string[]>({
+        url: pathServices.history.getContractorByIdPath + id,
+        method: "GET",
+    });
+};
+
 export const getSellApi = async (params: any): Promise<any> => {
     const skip =
         params?.pageIndex && params.pageSize

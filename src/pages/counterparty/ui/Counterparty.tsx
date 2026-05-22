@@ -43,6 +43,7 @@ import { FaPlus, FaRegEdit } from "react-icons/fa";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { IoTrashOutline } from "react-icons/io5";
 import { MdOutlinePostAdd } from "react-icons/md";
+import { Link } from "react-router-dom";
 
 export type ContragentType = {
     id: number;
@@ -212,23 +213,37 @@ const Counterparty = () => {
                     if (row.original.is_customer) types.push("Клиент");
                     if (row.original.is_supplier) types.push("Поставщик");
 
-                    if (!types.length)
-                        return <p className="w-[180px]">-</p>;
+                    if (!types.length) return <p className="w-[180px]">-</p>;
 
                     return (
                         <div className="flex flex-col gap-1 w-[180px]">
-                            {types.map((t) => (
-                                <span
-                                    key={t}
-                                    className={`text-xs px-2 py-0.5 rounded-full w-fit font-medium ${
-                                        t === "Клиент"
-                                            ? "bg-blue-100 text-blue-700"
-                                            : "bg-orange-100 text-orange-700"
-                                    }`}
-                                >
-                                    {t}
-                                </span>
-                            ))}
+                            {types.map((t) =>
+                                row.original.is_supplier ? (
+                                    <Link to={`/counterparties/${row?.original?.id}`}>
+                                        <span
+                                            key={t}
+                                            className={`text-xs px-2 py-0.5 rounded-full w-fit font-medium ${
+                                                t === "Клиент"
+                                                    ? "bg-blue-100 text-blue-700"
+                                                    : "bg-orange-100 text-orange-700"
+                                            }`}
+                                        >
+                                            {t}
+                                        </span>
+                                    </Link>
+                                ) : (
+                                    <span
+                                        key={t}
+                                        className={`text-xs px-2 py-0.5 rounded-full w-fit font-medium ${
+                                            t === "Клиент"
+                                                ? "bg-blue-100 text-blue-700"
+                                                : "bg-orange-100 text-orange-700"
+                                        }`}
+                                    >
+                                        {t}
+                                    </span>
+                                ),
+                            )}
                         </div>
                     );
                 },
@@ -511,10 +526,12 @@ const Counterparty = () => {
                                                         header.column.id ===
                                                         "actions";
                                                     return (
-                                                                        <Th
+                                                        <Th
                                                             className={classNames(
                                                                 "border border-slate-200 bg-slate-100",
-                                                                isActionsColumn ? "bg-slate-100" : "",
+                                                                isActionsColumn
+                                                                    ? "bg-slate-100"
+                                                                    : "",
                                                             )}
                                                             key={header.id}
                                                         >

@@ -245,6 +245,42 @@ export const exportProductWithExcel = async (params: any): Promise<any> => {
     });
 };
 
+export interface BulkJobFailure {
+    index: number;
+    name: string;
+    error_code: string;
+    error_message: string;
+}
+
+export interface BulkJobStatus {
+    job_id: string;
+    status: string;
+    total: number;
+    processed: number;
+    success_count: number;
+    failure_count: number;
+    failures: BulkJobFailure[];
+}
+
+export const bulkCreateProductApi = async (payload: {
+    products: any[];
+}): Promise<{ job_id: string }> => {
+    return await apiRequest<{ job_id: string }>({
+        url: pathServices.products.bulkCreateProduct,
+        method: "POST",
+        data: payload,
+    });
+};
+
+export const getBulkCreateStatusApi = async (
+    jobId: string,
+): Promise<BulkJobStatus> => {
+    return await apiRequest<BulkJobStatus>({
+        url: pathServices.products.bulkCreateProductStatus + jobId,
+        method: "GET",
+    });
+};
+
 /* ------------------------------ DELETE APIs ------------------------------ */
 
 export const deleteProductApi = async (id: number): Promise<any> => {

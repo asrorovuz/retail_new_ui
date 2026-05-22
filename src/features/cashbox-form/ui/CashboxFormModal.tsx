@@ -519,11 +519,7 @@ const CashboxFormModal = ({
                                                             <Select
                                                                 {...field}
                                                                 className={
-                                                                    type ===
-                                                                        2 ||
-                                                                    type === 3
-                                                                        ? "w-[25px]"
-                                                                        : "w-[75px]"
+                                                                    "w-[75px]"
                                                                 }
                                                                 isDisabled={
                                                                     filterCurrencies?.length! <=

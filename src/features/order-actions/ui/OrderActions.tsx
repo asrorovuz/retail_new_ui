@@ -283,6 +283,11 @@ const OrderActions = ({
         return backAmount > 0 ? backAmount : 0;
     }, [netPrice, totalPaymentAmount]);
 
+    const debetAmount = useMemo<number>(() => {
+        const debtAmount = netPrice - totalPaymentAmount;
+        return debtAmount > 0 ? debtAmount : 0;
+    }, [netPrice, totalPaymentAmount]);
+
     function onSubmitPaymentHandler(
         paymentAmounts: PaymentAmount[],
         callback: (success: boolean) => void,
@@ -641,7 +646,7 @@ const OrderActions = ({
                         onClick={() =>
                             checkShiftAndRun(() => setSellDebit(true))
                         }
-                        disabled={!activeDraft?.items?.length}
+                        disabled={!activeDraft?.items?.length || !debetAmount}
                         className="w-full text-base font-medium text-slate-800 bg-white"
                     >
                         В долг

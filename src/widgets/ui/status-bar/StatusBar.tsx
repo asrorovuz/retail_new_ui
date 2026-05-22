@@ -1,8 +1,29 @@
 import classNames from "@/shared/lib/classNames";
 import { Button, Dialog } from "@/shared/ui/kit";
 import { FaCheckCircle } from "react-icons/fa";
+import type { BulkJobFailure } from "@/entities/products/api";
 
-const StatusBar = ({ openStatusBar, handleCloseBar, status }: any) => {
+interface StatusBarStatus {
+    faild: number;
+    success: number;
+    total: number;
+    totalData: number;
+    status: boolean;
+    cancelled: boolean;
+    failures?: BulkJobFailure[];
+}
+
+const StatusBar = ({
+    openStatusBar,
+    handleCloseBar,
+    handleCancel,
+    status,
+}: {
+    openStatusBar: boolean;
+    handleCloseBar: () => void;
+    handleCancel: () => void;
+    status: StatusBarStatus;
+}) => {
   const pct =
     status?.totalData > 0
       ? Math.min(100, (status?.total / status?.totalData) * 100)
@@ -14,16 +35,14 @@ const StatusBar = ({ openStatusBar, handleCloseBar, status }: any) => {
       className={"px-20 py-20"}
       isOpen={openStatusBar}
     >
-      {!status?.status ? (
+      {!status?.status && !status?.cancelled ? (
         <h2 className="flex items-center justify-center gap-x-2 mt-10 mb-10">
           <span className="text-green-500">
             <FaCheckCircle />
           </span>{" "}
           Завершено
         </h2>
-      ) : (
-        ""
-      )}
+      ) : null}
       <div className="mb-10">
         <div
           className="w-full mb-2 rounded-lg bg-slate-200 shadow-inner overflow-hidden"
@@ -65,7 +84,26 @@ const StatusBar = ({ openStatusBar, handleCloseBar, status }: any) => {
           <p>(Неудавшихся загрузить)</p>
         </div>
       </div>
-      <div className="flex justify-center mb-10">
+      {!status?.status && status?.failures && status.failures.length > 0 && (
+        <div className="mb-6 max-h-40 overflow-y-auto rounded-lg border border-red-200 bg-red-50 p-3">
+          {status.failures.map((f, i) => (
+            <div key={i} className="mb-1 text-sm text-red-700">
+              <span className="font-semibold">{f.name}</span>: {f.error_message}
+            </div>
+          ))}
+        </div>
+      )}
+      <div className="flex justify-center gap-x-4 mb-10">
+        {status?.status && (
+          <Button
+            onClick={handleCancel}
+            variant="solid"
+            size="sm"
+            className="bg-red-500 hover:bg-red-600"
+          >
+            Отменить
+          </Button>
+        )}
         <Button
           disabled={status?.status}
           onClick={handleCloseBar}
