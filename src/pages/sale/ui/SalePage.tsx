@@ -7,6 +7,7 @@ import {
     useAllProductApi,
     useFindBarcode,
 } from "@/entities/products/repository";
+import { getPackageInfoByMarkingApi } from "@/entities/products/api";
 import Cashbox from "@/features/cashbox";
 import FavouriteProduct from "@/features/favourite-product";
 import PaymeTypeCards from "@/features/payme-type-cards";
@@ -14,7 +15,7 @@ import SaleAndRefunTable from "@/features/sale-refund-table";
 import SearchProduct from "@/features/search-product";
 import SearchProductTable from "@/features/search-product-table";
 import { useDebounce } from "@/shared/lib/useDebounce";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import PaymentSection from "@/features/payment-section/ui/PaymentSection";
 import eventBus from "@/shared/lib/eventBus";
 import { handleBarcodeScanned } from "@/shared/lib/handleScannedBarcode";
@@ -49,6 +50,8 @@ const SalePage = () => {
     const [activeSelectPaymetype, setActivePaymentSelectType] =
         useState<number>(1);
     const [dobtModal, setDebtModal] = useState(false);
+    const [isBlockSell, setIsBlockSell] = useState(false);
+    const isBlockSellRef = useRef(false);
 
     const navigate = useNavigate();
     const checkPermission = useCheckPermission();
@@ -94,13 +97,40 @@ const SalePage = () => {
     const completeActiveDraftSale = useDraftSaleStore(
         (store) => store.completeActiveDraftSale,
     );
-    const setContractorId = useDraftSaleStore((store) => store.setContragentId)
+    // const updateDraftSaleItem = useDraftSaleStore(
+    //     (store) => store.updateDraftSaleItem,
+    // );
+    const setContractorId = useDraftSaleStore((store) => store.setContragentId);
     const activeDraft: DraftSaleSchema =
         draftSales?.find((s) => s.isActive) ?? draftSales[0];
 
     useEffect(() => {
+        isBlockSellRef.current = isBlockSell;
+    }, [isBlockSell]);
+
+    useEffect(() => {
         if (!payModal) {
-            const onScan = eventBus.on("BARCODE_SCANNED", (code) => {
+            const onScan = eventBus.on("BARCODE_SCANNED", async (code) => {
+                const isMarking = !/^\d+$/.test(code) && code.length > 14;
+                if (isBlockSellRef.current && isMarking) {
+                    try {
+                        const res = await getPackageInfoByMarkingApi(code);
+                        const product = res.product;
+
+                        for (let i = 0; i < res.quantity; i++) {
+                            handleScannedProduct(
+                                product,
+                                "sale",
+                                setExpandedId,
+                                selectedRows,
+                                res?.marks[i],
+                            );
+                        }
+                    } catch {
+                        showErrorLocalMessage("Марка не найдена");
+                    }
+                    return;
+                }
                 const val: string = handleBarcodeScanned(code);
                 if (val) {
                     setBarcodeMark(code);
@@ -270,6 +300,8 @@ const SalePage = () => {
                     setActivePaymentSelectType={setActivePaymentSelectType}
                     updateDraftDiscount={updateDraftSaleDiscount}
                     updateDraftPayment={updateDraftSalePayment}
+                    isBlockSell={isBlockSell}
+                    setIsBlockSell={setIsBlockSell}
                 />
 
                 <OrderActions

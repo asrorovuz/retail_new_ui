@@ -1,6 +1,6 @@
 import type { RegisterRefundModel } from "@/@types/refund";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { getCheckRefundApi, registerRefundApi, updateRefundApi } from "../api";
+import { getCheckRefundApi, operationItemGetApi, registerRefundApi, updateRefundApi } from "../api";
 
 export const useRegisterRefundApi = () => {
   return useMutation({
@@ -19,5 +19,12 @@ export const useCheckRefundApi = (params: string) => {
 export const useUpdateRefundApi = () => {
   return useMutation({
     mutationFn: ({id, payload}: any) => updateRefundApi(id, payload),
+  });
+};
+
+export const useOperationItemGetApi = (params: any) => {
+  return useQuery({
+    queryKey: ["init-settings", params],
+    queryFn: () => operationItemGetApi(params),
   });
 };

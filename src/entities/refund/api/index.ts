@@ -28,3 +28,12 @@ export const updateRefundApi = async (id: number | null, payload: any) => {
     data: payload,
   });
 };
+
+export const operationItemGetApi = async ( params: any) => {
+  return await apiRequest({
+    url: pathServices.refund.operationItemGet,
+    method: "GET",
+    params
+  });
+};
+

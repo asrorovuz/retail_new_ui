@@ -61,6 +61,8 @@ export const pathServices = {
         getCashInCount: "/api/cash-box/cash-ins/count/get",
         getCashOutCount: "/api/cash-box/cash-outs/count/get",
         getCashExpenseCount: "/api/cash-box/expenses/count/get",
+        getSendCheck: "/api/fiscalization/send-unsent-receipts/",
+
         // CREATE
         createCashIn: "/api/cash-box/cash-in/create",
         createCashOut: "/api/cash-box/cash-out/create",
@@ -113,6 +115,9 @@ export const pathServices = {
         deleteProductPath: `/api/product/delete`,
         bulkDeleteProductPath: `/api/product/bulk-delete`,
         deleteFavoritProductPath: "/api/favorite-product/delete",
+
+        // MARKING
+        packageInfoByMarking: "/api/product/package-info-by-marking",
     },
 
     categories: {
@@ -142,12 +147,14 @@ export const pathServices = {
 
         // CREATE
         createFiscalized: "/api/fiscalization/sale/register",
+        createFiscalizedRefund: "/api/fiscalization/refund/register",
     },
 
     refund: {
         getCheck: "/api/sale/get-by-receipt",
         register: "/api/refund/register",
         updateRefundPath: "/api/refund/update/",
+        operationItemGet: "/api/fiscalization/operation/get"
     },
 
     purchase: {

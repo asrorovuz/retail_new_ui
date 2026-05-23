@@ -22,6 +22,8 @@ type PaymentSectionPropsType = {
     updateDraftPayment: (val: DraftSalePaymentAmountSchema[]) => void;
     setActiveType: (val: "qwerty" | "numeric" | "fullkey") => void;
     setActivePaymentSelectType: (val: number) => void;
+    isBlockSell?: boolean;
+    setIsBlockSell?: (val: boolean) => void;
 };
 
 const PaymentSection = ({
@@ -35,6 +37,8 @@ const PaymentSection = ({
     setValue,
     setActiveType,
     setActivePaymentSelectType,
+    isBlockSell,
+    setIsBlockSell,
 }: PaymentSectionPropsType) => {
     const { backspace, clear } = useKeyboard();
 
@@ -290,10 +294,15 @@ const PaymentSection = ({
                                 size="sm"
                                 type="button"
                                 variant="plain"
-                                onClick={() => setActiveType("qwerty")}
-                                className="w-full bg-slate-300 text-slate-700 text-sm"
+                                onClick={() => setIsBlockSell?.(!isBlockSell)}
+                                className={classNames(
+                                    "w-full text-sm text-white",
+                                    isBlockSell
+                                        ? "bg-green-600 hover:bg-green-700"
+                                        : "bg-red-500 hover:bg-red-600",
+                                )}
                             >
-                                ABC
+                                Блок
                             </Button>
                             <Button
                                 size="sm"

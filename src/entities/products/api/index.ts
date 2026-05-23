@@ -306,6 +306,22 @@ export const bulkDeleteProductApi = async (payload: {
     });
 };
 
+export interface PackageInfoByMarkingResponse {
+    marks: string[];
+    product: Product;
+    quantity: number;
+}
+
+export const getPackageInfoByMarkingApi = async (
+    marking: string,
+): Promise<PackageInfoByMarkingResponse> => {
+    return await apiRequest<PackageInfoByMarkingResponse>({
+        url: pathServices.products.packageInfoByMarking,
+        method: "POST",
+        data: { product_package_marking: marking },
+    });
+};
+
 export const deleteProductApi = async (id: number): Promise<any> => {
     return await apiRequest<any>({
         url: `${pathServices.products.deleteProductPath}/${id}`,

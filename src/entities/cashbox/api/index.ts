@@ -194,3 +194,13 @@ export const getSyncReportApi = async (
     data: null,
   });
 };
+
+export const getSyncSendCheckApi = async (
+  id: number
+): Promise<any> => {
+  return await apiRequest<any>({
+    url: pathServices.cashbox.getSendCheck + id,
+    method: "GET",
+    data: null,
+  });
+};

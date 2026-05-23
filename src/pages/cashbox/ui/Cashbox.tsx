@@ -13,6 +13,7 @@ import {
     useGetCloseZReport,
     useGetOpenZReport,
     useGetPrintXReport,
+    useGetSendCheck,
     useGetSyncReport,
 } from "@/entities/cashbox/repository";
 import { showErrorLocalMessage,showSuccessMessage } from "@/shared/lib/showMessage";
@@ -27,6 +28,7 @@ const Cashbox = () => {
     const { mutate: openZReportMutate } = useGetOpenZReport();
     const { mutate: closeZReportMutate } = useGetCloseZReport();
     const { mutate: syncReportMutate } = useGetSyncReport();
+    const { mutate: syncSendCheckMutate } = useGetSendCheck();
 
     const onCloseModal = () => {
         setIsOpen(false);
@@ -53,6 +55,9 @@ const Cashbox = () => {
                 break;
             case 4:
                 mutate = closeZReportMutate;
+                break;
+            case 5:
+                mutate = syncSendCheckMutate;
                 break;
             default:
                 return null;
@@ -85,7 +90,16 @@ const Cashbox = () => {
                 <div className="mb-2">
                     <NavigateButton content={"Касса"} />
                 </div>
-                <div className="flex gap-x-2">
+                <div className="flex gap-x-1">
+                    <Dropdown
+                        renderTitle={
+                            <Button icon={<FaSyncAlt />} size="sm">
+                                Отправка чеков
+                            </Button>
+                        }
+                    >
+                        {renderFiscalItems(5)}
+                    </Dropdown>
                     <Dropdown
                         renderTitle={
                             <Button icon={<FaSyncAlt />} size="sm">
@@ -123,9 +137,9 @@ const Cashbox = () => {
                         {renderFiscalItems(4)}
                     </Dropdown>
 
-                    <Button disabled variant="solid" size="sm">
+                    {/* <Button disabled variant="solid" size="sm">
                         Создать кассу
-                    </Button>
+                    </Button> */}
                 </div>
             </div>
 

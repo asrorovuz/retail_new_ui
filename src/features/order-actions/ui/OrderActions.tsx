@@ -18,6 +18,7 @@ import {
 } from "@/entities/init/repository";
 import {
     useCreateFiscalizedApi,
+    useCreateFiscalizedRefundApi,
     useFescalDeviceApi,
     usePaymentProviderApi,
     useRegisterSellApi,
@@ -53,6 +54,7 @@ import SellDebetModal from "@/widgets/ui/sellDebet/SellDebetModal";
 import ContragentModal from "@/features/modals/ui/ContragentModal";
 import Alert from "@/shared/ui/kit-pro/alert/Alert";
 import { usePermission } from "@/shared/lib/controlActionWithPermission";
+import OperationItemModal from "@/features/modals/ui/OperationItemModal";
 // import { useDraftPurchaseStore } from "@/app/store/usePurchaseDraftStore";
 
 type OrderActionType = {
@@ -100,6 +102,7 @@ const OrderActions = ({
     const [pendingAction, setPendingAction] = useState<(() => void) | null>(
         null,
     );
+    const [isOpenOperationModal, setIsOpenOperationModal] = useState(false);
 
     const [paymeType, setPaymeType] = useState<number[]>([]);
     const [openContragentModal, setOpenContragentModal] = useState(false);
@@ -119,6 +122,8 @@ const OrderActions = ({
     const { mutate: registerPurchaseMutate } = useRegisterPurchaseApi();
     const { mutate: createFiscalized, isPending: fiscalPending } =
         useCreateFiscalizedApi();
+    const { mutate: createFiscalizedRefund, isPending: fiscalPendingRefund } =
+        useCreateFiscalizedRefundApi();
     const { data: fiscalData = [] } = useFescalDeviceApi(fiscalizedModal);
     const filterDataFiscal = fiscalData?.filter(
         (elem: any) => elem?.is_enabled,
@@ -133,25 +138,6 @@ const OrderActions = ({
     const { checkPermissionByAction } = usePermission();
 
     const canCreate = checkPermissionByAction(type, "create");
-
-    // const addDrafts = () => {
-    //     const newDraftSale:
-    //         | DraftSaleSchema
-    //         | DraftRefundSchema
-    //         | DraftPurchaseSchema = {
-    //         items: [],
-    //         isActive: true,
-    //         discountAmount: "0",
-    //         [type === "sale" ? "payment" : "payout"]: {
-    //             amounts: PaymentTypes?.map((paymentType) => ({
-    //                 amount: 0,
-    //                 paymentType: paymentType?.type,
-    //             })),
-    //         },
-    //     };
-
-    //     addNewDraft(newDraftSale);
-    // };
 
     const checkShiftAndRun = (callback: () => void) => {
         if (activeShift) {
@@ -276,6 +262,64 @@ const OrderActions = ({
             handleCancelFiscalization();
             setPaymeType([]);
         }
+    };
+
+    const handleApproveFiscalizationRefund = () => {
+        if (selectFiscalized) {
+            const activePaymentData = paymentData?.filter(
+                (elem) => elem?.is_enabled,
+            );
+
+            if (
+                [
+                    FiscalizedProviderTypeEPos,
+                    FiscalizedProviderTypeHippoPos,
+                ].includes(selectFiscalized?.type) &&
+                (paymeType.includes(5) || paymeType.includes(6)) &&
+                activePaymentData?.length > 0
+            ) {
+                setPayModal(true);
+                setFiscalizedModal(false);
+            } else {
+                // ✅ Fiscal device tanlandi → operation item modal ochiladi
+                setFiscalizedModal(false);
+                setIsOpenOperationModal(true);
+            }
+        } else {
+            handleCancelFiscalization();
+            setPaymeType([]);
+        }
+    };
+
+    // ✅ Operation item tasdiqlanganda — refund fiscalize qilish
+    const handleApproveOperationItem = (operationId: number) => {
+        setIsOpenOperationModal(false);
+
+        const payload = {
+            refund_id: saleId,
+            fiscal_device_id: selectFiscalized?.id,
+            fiscal_operation_id: operationId, // ✅ qo'shildi
+        };
+
+        createFiscalizedRefund(payload, {
+            onSuccess() {
+                showSuccessMessage(
+                    messages.uz.SUCCESS_MESSAGE,
+                    messages.ru.SUCCESS_MESSAGE,
+                );
+                handleCancelFiscalization();
+                setPaymeType([]);
+            },
+            onError(error) {
+                showErrorMessage(error);
+            },
+        });
+    };
+
+    const handleCancelOperationModal = () => {
+        setIsOpenOperationModal(false);
+        // Fiscalized modalni qayta ochish (user orqaga qaytmoqchi bo'lsa)
+        setFiscalizedModal(true);
     };
 
     const cashBackAmount = useMemo<number>(() => {
@@ -574,9 +618,9 @@ const OrderActions = ({
         if (debit <= 0) {
             setIsOpenPayment(true);
         } else {
-            if (type === "sale") {
-                setSellModal(true);
-            }
+            if (type === "sale") setSellModal(true);
+            // ✅ refund uchun to'g'ridan payment modal ochiladi
+            if (type === "refund") setIsOpenPayment(true);
         }
     };
 
@@ -705,17 +749,43 @@ const OrderActions = ({
                     handleCancelPrint={handleCancelPrint}
                 />
 
-                <FiscalizedModal
-                    isOpen={!!saleId && fiscalizedModal}
-                    filterData={filterDataFiscal}
-                    saleId={saleId}
-                    selectFiscalized={selectFiscalized}
-                    handleCancel={handleCancelFiscalization}
-                    setSelectFiscalized={setSelectFiscalized}
-                    setIsOpen={setFiscalizedModal}
-                    fiscalPending={fiscalPending}
-                    handleApproveFiscalization={handleApproveFiscalization}
-                />
+                {type === "sale" && (
+                    <FiscalizedModal
+                        isOpen={!!saleId && fiscalizedModal}
+                        filterData={filterDataFiscal}
+                        saleId={saleId}
+                        selectFiscalized={selectFiscalized}
+                        handleCancel={handleCancelFiscalization}
+                        setSelectFiscalized={setSelectFiscalized}
+                        setIsOpen={setFiscalizedModal}
+                        fiscalPending={fiscalPending}
+                        handleApproveFiscalization={handleApproveFiscalization}
+                    />
+                )}
+
+                {type === "refund" && (
+                    <FiscalizedModal
+                        isOpen={!!saleId && fiscalizedModal}
+                        filterData={filterDataFiscal}
+                        saleId={saleId}
+                        selectFiscalized={selectFiscalized}
+                        handleCancel={handleCancelFiscalization}
+                        setSelectFiscalized={setSelectFiscalized}
+                        setIsOpen={setFiscalizedModal}
+                        fiscalPending={fiscalPendingRefund}
+                        handleApproveFiscalization={
+                            handleApproveFiscalizationRefund
+                        }
+                    />
+                )}
+
+                {type === "refund" && (
+                    <OperationItemModal
+                        isOpen={isOpenOperationModal}
+                        onConfirm={handleApproveOperationItem}
+                        onCancel={handleCancelOperationModal}
+                    />
+                )}
 
                 <PaymeWhithQR
                     isOpen={payModal && paymentData?.length > 0}

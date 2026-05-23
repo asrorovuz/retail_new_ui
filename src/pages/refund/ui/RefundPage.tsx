@@ -9,6 +9,7 @@ import {
     useAllProductApi,
     useFindBarcode,
 } from "@/entities/products/repository";
+import { getPackageInfoByMarkingApi } from "@/entities/products/api";
 import { useCheckRefundApi } from "@/entities/refund/repository";
 import Cashbox from "@/features/cashbox";
 import FavouriteProduct from "@/features/favourite-product";
@@ -32,7 +33,7 @@ import { Button } from "@/shared/ui/kit";
 import { Header } from "@/widgets";
 import Footer from "@/widgets/ui/footer/Footer";
 import QuertyKeyboard from "@/widgets/ui/keyboard/QuertyKeyboard";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const RefundPage = () => {
@@ -51,6 +52,8 @@ const RefundPage = () => {
     );
     const [activeSelectPaymetype, setActivePaymentSelectType] =
         useState<number>(1);
+    const [isBlockSell, setIsBlockSell] = useState(false);
+    const isBlockSellRef = useRef(false);
     const [refundCheckModal, setRefundCheckModal] = useState<{
         isOpen: boolean;
         ids: number[];
@@ -99,6 +102,9 @@ const RefundPage = () => {
     const completeActiveDraftRefund = useDraftRefundStore(
         (store) => store.completeActiveDraftRefund,
     );
+    // const updateDraftRefundItem = useDraftRefundStore(
+    //     (store) => store.updateDraftRefundItem,
+    // );
     // const deleteDraftRefundMark = useDraftRefundStore(
     //     (store) => store.deleteDraftRefundMark,
     // );
@@ -155,18 +161,42 @@ const RefundPage = () => {
     };
 
     useEffect(() => {
+        isBlockSellRef.current = isBlockSell;
+    }, [isBlockSell]);
+
+    useEffect(() => {
         if (!payModal) {
-            const onScan = eventBus.on("BARCODE_SCANNED", (code) => {
+            const onScan = eventBus.on("BARCODE_SCANNED", async (code) => {
                 if (code && code?.trim().startsWith("*")) {
                     const newBarcode = code?.slice(1);
                     setCheckDode(newBarcode);
                     setRefundCheckModal((prev) => ({ ...prev, isOpen: true }));
-                } else {
-                    const val: string = handleBarcodeScanned(code);
-                    if (val) {
-                        setBarcodeMark(code);
-                        setBarcode(val);
+                    return;
+                }
+                const isMarking = !/^\d+$/.test(code) && code.length > 14;
+                if (isBlockSellRef.current && isMarking) {
+                    try {
+                        const res = await getPackageInfoByMarkingApi(code);
+                        const product = res.product;
+
+                        for (let i = 0; i < res.quantity; i++) {
+                            handleScannedProduct(
+                                product,
+                                "refund",
+                                setExpandedId,
+                                selectedRows,
+                                res?.marks[i],
+                            );
+                        }
+                    } catch {
+                        showErrorLocalMessage("Марка не найдена");
                     }
+                    return;
+                }
+                const val: string = handleBarcodeScanned(code);
+                if (val) {
+                    setBarcodeMark(code);
+                    setBarcode(val);
                 }
             });
 
@@ -327,6 +357,8 @@ const RefundPage = () => {
                     setActiveType={setActiveType}
                     setActivePaymentSelectType={setActivePaymentSelectType}
                     updateDraftPayment={updateDraftRefundPayout}
+                    isBlockSell={isBlockSell}
+                    setIsBlockSell={setIsBlockSell}
                 />
 
                 <OrderActions

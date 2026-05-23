@@ -17,6 +17,7 @@ import {
   getOpenZReportApi,
   getPrintXReportApi,
   getSyncReportApi,
+  getSyncSendCheckApi,
   updateCashExpenseApi,
   updateCashInApi,
   updateCashOutApi,
@@ -224,6 +225,16 @@ export const useGetSyncReport = () => {
     mutationFn: (id: any) => getSyncReportApi(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["close-z"] });
+    },
+  });
+};
+
+export const useGetSendCheck = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: any) => getSyncSendCheckApi(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["send-check"] });
     },
   });
 };

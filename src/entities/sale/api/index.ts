@@ -52,6 +52,14 @@ export const createFiscalizedApi = async (payload: any) => {
   });
 };
 
+export const createFiscalizedRefundApi = async (payload: any) => {
+  return await apiRequest({
+    url: pathServices.sale.createFiscalizedRefund,
+    method: "POST",
+    data: payload,
+  });
+};
+
 export const paymentDebtsApi = async (payload: any) => {
   return await apiRequest({
     url: pathServices.sale.getPaymentDebts,

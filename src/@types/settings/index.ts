@@ -11,6 +11,7 @@ export type SettingsType = {
     fiscalization_settings: any;
     auto_print_receipt: boolean;
     enable_create_unknown_product: boolean;
+    organization_inn?: string;
 };
 
 export type TableColumnSetting = {
