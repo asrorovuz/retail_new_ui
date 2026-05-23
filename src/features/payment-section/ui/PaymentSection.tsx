@@ -35,7 +35,7 @@ const PaymentSection = ({
     updateDraftDiscount,
     value,
     setValue,
-    setActiveType,
+    // setActiveType,
     setActivePaymentSelectType,
     isBlockSell,
     setIsBlockSell,
