@@ -3,6 +3,7 @@ import {
     useMemo,
     useState,
     useCallback,
+    useRef,
     memo,
     type FC,
 } from "react";
@@ -545,6 +546,7 @@ const ProductFormMultiple: FC<Props> = ({
     const [activePacage, setActivePackage] = useState<any>(null);
 
     const methods = useForm({ defaultValues: { products } });
+    const lastAddedBarcodeRef = useRef<string | null>(null);
 
     const { mutate: createProduct } = useCreateProduct();
     const { mutate: alertOnUpdate } = useUpdateAlertOn();
@@ -641,7 +643,8 @@ const ProductFormMultiple: FC<Props> = ({
             ...prev,
             [newIndex]: [{ id: Date.now(), name: "", amount: 1 }],
         }));
-    }, [fields.length, append, createEmptyProduct]);
+        setTimeout(() => methods.setFocus(`products.${newIndex}.name` as any), 0);
+    }, [fields.length, append, createEmptyProduct, methods]);
 
     const onSubmit = async (data: any) => {
         setIsSubmitting(true);
@@ -761,7 +764,7 @@ const ProductFormMultiple: FC<Props> = ({
     //         setBarcode(null);
     //     }
     // }, [barcode, catalogData]);
-    /* 🔥 BARCODE LOGIC — YANGILANGAN */
+    /* 🔥 BARCODE LOGIC — bosqich 1: qatorni darhol qo'sh */
     useEffect(() => {
         if (!barcode) return;
 
@@ -775,30 +778,41 @@ const ProductFormMultiple: FC<Props> = ({
             return;
         }
 
-        // catalogData hali kelmasa — kutamiz
-        if (!catalogData || catalogData.length === 0) {
-            console.log("⏳ Catalog data hali kelmadi, barcode:", barcode);
-            return; // keyingi renderda qayta tekshiriladi
-        }
+        const newIndex = currentProducts?.length ?? 0;
+        lastAddedBarcodeRef.current = barcode;
+        append(createEmptyProduct(barcode));
+        setBarcode(null);
+        setTimeout(() => methods.setFocus(`products.${newIndex}.name` as any), 0);
+    }, [barcode, append, createEmptyProduct, methods, setBarcode]);
 
-        const newProduct = createEmptyProduct(barcode);
+    /* 🔥 BARCODE LOGIC — bosqich 2: catalogData kelganda qatorni yangilash */
+    useEffect(() => {
+        if (!catalogData?.length || !lastAddedBarcodeRef.current) return;
+
+        const currentProducts = methods.getValues("products");
+        const rowIndex = currentProducts?.findIndex((item: any) =>
+            item.barcodes?.some((b: any) => b.value === lastAddedBarcodeRef.current),
+        );
+
+        if (rowIndex === undefined || rowIndex === -1) {
+            lastAddedBarcodeRef.current = null;
+            return;
+        }
 
         const catalog = catalogData[0];
-
-        if (catalog) {
-            newProduct.name = catalog.name ?? catalog.class_name ?? "";
-            newProduct.catalog_code = catalog.class_code || catalog.code;
-            newProduct.catalog_name = catalog.class_name || catalog.name;
-            newProduct.catalog = {
-                label: catalog.class_name || catalog.name,
-                value: catalog.class_code || catalog.code,
-                data: catalog,
-            };
+        if (!methods.getValues(`products.${rowIndex}.name` as any)) {
+            methods.setValue(`products.${rowIndex}.name` as any, catalog.name ?? catalog.class_name ?? "");
         }
+        methods.setValue(`products.${rowIndex}.catalog_code` as any, catalog.class_code || catalog.code || null);
+        methods.setValue(`products.${rowIndex}.catalog_name` as any, catalog.class_name || catalog.name || null);
+        methods.setValue(`products.${rowIndex}.catalog` as any, {
+            label: catalog.class_name || catalog.name,
+            value: catalog.class_code || catalog.code,
+            data: catalog,
+        });
 
-        append(newProduct);
-        setBarcode(null); // eng oxirida
-    }, [barcode, catalogData, append, createEmptyProduct, methods, setBarcode]);
+        lastAddedBarcodeRef.current = null;
+    }, [catalogData, methods]);
 
     useEffect(() => {
         setMeasurmentPackages((prev) => {

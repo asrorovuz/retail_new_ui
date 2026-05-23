@@ -21,8 +21,24 @@ const AddProductModal: FC<ProductModalProps> = ({
 }) => {
     const [defaultValues, setDefaultValues] =
         useState<ProductDefaultValues | null>(null);
+
+    // ProductForm ichida setBarcode(null) chaqiriladi — bu barcode prop'ni null qilib
+    // useCatalogByBarcode'ni setData([]) ga undaydi. persistedQuery orqali
+    // so'nggi haqiqiy query'ni saqlab qolamiz, modal yopilguncha o'zgarmasin.
+    const [persistedQuery, setPersistedQuery] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (!isOpen) {
+            setPersistedQuery(null);
+        } else if (barcode) {
+            setPersistedQuery(barcode);
+        } else if (catalogCode) {
+            setPersistedQuery(catalogCode);
+        }
+    }, [isOpen, barcode, catalogCode]);
+
     const { data: catalogData, isLoading } = useCatalogByBarcode(
-        isOpen ? (barcode || catalogCode) : null,
+        isOpen ? persistedQuery : null,
         isOpen,
     );
 

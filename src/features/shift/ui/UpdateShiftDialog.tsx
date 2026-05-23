@@ -249,13 +249,13 @@ const UpdateShiftDialog = ({ isOpen, onClose }: PropsType) => {
                         size="sm"
                         className="text-xs"
                         type="number"
+                        space={false}
                         value={value}
                         onChange={(e) => {
                           const val = e.target.value.replace(/\s/g, "");
                           field.onChange(val === "" ? "" : val);
                         }}
                         onFocus={() => {
-                          // Focus bo'lganda errorni tozalash
                           if (errors.balances?.[index]?.amount) {
                             setValue(`balances.${index}.amount`, field.value);
                           }

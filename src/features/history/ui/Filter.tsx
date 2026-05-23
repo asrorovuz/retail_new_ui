@@ -1,6 +1,6 @@
+import { useGetAllAcounts } from "@/entities/auth/repository";
 import {
-  useContragentApi,
-  useEmployeeApi,
+  useContragentApi
 } from "@/entities/history/repository";
 import { useWarehouseApi } from "@/entities/init/repository";
 import { Button, Dialog, Form, Select } from "@/shared/ui/kit";
@@ -57,17 +57,18 @@ const Filter = ({
   });
 
   const { data: wareHouseData } = useWarehouseApi();
-  const { data: employeeData } = useEmployeeApi(isOpenFilter);
+  // const { data: employeeData } = useEmployeeApi(isOpenFilter);
+  const { data: accountsData } = useGetAllAcounts()
   const { data: contragentData } = useContragentApi(isOpenFilter);
 
   const employeeOption = useMemo(() => {
-    return employeeData?.map((item: any) => {
+    return accountsData?.map((item: any) => {
       return {
         label: item?.name,
         value: item?.id,
       };
     });
-  }, [employeeData]);
+  }, [accountsData]);
 
   const contragentOption = useMemo(() => {
     return contragentData?.map((item: any) => {
@@ -103,11 +104,12 @@ const Filter = ({
     };
 
     setParams((prev: any) => ({ ...prev, ...formattedData }));
+    setIsOpenFilter(false)
   };
 
   useEffect(() => {
     clearField();
-  }, [type, isOpenFilter]);
+  }, [type]);
 
   return (
     <Dialog

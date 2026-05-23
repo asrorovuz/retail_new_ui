@@ -28,8 +28,20 @@ const AddMoreProducts = ({
 }) => {
     const [products, setProducts] = useState<ProductDefaultValues[]>([]);
 
+    const [persistedQuery, setPersistedQuery] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (!isOpen) {
+            setPersistedQuery(null);
+        } else if (barcode) {
+            setPersistedQuery(barcode);
+        } else if (catalogCode) {
+            setPersistedQuery(catalogCode);
+        }
+    }, [isOpen, barcode, catalogCode]);
+
     const { data: catalogData = [] } = useCatalogByBarcode(
-        isOpen ? (barcode || catalogCode) : null,
+        isOpen ? persistedQuery : null,
         isOpen,
     );
 

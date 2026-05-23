@@ -70,7 +70,7 @@ const ProductsPage = () => {
         return () => {
             eventBus.remove("BARCODE_SCANNED", onScan);
         };
-    }, []);
+    }, [isAddOpen, isOpen]);
 
     // 2. Barcode bo‘lsa va product topilmasa
     useEffect(() => {
@@ -82,7 +82,7 @@ const ProductsPage = () => {
         if (!found) {
             if (
                 !settings?.enable_create_unknown_product ||
-                checkPermission(
+                !checkPermission(
                     AccountPermissions.AccountPermissionProductCreate,
                 )
             ) {

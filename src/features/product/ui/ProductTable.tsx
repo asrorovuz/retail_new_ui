@@ -497,7 +497,7 @@ const ProductTable = ({
             <Pagination
                 total={countData}
                 pageSize={pagination.pageSize}
-                pageSizeOptions={[20, 50, 100, 1000]}
+                pageSizeOptions={[20, 50, 100, 200]}
                 currentPage={pagination.pageIndex}
                 onChange={(page, size) =>
                     setPagination({

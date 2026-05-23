@@ -397,13 +397,17 @@ const ProductForm: FC<ProductFormType> = ({
         });
 
         // PACKAGE ni ham set qilish
-        if (catalogItem?.packages?.length) {
-            setPackageNames(catalogItem.packages); // state ga packageNames set qilinadi
+        const pkgList = catalogItem?.package_names?.length
+            ? catalogItem.package_names
+            : (catalogItem?.packages || []);
+
+        if (pkgList.length) {
+            setPackageNames(pkgList);
 
             const selectedPackage =
-                catalogItem.package_names.find(
+                pkgList.find(
                     (p: any) => p.code === defaultValue?.package_code,
-                ) || catalogItem.packages[0];
+                ) || pkgList[0];
 
             setValue("package_code", selectedPackage?.code || null);
             setValue("package", selectedPackage || null);

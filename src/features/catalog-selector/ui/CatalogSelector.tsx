@@ -72,7 +72,7 @@ const CatalogSelector = ({
             setValue(`products.${index}.package`, defaultPackage);
         } else {
             setValue("catalog", option || null);
-            setValue(`products.${index}.package`, defaultPackage);
+            setValue("package", defaultPackage);
         }
 
         onChange(option || null);

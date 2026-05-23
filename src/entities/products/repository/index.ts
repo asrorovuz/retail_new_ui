@@ -157,6 +157,7 @@ export const useCatalogByBarcode = (
   useEffect(() => {
     if (!query || !isOpen) {
       setData([]);
+      setIsLoading(false);
       return;
     }
 

@@ -53,7 +53,7 @@ export const columns = (
                     }
                 }
 
-                return <FormattedNumber value={reallyPrice ?? 0} scale={2} />;
+                return <FormattedNumber value={reallyPrice ?? 0} />;
             },
             maxSize: 90,
         },
@@ -68,7 +68,7 @@ export const columns = (
                 bodyCellClassName: "text-right",
             },
             cell: ({ row }) => (
-                <FormattedNumber value={row.original.quantity} scale={2} />
+                <FormattedNumber value={row.original.quantity} />
             ),
             maxSize: 80,
         },
@@ -83,7 +83,6 @@ export const columns = (
             cell: ({ row }) => (
                 <FormattedNumber
                     value={row.original.totalAmount ?? 0}
-                    scale={2}
                 />
             ),
             maxSize: 110,

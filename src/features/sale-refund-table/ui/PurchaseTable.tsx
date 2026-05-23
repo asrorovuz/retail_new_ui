@@ -22,6 +22,7 @@ import { CommonDeleteDialog } from "@/widgets/ui/delete-dialog/CommonDeleteDialo
 import type { DraftPurchaseSchema } from "@/@types/purchase";
 import { getActivePrice } from "@/shared/lib/getActivatePrice";
 import { useDraftPurchaseStore } from "@/app/store/usePurchaseDraftStore";
+import { truncate3 } from "@/shared/lib/truncate3";
 
 type PropsType = {
     type: "sale" | "refund" | "purchase";
@@ -304,7 +305,6 @@ const PurchaseTable = ({
                                 >
                                     <FormattedNumber
                                         value={totalPrice}
-                                        scale={2}
                                     />
                                 </div>
                             </div>
@@ -331,7 +331,7 @@ const PurchaseTable = ({
                                                 : "float"
                                         }
                                         className="!w-[35%] h-8"
-                                        value={localValue ?? 0}
+                                        value={truncate3(localValue) ?? 0}
                                         onFocus={() =>
                                             setActiveTypeKeyboard("numeric")
                                         }
@@ -497,7 +497,6 @@ const PurchaseTable = ({
                                         >
                                             <FormattedNumber
                                                 value={currentItem?.quantity}
-                                                scale={3}
                                             />
                                         </div>
                                     )}
@@ -528,15 +527,11 @@ const PurchaseTable = ({
                                             setActiveTypeKeyboard("numeric")
                                         }
                                         onChange={(val) => {
-                                            const price = getActivePrice(
-                                                currentItem,
-                                                type,
-                                                selectedRows,
-                                            );
+                                            
                                             const recalculatedQuantity =
                                                 Number(val?.target?.value) /
-                                                price;
-                                            (updateDraftItemQuantity(
+                                                currentItem?.quantity;
+                                            (updateDraftItemPrice(
                                                 Number(expandedRow),
                                                 recalculatedQuantity,
                                             ),
@@ -564,16 +559,18 @@ const PurchaseTable = ({
                                     />
                                 ) : (
                                     <div
-                                        // onClick={() => {
-                                        //   if (currentItem?.productPackageName?.toLowerCase() !== "шт")
-                                        //     setIsEditing({ isOpen: true, type: "totalPrice" });
-                                        // }}
+                                        onClick={() => {
+                                            setIsEditing({
+                                                isOpen: true,
+                                                type: "totalPrice",
+                                            });
+                                            //   if (currentItem?.productPackageName?.toLowerCase() !== "шт")
+                                        }}
                                         className="bg-white h-8 w-[35%] p-2 flex items-center justify-between gap-2 rounded-lg"
                                     >
                                         Сумма:
                                         <FormattedNumber
                                             value={currentItem?.totalAmount}
-                                            scale={2}
                                         />
                                     </div>
                                 )}

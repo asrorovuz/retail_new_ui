@@ -39,6 +39,7 @@ const DiscountModal = ({
         type="number"
         autoFocus
         replaceLeadingZero={true}
+        space={false}
         value={value}
         onChange={(e) => setValue(e.target.value)}
       />

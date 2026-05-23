@@ -285,7 +285,7 @@ const SaleAndRefunTable = ({
                                           : "text-green-600",
                                 )}
                             >
-                                <FormattedNumber value={totalPrice} scale={2} />
+                                <FormattedNumber value={totalPrice} />
                             </div>
                         </div>
 
@@ -574,7 +574,6 @@ const SaleAndRefunTable = ({
                                     >
                                         <FormattedNumber
                                             value={currentItem?.quantity}
-                                            scale={3}
                                         />
                                     </div>
                                 )}
@@ -658,7 +657,6 @@ const SaleAndRefunTable = ({
                                     <div className="text-xs font-medium text-slate-800">
                                         <FormattedNumber
                                             value={currentItem?.totalAmount}
-                                            scale={2}
                                         />
                                     </div>
                                 </div>
