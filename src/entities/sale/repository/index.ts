@@ -55,13 +55,13 @@ export const useSellTransferApi = (params: any) => {
 
 export const useCreateFiscalizedApi = () => {
     return useMutation({
-        mutationFn: (data: any) => createFiscalizedRefundApi(data),
+        mutationFn: (data: any) => createFiscalizedApi(data),
     });
 };
 
 export const useCreateFiscalizedRefundApi = () => {
     return useMutation({
-        mutationFn: (data: any) => createFiscalizedApi(data),
+        mutationFn: (data: any) => createFiscalizedRefundApi(data),
     });
 };
 
