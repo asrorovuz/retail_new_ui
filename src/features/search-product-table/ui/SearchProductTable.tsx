@@ -97,6 +97,8 @@ const SearchProductTable = ({
             addProducts(item);
         }
 
+        const newQuantity = type === "purchase" && !operationItem ? 0 : quantity + 1
+
         if (type === "revision" || type === "writeof") {
             newItem = {
                 productId: item?.id,
@@ -117,10 +119,10 @@ const SearchProductTable = ({
                         : packagePrice?.product_price_type?.id,
                 priceAmount: packagePrice?.amount,
                 priceAmoutBulk: packagePriceBulk?.amount,
-                quantity: quantity + 1,
+                quantity: newQuantity,
                 isMark: type === "sale" ? item?.is_marked || false : false,
                 totalAmount:
-                    (quantity + 1) *
+                    (newQuantity) *
                     (isSelectedBulk && type === "sale"
                         ? packagePriceBulk?.amount
                         : packagePrice?.amount),
@@ -171,11 +173,13 @@ const SearchProductTable = ({
                                     )}
                                 />
                             </span>
-                            {(type === "sale" || type === "refund") && <span className="text-nowrap border-r-2 border-slate-600 px-1">
-                                <FormattedNumber
-                                    value={Number(bulkPrice?.amount || 0)}
-                                />
-                            </span>}
+                            {(type === "sale" || type === "refund") && (
+                                <span className="text-nowrap border-r-2 border-slate-600 px-1">
+                                    <FormattedNumber
+                                        value={Number(bulkPrice?.amount || 0)}
+                                    />
+                                </span>
+                            )}
                             <span className="text-nowrap px-1">
                                 <FormattedNumber value={Number(state || 0)} />
                             </span>

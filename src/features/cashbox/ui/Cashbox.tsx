@@ -47,13 +47,14 @@ const Cashbox: FC<CashboxPropsType> = (props) => {
 
         if (!dataById?.length) return;
 
-        dataById.forEach((item: any) => {
+        dataById?.forEach((item: any) => {
             addProducts(item);
 
             const existingItem = activeDraft?.items?.find(
                 (p) => p.productId === item?.product?.id,
             );
-            const quantity = existingItem?.quantity ?? 0;
+
+            if (existingItem) return;
 
             const purchasePrice = {
                 amount: item?.product?.warehouse_items?.[0]
@@ -62,6 +63,9 @@ const Cashbox: FC<CashboxPropsType> = (props) => {
                     item?.product?.warehouse_items?.[0]
                         ?.purchase_price_currency,
             };
+
+            // Yangi skanerda miqdorni 1 ga oshiramiz
+            // Yangi mahsulotda esa 0 dan boshlaymiz (prixodgacha)
 
             const newItem = {
                 productId: item?.product?.id,
@@ -72,9 +76,9 @@ const Cashbox: FC<CashboxPropsType> = (props) => {
                 priceTypeId: 0,
                 priceAmount: purchasePrice?.amount,
                 priceAmoutBulk: item?.product?.prices?.[1]?.amount,
-                quantity: quantity + 1,
+                quantity: 0,
                 isMark: false,
-                totalAmount: (quantity + 1) * (purchasePrice?.amount ?? 0),
+                totalAmount: 0,
                 catalogCode: item?.product?.catalog_code,
                 catalogName: item?.product?.catalog_name,
             };

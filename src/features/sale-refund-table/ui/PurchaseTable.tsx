@@ -22,7 +22,7 @@ import { CommonDeleteDialog } from "@/widgets/ui/delete-dialog/CommonDeleteDialo
 import type { DraftPurchaseSchema } from "@/@types/purchase";
 import { getActivePrice } from "@/shared/lib/getActivatePrice";
 import { useDraftPurchaseStore } from "@/app/store/usePurchaseDraftStore";
-import { truncate3 } from "@/shared/lib/truncate3";
+// import { truncate3 } from "@/shared/lib/truncate3";
 
 type PropsType = {
     type: "sale" | "refund" | "purchase";
@@ -157,6 +157,10 @@ const PurchaseTable = ({
                 )?.id;
             setExpandedId(null);
             setExpandedRow(itemId!);
+            setIsEditing({
+                isOpen: true,
+                type: "quantity",
+            });
         }
     }, [expendedId]);
 
@@ -303,9 +307,7 @@ const PurchaseTable = ({
                                         "text-2xl font-semibold text-green-600",
                                     )}
                                 >
-                                    <FormattedNumber
-                                        value={totalPrice}
-                                    />
+                                    <FormattedNumber value={totalPrice} />
                                 </div>
                             </div>
 
@@ -331,7 +333,7 @@ const PurchaseTable = ({
                                                 : "float"
                                         }
                                         className="!w-[35%] h-8"
-                                        value={truncate3(localValue) ?? 0}
+                                        value={localValue ?? 0}
                                         onFocus={() =>
                                             setActiveTypeKeyboard("numeric")
                                         }
@@ -527,7 +529,6 @@ const PurchaseTable = ({
                                             setActiveTypeKeyboard("numeric")
                                         }
                                         onChange={(val) => {
-                                            
                                             const recalculatedQuantity =
                                                 Number(val?.target?.value) /
                                                 currentItem?.quantity;
@@ -600,6 +601,7 @@ const PurchaseTable = ({
                             { value: 1, label: "Розн. цена" },
                             { value: 2, label: "Опт. цена" },
                         ]}
+                        isSearchable={false}
                         className="text-xs"
                         value={
                             selectedRows?.[currentItem?.productId]

@@ -109,6 +109,23 @@ const PaymentSection = ({
         updateDraftPayment(updatedAmounts);
     };
 
+    const currentTypeAmount = useMemo<number>(() => {
+        if (activeSelectPaymetype === 0) {
+            return Number(activeDraft?.discountAmount) || 0;
+        }
+
+        const payments =
+            type === "sale"
+                ? (activeDraft?.payment?.amounts ?? [])
+                : (activeDraft?.payout?.amounts ?? []);
+
+        return (
+            Number(
+                payments.find((p) => p.paymentType === activeSelectPaymetype)
+                    ?.amount,
+            ) || 0
+        );
+    }, [activeSelectPaymetype, activeDraft, type]);
     // const onClickNumber = (num: string) => {
     //     const current = getCurrentAmount();
 
@@ -152,17 +169,20 @@ const PaymentSection = ({
         );
     };
 
-    const toPayAmount = useMemo<number>(() => {
-        return netPrice - totalPaymentAmount;
-    }, [netPrice, totalPaymentAmount]);
+    // const toPayAmount = useMemo<number>(() => {
+    //     return netPrice - totalPaymentAmount;
+    // }, [netPrice, totalPaymentAmount]);
 
-    const onMagent = () => {
-        if (toPayAmount <= 0) return;
+    const onMagnet = () => {
+        // Joriy turni chiqarib, qolgan to'lovlar summasini hisoblaymiz
+        const otherPaymentsTotal = totalPaymentAmount - currentTypeAmount;
+        const newAmount = netPrice - otherPaymentsTotal;
 
-        const newAmount = String(toPayAmount);
+        if (newAmount <= 0) return;
 
-        setValue(newAmount);
-        onPaymentChanged(activeSelectPaymetype, newAmount);
+        const newAmountStr = String(newAmount);
+        setValue(newAmountStr);
+        onPaymentChanged(activeSelectPaymetype, newAmountStr);
     };
 
     const onBackSpace = () => {
@@ -204,6 +224,23 @@ const PaymentSection = ({
             setValue(current ? current?.amount?.toString() : "0");
         }
     }, [amounts, activeSelectPaymetype]);
+
+    useEffect(() => {
+        if (!activeDraft?.items?.length) {
+            const payments =
+                type === "sale"
+                    ? (activeDraft?.payment?.amounts ?? [])
+                    : (activeDraft?.payout?.amounts ?? []);
+
+            // Turlarni saqlab, faqat amountlarni 0 qilamiz
+            const clearedAmounts = payments.map((p) => ({ ...p, amount: "0" }));
+
+            updateDraftPayment(clearedAmounts);
+
+            if (updateDraftDiscount) updateDraftDiscount("0");
+            setValue("0");
+        }
+    }, [activeDraft?.items?.length]);
 
     return (
         <>
@@ -285,7 +322,7 @@ const PaymentSection = ({
                             <Button
                                 variant="plain"
                                 className="bg-transparent text-blue-500 w-max h-8 ml-1"
-                                onClick={onMagent}
+                                onClick={onMagnet}
                                 icon={<MagnetSvg size={28} />}
                             />
                         </div>
@@ -348,7 +385,10 @@ const PaymentSection = ({
                             ></Button>
                         </div>
                     </div>
-                    <NumericKeyboard onClickNumber={onClickNumber} />
+                    <NumericKeyboard
+                        onClickNumber={onClickNumber}
+                        isActive={!activeDraft?.items?.length || false}
+                    />
                 </div>
             )}
         </>
