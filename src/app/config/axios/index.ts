@@ -87,7 +87,78 @@ export const ipcFetch = async <T>(request: {
   });
 };
 
-// 🔹 Avtomatik API so‘rov funksiyasi
+// =============================================================
+// KASSA CONFIG — server/client rejimi IPC funksiyalari
+// =============================================================
+
+// AppConfigResponse — Go main.go dagi "hippo/config/get" handleri qaytaradigan tuzilma
+export type AppConfigResponse = {
+  configured: boolean;       // config.json mavjudmi?
+  mode?: "server" | "client"; // mavjud bo’lsa — qaysi rejim
+  ip?: string;               // mavjud bo’lsa — IP manzil
+  localIP: string;           // bu kompyuterning lokal IP si (server mode uchun ko’rsatiladi)
+};
+
+// getAppConfig — Go dan joriy config ni so’raydi.
+// Production (Electron): IPC orqali main.go ga "hippo/config/get" yuboradi.
+// Development: setup ekranini ko’rsatmaslik uchun "configured: true" qaytaradi.
+export const getAppConfig = (): Promise<AppConfigResponse> => {
+  return new Promise((resolve) => {
+    if (
+      !window?.astilectron ||
+      typeof window?.astilectron.sendMessage !== "function"
+    ) {
+      // Dev mode — setup ekranini o’tkazib yuboramiz
+      resolve({ configured: true, localIP: "localhost" });
+      return;
+    }
+
+    window.astilectron.sendMessage(
+      // Payload bo’sh — Go tomonida payload o’qilmaydi
+      { name: "hippo/config/get", payload: {} },
+      (message: any) => {
+        if (message?.payload) {
+          resolve(message.payload as AppConfigResponse);
+        } else {
+          // Javob kelmasdi — xavfsiz default
+          resolve({ configured: true, localIP: "localhost" });
+        }
+      },
+    );
+  });
+};
+
+// saveAppConfig — tanlangan rejim va IP ni Go ga yuboradi, config.json ga yoziladi.
+// Go proxyService.SetHost() ni ham yangilaydi — restart kerak emas.
+export const saveAppConfig = (config: {
+  mode: "server" | "client";
+  ip: string;
+}): Promise<{ ok: boolean; host: string }> => {
+  return new Promise((resolve, reject) => {
+    if (
+      !window?.astilectron ||
+      typeof window?.astilectron.sendMessage !== "function"
+    ) {
+      // Dev mode — simulyatsiya
+      resolve({ ok: true, host: "http://localhost:7071" });
+      return;
+    }
+
+    window.astilectron.sendMessage(
+      // Payload to’g’ridan-to’g’ri AppConfig formatida — Go json.Unmarshal qiladi
+      { name: "hippo/config/save", payload: config },
+      (message: any) => {
+        if (message?.payload?.ok) {
+          resolve(message.payload);
+        } else {
+          reject(new Error("Config saqlashda xatolik"));
+        }
+      },
+    );
+  });
+};
+
+// 🔹 Avtomatik API so’rov funksiyasi
 export const apiRequest = async <T>(request: {
   url: string;
   method?: "GET" | "POST" | "PUT" | "DELETE";

@@ -1,9 +1,11 @@
+import { getAppConfig } from "@/app/config/axios";
+import type { AppConfigResponse } from "@/app/config/axios";
 import { messages } from "@/app/constants/message.request";
 import { usePrinterApi, useSettingsApi } from "@/entities/init/repository";
 import { useUpdateSettings } from "@/entities/settings/repository";
 import { showErrorMessage, showSuccessMessage } from "@/shared/lib/showMessage";
 import { Button, Form, FormItem, Select, Switcher } from "@/shared/ui/kit";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 
 const ReceiptSizeOptions = [
@@ -15,6 +17,12 @@ const DeviceSettings = () => {
     const { data: settingsData } = useSettingsApi();
     const { data: printerData = [] } = usePrinterApi();
     const { mutate: updateSettings, isPending } = useUpdateSettings();
+    const [appConfig, setAppConfig] = useState<AppConfigResponse | null>(null);
+
+    // Kassa rejimi va IP ni yuklaymiz
+    useEffect(() => {
+        getAppConfig().then(setAppConfig).catch(() => {});
+    }, []);
 
     const form = useForm();
 
@@ -62,6 +70,37 @@ const DeviceSettings = () => {
 
     return (
         <div className="p-3 rounded-lg bg-white w-full">
+            {/* ── Kassa ulanish holati ─────────────────────────────────────── */}
+            {appConfig?.mode && (
+                <div className="mb-4 flex items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm">
+                    {appConfig.mode === "server" ? (
+                        <>
+                            <span className="shrink-0 rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-semibold text-green-700">
+                                Asosiy kassa
+                            </span>
+                            <span className="text-slate-500">
+                                Boshqa kassalar ushbu IP ga ulanadi:
+                            </span>
+                            <span className="font-mono font-semibold text-slate-800 select-all">
+                                {appConfig.localIP}
+                            </span>
+                        </>
+                    ) : (
+                        <>
+                            <span className="shrink-0 rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-semibold text-blue-700">
+                                Klient kassa
+                            </span>
+                            <span className="text-slate-500">
+                                Ulangan server:
+                            </span>
+                            <span className="font-mono font-semibold text-slate-800 select-all">
+                                {appConfig.ip}
+                            </span>
+                        </>
+                    )}
+                </div>
+            )}
+
             <FormProvider {...form}>
                 <Form onSubmit={form.handleSubmit(onSubmit)}>
                     <div className="bg-white rounded-lg border p-4 mb-4">
