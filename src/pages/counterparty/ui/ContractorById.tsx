@@ -9,6 +9,7 @@ import { SlReload } from "react-icons/sl";
 import { FaMoneyCheckDollar } from "react-icons/fa6";
 import { CgArrowsExchange } from "react-icons/cg";
 import Tab1 from "./tab-items/Tab1";
+import Tab7 from "./tab-items/Tab7";
 
 const tabs = [
     {
@@ -74,7 +75,7 @@ const ContractorById = () => {
     const [activeTab, setActiveTab] = useState("tab1");
     const { id } = useParams();
 
-    const { data, isPending } = useContragentByIdApi(Number(id));    
+    const { data, isPending } = useContragentByIdApi(Number(id));
 
     const renderContent = () => {
         if (isPending) {
@@ -91,7 +92,7 @@ const ContractorById = () => {
         if (activeTab === "tab4") return <></>;
         if (activeTab === "tab5") return <></>;
         if (activeTab === "tab6") return <></>;
-        if (activeTab === "tab7") return <></>;
+        if (activeTab === "tab7") return <Tab7 contractorId={id}/>;
     };
 
     return (

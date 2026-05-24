@@ -27,33 +27,41 @@ export const exportToExcelApi = (
         } else if (file instanceof ArrayBuffer) {
             uint8Array = new Uint8Array(file);
         } else if (file instanceof Blob) {
-            // Blob → ArrayBuffer → Uint8Array
             file.arrayBuffer().then((buffer) => {
-                const workbook = XLSX.read(new Uint8Array(buffer), {
-                    type: "array",
-                });
-                XLSX.writeFile(workbook, `${fileName}.xlsx`);
+                downloadXlsxBlob(new Uint8Array(buffer), fileName);
             });
             return;
         } else if (Array.isArray(file)) {
-            // Astilectron IPC: plain number[]
             uint8Array = new Uint8Array(file as number[]);
         } else if (
             file !== null &&
             typeof file === "object" &&
             "data" in (file as object)
         ) {
-            // Astilectron IPC: { data: number[] }
             uint8Array = new Uint8Array((file as { data: number[] }).data);
         } else {
             console.error("Kutilmagan ma'lumot turi:", typeof file, file);
             return;
         }
 
-        // XLSX orqali yozish — Electron va Browserda ishlaydi
-        const workbook = XLSX.read(uint8Array, { type: "array" });
-        XLSX.writeFile(workbook, `${fileName}.xlsx`);
+        downloadXlsxBlob(uint8Array, fileName);
     } catch (error) {
         console.error("Excel eksport xatosi:", error);
     }
 };
+
+// XLSX.writeFile o'rniga Blob + <a> — Electron va Browserda ishlaydi
+function downloadXlsxBlob(uint8Array: Uint8Array, fileName: string): void {
+    const blob = new Blob([uint8Array as any], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `${fileName}.xlsx`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+}

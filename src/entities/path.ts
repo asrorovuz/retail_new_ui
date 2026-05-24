@@ -237,4 +237,8 @@ export const pathServices = {
         createWriteoff: "/api/write-off/register",
         deleteWriteoffPath: "/api/write-off/delete",
     },
+
+    contractor: {
+        getActReport: "/api/contractor/act-report/"
+    }
 };

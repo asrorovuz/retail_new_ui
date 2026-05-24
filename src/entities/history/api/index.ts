@@ -27,12 +27,13 @@ export const getSellApi = async (params: any): Promise<any> => {
         params?.pageIndex && params.pageSize
             ? (params?.pageIndex - 1) * params?.pageSize
             : 0;
+    const { pageSize, pageIndex, ...param } = params;
     return await apiRequest<any>({
         url: pathServices.history.getSellPath,
         params: {
             limit: params?.pageSize ?? 20,
             skip,
-            ...params,
+            ...param,
         },
         method: "GET",
     });
@@ -50,12 +51,13 @@ export const getRefundApi = async (params: any): Promise<any> => {
         params?.pageIndex && params.pageSize
             ? (params?.pageIndex - 1) * params?.pageSize
             : 0;
+    const { pageSize, pageIndex, ...param } = params;
     return await apiRequest<any>({
         url: pathServices.history.getRefundPath,
         params: {
             limit: params?.pageSize ?? 20,
             skip,
-            ...params,
+            ...param,
         },
         method: "GET",
     });
@@ -73,12 +75,13 @@ export const getPurchaseApi = async (params: any): Promise<any> => {
         params?.pageIndex && params.pageSize
             ? (params?.pageIndex - 1) * params?.pageSize
             : 0;
+    const { pageSize, pageIndex, ...param } = params;
     return await apiRequest<any>({
         url: pathServices.history.getPurchasePath,
         params: {
             limit: params?.pageSize ?? 20,
             skip,
-            ...params,
+            ...param,
         },
         method: "GET",
     });
@@ -99,12 +102,13 @@ export const getOperationCountApi = async (
         params?.pageIndex && params.pageSize
             ? (params?.pageIndex - 1) * params?.pageSize
             : 0;
+    const { pageSize, pageIndex, ...param } = params;
     return await apiRequest<any>({
         url: `/api/${type}/get/count`,
         params: {
             limit: params?.pageSize ?? 20,
             skip,
-            ...params,
+            ...param,
         },
         method: "GET",
     });

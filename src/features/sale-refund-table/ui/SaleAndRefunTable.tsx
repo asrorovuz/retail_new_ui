@@ -165,7 +165,7 @@ const SaleAndRefunTable = ({
                         overflow={false}
                         compact={true}
                     >
-                        <THead className={"sticky top-0"}>
+                        <THead className={"sticky top-0 z-20 bg-white"}>
                             {table?.getHeaderGroups().map((headerGroup) => (
                                 <Tr key={headerGroup.id}>
                                     {headerGroup.headers.map((header, ind) => {

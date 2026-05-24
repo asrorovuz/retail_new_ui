@@ -187,7 +187,7 @@ const PurchaseTable = ({
                             overflow={false}
                             compact={true}
                         >
-                            <THead className={"sticky top-0"}>
+                            <THead className={"sticky top-0 bg-white"}>
                                 {table?.getHeaderGroups().map((headerGroup) => (
                                     <Tr key={headerGroup.id}>
                                         {headerGroup.headers.map(

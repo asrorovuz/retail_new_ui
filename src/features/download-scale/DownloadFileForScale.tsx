@@ -1,7 +1,6 @@
 import { useExportProductScaleApi } from "@/entities/products/repository";
 import { showErrorMessage } from "@/shared/lib/showMessage";
 import { Button, Dropdown } from "@/shared/ui/kit";
-import * as XLSX from "xlsx";
 
 enum TypeScales {
     ShtrixmExportFormat = 1, // txt
@@ -19,16 +18,28 @@ const DownloadFileForScales = ({ handleExport }: any) => {
 
             let fileName = "Файл"; // default nom
 
-            if (type === TypeScales.RongtaExportFormat) {
-                fileName = "Экспорт_Ронгта";
-                const data = new Uint8Array(res);
-                const workbook = XLSX.read(data, { type: "array" });
-                XLSX.writeFile(workbook, `${fileName}.xlsx`);
-            } else if (type === TypeScales.TmaExportFormat) {
-                fileName = "Экспорт_TMA";
-                const data = new Uint8Array(res);
-                const workbook = XLSX.read(data, { type: "array" });
-                XLSX.writeFile(workbook, `${fileName}.xlsx`);
+            if (
+                type === TypeScales.RongtaExportFormat ||
+                type === TypeScales.TmaExportFormat
+            ) {
+                const fileName =
+                    type === TypeScales.RongtaExportFormat
+                        ? "Экспорт_Ронгта"
+                        : "Экспорт_TMA";
+
+                const uint8Array = new Uint8Array(res);
+                const blob = new Blob([uint8Array], {
+                    type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                });
+
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement("a");
+                link.href = url;
+                link.download = `${fileName}.xlsx`;
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+                URL.revokeObjectURL(url);
             } else {
                 fileName =
                     TypeScales.ThePosExportFormat === type
