@@ -4,10 +4,10 @@ import { AiOutlineEnter } from "react-icons/ai";
 
 const NumericKeyboard = ({
     onClickNumber,
-    isActive,
+    isActive = false, // default: klaviatura faol (bloklangan emas)
 }: {
     onClickNumber?: (key: string) => void;
-    isActive: boolean;
+    isActive?: boolean; // optional — berilmasa false
 }) => {
     const { insert, blurActiveField } = useKeyboard();
 
