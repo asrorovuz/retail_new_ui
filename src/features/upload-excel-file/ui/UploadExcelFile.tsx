@@ -293,7 +293,7 @@ const UploadExcelFile = ({ isOpen, setIsOpen }: any) => {
                 (p: any) => p?.name === elem?.name,
             );
             const category: any = categoryData?.find(
-                (p: any) => p?.name === elem?.category_name,
+                (p: any) => p?.name === elem?.category,
             );
 
             const baseProduct = initialState?.edit ? product : null;
@@ -311,14 +311,14 @@ const UploadExcelFile = ({ isOpen, setIsOpen }: any) => {
                         initialState?.edit && !elem?.purchasePrice
                             ? (product?.purchase_price?.amount ?? null)
                             : elem?.purchasePrice
-                              ? Number(elem.purchasePrice.replace(",", ""))
+                              ? Number(String(elem.purchasePrice).replace(",", ""))
                               : null,
                     currency_code: currencyCode,
                 },
                 measurement_name:
-                    initialState?.edit && !elem?.packageMeasurementName
+                    initialState?.edit && !elem?.measurement && !elem?.packageMeasurementName
                         ? showMeasurmentName(product?.measurement_code)
-                        : elem?.packageMeasurementName || "шт",
+                        : elem?.measurement || elem?.packageMeasurementName || "шт",
                 sku: elem?.sku ?? baseProduct?.sku ?? null,
                 code: elem?.code ?? baseProduct?.code ?? null,
                 state:
@@ -342,7 +342,7 @@ const UploadExcelFile = ({ isOpen, setIsOpen }: any) => {
                         ? product?.category_name
                         : elem?.category,
                 category_id:
-                    initialState?.edit && !elem?.categoryName
+                    initialState?.edit && !elem?.category
                         ? product?.category_id
                         : category?.id,
                 catalog_code:
@@ -359,7 +359,7 @@ const UploadExcelFile = ({ isOpen, setIsOpen }: any) => {
                             initialState?.edit && !elem?.commonPrice
                                 ? (product?.prices?.[0]?.amount ?? 0)
                                 : elem?.commonPrice
-                                  ? Number(elem.commonPrice.replace(",", ""))
+                                  ? Number(String(elem.commonPrice).replace(",", ""))
                                   : 0,
                         price_type_id: 1,
                         currency_code: currencyCode,
@@ -369,7 +369,7 @@ const UploadExcelFile = ({ isOpen, setIsOpen }: any) => {
                             initialState?.edit && !elem?.bulkPrice
                                 ? (product?.prices?.[1]?.amount ?? 0)
                                 : elem?.bulkPrice
-                                  ? Number(elem.bulkPrice.replace(",", ""))
+                                  ? Number(String(elem.bulkPrice).replace(",", ""))
                                   : 0,
                         price_type_id: 2,
                         currency_code: currencyCode,
