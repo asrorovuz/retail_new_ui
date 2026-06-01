@@ -59,6 +59,21 @@ const SearchProduct = ({
         }
     }, [activeType]);
 
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (!setActiveType) return;
+            const tag = (document.activeElement as HTMLElement)?.tagName;
+            if (tag === "INPUT" || tag === "TEXTAREA") return;
+            if (e.key.length !== 1 || e.ctrlKey || e.altKey || e.metaKey) return;
+
+            setActiveType("qwerty");
+            setSearch(e.key);
+            inputRef.current?.focus();
+        };
+        window.addEventListener("keydown", handleKeyDown);
+        return () => window.removeEventListener("keydown", handleKeyDown);
+    }, [setActiveType, setSearch]);
+
     return (
         <div className="flex gap-1">
             <div className=" gap-1 w-full rounded-lg">

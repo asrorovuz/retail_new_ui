@@ -2,6 +2,7 @@ import {
     useState,
     useEffect,
     useRef,
+    useCallback,
     type ChangeEvent,
     type ElementType,
     type ReactNode,
@@ -77,6 +78,16 @@ const Input = (props: InputProps) => {
 
     const inputRef = useRef<HTMLInputElement>(null);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+    const mergedRef = useCallback(
+        (node: HTMLInputElement | null) => {
+            (inputRef as React.MutableRefObject<HTMLInputElement | null>).current = node;
+            if (!ref) return;
+            if (typeof ref === "function") ref(node as any);
+            else (ref as React.MutableRefObject<HTMLInputElement | null>).current = node;
+        },
+        [ref],
+    );
     const fieldObjRef = useRef<any | null>(null); // ActiveField obyekti saqlash uchun
 
     // tayyorlaydigan funksiya, register uchun foydalanamiz
@@ -308,7 +319,7 @@ const Input = (props: InputProps) => {
         className: !unstyle ? inputClass : "",
         disabled,
         type: type === "number" ? "text" : type,
-        ref: inputRef,
+        ref: mergedRef,
         value: displayValue,
         onChange: handleChange,
         onFocus: handleFocus,

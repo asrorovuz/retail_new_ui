@@ -144,6 +144,7 @@ export const pathServices = {
         updateSellPath: "/api/sale/update/",
         getPaymentDebts: "/api/payment/register",
         getPayoutDebts: "/api/payout/register",
+        getSaleById: "api/sale/",
 
         // CREATE
         createFiscalized: "/api/fiscalization/sale/register",

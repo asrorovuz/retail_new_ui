@@ -25,7 +25,7 @@ import {
     useReactTable,
     getCoreRowModel,
     flexRender,
-    type ColumnDef,
+    createColumnHelper,
 } from "@tanstack/react-table";
 import { useMemo, useState } from "react";
 import { FaRegEdit } from "react-icons/fa";
@@ -44,6 +44,7 @@ const TableHistory = ({
     pay,
     payKey,
     type,
+    countyparty = false,
 }: {
     data: any[];
     count: number;
@@ -54,12 +55,15 @@ const TableHistory = ({
     pay: boolean;
     payKey: string;
     type: "sale" | "refund" | "purchase";
+    countyparty?: boolean;
 }) => {
     const [id, setId] = useState(null);
     const [isOpenDelete, setIsOpenDelete] = useState(false);
     const navigate = useNavigate();
     const { mutate: deleteMutation, isPending: deletePending } =
         useDeleteTransactions(type);
+
+    const columnHelper = createColumnHelper<any>();
 
     const { addDraftSale, draftSales, activateDraftSale } = useDraftSaleStore();
     const { addDraftRefund, draftRefunds, activateDraftRefund } =
@@ -176,23 +180,30 @@ const TableHistory = ({
         }
     };
 
-    const columns = useMemo<ColumnDef<any>[]>(() => {
+    const columns = useMemo(() => {
         return [
-            {
+            columnHelper.display({
                 id: "index",
-                header: "№",
+                header: () => <div className="!w-10">№</div>,
                 cell: (info) => (
                     <div className="!w-10">
                         {(params?.pageIndex - 1) * params?.pageSize +
-                            (info?.row?.index + 1)}
+                            (info.row.index + 1)}
                     </div>
                 ),
-            },
-            {
+                // meta: {
+                //     bodyCellClassName: "!w-10",
+                //     headerClassName: "!w-10"
+                // },
+                // maxSize: 40,
+                // size: 40
+            }),
+
+            columnHelper.display({
                 id: "number",
                 header: "ID",
                 cell: ({ row }) => {
-                    const number = row?.original.number;
+                    const number = row.original.number;
                     return (
                         <div
                             className="cursor-pointer font-bold hover:text-primary text-center"
@@ -202,46 +213,40 @@ const TableHistory = ({
                         </div>
                     );
                 },
-            },
-            ...(pay
+            }),
+
+            ...(pay && !countyparty
                 ? [
-                      {
+                      columnHelper.accessor("contractor.name", {
                           id: "contractor",
-                          accessorKey: "contractor.name",
                           enableSorting: false,
                           enableHiding: false,
                           meta: {
-                              cellClassName: "font-bold truncate text-center",
+                              bodyCellClassName:
+                                  "font-bold truncate text-center",
                           },
-                          header: () => {
-                              return "Контрагент";
-                          },
-                      },
+                          header: () => "Контрагент",
+                      }),
                   ]
                 : []),
-            {
+
+            columnHelper.accessor("totals", {
                 id: "totals",
-                accessorKey: "totals",
                 enableSorting: false,
                 enableHiding: false,
                 meta: {
-                    cellClassName: "text-end",
+                    bodyCellClassName: "text-end",
                 },
-                header: () => {
-                    return "Итого";
-                },
+                header: () => "Итого",
                 cell: ({ row }) => {
-                    const totals = row?.original?.totals;
-
+                    const totals = row.original?.totals;
                     return (
                         <div className="whitespace-nowrap">
                             {totals ? (
-                                totals?.map((item: any, index: number) => (
+                                totals.map((item: any, index: number) => (
                                     <p
                                         key={index}
-                                        className={
-                                            "heading-text font-bold whitespace-nowrap flex gap-x-1"
-                                        }
+                                        className="heading-text font-bold whitespace-nowrap flex gap-x-1"
                                     >
                                         <FormattedNumber value={item?.amount} />
                                         <CurrencyName
@@ -250,32 +255,27 @@ const TableHistory = ({
                                     </p>
                                 ))
                             ) : (
-                                <p className={"heading-text font-bold"}>0</p>
+                                <p className="heading-text font-bold">0</p>
                             )}
                         </div>
                     );
                 },
-                maxSize: 150,
-                minSize: 150,
-            },
+            }),
+
             ...(pay
                 ? [
-                      {
+                      columnHelper.accessor("cashbox_state", {
                           id: "cashbox_state",
-                          accessorKey: "cashbox_state",
                           enableSorting: false,
                           enableHiding: false,
                           meta: {
-                              cellClassName: "text-end min-w-[175px]",
+                              bodyCellClassName: "text-end min-w-[175px]",
                           },
-                          header: () => {
-                              return "Оплата";
-                          },
-                          cell: ({ row }: { row: any }) => {
-                              const { [payKey as string]: pay } =
-                                  row?.original as any;
-
-                              const { cash_box_states } = pay || {};
+                          header: () => "Оплата",
+                          cell: ({ row }) => {
+                              const { [payKey as string]: payData } =
+                                  row.original as any;
+                              const { cash_box_states } = payData || {};
 
                               return (
                                   <div className="whitespace-nowrap text-nowrap">
@@ -287,13 +287,11 @@ const TableHistory = ({
                                                       item: any,
                                                       index: number,
                                                   ) => (
-                                                      <div className="flex gap-1 items-center">
-                                                          <p
-                                                              key={index}
-                                                              className={
-                                                                  "heading-text font-bold whitespace-nowrap flex gap-x-1"
-                                                              }
-                                                          >
+                                                      <div
+                                                          key={index}
+                                                          className="flex gap-1 items-center"
+                                                      >
+                                                          <p className="heading-text font-bold whitespace-nowrap flex gap-x-1">
                                                               <FormattedNumber
                                                                   value={
                                                                       item?.amount
@@ -350,11 +348,7 @@ const TableHistory = ({
                                                   ),
                                               )
                                       ) : (
-                                          <p
-                                              className={
-                                                  "heading-text font-bold"
-                                              }
-                                          >
+                                          <p className="heading-text font-bold">
                                               0
                                           </p>
                                       )}
@@ -363,20 +357,60 @@ const TableHistory = ({
                           },
                           maxSize: 150,
                           minSize: 150,
-                      },
-                      {
-                          id: "debt",
-                          accessorKey: "debt",
+                      }),
+                      columnHelper.accessor("discount", {
+                          id: "discount",
                           enableSorting: false,
                           enableHiding: false,
                           meta: {
-                              cellClassName: "text-end min-w-[175px]",
+                              bodyCellClassName: "text-end",
                           },
-                          header: () => {
-                              return "Долг";
+                          header: () => "Скидка",
+                          cell: ({ row }) => {
+                              const totals = row.original?.exact_discounts;
+                              console.log(row.original);
+
+                              return (
+                                  <div className="whitespace-nowrap">
+                                      {totals ? (
+                                          totals.map(
+                                              (item: any, index: number) => (
+                                                  <p
+                                                      key={index}
+                                                      className="heading-text font-bold whitespace-nowrap flex gap-x-1"
+                                                  >
+                                                      <FormattedNumber
+                                                          value={item?.amount}
+                                                      />
+                                                      <CurrencyName
+                                                          currency={
+                                                              item?.currency
+                                                          }
+                                                      />
+                                                  </p>
+                                              ),
+                                          )
+                                      ) : (
+                                          <p className="heading-text font-bold">
+                                              0
+                                          </p>
+                                      )}
+                                  </div>
+                              );
                           },
-                          cell: ({ row }: { row: any }) => {
-                              const debts = row?.original?.debts;
+                          maxSize: 150,
+                          minSize: 150,
+                      }),
+                      columnHelper.accessor("debt", {
+                          id: "debt",
+                          enableSorting: false,
+                          enableHiding: false,
+                          meta: {
+                              bodyCellClassName: "text-end min-w-[175px]",
+                          },
+                          header: () => "Долг",
+                          cell: ({ row }) => {
+                              const debts = row.original?.debts;
                               return (
                                   <div>
                                       {debts ? (
@@ -389,9 +423,7 @@ const TableHistory = ({
                                                   ) => (
                                                       <p
                                                           key={index}
-                                                          className={
-                                                              "heading-text font-bold text-nowrap whitespace-nowrap flex gap-x-1"
-                                                          }
+                                                          className="heading-text font-bold text-nowrap whitespace-nowrap flex gap-x-1"
                                                       >
                                                           <FormattedNumber
                                                               value={
@@ -407,11 +439,7 @@ const TableHistory = ({
                                                   ),
                                               )
                                       ) : (
-                                          <p
-                                              className={
-                                                  "heading-text font-bold"
-                                              }
-                                          >
+                                          <p className="heading-text font-bold">
                                               0
                                           </p>
                                       )}
@@ -420,129 +448,93 @@ const TableHistory = ({
                           },
                           maxSize: 150,
                           minSize: 150,
-                      },
-                      {
+                      }),
+
+                      columnHelper.accessor("account.name", {
                           id: "account",
-                          accessorKey: "account.name",
                           enableSorting: false,
                           enableHiding: false,
                           meta: {
-                              cellClassName: "font-bold truncate text-center",
+                              bodyCellClassName:
+                                  "font-bold truncate text-center",
                           },
-                          header: () => {
-                              return "Сотрудник";
-                          },
-                      },
+                          header: () => "Сотрудник",
+                      }),
                   ]
                 : []),
-            // {
-            //     id: "employee",
-            //     accessorKey: "employees.name",
-            //     enableSorting: false,
-            //     enableHiding: false,
-            //     meta: {
-            //         cellClassName: "font-bold truncate text-center",
-            //     },
-            //     header: () => {
-            //         return "Сотрудник";
-            //     },
-            // },
-            // {
-            //     id: "note",
-            //     accessorKey: "note",
-            //     enableSorting: false,
-            //     enableHiding: false,
-            //     meta: {
-            //         cellClassName: "font-bold truncate text-center",
-            //     },
-            //     header: () => {
-            //         return "Примечание";
-            //     },
-            //     cell: ({ row }) => {
-            //         return <div>{row?.original?.comment}</div>;
-            //     },
-            // },
-            {
+
+            columnHelper.accessor("date", {
                 id: "date",
-                accessorKey: "date",
                 enableSorting: false,
                 enableHiding: false,
                 meta: {
-                    cellClassName: "font-bold truncate text-center",
+                    bodyCellClassName: "font-bold truncate text-center",
                 },
-                header: () => {
-                    return "Дата";
-                },
+                header: () => "Дата",
                 cell: ({ row }) => {
-                    const date = row?.original?.date;
+                    const date = row.original?.date;
                     return <div>{new Date(date).toLocaleString()}</div>;
                 },
-            },
-            {
+            }),
+
+            columnHelper.display({
                 id: "action",
                 meta: {
-                    cellClassName:
-                        "text-center sticky right-0 z-999 !bg-white dark:!bg-slate-800 hover:!bg-white dark:hover:!bg-slate-800 shadow-[inset_0_1px_0_#e5e7eb] dark:shadow-[inset_0_1px_0_#374151]",
-                    headerClassName:
-                        "text-center sticky right-0 z-999 !bg-white dark:!bg-slate-800 hover:!bg-white dark:hover:!bg-slate-800 shadow-[inset_0_0_0_#e5e7eb] dark:shadow-[inset_0_0_0_#374151]",
+                    bodyCellClassName: "text-center sticky right-0 z-999",
                 },
-                header: () => {
-                    return "";
-                },
-                cell: ({ row }) => {
-                    return (
-                        <Dropdown
-                            renderTitle={
-                                <div className="flex px-2 justify-center text-2xl text-slate-600">
-                                    <HiOutlineDotsHorizontal />
+                header: () => "",
+                cell: ({ row }) => (
+                    <Dropdown
+                        renderTitle={
+                            <div className="w-full h-full flex justify-center text-2xl text-slate-600">
+                                <HiOutlineDotsHorizontal />
+                            </div>
+                        }
+                    >
+                        {canView && (
+                            <DropdownItem
+                                onClick={() =>
+                                    setViewModal({
+                                        isOpen: true,
+                                        id: row.original?.id,
+                                    })
+                                }
+                                className="h-auto!"
+                            >
+                                <div className="w-full flex items-center gap-2 text-slate-700 py-3 px-5 rounded-lg">
+                                    <TbEye size={22} />
+                                    Посмотреть
                                 </div>
-                            }
-                        >
-                            {canView && (
-                                <DropdownItem
-                                    onClick={() =>
-                                        setViewModal({
-                                            isOpen: true,
-                                            id: row?.original?.id,
-                                        })
-                                    }
-                                    className="h-auto!"
-                                >
-                                    <div className="w-full flex items-center gap-2 text-slate-700 py-3 px-5 rounded-lg">
-                                        <TbEye size={22} />
-                                        Посмотреть
-                                    </div>
-                                </DropdownItem>
-                            )}
-                            {canUpdate && (
-                                <DropdownItem
-                                    onClick={() => onSubmit(row.original)}
-                                    className="h-auto!"
-                                >
-                                    <div className="w-full flex items-center gap-2 text-orange-500 py-3 px-5 rounded-lg">
-                                        <FaRegEdit size={20} />
-                                        Редактировать
-                                    </div>
-                                </DropdownItem>
-                            )}
-                            {canDelete && (
-                                <DropdownItem
-                                    onClick={() => {
-                                        setId(row.original.id);
-                                        setIsOpenDelete(true);
-                                    }}
-                                    className="h-auto!"
-                                >
-                                    <div className="w-full flex items-center gap-2 text-red-500 py-3 px-5 rounded-lg">
-                                        <IoTrashOutline size={20} />
-                                        Удалить
-                                    </div>
-                                </DropdownItem>
-                            )}
-                        </Dropdown>
-                    );
-                },
-            },
+                            </DropdownItem>
+                        )}
+                        {canUpdate && (
+                            <DropdownItem
+                                onClick={() => onSubmit(row.original)}
+                                className="h-auto!"
+                            >
+                                <div className="w-full flex items-center gap-2 text-orange-500 py-3 px-5 rounded-lg">
+                                    <FaRegEdit size={20} />
+                                    Редактировать
+                                </div>
+                            </DropdownItem>
+                        )}
+                        {canDelete && (
+                            <DropdownItem
+                                onClick={() => {
+                                    setId(row.original.id);
+                                    setIsOpenDelete(true);
+                                }}
+                                className="h-auto!"
+                            >
+                                <div className="w-full flex items-center gap-2 text-red-500 py-3 px-5 rounded-lg">
+                                    <IoTrashOutline size={20} />
+                                    Удалить
+                                </div>
+                            </DropdownItem>
+                        )}
+                    </Dropdown>
+                ),
+            }),
         ];
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [data, params]);
@@ -601,21 +593,6 @@ const TableHistory = ({
         data,
         columns,
         getCoreRowModel: getCoreRowModel(),
-        // getRowId: (row: any) => row.id,
-        // onPaginationChange: onPaginationChange,
-        // autoResetPageIndex: false,
-        // manualPagination: true,
-        // manualFiltering: true,
-        // manualSorting: true,
-        // enableSorting: true,
-        // enableSortingRemoval: true,
-        // rowCount: count,
-        // state: {
-        //     pagination: {
-        //         pageIndex: params.skip / (params.limit || 1),
-        //         pageSize: params.limit,
-        //     },
-        // },
     });
 
     if (loading)
@@ -626,10 +603,15 @@ const TableHistory = ({
         );
 
     return (
-        <div className="bg-white h-screen p-2 flex flex-col">
+        <div
+            className={`bg-white p-2 flex flex-col ${countyparty ? "h-[calc(100vh-136px)]" : "h-screen"}`}
+        >
             <div
                 className={classNames(
-                    "flex flex-col mb-3 h-[calc(100vh-136px)]",
+                    "flex flex-col mb-3 ",
+                    countyparty
+                        ? "h-[calc(100vh-252px)]"
+                        : "h-[calc(100vh-136px)]",
                 )}
             >
                 <div className="h-full mb-3 border-slate-300 rounded-lg overflow-auto">
@@ -643,7 +625,7 @@ const TableHistory = ({
                                                 className={classNames(
                                                     header.column.columnDef.meta
                                                         ?.color,
-                                                    "border border-slate-200 bg-slate-200",
+                                                    "border bg-white",
                                                 )}
                                                 key={header.id}
                                             >
@@ -674,7 +656,7 @@ const TableHistory = ({
                                                 className={classNames(
                                                     cell.column.columnDef.meta
                                                         ?.color || "#fff",
-                                                    "border !py-0",
+                                                    "border",
                                                 )}
                                                 key={cell.id}
                                             >
@@ -698,17 +680,17 @@ const TableHistory = ({
                                 ))}
                             </TBody>
                             <TFoot>
-                                <Tr className="font-bold bg-slate-200">
+                                <Tr className="font-bold border">
                                     {/* № */}
                                     <Td>
-                                        <div className="px-4 py-3">Итого</div>
+                                        <div className="px-4 py-1">Итого</div>
                                     </Td>
 
                                     {/* Номер */}
                                     <Td />
 
                                     {/* Контрагент (agar pay bo‘lsa) */}
-                                    {pay && <Td />}
+                                    {pay && !countyparty && <Td />}
 
                                     {/* 🔹 ИТОГО */}
                                     <Td>
@@ -773,15 +755,6 @@ const TableHistory = ({
                                     <Td />
 
                                     {/* Status */}
-                                    <Td />
-
-                                    {/* Note */}
-                                    <Td />
-
-                                    {/* Date */}
-                                    <Td />
-
-                                    {/* Action */}
                                     <Td />
                                 </Tr>
                             </TFoot>

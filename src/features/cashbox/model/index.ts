@@ -21,6 +21,7 @@ export type CashboxPropsType =
     | ({
           type: "purchase";
           drafts: DraftPurchaseSchema[];
+          payModal?: boolean;
           addNewDraft: (payload: DraftPurchaseSchema) => void;
       } & BaseProps);
 

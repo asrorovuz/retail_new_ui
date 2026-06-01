@@ -13,7 +13,7 @@ import classNames from "@/shared/lib/classNames";
 import TBody from "@/shared/ui/kit/Table/TBody";
 import type { DraftSaleSchema } from "@/@types/sale";
 import Td from "@/shared/ui/kit/Table/Td";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import FormattedNumber from "@/shared/ui/kit-pro/numeric-format/NumericFormat";
 import { HiTrash } from "react-icons/hi";
 import Empty from "@/shared/ui/kit-pro/empty/Empty";
@@ -133,6 +133,31 @@ const SaleAndRefunTable = ({
             setExpandedRow(itemId!);
         }
     }, [expendedId]);
+
+    const increaseRef = useRef(increase);
+    increaseRef.current = increase;
+    const decreaseRef = useRef(decrease);
+    decreaseRef.current = decrease;
+
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (!expandedRow) return;
+            const tag = (document.activeElement as HTMLElement)?.tagName;
+            if (tag === "INPUT" || tag === "TEXTAREA") return;
+            if (isEditing.isOpen) return;
+
+            if (e.key === "ArrowRight") {
+                e.preventDefault();
+                increaseRef.current();
+            } else if (e.key === "ArrowLeft") {
+                e.preventDefault();
+                decreaseRef.current();
+            }
+        };
+
+        window.addEventListener("keydown", handleKeyDown);
+        return () => window.removeEventListener("keydown", handleKeyDown);
+    }, [expandedRow, isEditing.isOpen]);
 
     const table = useReactTable({
         data: activeDraft?.items ?? [],

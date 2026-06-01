@@ -10,6 +10,7 @@ import { FaMoneyCheckDollar } from "react-icons/fa6";
 import { CgArrowsExchange } from "react-icons/cg";
 import Tab1 from "./tab-items/Tab1";
 import Tab7 from "./tab-items/Tab7";
+import Tab2 from "./tab-items/Tab2";
 
 const tabs = [
     {
@@ -86,8 +87,8 @@ const ContractorById = () => {
             );
         }
 
-        if (activeTab === "tab1") return <Tab1 data={data} />;
-        if (activeTab === "tab2") return <></>;
+        if (activeTab === "tab1") return <Tab1 data={data} id={id}/>;
+        if (activeTab === "tab2") return <Tab2 id={id} />;
         if (activeTab === "tab3") return <></>;
         if (activeTab === "tab4") return <></>;
         if (activeTab === "tab5") return <></>;

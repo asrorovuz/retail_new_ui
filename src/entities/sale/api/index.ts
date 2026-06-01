@@ -37,6 +37,13 @@ export const getTransferApi = async (params: any): Promise<any> => {
   });
 };
 
+export const getSaleByIdApi = async (id: any): Promise<any> => {
+  return await apiRequest({
+    url: pathServices.sale.getSaleById + id,
+    method: "GET",
+  });
+};
+
 export const paymentProviderApi = async (): Promise<PaymeProviderType[]> => {
   return await apiRequest({
     url: pathServices.sale.getPaymentPath,

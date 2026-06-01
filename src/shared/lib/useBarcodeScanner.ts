@@ -66,20 +66,18 @@ export const useBarcodeScanner = () => {
       // Browserga yozilishiga yo‘l bermaymiz
       
       if (e.key === "Enter") {
-        e.preventDefault();
-        e.stopImmediatePropagation();
-        // 🔥 QO‘SHIMCHA HIMOYA
         if (buffer.current.length >= 6) {
+          e.preventDefault();
+          e.stopImmediatePropagation();
           eventBus.dispatch("BARCODE_SCANNED", buffer.current);
+          buffer.current = "";
         }
-        buffer.current = "";
         return;
       }
-      
+
       if (e.key.length === 1) {
         buffer.current += e.key;
         e.preventDefault();
-        e.stopPropagation();
       }
     };
 

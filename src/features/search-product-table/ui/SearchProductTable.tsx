@@ -9,6 +9,12 @@ import { highlightText } from "@/shared/lib/hightLightText";
 import { showMeasurmentName } from "@/shared/lib/showMeausermentName";
 import FormattedNumber from "@/shared/ui/kit-pro/numeric-format/NumericFormat";
 import type { PriceType } from "@/widgets/ui/favourite-card/FavouriteCard";
+import { useEffect, useRef, useState } from "react";
+
+const buildPrice = (item: any) => ({
+    amount: item?.purchase_price_amount,
+    currency: item?.purchase_price_currency,
+});
 
 type PropsType = {
     data: Product[] | [];
@@ -64,16 +70,31 @@ const SearchProductTable = ({
 
     const { active, update } = getActiveDraft();
 
-    const onBuildPrice = (item: any) => {
-        return {
-            amount: item?.purchase_price_amount,
-            currency: item?.purchase_price_currency,
-        };
-    };
+    const [highlightedIndex, setHighlightedIndex] = useState(-1);
+    const highlightedIndexRef = useRef(-1);
+    const rowRefs = useRef<(HTMLDivElement | null)[]>([]);
+    const dataRef = useRef(data);
+    dataRef.current = data;
+
+    // Updated every render — window listener calls this to avoid stale closure
+    const onChangeRef = useRef<(item: any) => void>(() => {});
+
+    useEffect(() => {
+        setHighlightedIndex(-1);
+        highlightedIndexRef.current = -1;
+    }, [data]);
+
+    useEffect(() => {
+        if (highlightedIndex >= 0) {
+            rowRefs.current[highlightedIndex]?.scrollIntoView({
+                block: "nearest",
+            });
+        }
+    }, [highlightedIndex]);
 
     const onChange = (item: any) => {
         const operationItem = active?.items?.find(
-            (p) => p.productId === item?.id,
+            (p: any) => p.productId === item?.id,
         );
 
         const isSelectedBulk =
@@ -81,23 +102,26 @@ const SearchProductTable = ({
 
         const packagePrice =
             type === "purchase"
-                ? onBuildPrice(item?.warehouse_items?.[0])
+                ? buildPrice(item?.warehouse_items?.[0])
                 : item?.prices?.find(
                       (p: PriceType) => p?.product_price_type?.is_primary,
                   ) || item?.prices?.[0];
+
         const packagePriceBulk =
             item?.prices?.find(
-                (p: PriceType) => p.product_price_type.is_bulk,
-            ) || item.prices[1];
+                (p: PriceType) => p?.product_price_type?.is_bulk,
+            ) || item?.prices?.[1];
+
         const quantity = operationItem?.quantity ?? 0;
 
-        let newItem: any; // 🔹 let bilan tashqarida e'lon qilamiz
+        let newItem: any;
 
         if (type === "purchase") {
             addProducts(item);
         }
 
-        const newQuantity = type === "purchase" && !operationItem ? 0 : quantity + 1
+        const newQuantity =
+            type === "purchase" && !operationItem ? 0 : quantity + 1;
 
         if (type === "revision" || type === "writeof") {
             newItem = {
@@ -122,7 +146,7 @@ const SearchProductTable = ({
                 quantity: newQuantity,
                 isMark: type === "sale" ? item?.is_marked || false : false,
                 totalAmount:
-                    (newQuantity) *
+                    newQuantity *
                     (isSelectedBulk && type === "sale"
                         ? packagePriceBulk?.amount
                         : packagePrice?.amount),
@@ -136,6 +160,41 @@ const SearchProductTable = ({
         setExpandedId?.(newItem?.productId!);
         setActiveType("numeric");
     };
+
+    // Sync ref every render so the window listener always has the latest onChange
+    onChangeRef.current = onChange;
+
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === "ArrowDown") {
+                e.preventDefault();
+                const el = document.activeElement as HTMLElement;
+                if (el?.tagName === "INPUT") el.blur();
+                const next = Math.min(
+                    highlightedIndexRef.current + 1,
+                    dataRef.current.length - 1,
+                );
+                highlightedIndexRef.current = next;
+                setHighlightedIndex(next);
+            } else if (e.key === "ArrowUp") {
+                e.preventDefault();
+                const el = document.activeElement as HTMLElement;
+                if (el?.tagName === "INPUT") el.blur();
+                const next = Math.max(highlightedIndexRef.current - 1, 0);
+                highlightedIndexRef.current = next;
+                setHighlightedIndex(next);
+            } else if (e.key === "Enter") {
+                const idx = highlightedIndexRef.current;
+                const item = dataRef.current[idx];
+                if (idx >= 0 && item) {
+                    e.preventDefault();
+                    onChangeRef.current(item);
+                }
+            }
+        };
+        window.addEventListener("keydown", handleKeyDown);
+        return () => window.removeEventListener("keydown", handleKeyDown);
+    }, []);
 
     return (
         <div className="flex-1 h-full overflow-y-auto bg-white w-full rounded-md">
@@ -155,11 +214,16 @@ const SearchProductTable = ({
 
                 return (
                     <div
+                        ref={(el) => {
+                            rowRefs.current[index] = el;
+                        }}
                         key={item?.id}
                         onClick={() => onChange(item)}
                         className={classNames(
                             "flex justify-between items-start gap-x-[30px] text-xs text-slate-700 p-2 active:bg-slate-100",
                             !!index && "border-t border-slate-300",
+                            index === highlightedIndex &&
+                                "bg-blue-100 font-medium",
                         )}
                     >
                         {highlightText(item?.name, debouncedSearch)}

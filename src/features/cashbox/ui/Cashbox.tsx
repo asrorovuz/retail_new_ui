@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, type FC } from "react";
+import { useEffect, useMemo, useRef, useState, type FC } from "react";
 import type { CashboxPropsType } from "../model";
 import Tabs from "@/shared/ui/kit-pro/tabs/Tabs";
 import { Select } from "@/shared/ui/kit";
@@ -18,15 +18,16 @@ const Cashbox: FC<CashboxPropsType> = (props) => {
 
     const activeDraft = draftPurchases?.find((item) => item?.isActive);
     const { data } = useContragentApi();
+
+    const [localContractorId, setLocalContractorId] = useState<number | null>(null);
+
     const { data: dataById } = useContractorByIdApi(
-        props?.type === "purchase"
-            ? (activeDraft?.contractor_id ?? null)
-            : null,
+        props?.type === "purchase" ? localContractorId : null,
     );
 
     const contractor = useMemo(() => {
-        return data?.find((el: any) => el?.id === activeDraft?.contractor_id);
-    }, [data, activeDraft?.contractor_id]);
+        return data?.find((el: any) => el?.id === localContractorId);
+    }, [data, localContractorId]);
 
     const selectOption = useMemo(() => {
         return data
@@ -110,13 +111,14 @@ const Cashbox: FC<CashboxPropsType> = (props) => {
                         placeholder="Поставщик"
                         value={
                             selectOption?.find(
-                                (opt: any) =>
-                                    opt.value === activeDraft?.contractor_id,
+                                (opt: any) => opt.value === localContractorId,
                             ) ?? null
                         }
                         isClearable
                         onChange={(val: any) => {
-                            setContractorId(val ? val.value : null);
+                            const id = val ? val.value : null;
+                            setLocalContractorId(id);
+                            setContractorId(id);
                         }}
                         styles={{
                             control: (base) => ({

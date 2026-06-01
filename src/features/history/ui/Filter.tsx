@@ -22,6 +22,7 @@ interface PropsType {
   isOpenFilter: boolean;
   setIsOpenFilter: (val: boolean) => void;
   setParams: any;
+  countyparty?: boolean
 }
 
 interface OptionType {
@@ -51,6 +52,7 @@ const Filter = ({
   isOpenFilter,
   setIsOpenFilter,
   setParams,
+  countyparty=false
 }: PropsType) => {
   const { control, handleSubmit, reset } = useForm<ParamType>({
     defaultValues: initialValue,
@@ -90,7 +92,7 @@ const Filter = ({
 
   const clearField = () => {
     reset(initialValue);
-    setParams((prev: any) => ({ ...prev, ...initialValue }));
+    setParams((prev: any) => ({ ...prev, ...initialValue, ...(countyparty && { contractor_id: prev.contractor_id }), }));
   };
 
   const onSubmit = (data: ParamType) => {
@@ -99,11 +101,11 @@ const Filter = ({
       is_approved: data?.is_approved?.value ?? null,
       is_for_debt: data?.is_for_debt?.value ?? null,
       used_warehouses: data?.used_warehouses?.value ?? null,
-      contractor_id: data?.contractor_id?.value ?? null,
+      ...(!countyparty && { contractor_id: data?.contractor_id?.value ?? null }),
       employee_id: data?.employee_id?.value ?? null,
     };
 
-    setParams((prev: any) => ({ ...prev, ...formattedData }));
+    setParams((prev: any) => ({ ...prev, ...formattedData, ...(countyparty && { contractor_id: prev.contractor_id }), }));
     setIsOpenFilter(false)
   };
 
@@ -139,7 +141,7 @@ const Filter = ({
             }}
           />
 
-          <Controller
+          {!countyparty && <Controller
             name="contractor_id"
             control={control}
             render={({ field }) => {
@@ -153,7 +155,7 @@ const Filter = ({
                 />
               );
             }}
-          />
+          />}
 
           <Controller
             name="used_warehouses"

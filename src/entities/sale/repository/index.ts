@@ -4,6 +4,7 @@ import {
     createFiscalizedRefundApi,
     fiscalDeviceApi,
     getAllContractorApi,
+    getSaleByIdApi,
     getTransferApi,
     paymentDebtsApi,
     paymentProviderApi,
@@ -50,6 +51,13 @@ export const useSellTransferApi = (params: any) => {
     return useQuery({
         queryKey: ["sell-transfer", params],
         queryFn: () => getTransferApi(params),
+    });
+};
+
+export const useSaleByIdApi = (id: any) => {
+    return useQuery({
+        queryKey: ["sell-by-id", id],
+        queryFn: () => getSaleByIdApi(id),
     });
 };
 

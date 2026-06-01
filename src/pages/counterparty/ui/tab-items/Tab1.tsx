@@ -1,13 +1,18 @@
+import { useSaleByIdApi } from "@/entities/sale/repository";
 import { formattedPhone } from "@/shared/lib/formatedPhone";
 import { Card } from "@/shared/ui/kit";
 import FormattedNumber from "@/shared/ui/kit-pro/numeric-format/NumericFormat";
 import dayjs from "dayjs";
 
-const Tab1 = ({ data }: any) => {
+const Tab1 = ({ data, id }: any) => {
+    const { data: byIdData } = useSaleByIdApi(id);
+
     const debts = data?.debts?.reduce(
         (sum: any, acc: any) => sum + acc?.amount,
         0,
     );
+
+    console.log(byIdData, data);
 
     return (
         <div className="grid grid-cols-5 gap-x-2">
@@ -55,6 +60,21 @@ const Tab1 = ({ data }: any) => {
                         </span>
                     </li>
                 </ul>
+            </Card>
+
+            <Card className="p-3 col-span-3">
+                <div className="text-xl text-slate-800 border-b mb-2 pb-2">
+                    Статистика по продажам
+                </div>
+
+                <div>
+                    <div>
+                        Umumiy foyda:
+                        {/* <span>{data}</span> */}
+                    </div>
+                    <div></div>
+                    <div></div>
+                </div>
             </Card>
         </div>
     );

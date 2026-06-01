@@ -56,6 +56,7 @@ interface Props {
 const vatOptions = [
     { label: "БЕЗ НДС", value: null },
     { label: "0", value: 0 },
+    { label: "6", value: 6 },
     { label: "12", value: 12 },
 ];
 

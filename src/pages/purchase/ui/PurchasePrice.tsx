@@ -145,6 +145,7 @@ const PurchasePrice = () => {
                     drafts={draftPurchases}
                     addNewDraft={addDraftPurchase}
                     activateDraft={activateDraftPurchase}
+                    payModal={payModal}
                 />
                 <PurchaseTable
                     type="purchase"
