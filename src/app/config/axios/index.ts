@@ -112,17 +112,32 @@ const parseIpcPayload = (message: any): any => {
   return raw;
 };
 
-// getAppConfig — Go dan joriy config ni so’raydi.
-// Production (Electron): IPC orqali main.go ga "hippo/config/get" yuboradi.
-// Development: setup ekranini ko’rsatmaslik uchun "configured: true" qaytaradi.
+// getAppConfig — joriy config holatini so’raydi.
+// Astilectron: IPC orqali Go main.go ga "hippo/config/get" yuboradi.
+// Web: localStorage dan o’qiydi.
 export const getAppConfig = (): Promise<AppConfigResponse> => {
   return new Promise((resolve) => {
     if (
       !window?.astilectron ||
       typeof window?.astilectron.sendMessage !== "function"
     ) {
-      // Dev mode — setup ekranini o’tkazib yuboramiz
-      resolve({ configured: true, localIP: "localhost" });
+      // Web mode — localStorage dan o’qiymiz
+      const saved = localStorage.getItem("hippo_app_config");
+      if (saved) {
+        try {
+          const cfg = JSON.parse(saved);
+          resolve({
+            configured: true,
+            localIP: cfg.localIP ?? "",
+            mode: cfg.mode,
+            ip: cfg.ip,
+          });
+        } catch {
+          resolve({ configured: false, localIP: window.location.hostname });
+        }
+      } else {
+        resolve({ configured: false, localIP: window.location.hostname });
+      }
       return;
     }
 
@@ -142,8 +157,9 @@ export const getAppConfig = (): Promise<AppConfigResponse> => {
   });
 };
 
-// saveAppConfig — tanlangan rejim va IP ni Go ga yuboradi, config.json ga yoziladi.
-// Go proxyService.SetHost() ni ham yangilaydi — restart kerak emas.
+// saveAppConfig — tanlangan rejim va IP ni saqlaydi.
+// Astilectron: Go ga yuboradi, config.json ga yoziladi.
+// Web: localStorage ga yozadi va kerak bo’lsa Axios baseURL ni yangilaydi.
 export const saveAppConfig = (config: {
   mode: "server" | "client";
   ip: string;
@@ -153,8 +169,30 @@ export const saveAppConfig = (config: {
       !window?.astilectron ||
       typeof window?.astilectron.sendMessage !== "function"
     ) {
-      // Dev mode — simulyatsiya
-      resolve({ ok: true, host: "http://localhost:7071" });
+      // Web mode — localStorage ga saqlaymiz
+      try {
+        const toSave = {
+          mode: config.mode,
+          ip: config.ip,
+          localIP: window.location.hostname,
+        };
+        localStorage.setItem("hippo_app_config", JSON.stringify(toSave));
+
+        // Client modeda Axios baseURL ni remote serverga yo’naltiramiz
+        if (config.mode === "client" && config.ip) {
+          const currentUrl = new URL(import.meta.env.VITE_BASE_URL);
+          AxiosBase.defaults.baseURL = `http://${config.ip}:${currentUrl.port}`;
+        }
+
+        const host =
+          config.mode === "client"
+            ? `http://${config.ip}:${new URL(import.meta.env.VITE_BASE_URL).port}`
+            : import.meta.env.VITE_BASE_URL;
+
+        resolve({ ok: true, host });
+      } catch {
+        reject(new Error("Config saqlashda xatolik"));
+      }
       return;
     }
 
