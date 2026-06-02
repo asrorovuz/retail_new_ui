@@ -1,7 +1,8 @@
 import { useActReport } from "@/entities/contractor/repository";
 import classNames from "@/shared/lib/classNames";
-import { Card, DatePicker, Table } from "@/shared/ui/kit";
+import { Button, Card, DatePicker, Table } from "@/shared/ui/kit";
 import Empty from "@/shared/ui/kit-pro/empty/Empty";
+import FormattedNumber from "@/shared/ui/kit-pro/numeric-format/NumericFormat";
 import TBody from "@/shared/ui/kit/Table/TBody";
 import Td from "@/shared/ui/kit/Table/Td";
 import Th from "@/shared/ui/kit/Table/Th";
@@ -16,6 +17,7 @@ import {
 import dayjs from "dayjs";
 import { useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { PiMicrosoftExcelLogoDuotone } from "react-icons/pi";
 
 const Tab7 = ({ contractorId }: any) => {
     const [params, setParams] = useState({
@@ -34,6 +36,15 @@ const Tab7 = ({ contractorId }: any) => {
         },
     });
 
+    const calcDebts = (list: any[]) => {
+        return list?.reduce(
+            (sum: number, item: any) => sum + (item?.amount || 0),
+            0,
+        );
+    };
+
+    console.log(actReportData, "act repoert");
+
     const columns = useMemo<ColumnDef<any>[]>(
         () => [
             {
@@ -48,12 +59,29 @@ const Tab7 = ({ contractorId }: any) => {
             {
                 header: "Предыдущий долг",
                 accessorKey: "name",
-                // cell: ({ row }) => <span></span>,
+                cell: ({ row }) => (
+                    <span>
+                        <FormattedNumber
+                            value={
+                                calcDebts(row?.original?.before_debts || []) ||
+                                0
+                            }
+                        />
+                    </span>
+                ),
             },
             {
                 header: "Увеличение задолженности",
                 accessorKey: "name",
-                // cell: ({ row }) => <span></span>,
+                cell: ({ row }) => (
+                    <span>
+                        <FormattedNumber
+                            value={
+                                calcDebts(row?.original?.after_debts || []) || 0
+                            }
+                        />
+                    </span>
+                ),
             },
             {
                 header: "Уменьшение задолженности",
@@ -63,7 +91,15 @@ const Tab7 = ({ contractorId }: any) => {
             {
                 header: "Последующая задолженность",
                 accessorKey: "name",
-                // cell: ({ row }) => <span></span>,
+                cell: ({ row }) => (
+                    <span>
+                        <FormattedNumber
+                            value={
+                                calcDebts(row?.original?.after_debts || []) || 0
+                            }
+                        />
+                    </span>
+                ),
             },
             {
                 header: "Пользователи",
@@ -74,9 +110,9 @@ const Tab7 = ({ contractorId }: any) => {
                 header: "Дата",
                 accessorKey: "name",
                 cell: ({ row }) => (
-                    <span>
+                    <div className="w-max px-2">
                         {dayjs(row?.original?.date).format("HH:mm YYYY-MM-DD")}
-                    </span>
+                    </div>
                 ),
             },
         ],
@@ -128,50 +164,64 @@ const Tab7 = ({ contractorId }: any) => {
     return (
         <Card className="py-2 h-full">
             <div className="flex flex-col gap-2">
-                <div className="flex gap-x-2">
-                    <Controller
-                        name="date_start"
-                        control={control}
-                        render={({ field }) => {
-                            return (
-                                <div className="relative">
-                                    <DatePicker
-                                        inputFormat="DD-MM-YYYY"
-                                        size="sm"
-                                        placeholder={"Дата начала"}
-                                        closePickerOnChange={true}
-                                        inputtable={true}
-                                        onChange={field.onChange}
-                                        value={field.value}
-                                    />
-                                </div>
-                            );
-                        }}
-                    />
+                <div className="flex gap-x-2 justify-between">
+                    <span>-</span>
+                    <div className="flex gap-x-2">
+                        <Button
+                            size="sm"
+                            variant="solid"
+                            icon={
+                                <>
+                                    <PiMicrosoftExcelLogoDuotone />
+                                </>
+                            }
+                        >
+                            Скачать в Excel
+                        </Button>
+                        <Controller
+                            name="date_start"
+                            control={control}
+                            render={({ field }) => {
+                                return (
+                                    <div className="relative">
+                                        <DatePicker
+                                            inputFormat="DD-MM-YYYY"
+                                            size="sm"
+                                            placeholder={"Дата начала"}
+                                            closePickerOnChange={true}
+                                            inputtable={true}
+                                            onChange={field.onChange}
+                                            value={field.value}
+                                        />
+                                    </div>
+                                );
+                            }}
+                        />
 
-                    <Controller
-                        name="date_end"
-                        control={control}
-                        render={({ field }) => {
-                            return (
-                                <div className="relative">
-                                    <DatePicker
-                                        inputFormat="DD-MM-YYYY"
-                                        size="sm"
-                                        placeholder={"Дата окончания"}
-                                        closePickerOnChange={true}
-                                        inputtable={true}
-                                        onChange={field.onChange}
-                                        value={field.value}
-                                    />
-                                </div>
-                            );
-                        }}
-                    />
+                        <Controller
+                            name="date_end"
+                            control={control}
+                            render={({ field }) => {
+                                return (
+                                    <div className="relative">
+                                        <DatePicker
+                                            inputFormat="DD-MM-YYYY"
+                                            size="sm"
+                                            placeholder={"Дата окончания"}
+                                            closePickerOnChange={true}
+                                            inputtable={true}
+                                            onChange={field.onChange}
+                                            value={field.value}
+                                        />
+                                    </div>
+                                );
+                            }}
+                        />
+                    </div>
                 </div>
 
-                <div className="flex-1 h-full border">
-                    <Table className="table-fixed w-full ">
+                <div className="flex-1 h-full border overflow-auto">
+                    <Table className="rounded-lg overflow-auto w-max">
                         <THead className="sticky top-0 bg-white">
                             {table.getHeaderGroups().map((headerGroup) => (
                                 <Tr key={headerGroup.id}>

@@ -40,6 +40,9 @@ export const SetupPage = ({ localIP, onComplete }: Props) => {
         ip: mode === "server" ? localIP : clientIP.trim(),
       });
 
+      // Go proxy to'liq tayyor bo'lishi uchun kichik pauza
+      await new Promise((r) => setTimeout(r, 500));
+
       // Muvaffaqiyatli — asosiy ilovaga o'tamiz
       onComplete();
     } catch {

@@ -104,6 +104,7 @@ const RevisyaOperation = () => {
                     activeDraft={draftRevisions[0]}
                     expandedRow={expandedRow}
                     expendedId={expendedId}
+                    keyType={activeType}
                     setActiveTypeKeyboard={setActiveType}
                     setExpandedRow={setExpandedRow}
                     setExpandedId={setExpandedId}

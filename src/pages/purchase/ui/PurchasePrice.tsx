@@ -155,6 +155,7 @@ const PurchasePrice = () => {
                     expandedRow={expandedRow}
                     selectedRows={selectedRows}
                     expendedId={expendedId}
+                    keyType={activeType}
                     setActiveTypeKeyboard={setActiveType}
                     setExpandedRow={setExpandedRow}
                     setSelectedRows={setSelectedRows}

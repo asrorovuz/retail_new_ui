@@ -99,6 +99,19 @@ export type AppConfigResponse = {
   localIP: string;           // bu kompyuterning lokal IP si (server mode uchun ko’rsatiladi)
 };
 
+// Go IPC javobini parse qilish:
+// Regular API: { status_code, data: "json-string" }
+// Config IPC:  to’g’ridan-to’g’ri { configured, localIP, ... }
+// Ikki formatni ham qo’llab-quvvatlaydi
+const parseIpcPayload = (message: any): any => {
+  if (!message?.payload) return null;
+  const raw = message.payload;
+  if (typeof raw?.data === "string") {
+    try { return JSON.parse(raw.data); } catch { return raw; }
+  }
+  return raw;
+};
+
 // getAppConfig — Go dan joriy config ni so’raydi.
 // Production (Electron): IPC orqali main.go ga "hippo/config/get" yuboradi.
 // Development: setup ekranini ko’rsatmaslik uchun "configured: true" qaytaradi.
@@ -117,11 +130,12 @@ export const getAppConfig = (): Promise<AppConfigResponse> => {
       // Payload bo’sh — Go tomonida payload o’qilmaydi
       { name: "hippo/config/get", payload: {} },
       (message: any) => {
-        if (message?.payload) {
-          resolve(message.payload as AppConfigResponse);
+        const parsed = parseIpcPayload(message);
+        if (parsed) {
+          resolve(parsed as AppConfigResponse);
         } else {
-          // Javob kelmasdi — xavfsiz default
-          resolve({ configured: true, localIP: "localhost" });
+          // Go javob bermadi — xavfsiz: setup ko’rsatish (configured: false)
+          resolve({ configured: false, localIP: "" });
         }
       },
     );
@@ -148,8 +162,9 @@ export const saveAppConfig = (config: {
       // Payload to’g’ridan-to’g’ri AppConfig formatida — Go json.Unmarshal qiladi
       { name: "hippo/config/save", payload: config },
       (message: any) => {
-        if (message?.payload?.ok) {
-          resolve(message.payload);
+        const parsed = parseIpcPayload(message);
+        if (parsed?.ok) {
+          resolve(parsed);
         } else {
           reject(new Error("Config saqlashda xatolik"));
         }

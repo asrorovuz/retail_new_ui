@@ -26,6 +26,7 @@ type PropsType = {
     activeDraft: RevisionDraft;
     expandedRow: string | null;
     expendedId: number | null;
+    keyType?: "numeric" | "qwerty" | "fullkey";
     setActiveTypeKeyboard: (type: "numeric" | "qwerty") => void;
     setExpandedRow: React.Dispatch<React.SetStateAction<string | null>>;
     setExpandedId: React.Dispatch<React.SetStateAction<number | null>>;
@@ -41,6 +42,7 @@ const RevisionTable = ({
     setExpandedRow,
     setActiveTypeKeyboard,
     expandedRow,
+    keyType,
     deleteDraftItem,
     updateDraftItemQuantity,
 }: PropsType) => {
@@ -96,17 +98,40 @@ const RevisionTable = ({
     const decreaseRef = useRef(decrease);
     decreaseRef.current = decrease;
 
+    const keyTypeRef = useRef(keyType);
+    keyTypeRef.current = keyType;
+    const expandedRowRef = useRef(expandedRow);
+    expandedRowRef.current = expandedRow;
+    const itemsRef = useRef(activeDraft?.items);
+    itemsRef.current = activeDraft?.items;
+
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
-            if (!expandedRow) return;
             const tag = (document.activeElement as HTMLElement)?.tagName;
             if (tag === "INPUT" || tag === "TEXTAREA") return;
             if (isEditing.isOpen) return;
 
-            if (e.key === "ArrowRight") {
+            const items = itemsRef.current;
+
+            if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+                if (keyTypeRef.current === "qwerty") return;
+                if (!items?.length) return;
+                e.preventDefault();
+                const currentIndex =
+                    expandedRowRef.current !== null
+                        ? Number(expandedRowRef.current)
+                        : -1;
+                const next =
+                    e.key === "ArrowDown"
+                        ? Math.min(currentIndex + 1, items.length - 1)
+                        : Math.max(currentIndex - 1, 0);
+                setExpandedRow(String(next));
+            } else if (e.key === "ArrowRight") {
+                if (!expandedRowRef.current) return;
                 e.preventDefault();
                 increaseRef.current();
             } else if (e.key === "ArrowLeft") {
+                if (!expandedRowRef.current) return;
                 e.preventDefault();
                 decreaseRef.current();
             }
@@ -114,7 +139,7 @@ const RevisionTable = ({
 
         window.addEventListener("keydown", handleKeyDown);
         return () => window.removeEventListener("keydown", handleKeyDown);
-    }, [expandedRow, isEditing.isOpen]);
+    }, [isEditing.isOpen]);
 
     const table = useReactTable({
         data: activeDraft?.items ?? [],

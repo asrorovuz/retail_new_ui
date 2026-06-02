@@ -1,7 +1,7 @@
 import {
     useOperationCountApi,
-    usePurchaseApi,
-    usePurchaseIdApi,
+    useRefundApi,
+    useRefundIdApi,
 } from "@/entities/history/repository";
 import { Filter, TransactionModal } from "@/features/history";
 import TableHistory from "@/features/history/ui/Table";
@@ -15,12 +15,12 @@ import { FaPlus } from "react-icons/fa";
 import { VscListFilter } from "react-icons/vsc";
 import { useNavigate } from "react-router-dom";
 
-const Tab2 = ({ id }: any) => {
+const Tab3 = ({ id }: any) => {
     const navigate = useNavigate();
     const [params, setParams] = useState({
         pageIndex: 1,
         pageSize: 20,
-        contractor_id: id
+        contractor_id: id,
     });
     const [isOpenFilter, setIsOpenFilter] = useState(false);
     const [viewModal, setViewModal] = useState({
@@ -29,11 +29,11 @@ const Tab2 = ({ id }: any) => {
     });
 
     const { checkPermissionByAction } = usePermission();
-    const canCreate = checkPermissionByAction("purchase", "create");
+    const canCreate = checkPermissionByAction("refund", "create");
 
-    const { data, isLoading } = usePurchaseApi(params);
-    const { data: count } = useOperationCountApi(params, "purchase");
-    const { data: dataId, isPending: isLoadingId } = usePurchaseIdApi(
+    const { data, isLoading } = useRefundApi(params);
+    const { data: count } = useOperationCountApi(params, "refund");
+    const { data: dataId, isPending: isLoadingId } = useRefundIdApi(
         viewModal?.id,
     );
 
@@ -41,7 +41,7 @@ const Tab2 = ({ id }: any) => {
         defaultValues: {
             date_start: null,
             date_end: null,
-            contractor_id: id
+            contractor_id: id,
         },
     });
 
@@ -117,7 +117,7 @@ const Tab2 = ({ id }: any) => {
                             icon={<FaPlus />}
                             variant="solid"
                             size="sm"
-                            onClick={() => navigate("/purchase")}
+                            onClick={() => navigate("/refund")}
                         >
                             Добавить
                         </Button>
@@ -125,7 +125,7 @@ const Tab2 = ({ id }: any) => {
                 </div>
             </div>
             <Filter
-                type="purchase"
+                type="refund"
                 isOpenFilter={isOpenFilter}
                 setIsOpenFilter={setIsOpenFilter}
                 setParams={setParams}
@@ -138,23 +138,23 @@ const Tab2 = ({ id }: any) => {
                 setParams={setParams}
                 setViewModal={setViewModal}
                 pay={true}
-                payKey={"payout"}
+                payKey={"payment"}
                 params={params}
-                type="purchase"
+                type="refund"
                 countyparty={true}
             />
 
             <Dialog
                 onClose={closeModal}
-                title={`Приход № ${dataId?.number}`}
+                title={`Возврат № ${dataId?.number}`}
                 isOpen={viewModal?.isOpen}
             >
                 {!isLoadingId ? (
                     <TransactionModal
                         data={dataId}
-                        payKey={"payout"}
+                        payKey={"payment"}
                         viewModal={viewModal}
-                        type={"purchase"}
+                        type={"refund"}
                     />
                 ) : (
                     <div className="h-[70vh]">
@@ -166,4 +166,4 @@ const Tab2 = ({ id }: any) => {
     );
 };
 
-export default Tab2;
+export default Tab3;

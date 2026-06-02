@@ -11,6 +11,8 @@ import { CgArrowsExchange } from "react-icons/cg";
 import Tab1 from "./tab-items/Tab1";
 import Tab7 from "./tab-items/Tab7";
 import Tab2 from "./tab-items/Tab2";
+import Tab3 from "./tab-items/Tab3";
+import Tab4 from "./tab-items/Tab4";
 
 const tabs = [
     {
@@ -87,13 +89,13 @@ const ContractorById = () => {
             );
         }
 
-        if (activeTab === "tab1") return <Tab1 data={data} id={id}/>;
+        if (activeTab === "tab1") return <Tab1 data={data} id={id} />;
         if (activeTab === "tab2") return <Tab2 id={id} />;
-        if (activeTab === "tab3") return <></>;
-        if (activeTab === "tab4") return <></>;
+        if (activeTab === "tab3") return <Tab3 id={id} />;
+        if (activeTab === "tab4") return <Tab4 id={id} />;
         if (activeTab === "tab5") return <></>;
         if (activeTab === "tab6") return <></>;
-        if (activeTab === "tab7") return <Tab7 contractorId={id}/>;
+        if (activeTab === "tab7") return <Tab7 contractorId={id} />;
     };
 
     return (

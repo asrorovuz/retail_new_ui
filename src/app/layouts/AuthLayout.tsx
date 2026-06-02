@@ -7,12 +7,13 @@ import FullKeyboard from "@/widgets/ui/keyboard/FullKeyboard";
 export const AuthLayout = () => {
     const navigate = useNavigate();
 
-    const { data, refetch } = useAuthStatus();
+    const { data, isLoading, refetch } = useAuthStatus();
 
     useEffect(() => {
+        if (isLoading) return;
         if (data?.is_registered) navigate("/login");
         else navigate("/register");
-    }, [data]);
+    }, [data, isLoading]);
 
     return (
         <div className="w-screen h-screen flex flex-col justify-center items-center bg-slate-200">

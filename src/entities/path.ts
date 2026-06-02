@@ -240,6 +240,8 @@ export const pathServices = {
     },
 
     contractor: {
-        getActReport: "/api/contractor/act-report/"
+        getActReport: "/api/contractor/act-report/",
+        getPaymentPath: "/api/payment/get",
+        getPaymentCountPath: "/api/payment/get/count"
     }
 };
