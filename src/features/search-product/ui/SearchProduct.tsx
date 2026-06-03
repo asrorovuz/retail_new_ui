@@ -23,8 +23,16 @@ const SearchProduct = ({
 }: SearchProductProps) => {
     const { registerField, unregisterField } = useKeyboard();
     const inputRef = useRef<HTMLInputElement>(null);
+    const focusTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const pendingCharsRef = useRef<string[]>([]);
+    const isScannerActiveRef = useRef(false);
+    const scannerTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const isSearchFocusedRef = useRef(false);
+    const isSearchModeRef = useRef(false);
 
     const onFocusedSearch = () => {
+        isSearchFocusedRef.current = true;
+        isSearchModeRef.current = true;
         if (setSearchFocus) {
             setSearchFocus(true);
         }
@@ -40,6 +48,7 @@ const SearchProduct = ({
     };
 
     const onBlurSearch = () => {
+        isSearchFocusedRef.current = false;
         if (setSearchFocus) {
             setSearchFocus(false);
         }
@@ -55,20 +64,70 @@ const SearchProduct = ({
 
     useEffect(() => {
         if (activeType !== "qwerty") {
+            isSearchModeRef.current = false;
             setSearch("");
         }
     }, [activeType]);
 
     useEffect(() => {
+        const resetScanner = () => {
+            isScannerActiveRef.current = false;
+            if (scannerTimeoutRef.current) {
+                clearTimeout(scannerTimeoutRef.current);
+                scannerTimeoutRef.current = null;
+            }
+        };
+        const handleScannerActive = () => {
+            isScannerActiveRef.current = true;
+            if (focusTimerRef.current) clearTimeout(focusTimerRef.current);
+            focusTimerRef.current = null;
+            pendingCharsRef.current = [];
+            if (document.activeElement === inputRef.current) {
+                inputRef.current?.blur();
+                setSearch("");
+                if (setActiveType) setActiveType("numeric");
+            }
+            if (scannerTimeoutRef.current) clearTimeout(scannerTimeoutRef.current);
+            scannerTimeoutRef.current = setTimeout(resetScanner, 300);
+        };
+        const handleScannerComplete = () => {
+            resetScanner();
+        };
+        window.addEventListener("SCANNER_ACTIVE", handleScannerActive);
+        window.addEventListener("SCANNER_COMPLETE", handleScannerComplete);
+        return () => {
+            window.removeEventListener("SCANNER_ACTIVE", handleScannerActive);
+            window.removeEventListener("SCANNER_COMPLETE", handleScannerComplete);
+        };
+    }, []);
+
+    useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === "Escape" && isSearchModeRef.current) {
+                isSearchModeRef.current = false;
+                inputRef.current?.blur();
+                setSearch("");
+                if (setActiveType) setActiveType("numeric");
+                return;
+            }
+
             if (!setActiveType) return;
+            if (isScannerActiveRef.current) return;
             const tag = (document.activeElement as HTMLElement)?.tagName;
             if (tag === "INPUT" || tag === "TEXTAREA") return;
             if (e.key.length !== 1 || e.ctrlKey || e.altKey || e.metaKey) return;
 
-            setActiveType("qwerty");
-            setSearch(e.key);
-            inputRef.current?.focus();
+            pendingCharsRef.current.push(e.key);
+            if (focusTimerRef.current) clearTimeout(focusTimerRef.current);
+
+            focusTimerRef.current = setTimeout(() => {
+                const chars = pendingCharsRef.current.join("");
+                pendingCharsRef.current = [];
+                focusTimerRef.current = null;
+                setActiveType("qwerty");
+                setSearch(chars);
+                inputRef.current?.focus();
+            }, 50);
         };
         window.addEventListener("keydown", handleKeyDown);
         return () => window.removeEventListener("keydown", handleKeyDown);

@@ -42,34 +42,39 @@ export const useBarcodeScanner = () => {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // 🔴 AGAR USER INPUTDA YOZAYOTGAN BO‘LSA — CHIQIB KETAMIZ
-      const active = document.activeElement as HTMLElement | null;
-      if (
-        active &&
-        (active.tagName === "INPUT" ||
-          active.tagName === "TEXTAREA" ||
-          active.tagName === "BUTTON" ||
-          active.isContentEditable)
-      ) {
-        return;
-      }
-
       const now = Date.now();
+      const elapsed = now - lastTime.current;
 
-      // Agar sekin yozilsa — bu scanner emas
-      if (now - lastTime.current > 40) {
+      if (elapsed > 40) {
+        if (buffer.current.length >= 2) {
+          window.dispatchEvent(new CustomEvent("SCANNER_COMPLETE"));
+        }
         buffer.current = "";
       }
-
       lastTime.current = now;
 
-      // Browserga yozilishiga yo‘l bermaymiz
-      
+      // Faqat birinchi char uchun (yangi ketma-ketlik boshi) active inputga ruxsat
+      // Char 2+ da esa scanner tezligida kelgan bo’lsa — hamma holatda scanner sifatida ishla
+      if (buffer.current.length === 0) {
+        const active = document.activeElement as HTMLElement | null;
+        if (
+          active &&
+          (active.tagName === "INPUT" ||
+            active.tagName === "TEXTAREA" ||
+            active.tagName === "BUTTON" ||
+            active.isContentEditable)
+        ) {
+          if (e.key.length === 1) buffer.current += e.key;
+          return;
+        }
+      }
+
       if (e.key === "Enter") {
         if (buffer.current.length >= 6) {
           e.preventDefault();
           e.stopImmediatePropagation();
           eventBus.dispatch("BARCODE_SCANNED", buffer.current);
+          window.dispatchEvent(new CustomEvent("SCANNER_COMPLETE"));
           buffer.current = "";
         }
         return;
@@ -78,6 +83,12 @@ export const useBarcodeScanner = () => {
       if (e.key.length === 1) {
         buffer.current += e.key;
         e.preventDefault();
+        if (buffer.current.length === 2) {
+          window.dispatchEvent(new CustomEvent("SCANNER_ACTIVE"));
+        }
+        if (buffer.current.length >= 2) {
+          e.stopImmediatePropagation();
+        }
       }
     };
 
