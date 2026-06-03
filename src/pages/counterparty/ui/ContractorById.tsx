@@ -92,7 +92,7 @@ const ContractorById = () => {
         if (activeTab === "tab1") return <Tab1 data={data} id={id} />;
         if (activeTab === "tab2") return <Tab2 id={id} />;
         if (activeTab === "tab3") return <Tab3 id={id} />;
-        if (activeTab === "tab4") return <Tab4 id={id} />;
+        if (activeTab === "tab4") return <Tab4  />;
         if (activeTab === "tab5") return <></>;
         if (activeTab === "tab6") return <></>;
         if (activeTab === "tab7") return <Tab7 contractorId={id} />;

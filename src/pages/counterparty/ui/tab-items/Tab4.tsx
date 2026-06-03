@@ -3,7 +3,7 @@ import {
     usePaymentCount,
 } from "@/entities/contractor/repository";
 import classNames from "@/shared/lib/classNames";
-import { Button, DatePicker, Pagination, Table } from "@/shared/ui/kit";
+import {  DatePicker, Pagination, Table } from "@/shared/ui/kit";
 import Empty from "@/shared/ui/kit-pro/empty/Empty";
 import FormattedNumber from "@/shared/ui/kit-pro/numeric-format/NumericFormat";
 import TBody from "@/shared/ui/kit/Table/TBody";
@@ -20,15 +20,14 @@ import {
 import dayjs from "dayjs";
 import { useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { VscListFilter } from "react-icons/vsc";
 
-const Tab4 = ({ id }: any) => {
+const Tab4 = () => {
     const [params, setParams] = useState({
         pageIndex: 1,
         pageSize: 20,
         // contractor_id: +id,
     });
-    const [isOpenFilter, setIsOpenFilter] = useState(false);
+    // const [isOpenFilter, setIsOpenFilter] = useState(false);
 
     const { data, isPending: loading } = usePaymentAll(params);
     const { data: count } = usePaymentCount(params);
