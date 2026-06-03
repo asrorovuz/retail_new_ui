@@ -103,6 +103,11 @@ const SearchProduct = ({
 
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
+            const isAnyModalOpen =
+                document.body.classList.contains("dialog-open") ||
+                document.body.classList.contains("drawer-open");
+            if (isAnyModalOpen) return;
+
             if (e.key === "Escape" && isSearchModeRef.current) {
                 isSearchModeRef.current = false;
                 inputRef.current?.blur();
