@@ -96,7 +96,7 @@ export const columns = (
                 bodyCellClassName: "text-right",
             },
             cell: ({ row }) =>
-                row.original.isMark || row.original?.marks?.length ? (
+                row.original.isMark ? (
                     <div className="flex items-end justify-end gap-x-1">
                         <span className="text-lg">
                             {row.original.marks?.length || 0}
