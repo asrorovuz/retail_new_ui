@@ -10,13 +10,17 @@ type Mode = "server" | "client";
 type Props = {
   // Bu kompyuterning lokal IP si — server modeda foydalanuvchiga ko'rsatiladi
   localIP: string;
+  // Mavjud bo'lsa — oldingi config dagi rejim (client mode restart da)
+  currentMode?: Mode;
+  // Mavjud bo'lsa — oldingi config dagi IP (client mode restart da pre-fill)
+  currentIP?: string;
   // Setup tugagach App.tsx da chaqiriladi — asosiy ilovaga o'tish uchun
   onComplete: () => void;
 };
 
-export const SetupPage = ({ localIP, onComplete }: Props) => {
-  const [mode, setMode] = useState<Mode | null>(null);
-  const [clientIP, setClientIP] = useState("");
+export const SetupPage = ({ localIP, currentMode, currentIP, onComplete }: Props) => {
+  const [mode, setMode] = useState<Mode | null>(currentMode ?? null);
+  const [clientIP, setClientIP] = useState(currentIP ?? "");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -58,7 +62,11 @@ export const SetupPage = ({ localIP, onComplete }: Props) => {
         {/* Sarlavha */}
         <div className="mb-8">
           <h1 className="text-2xl font-bold text-gray-800">Hippo Retail POS</h1>
-          <p className="text-gray-500 mt-1">Kassa rejimini tanlang</p>
+          <p className="text-gray-500 mt-1">
+            {currentMode === "client"
+              ? "Server IP manzilini tasdiqlang yoki yangilang"
+              : "Kassa rejimini tanlang"}
+          </p>
         </div>
 
         {/* Rejim tanlash tugmalari */}

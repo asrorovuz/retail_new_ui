@@ -20,10 +20,14 @@ function App() {
   const [setupState, setSetupState] = useState<{
     checked: boolean;
     configured: boolean;
+    setupCompleted: boolean;
+    mode?: "server" | "client";
+    ip?: string;
     localIP: string;
   }>({
-    checked: false,    // boshlang'ich holat — hali tekshirilmagan
+    checked: false,
     configured: false,
+    setupCompleted: false,
     localIP: "",
   });
 
@@ -33,6 +37,9 @@ function App() {
       setSetupState({
         checked: true,
         configured: cfg.configured,
+        setupCompleted: false,
+        mode: cfg.mode,
+        ip: cfg.ip,
         localIP: cfg.localIP,
       });
     });
@@ -43,14 +50,18 @@ function App() {
     return null;
   }
 
-  // Config yo'q — foydalanuvchiga rejim tanlash ekranini ko'rsatamiz
-  if (!setupState.configured) {
+  // SetupPage ko'rsatish shartlari:
+  // 1. Birinchi marta (config.json yo'q)
+  // 2. Client mode — har restart da IP ni tasdiqlash/o'zgartirish imkoniyati
+  // (setupCompleted = true bo'lsa, bu sessiyada setup o'tgan, asosiy ilovaga o'tamiz)
+  if (!setupState.setupCompleted && (!setupState.configured || setupState.mode === "client")) {
     return (
       <SetupPage
         localIP={setupState.localIP}
-        // Setup tugagach — asosiy ilovaga o'tamiz (qayta tekshirishsiz)
+        currentMode={setupState.mode}
+        currentIP={setupState.ip}
         onComplete={() =>
-          setSetupState((prev) => ({ ...prev, configured: true }))
+          setSetupState((prev) => ({ ...prev, setupCompleted: true }))
         }
       />
     );

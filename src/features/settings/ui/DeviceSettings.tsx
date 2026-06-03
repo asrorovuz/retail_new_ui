@@ -1,5 +1,6 @@
 import { getAppConfig } from "@/app/config/axios";
 import type { AppConfigResponse } from "@/app/config/axios";
+import { useOfflineStore } from "@/app/store/useOfflineStore";
 import { messages } from "@/app/constants/message.request";
 import { usePrinterApi, useSettingsApi } from "@/entities/init/repository";
 import { useUpdateSettings } from "@/entities/settings/repository";
@@ -18,6 +19,7 @@ const DeviceSettings = () => {
     const { data: printerData = [] } = usePrinterApi();
     const { mutate: updateSettings, isPending } = useUpdateSettings();
     const [appConfig, setAppConfig] = useState<AppConfigResponse | null>(null);
+    const { isOnline, queueLength } = useOfflineStore();
 
     // Kassa rejimi va IP ni yuklaymiz
     useEffect(() => {
@@ -97,6 +99,37 @@ const DeviceSettings = () => {
                                 {appConfig.ip}
                             </span>
                         </>
+                    )}
+                </div>
+            )}
+
+            {/* ── Server ulanish holati (faqat client mode) ────────────────── */}
+            {appConfig?.mode === "client" && (
+                <div
+                    className={`mb-4 flex items-center gap-3 rounded-lg border px-4 py-3 text-sm ${
+                        isOnline
+                            ? "border-green-200 bg-green-50"
+                            : "border-amber-200 bg-amber-50"
+                    }`}
+                >
+                    <span
+                        className={`h-2 w-2 shrink-0 rounded-full ${
+                            isOnline ? "bg-green-500" : "bg-amber-500 animate-pulse"
+                        }`}
+                    />
+                    {isOnline ? (
+                        <span className="text-green-700">
+                            Server bilan aloqa mavjud
+                        </span>
+                    ) : (
+                        <span className="text-amber-700">
+                            Server bilan aloqa yo'q — offline rejimda ishlayapti
+                            {queueLength > 0 && (
+                                <span className="ml-1 font-semibold">
+                                    ({queueLength} ta amal kutmoqda)
+                                </span>
+                            )}
+                        </span>
                     )}
                 </div>
             )}
