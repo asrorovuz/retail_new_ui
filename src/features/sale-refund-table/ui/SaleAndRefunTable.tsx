@@ -5,7 +5,7 @@ import {
     useReactTable,
 } from "@tanstack/react-table";
 import { columns } from "./table/columns";
-import { Button, Input, Select, Table } from "@/shared/ui/kit";
+import { Button, Dialog, Input, Select, Table } from "@/shared/ui/kit";
 import THead from "@/shared/ui/kit/Table/THead";
 import Tr from "@/shared/ui/kit/Table/Tr";
 import Th from "@/shared/ui/kit/Table/Th";
@@ -73,6 +73,7 @@ const SaleAndRefunTable = ({
     const [localQuantity, setLocalQuantity] = useState<string>(
         String(currentItem?.quantity ?? 0),
     );
+    const [confirmDelete, setConfirmDelete] = useState(false);
 
     const onDeleteDraftItem = () => {
         if (expandedRow) {
@@ -82,14 +83,12 @@ const SaleAndRefunTable = ({
     };
 
     const decrease = () => {
-        const newVal = (currentItem?.quantity || 0) - 1;
-
         if (currentItem?.quantity === 1) {
-            deleteDraftItem(Number(expandedRow));
-            setExpandedRow(null);
+            setConfirmDelete(true);
             return;
         }
 
+        const newVal = (currentItem?.quantity || 0) - 1;
         if (newVal > 0) {
             const price = getActivePrice(currentItem, type, selectedRows);
             updateDraftItemQuantity(Number(expandedRow), newVal);
@@ -727,6 +726,35 @@ const SaleAndRefunTable = ({
                     </div>
                 </div>
             </div>
+        <Dialog
+            isOpen={confirmDelete}
+            onClose={() => setConfirmDelete(false)}
+            onRequestClose={() => setConfirmDelete(false)}
+            title="Внимание"
+            width={400}
+        >
+            <div className="grid gap-7 px-1">
+                <span className="text-gray-600">
+                    Вы действительно хотите удалить товар &quot;
+                    {currentItem?.productName}&quot;?
+                </span>
+                <div className="flex justify-end items-center gap-2">
+                    <Button onClick={() => setConfirmDelete(false)}>
+                        Назад
+                    </Button>
+                    <Button
+                        variant="solid"
+                        className="bg-red-700 text-white hover:bg-red-700 hover:opacity-90"
+                        onClick={() => {
+                            onDeleteDraftItem();
+                            setConfirmDelete(false);
+                        }}
+                    >
+                        Удалить
+                    </Button>
+                </div>
+            </div>
+        </Dialog>
         </div>
     );
 };
