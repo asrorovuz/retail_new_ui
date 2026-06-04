@@ -76,8 +76,8 @@ type OrderActionType = {
         contragentId: number | null,
         comment: string,
     ) => void;
-    localContractorId: number | null;
-    setLocalContractorId: (val: number | null) => void;
+    localContractorId?: number | null;
+    setLocalContractorId?: (val: number | null) => void;
 };
 
 const OrderActions = ({
@@ -521,7 +521,9 @@ const OrderActions = ({
                         if (setContractorIDStore) {
                             setContractorIDStore(null, "");
                         }
-                        setLocalContractorId(null)
+                        if(setLocalContractorId){
+                            setLocalContractorId(null)
+                        }
                         showSuccessMessage(
                             messages.uz.SUCCESS_MESSAGE,
                             messages.ru.SUCCESS_MESSAGE,
@@ -579,7 +581,7 @@ const OrderActions = ({
                     if (setContractorIDStore) {
                         setContractorIDStore(null, "");
                     }
-                    setLocalContractorId(null)
+                    if(setLocalContractorId){setLocalContractorId(null)}
                     // addDrafts();
                     showSuccessMessage(
                         messages.uz.SUCCESS_MESSAGE,
