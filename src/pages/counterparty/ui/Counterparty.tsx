@@ -8,6 +8,7 @@ import {
 } from "@/entities/purchase/repository";
 import { useContractorApi } from "@/entities/sale/repository";
 import ContragentModal from "@/features/modals/ui/ContragentModal";
+import { UploadContractorFile } from "@/features/upload-excel-file";
 import PaymentDebtsModal from "@/features/modals/ui/PaymentDebtsModal";
 import SearchProduct from "@/features/search-product";
 import classNames from "@/shared/lib/classNames";
@@ -39,7 +40,7 @@ import {
 } from "@tanstack/react-table";
 import dayjs from "dayjs";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { FaPlus, FaRegEdit } from "react-icons/fa";
+import { FaPlus, FaRegEdit, FaFileExcel } from "react-icons/fa";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { IoTrashOutline } from "react-icons/io5";
 import { MdOutlinePostAdd } from "react-icons/md";
@@ -77,6 +78,7 @@ const Counterparty = () => {
     const [contragent, setContragent] = useState<ContragentType | null>(null);
     const [products, setProducts] = useState<any>(null);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const [isOpenExcel, setIsOpenExcel] = useState(false);
     const [loading, setLoading] = useState(false);
     const [filter, setFilter] = useState({
         is_customer: false,
@@ -219,7 +221,9 @@ const Counterparty = () => {
                         <div className="flex flex-col gap-1 w-[180px]">
                             {types.map((t) =>
                                 row.original.is_supplier ? (
-                                    <Link to={`/counterparties/${row?.original?.id}`}>
+                                    <Link
+                                        to={`/counterparties/${row?.original?.id}`}
+                                    >
                                         <span
                                             key={t}
                                             className={`text-xs px-2 py-0.5 rounded-full w-fit font-medium ${
@@ -497,6 +501,15 @@ const Counterparty = () => {
 
                 <div className="flex gap-x-2">
                     <Button
+                        onClick={() => setIsOpenExcel(true)}
+                        variant="solid"
+                        size="sm"
+                        className="bg-green-600 hover:bg-green-700"
+                        icon={<FaFileExcel />}
+                    >
+                        Excel
+                    </Button>
+                    <Button
                         onClick={() => setIsOpen(true)}
                         variant="solid"
                         size="sm"
@@ -764,6 +777,11 @@ const Counterparty = () => {
                     После удаления восстановить контрагента будет невозможно.
                 </p>
             </ConfirmDialog>
+
+            <UploadContractorFile
+                isOpen={isOpenExcel}
+                setIsOpen={setIsOpenExcel}
+            />
         </div>
     );
 };

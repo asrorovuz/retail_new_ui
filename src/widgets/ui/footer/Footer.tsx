@@ -1,14 +1,24 @@
 import { useAuthContext } from "@/app/providers/AuthProvider";
 import { useSettingsStore } from "@/app/store/useSettingsStore";
+import {
+    useSaleSettingsStore,
+    type PriceDisplayMode,
+} from "@/app/store/useSaleSettingsStore";
 import { useShiftApi } from "@/entities/init/repository";
 import { CreateShiftDialog, UpdateShiftDialog } from "@/features/shift";
-import { Button } from "@/shared/ui/kit";
+import { Button, Dropdown, Radio } from "@/shared/ui/kit";
 import Alert from "@/shared/ui/kit-pro/alert/Alert";
 import { LogoutSvg } from "@/shared/ui/svg/LogoutSvg";
 import { useEffect, useState } from "react";
 import { MdOutlineSettings } from "react-icons/md";
 import { TfiReload } from "react-icons/tfi";
-import { useNavigate, useOutletContext } from "react-router-dom";
+import { Link, useNavigate, useOutletContext } from "react-router-dom";
+
+const PRICE_OPTIONS: { value: PriceDisplayMode; label: string }[] = [
+    { value: "both", label: "Оба варианта" },
+    { value: "retail", label: "Только цена продажи" },
+    { value: "bulk", label: "Только оптовая цена" },
+];
 
 const Footer = ({ deleteDraft, draft }: any) => {
     const [showAlert, setShowAlert] = useState(false);
@@ -23,6 +33,7 @@ const Footer = ({ deleteDraft, draft }: any) => {
     const navigate = useNavigate();
 
     const { activeShift, setActiveShift } = useSettingsStore();
+    const { priceDisplayMode, setPriceDisplayMode } = useSaleSettingsStore();
 
     const onDeleteActivedraft = () => {
         const findIndex = draft?.findIndex((item: any) => item?.isActive);
@@ -59,11 +70,52 @@ const Footer = ({ deleteDraft, draft }: any) => {
                 </Button>
             </div>
             <div className="flex items-center gap-x-2">
-                <Button
-                    size="xs"
-                    onClick={() => navigate("/settings")}
-                    icon={<MdOutlineSettings />}
-                />
+                <Dropdown
+                    trigger="click"
+                    placement="top-start"
+                    renderTitle={
+                        <Button
+                            size="xs"
+                            icon={<MdOutlineSettings />}
+                        />
+                    }
+                    menuClass="p-2 min-w-[220px]"
+                >
+                    <Dropdown.Item variant="custom">
+                        <Link
+                            to="/settings"
+                            className="flex items-center gap-x-2 px-2 py-2 rounded hover:bg-slate-100 text-sm text-slate-700 w-full"
+                        >
+                            <MdOutlineSettings size={15} />
+                            Настройки
+                        </Link>
+                    </Dropdown.Item>
+                    <Dropdown.Item variant="divider" />
+                    <Dropdown.Item variant="header">
+                        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide px-2 py-1">
+                            Настройки продаж
+                        </p>
+                    </Dropdown.Item>
+                    {PRICE_OPTIONS.map((opt) => (
+                        <Dropdown.Item
+                            key={opt.value}
+                            variant="custom"
+                            onClick={() => setPriceDisplayMode(opt.value)}
+                        >
+                            <label className="flex items-center gap-x-2 px-2 py-2 cursor-pointer hover:bg-slate-100 rounded w-full text-sm text-slate-700">
+                                <Radio
+                                    value={opt.value}
+                                    name="footerPriceMode"
+                                    checked={priceDisplayMode === opt.value}
+                                    onChange={() =>
+                                        setPriceDisplayMode(opt.value)
+                                    }
+                                />
+                                {opt.label}
+                            </label>
+                        </Dropdown.Item>
+                    ))}
+                </Dropdown>
 
                 <Button
                     onClick={() => setIsOpenNavigate(true)}

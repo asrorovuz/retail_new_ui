@@ -196,7 +196,7 @@ export const updateAlertOnApi = async (
 
 export const updateProductApi = async (
     productId: number,
-    payload: ProductFormType,
+    payload: any,
 ): Promise<Product> => {
     return await apiRequest<Product>({
         url: `${pathServices.products.updateProduct}${productId}`,
@@ -277,6 +277,25 @@ export const getBulkCreateStatusApi = async (
 ): Promise<BulkJobStatus> => {
     return await apiRequest<BulkJobStatus>({
         url: pathServices.products.bulkCreateProductStatus + jobId,
+        method: "GET",
+    });
+};
+
+export const bulkUpdateProductApi = async (payload: {
+    products: any[];
+}): Promise<{ job_id: string }> => {
+    return await apiRequest<{ job_id: string }>({
+        url: pathServices.products.bulkUpdateProduct,
+        method: "POST",
+        data: payload,
+    });
+};
+
+export const getBulkUpdateStatusApi = async (
+    jobId: string,
+): Promise<BulkJobStatus> => {
+    return await apiRequest<BulkJobStatus>({
+        url: pathServices.products.bulkUpdateProductStatus + jobId,
         method: "GET",
     });
 };

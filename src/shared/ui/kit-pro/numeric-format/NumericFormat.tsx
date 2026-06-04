@@ -29,11 +29,12 @@ const FormattedNumber: React.FC<FormattedNumberProps> = ({
     return <span>{grouped}.</span>;
   }
 
-  // Agar scale berilgan bo‘lsa → verguldan keyingi raqamlarni kesib tashlaymiz
+  // Verguldan keyingi raqamlarni cheklash (default 3, trailing nollarni trim)
   let formattedDecimal = decimalPart ?? "";
 
-  if (scale !== undefined && scale >= 0 && decimalPart) {
-    formattedDecimal = decimalPart.slice(0, scale);
+  if (decimalPart) {
+    const maxScale = scale !== undefined ? scale : 3;
+    formattedDecimal = decimalPart.slice(0, maxScale).replace(/0+$/, "");
   }
 
   // Yakuniy format

@@ -8,13 +8,7 @@ import {
 import classNames from "@/shared/lib/classNames";
 import { usePermission } from "@/shared/lib/controlActionWithPermission";
 import { showErrorMessage, showSuccessMessage } from "@/shared/lib/showMessage";
-import {
-    Button,
-    DatePicker,
-    Dialog,
-    Pagination,
-    Table,
-} from "@/shared/ui/kit";
+import { Button, DatePicker, Dialog, Pagination, Table } from "@/shared/ui/kit";
 import ConfirmDialog from "@/shared/ui/kit-pro/confirm-dialog/ConfirmDialog";
 import Empty from "@/shared/ui/kit-pro/empty/Empty";
 import NavigateButton from "@/shared/ui/kit-pro/navigate-button/NavigateButton";
@@ -372,14 +366,121 @@ const RevisiyaPage = () => {
                     title={
                         <div className="flex gap-x-2 items-center">
                             Ревизия{" "}
-                            <p className="bg-blue-300 rounded-lg h-10 w-10 p-x-1 flex justify-center items-center">
+                            <p className="bg-blue-300 rounded-lg h-10 w-10 flex justify-center items-center font-bold">
                                 {itemModal?.number}
                             </p>
                         </div>
                     }
+                    onClose={() => setItemModal(null)}
                     isOpen={!!itemModal}
                 >
-                    <div>{itemModal?.number}</div>
+                    <div className="flex flex-col gap-y-4 p-2 h-[60vh]">
+                        {/* Meta info: xodim va sana */}
+                        <div className="flex gap-x-6 text-sm text-slate-600 border-b pb-3">
+                            <div className="flex items-center gap-x-2">
+                                <span className="font-medium text-slate-700">
+                                    Сотрудник:
+                                </span>
+                                <span>{itemModal?.account?.name ?? "—"}</span>
+                            </div>
+                            <div className="flex items-center gap-x-2">
+                                <span className="font-medium text-slate-700">
+                                    Дата:
+                                </span>
+                                <span>
+                                    {dayjs(itemModal?.date).format(
+                                        "DD-MM-YYYY HH:mm",
+                                    )}
+                                </span>
+                            </div>
+                        </div>
+
+                        {/* Mahsulotlar jadvali */}
+                        {itemModal?.items?.length > 0 ? (
+                            <div className="overflow-auto rounded-lg border border-slate-200">
+                                <table className="w-full text-sm">
+                                    <thead className="bg-slate-100 sticky top-0">
+                                        <tr>
+                                            <th className="text-left px-4 py-2 font-medium text-slate-700 border-b border-slate-200 w-[50px]">
+                                                №
+                                            </th>
+                                            <th className="text-left px-4 py-2 font-medium text-slate-700 border-b border-slate-200">
+                                                Наименование товара
+                                            </th>
+                                            <th className="text-left px-4 py-2 font-medium text-slate-700 border-b border-slate-200 w-[220px]">
+                                                Количество
+                                            </th>
+                                            {/* <th className="text-left px-4 py-2 font-medium text-slate-700 border-b border-slate-200 w-[150px]">
+                                                Склад (откуда)
+                                            </th> */}
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {itemModal.items.map(
+                                            (el: any, index: number) => {
+                                                const product =
+                                                    el?.warehouse_operation_from
+                                                        ?.product;
+                                                // const warehouseName =
+                                                //     el?.warehouse_operation_from
+                                                //         ?.name ?? "—";
+
+                                                return (
+                                                    <tr
+                                                        key={el?.id ?? index}
+                                                        className="hover:bg-slate-50 transition border-b border-slate-100 last:border-0"
+                                                    >
+                                                        <td className="px-4 py-2 text-slate-500">
+                                                            {index + 1}
+                                                        </td>
+                                                        <td className="px-4 py-2 font-medium text-slate-800">
+                                                            {product?.name ??
+                                                                "—"}
+                                                        </td>
+                                                        <td className="px-4 py-2 text-slate-700">
+                                                            {el?.quantity ??
+                                                                "—"}
+                                                        </td>
+                                                        {/* <td className="px-4 py-2 text-slate-600">
+                                                            {warehouseName}
+                                                        </td> */}
+                                                    </tr>
+                                                );
+                                            },
+                                        )}
+                                    </tbody>
+                                    <tfoot className="bg-slate-50">
+                                        <tr>
+                                            <td
+                                                colSpan={2}
+                                                className="px-4 py-2 text-sm font-semibold text-slate-700"
+                                            >
+                                                Итого позиций:{" "}
+                                                {itemModal.items.length}
+                                            </td>
+                                            <td
+                                                colSpan={2}
+                                                className="px-4 py-2 text-sm font-semibold text-slate-700"
+                                            >
+                                                Итого количество:{" "}
+                                                {itemModal.items.reduce(
+                                                    (sum: number, el: any) =>
+                                                        sum +
+                                                        (Number(el?.quantity) ||
+                                                            0),
+                                                    0,
+                                                )}
+                                            </td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        ) : (
+                            <div className="flex items-center justify-center h-32 text-slate-400 text-sm">
+                                Нет данных
+                            </div>
+                        )}
+                    </div>
                 </Dialog>
             )}
         </div>

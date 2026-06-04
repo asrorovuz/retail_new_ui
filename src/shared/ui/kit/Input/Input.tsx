@@ -138,6 +138,10 @@ const Input = (props: InputProps) => {
                         if (parts.length > 2) {
                             raw = parts[0] + "." + parts.slice(1).join("");
                         }
+                        if (raw.includes(".")) {
+                            const [int, dec] = raw.split(".");
+                            raw = int + "." + dec.slice(0, 3);
+                        }
                     }
                 }
 
@@ -156,7 +160,14 @@ const Input = (props: InputProps) => {
     const onlyValidNumbers = (val: string) => val.replace(/[^0-9.\-]/g, "");
     const onlyInt = (val: string) => val.replace(/[^0-9\-]/g, "");
 
-    const onlyFloat = (val: string) => val.replace(/[^0-9.\-]/g, "");
+    const onlyFloat = (val: string) => {
+        let result = val.replace(/[^0-9.\-]/g, "");
+        if (result.includes(".")) {
+            const [int, dec] = result.split(".");
+            result = int + "." + dec.slice(0, 3);
+        }
+        return result;
+    };
 
     const formatValue = (val: string) => {
         if (val.includes(".")) {

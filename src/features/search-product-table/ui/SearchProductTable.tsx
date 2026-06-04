@@ -4,6 +4,7 @@ import { useDraftRefundStore } from "@/app/store/useRefundDraftStore";
 import { useReturnPurchaseDraftStore } from "@/app/store/useReturnPurchaseDraftStore";
 import { useRevisionStore } from "@/app/store/useRevision";
 import { useDraftSaleStore } from "@/app/store/useSaleDraftStore";
+import { useSaleSettingsStore } from "@/app/store/useSaleSettingsStore";
 import { useWriteOfStore } from "@/app/store/useWriteofStroe";
 import classNames from "@/shared/lib/classNames";
 import { highlightText } from "@/shared/lib/hightLightText";
@@ -83,6 +84,7 @@ const SearchProductTable = ({
     };
 
     const { active, update } = getActiveDraft();
+    const { priceDisplayMode } = useSaleSettingsStore();
 
     const [highlightedIndex, setHighlightedIndex] = useState(-1);
     const highlightedIndexRef = useRef(-1);
@@ -234,7 +236,7 @@ const SearchProductTable = ({
                         key={item?.id}
                         onClick={() => onChange(item)}
                         className={classNames(
-                            "flex justify-between items-start gap-x-[30px] text-xs text-slate-700 p-2 active:bg-slate-100",
+                            "flex justify-between items-start gap-x-[30px] text-sm text-slate-700 p-2 active:bg-slate-100",
                             !!index && "border-t border-slate-300",
                             index === highlightedIndex &&
                                 "bg-blue-100 font-medium",
@@ -242,23 +244,38 @@ const SearchProductTable = ({
                     >
                         {highlightText(item?.name, debouncedSearch)}
                         <div className="flex">
-                            <span className="text-nowrap border-r-2 border-slate-600 px-1">
-                                <FormattedNumber
-                                    value={Number(
-                                        type === "purchase"
-                                            ? purchasePrice
-                                            : price?.amount || 0,
-                                    )}
-                                />
-                            </span>
-                            {(type === "sale" || type === "refund") && (
-                                <span className="text-nowrap border-r-2 border-slate-600 px-1">
+                            {(type !== "sale" && type !== "refund") ||
+                            priceDisplayMode !== "bulk" ? (
+                                <span className="text-nowrap px-2 bg-blue-100 text-blue-700 font-medium">
                                     <FormattedNumber
-                                        value={Number(bulkPrice?.amount || 0)}
+                                        value={Number(
+                                            type === "purchase"
+                                                ? purchasePrice
+                                                : price?.amount || 0,
+                                        )}
                                     />
                                 </span>
-                            )}
-                            <span className="text-nowrap px-1">
+                            ) : null}
+                            {(type === "sale" || type === "refund") &&
+                                priceDisplayMode !== "retail" && (
+                                    <span className="text-nowrap px-2 bg-orange-100 text-orange-700" >
+                                        <FormattedNumber
+                                            value={Number(
+                                                bulkPrice?.amount || 0,
+                                            )}
+                                        />
+                                    </span>
+                                )}
+                            <span
+                                className={classNames(
+                                    "text-nowrap px-2 font-medium",
+                                    (state ?? 0) > 0
+                                        ? "bg-green-100 text-green-700"
+                                        : (state ?? 0) < 0
+                                          ? "bg-red-100 text-red-700"
+                                          : "bg-slate-100 text-slate-600",
+                                )}
+                            >
                                 <FormattedNumber value={Number(state || 0)} />
                             </span>
                         </div>

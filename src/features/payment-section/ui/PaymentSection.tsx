@@ -140,6 +140,12 @@ const PaymentSection = ({
         // Ikki marta "." bosilmasligi uchun
         if (num === "." && current.includes(".")) return;
 
+        // Verguldan keyin 3 ta raqamdan ko'p kiritmaydi
+        if (num !== "." && current.includes(".")) {
+            const decPart = current.split(".")[1] || "";
+            if (decPart.length >= 3) return;
+        }
+
         // "0." → ruxsat, "05" → ruxsat emas
         let newValue: string;
 
@@ -277,7 +283,7 @@ const PaymentSection = ({
                                                 {activeDraft?.discountAmount
                                                     ? Number(
                                                           activeDraft?.discountAmount,
-                                                      )?.toLocaleString("ru-RU")
+                                                      )?.toLocaleString("ru-RU", { maximumFractionDigits: 3 })
                                                     : 0}
                                             </span>
                                         </div>

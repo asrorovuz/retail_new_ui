@@ -107,6 +107,8 @@ export const pathServices = {
         createProductPath: "/api/product/create",
         bulkCreateProduct: "/api/product/bulk-create",
         bulkCreateProductStatus: "/api/product/bulk-create/status/",
+        bulkUpdateProduct: "/api/product/bulk-update",
+        bulkUpdateProductStatus: "/api/product/bulk-job/status/",
         createFavouriteProductPath: "/api/favorite-product/add",
         createExcelFileProduct: `/api/excel/parse`,
         exportExcelFileProduct: `/api/excel/products`,

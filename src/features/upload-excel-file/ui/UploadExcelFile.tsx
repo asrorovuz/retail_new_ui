@@ -1,4 +1,5 @@
 import { messages, ERROR_MESSAGES } from "@/app/constants/message.request";
+import { useSettingsStore } from "@/app/store/useSettingsStore";
 import {
     useAllProductApi,
     useCreateProductWithExcel,
@@ -8,6 +9,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import {
     bulkCreateProductApi,
     getBulkCreateStatusApi,
+    bulkUpdateProductApi,
+    getBulkUpdateStatusApi,
     type BulkJobFailure,
 } from "@/entities/products/api";
 import { convertFilesToBase64 } from "@/shared/lib/convertFilesToBase64";
@@ -101,6 +104,7 @@ const INITIAL_STATUS: StatusState = {
 
 const UploadExcelFile = ({ isOpen, setIsOpen }: any) => {
     const queryClient = useQueryClient();
+    const { wareHouseId } = useSettingsStore();
     const { data: productData } = useAllProductApi();
     const { data: currencies } = useCurrancyApi();
     const { data: categoryData } = useCategoryApi();
@@ -311,20 +315,31 @@ const UploadExcelFile = ({ isOpen, setIsOpen }: any) => {
                         initialState?.edit && !elem?.purchasePrice
                             ? (product?.purchase_price?.amount ?? null)
                             : elem?.purchasePrice
-                              ? Number(String(elem.purchasePrice).replace(",", ""))
+                              ? Number(
+                                    String(elem.purchasePrice).replace(",", ""),
+                                )
                               : null,
                     currency_code: currencyCode,
                 },
                 measurement_name:
-                    initialState?.edit && !elem?.measurement && !elem?.packageMeasurementName
+                    initialState?.edit &&
+                    !elem?.measurement &&
+                    !elem?.packageMeasurementName
                         ? showMeasurmentName(product?.measurement_code)
-                        : elem?.measurement || elem?.packageMeasurementName || "шт",
+                        : elem?.measurement ||
+                          elem?.packageMeasurementName ||
+                          "шт",
                 sku: elem?.sku ?? baseProduct?.sku ?? null,
                 code: elem?.code ?? baseProduct?.code ?? null,
-                state:
-                    elem?.state ??
-                    baseProduct?.warehouse_items?.[0]?.state ??
-                    null,
+                quantity:
+                    elem?.state != null
+                        ? Number(String(elem.state).replace(",", ""))
+                        : initialState?.edit
+                          ? (Number(
+                                baseProduct?.warehouse_items?.[0]?.state,
+                            ) ?? null)
+                          : null,
+                warehouse_id: wareHouseId ?? null,
                 is_legal:
                     elem?.isLegal?.toLowerCase() === "белый" ? true : false,
                 barcodes:
@@ -359,7 +374,12 @@ const UploadExcelFile = ({ isOpen, setIsOpen }: any) => {
                             initialState?.edit && !elem?.commonPrice
                                 ? (product?.prices?.[0]?.amount ?? 0)
                                 : elem?.commonPrice
-                                  ? Number(String(elem.commonPrice).replace(",", ""))
+                                  ? Number(
+                                        String(elem.commonPrice).replace(
+                                            ",",
+                                            "",
+                                        ),
+                                    )
                                   : 0,
                         price_type_id: 1,
                         currency_code: currencyCode,
@@ -369,7 +389,9 @@ const UploadExcelFile = ({ isOpen, setIsOpen }: any) => {
                             initialState?.edit && !elem?.bulkPrice
                                 ? (product?.prices?.[1]?.amount ?? 0)
                                 : elem?.bulkPrice
-                                  ? Number(String(elem.bulkPrice).replace(",", ""))
+                                  ? Number(
+                                        String(elem.bulkPrice).replace(",", ""),
+                                    )
                                   : 0,
                         price_type_id: 2,
                         currency_code: currencyCode,
@@ -379,6 +401,8 @@ const UploadExcelFile = ({ isOpen, setIsOpen }: any) => {
         });
 
         const chunks = chunkArray(resultData, 1000);
+        const submitApi = initialState.edit ? bulkUpdateProductApi : bulkCreateProductApi;
+        const getStatusApi = initialState.edit ? getBulkUpdateStatusApi : getBulkCreateStatusApi;
 
         isCancelledRef.current = false;
         setOpenStatusBar(true);
@@ -396,7 +420,7 @@ const UploadExcelFile = ({ isOpen, setIsOpen }: any) => {
             if (isCancelledRef.current) break;
 
             try {
-                const { job_id } = await bulkCreateProductApi({
+                const { job_id } = await submitApi({
                     products: chunk,
                 });
 
@@ -409,7 +433,7 @@ const UploadExcelFile = ({ isOpen, setIsOpen }: any) => {
                             return;
                         }
                         try {
-                            const res = await getBulkCreateStatusApi(job_id);
+                            const res = await getStatusApi(job_id);
 
                             const newSuccess =
                                 cumulativeSuccess + res.success_count;
@@ -438,7 +462,9 @@ const UploadExcelFile = ({ isOpen, setIsOpen }: any) => {
                                     if (failure) {
                                         errorBySourceIndex.set(
                                             chunkOffset + j,
-                                            ERROR_MESSAGES[failure.error_code] ||
+                                            ERROR_MESSAGES[
+                                                failure.error_code
+                                            ] ||
                                                 failure.error_message ||
                                                 "Неизвестная ошибка",
                                         );
@@ -644,7 +670,11 @@ const ProductHeader = ({
             </div>
             <div className="flex justify-between items-center mb-5 px-0.5">
                 <InputGroup className="px-0.5 flex w-[350px]">
-                    <Button size="sm" className="z-10" onClick={() => handleIncDec("-")}>
+                    <Button
+                        size="sm"
+                        className="z-10"
+                        onClick={() => handleIncDec("-")}
+                    >
                         -
                     </Button>
                     <Input
@@ -659,7 +689,11 @@ const ProductHeader = ({
                         className="w-full text-center shadow-inner bg-white -mx-5"
                         value={initialState?.rowsCount}
                     />
-                    <Button size="sm" className="z-10" onClick={() => handleIncDec("+")}>
+                    <Button
+                        size="sm"
+                        className="z-10"
+                        onClick={() => handleIncDec("+")}
+                    >
                         +
                     </Button>
                 </InputGroup>
