@@ -69,7 +69,6 @@ interface StatusState {
 }
 
 const optionSelect = [
-    { label: "ID", value: "id" },
     { label: "Название", value: "name" },
     { label: "Цена продажи", value: "commonPrice" },
     { label: "Закупочная цена", value: "purchasePrice" },
@@ -293,9 +292,9 @@ const UploadExcelFile = ({ isOpen, setIsOpen }: any) => {
         });
 
         const resultData = noSelectData?.map((elem) => {
-            const product: any = elem?.id
-                ? productData?.find((p: any) => p?.id === Number(elem?.id))
-                : productData?.find((p: any) => p?.name === elem?.name);
+            const product: any = productData?.find(
+                (p: any) => p?.name === elem?.name,
+            );
             const category: any = categoryData?.find(
                 (p: any) => p?.name === elem?.category,
             );
@@ -308,9 +307,7 @@ const UploadExcelFile = ({ isOpen, setIsOpen }: any) => {
                 860;
 
             return {
-                id: initialState?.edit
-                    ? (elem?.id ? Number(elem?.id) : product?.id)
-                    : undefined,
+                id: initialState?.edit ? product?.id : undefined,
                 name: elem?.name || "",
                 purchase_price: {
                     amount:
@@ -337,9 +334,8 @@ const UploadExcelFile = ({ isOpen, setIsOpen }: any) => {
                     elem?.state != null
                         ? Number(String(elem.state).replace(",", ""))
                         : initialState?.edit
-                          ? (Number(
-                                baseProduct?.warehouse_items?.[0]?.state,
-                            ) ?? null)
+                          ? (Number(baseProduct?.warehouse_items?.[0]?.state) ??
+                            null)
                           : null,
                 warehouse_id: wareHouseId ?? null,
                 is_legal:
@@ -403,7 +399,9 @@ const UploadExcelFile = ({ isOpen, setIsOpen }: any) => {
         });
 
         const chunks = chunkArray(resultData, 1000);
-        const submitApi = initialState.edit ? bulkUpdateProductApi : bulkCreateProductApi;
+        const submitApi = initialState.edit
+            ? bulkUpdateProductApi
+            : bulkCreateProductApi;
         const getStatusApi = getBulkJobStatusApi;
 
         isCancelledRef.current = false;
