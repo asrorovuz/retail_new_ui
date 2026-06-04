@@ -136,30 +136,33 @@ const PaymentModal = ({
             </div>
             <div className="bg-slate-200 rounded-2xl text-slate-800 mb-4 p-4">
                 <div className="flex flex-col gap-y-3 mb-3 pb-3 border-b border-dashed border-slate-500">
-                    <div className="flex justify-between border-b border-dashed">
-                        <span>Скидка:</span>
-                        <FormattedNumber
-                            value={activeDraft?.discountAmount ?? 0}
-                        />
-                    </div>
+                    {type !== "purchase" && (
+                        <div className="flex justify-between border-b border-dashed">
+                            <span>Скидка:</span>
+                            <FormattedNumber
+                                value={activeDraft?.discountAmount ?? 0}
+                            />
+                        </div>
+                    )}
                     <div className="flex justify-between border-b border-dashed">
                         <span>Оплаченная сумма:</span>
                         <FormattedNumber value={totalPaymentAmount ?? 0} />
                     </div>
-                    {type !== "refund" && (
-                        <div className="flex justify-between border-b border-dashed">
-                            <span>Долг:</span>
-                            <FormattedNumber
-                                value={
-                                    totalAmount -
-                                        Number(
-                                            activeDraft?.discountAmount ?? 0,
-                                        ) -
-                                        totalPaymentAmount || 0
-                                }
-                            />
-                        </div>
-                    )}
+                    {type !== "refund" &&
+                        (() => {
+                            const debt =
+                                totalAmount -
+                                Number(activeDraft?.discountAmount ?? 0) -
+                                totalPaymentAmount;
+                            return (
+                                <div className="flex justify-between border-b border-dashed">
+                                    <span>Долг:</span>
+                                    <FormattedNumber
+                                        value={debt > 0 ? debt : 0}
+                                    />
+                                </div>
+                            );
+                        })()}
                     {(type === "sale"
                         ? activeDraft?.payment
                         : activeDraft?.payout
@@ -184,15 +187,20 @@ const PaymentModal = ({
                     </div>
                     {type !== "refund" && (
                         <>
-                            <div className="flex justify-between border-b border-dashed">
-                                <span>Итого со скидкой:</span>
-                                <FormattedNumber
-                                    value={
-                                        totalAmount -
-                                        Number(activeDraft?.discountAmount ?? 0)
-                                    }
-                                />
-                            </div>
+                            {type !== "purchase" && (
+                                <div className="flex justify-between border-b border-dashed">
+                                    <span>Итого со скидкой:</span>
+                                    <FormattedNumber
+                                        value={
+                                            totalAmount -
+                                            Number(
+                                                activeDraft?.discountAmount ??
+                                                    0,
+                                            )
+                                        }
+                                    />
+                                </div>
+                            )}
                             <div className="flex justify-between">
                                 <span>Сдача:</span>
                                 <FormattedNumber value={cashBackAmount ?? 0} />

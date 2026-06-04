@@ -72,7 +72,13 @@ const PurchaseTable = ({
     const [localQuantity, setLocalQuantity] = useState<string>(
         String(currentItem?.quantity ?? 0),
     );
-
+    const [marginByProduct, setMarginByProduct] = useState<
+        Record<number, string>
+    >({});
+    const marginPercent =
+        currentItem?.productId != null
+            ? (marginByProduct[currentItem.productId] ?? "")
+            : "";
     const onDeleteDraftItem = () => {
         if (expandedRow) {
             deleteDraftItem(+expandedRow);
@@ -139,6 +145,40 @@ const PurchaseTable = ({
         selectedType === 1
             ? (retailPrice?.amount ?? "0")
             : (bulkPrice?.amount ?? "0");
+
+    const handleMarginChange = (raw: string) => {
+        if (!currentItem) return;
+        setMarginByProduct((prev) => ({
+            ...prev,
+            [currentItem.productId]: raw,
+        }));
+        const pct = Number(raw);
+        if (isNaN(pct) || !retailPrice?.id) return;
+        const newRetail = Math.round(
+            (currentItem.priceAmount ?? 0) * (1 + pct / 100),
+        );
+        updatePrices(
+            { id: currentItem.productId, price_id: retailPrice.id },
+            String(newRetail),
+        );
+    };
+
+    // expandedRow almashganda editing panelni yopish
+    useEffect(() => {
+        setIsEditing({ isOpen: false, type: "price" });
+    }, [expandedRow]);
+
+    // currentItem?.productId o'zgarganda (o'chirilsa yoki boshqa qatorga o'tilsa)
+    useEffect(() => {
+        const productId = currentItem?.productId;
+        if (productId != null) {
+            // Yangi product uchun selectni Rozichga qaytarish
+            setSelectedRows?.((prev: any) => ({ ...prev, [productId]: false }));
+        } else {
+            // Product o'chirildi yoki jadval bo'shadi — panelni yopish
+            setExpandedRow(null);
+        }
+    }, [currentItem?.productId]);
 
     useEffect(() => {
         setLocalQuantity(String(currentItem?.quantity ?? 0));
@@ -704,92 +744,34 @@ const PurchaseTable = ({
                         }}
                     />
 
-                    {/* INFO */}
-                    <div className="flex flex-col text-xs font-normal text-slate-800">
-                        <div className="flex justify-between gap-x-2">
-                            <span className="text-slate-600">Розничная:</span>
-                            <FormattedNumber value={retailPrice?.amount ?? 0} />
-                        </div>
+                    {/* INFO + Marja */}
+                    <div className="flex gap-x-2 text-sm font-normal text-slate-800">
+                        <Input
+                            type="number"
+                            placeholder="%"
+                            disabled={selectedType === 2}
+                            value={selectedType === 2 ? "" : marginPercent}
+                            onChange={(e) => handleMarginChange(e.target.value)}
+                            onFocus={() => setActiveTypeKeyboard("numeric")}
+                            className="!w-12 !h-8"
+                            size="sm"
+                        />
+                        <div className="flex flex-col w-full">
+                            <div className="flex items-center justify-between gap-x-1">
+                                <span className="text-slate-600 shrink-0">
+                                    Розничная:
+                                </span>
 
-                        <div className="flex justify-between gap-x-2">
-                            <span className="text-slate-600">Оптовая:</span>
-                            <FormattedNumber value={bulkPrice?.amount ?? 0} />
-                        </div>
-                    </div>
-                </div>
-                <div className="grid grid-cols-3 gap-x-1 items-center">
-                    <Select
-                        size="sm"
-                        options={[
-                            { value: 1, label: "Розн. цена" },
-                            { value: 2, label: "Опт. цена" },
-                        ]}
-                        isDisabled
-                        className="text-xs"
-                        placeholder={"Скидка"}
-                        // value={
-                        //   selectedRows?.[currentItem?.productId]
-                        //     ? { value: 2, label: "Опт. цена" }
-                        //     : { value: 1, label: "Розн. цена" }
-                        // }
-                        onChange={(val: any) => {
-                            setSelectedRows((prev: any) => ({
-                                ...prev,
-                                [currentItem?.productId]: val.value === 2,
-                            }));
-                        }}
-                        styles={{
-                            control: (base) => ({
-                                ...base,
-                                height: "30px",
-                                minHeight: "30px",
-                                borderRadius: "8px",
-                            }),
-                            menuPortal: (base) => ({
-                                ...base,
-                                zIndex: 9999,
-                            }),
-                        }}
-                        menuPortalTarget={document.body}
-                        menuPosition="fixed"
-                    />
-
-                    {/* INPUT PRICE */}
-                    <Input
-                        size="sm"
-                        type="number"
-                        disabled
-                        space={false}
-                        className="!w-[135px] h-[30px] text-xs"
-                        placeholder="Скидка"
-                        // value={String(selectedPrice ?? 0) ?? 0}
-                        onFocus={() => setActiveTypeKeyboard("numeric")}
-                        onChange={(val) => {
-                            const newAmount = Number(val.target.value);
-
-                            const priceId =
-                                selectedType === 1
-                                    ? retailPrice?.id
-                                    : bulkPrice?.id;
-
-                            updatePrices(
-                                {
-                                    id: currentItem?.productId,
-                                    price_id: priceId,
-                                },
-                                String(newAmount ?? 0),
-                            );
-                        }}
-                    />
-
-                    {/* INFO */}
-                    <div className="flex flex-col text-xs font-normal text-slate-800">
-                        <div className="flex justify-between gap-x-2">
-                            <span className="text-slate-600">Скидка:</span>0
-                        </div>
-
-                        <div className="flex justify-between gap-x-2">
-                            <span className="text-slate-600">Скидка:</span>0
+                                <FormattedNumber
+                                    value={Number(retailPrice?.amount ?? 0)}
+                                />
+                            </div>
+                            <div className="flex justify-between gap-x-2">
+                                <span className="text-slate-600">Оптовая:</span>
+                                <FormattedNumber
+                                    value={Number(bulkPrice?.amount ?? 0)}
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>

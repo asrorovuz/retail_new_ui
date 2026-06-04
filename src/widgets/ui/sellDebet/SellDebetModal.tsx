@@ -25,23 +25,28 @@ const SellDebetModal = ({
 }: SellDebetModalProps) => {
     const [contractorIdState, setContractorIdState] = useState<any>(null);
     const [comment, setComment] = useState("");
+    const [search, setSearch] = useState("");
 
-    const { data, isPending } = useContractorApi(isOpen, "");
+    const typeParams =
+        type === "purchase"
+            ? { is_supplier: true }
+            : type === "sale"
+              ? { is_customer: true }
+              : undefined;
+
+    const { data, isPending } = useContractorApi(isOpen, search, typeParams);
 
     useEffect(() => {
         setContractorIdState(contractorId);
     }, [contractorId]);
 
-    const filterData =
-        type === "purchase"
-            ? data?.filter((el: any) => el?.is_supplier)
-            : type === "sale"
-              ? data?.filter((el: any) => el?.is_customer)
-              : data;
+    useEffect(() => {
+        if (!isOpen) setSearch("");
+    }, [isOpen]);
 
     const contractorOptions = useMemo(() => {
         return (
-            filterData?.map((item: any) => ({
+            data?.map((item: any) => ({
                 label: item?.name,
                 value: item?.id,
             })) ?? []
@@ -79,7 +84,6 @@ const SellDebetModal = ({
                     <Select
                         options={contractorOptions}
                         size="sm"
-                        isSearchable={false}
                         isLoading={isPending}
                         className="w-full bg-white"
                         placeholder={
@@ -91,6 +95,10 @@ const SellDebetModal = ({
                         getOptionLabel={(option) => option?.label || ""}
                         getOptionValue={(option) => String(option?.value)}
                         onChange={(val) => setContractorIdState(val?.value)}
+                        // 👇 qo'shildi
+                        inputValue={search}
+                        onInputChange={(val) => setSearch(val)}
+                        filterOption={() => true} // o'zimiz filterlayapmiz
                     />
                     <Button
                         size="sm"

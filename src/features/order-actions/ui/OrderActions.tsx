@@ -104,7 +104,7 @@ const OrderActions = ({
         useState<FizcalResponsetype | null>(null);
     const [sellDebit, setSellDebit] = useState(false);
     // const [isOpenContractModal, setIsOpenContractModal] = useState(false);
-    const [contractorId, setContractorId] = useState<number | null>(localContractorId ?? null);
+    const [contractorId, setContractorId] = useState<number | null>(null);
     const [shiftAlert, setShiftAlert] = useState(false);
     const [pendingAction, setPendingAction] = useState<(() => void) | null>(
         null,
@@ -729,6 +729,12 @@ const OrderActions = ({
             setSelectFiscalized(filterDataFiscal[0]);
         }
     }, [filterDataFiscal]);
+
+    useEffect(() => {
+        if(localContractorId){
+            setContractorId(localContractorId)
+        }
+    }, [localContractorId])
 
     return keyType === "numeric" ? (
         <>

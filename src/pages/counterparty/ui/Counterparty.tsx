@@ -6,7 +6,10 @@ import {
     useContractorProductApi,
     useDeleteProductContractorApi,
 } from "@/entities/purchase/repository";
-import { useContractorApi } from "@/entities/sale/repository";
+import {
+    useContractorApi,
+    useContractorCountApi,
+} from "@/entities/sale/repository";
 import ContragentModal from "@/features/modals/ui/ContragentModal";
 import { UploadContractorFile } from "@/features/upload-excel-file";
 import PaymentDebtsModal from "@/features/modals/ui/PaymentDebtsModal";
@@ -96,7 +99,18 @@ const Counterparty = () => {
 
     const columnHelper = createColumnHelper<any>();
 
-    const { data, isPending } = useContractorApi(true, search, isFilter);
+    const { data, isPending } = useContractorApi(
+        true,
+        search,
+        isFilter,
+        pagination,
+    );
+    const { data: count } = useContractorCountApi(
+        true,
+        search,
+        isFilter,
+        pagination,
+    );
     const { mutate: deleteMutate, isPending: isDeletePending } =
         useDeleteContractor();
     const { data: productsData, isPending: productsPending } = useAllProductApi(
@@ -108,10 +122,6 @@ const Counterparty = () => {
     const { mutateAsync: contractorProductCreateAsync } =
         useContractorProductApi();
     const { mutate: deleteProductMutate } = useDeleteProductContractorApi();
-    // const [filterItems, setFilterItems] = useState({
-    //   type: null,
-    //   debit: null,
-    // });
 
     useEffect(() => {
         if (isOpenProducts) {
@@ -203,9 +213,16 @@ const Counterparty = () => {
             columnHelper.display({
                 id: "name",
                 header: "НАЗВАНИЕ",
-                cell: ({ row }) => (
-                    <p className="w-[250px]">{row.original.name || "-"}</p>
-                ),
+                cell: ({ row }) =>
+                    row.original.is_supplier ? (
+                        <Link to={`/counterparties/${row.original.id}`}>
+                            <p className="w-[250px] text-blue-500 hover:underline">
+                                {row.original.name || "-"}
+                            </p>
+                        </Link>
+                    ) : (
+                        <p className="w-[250px]">{row.original.name || "-"}</p>
+                    ),
             }),
             columnHelper.display({
                 id: "type",
@@ -221,20 +238,16 @@ const Counterparty = () => {
                         <div className="flex flex-col gap-1 w-[180px]">
                             {types.map((t) =>
                                 row.original.is_supplier ? (
-                                    <Link
-                                        to={`/counterparties/${row?.original?.id}`}
+                                    <span
+                                        key={t}
+                                        className={`text-xs px-2 py-0.5 rounded-full w-fit font-medium ${
+                                            t === "Клиент"
+                                                ? "bg-blue-100 text-blue-700"
+                                                : "bg-orange-100 text-orange-700"
+                                        }`}
                                     >
-                                        <span
-                                            key={t}
-                                            className={`text-xs px-2 py-0.5 rounded-full w-fit font-medium ${
-                                                t === "Клиент"
-                                                    ? "bg-blue-100 text-blue-700"
-                                                    : "bg-orange-100 text-orange-700"
-                                            }`}
-                                        >
-                                            {t}
-                                        </span>
-                                    </Link>
+                                        {t}
+                                    </span>
                                 ) : (
                                     <span
                                         key={t}
@@ -263,7 +276,9 @@ const Counterparty = () => {
                             0,
                         ) ?? 0;
                     return (
-                        <p className="w-[200px]">
+                        <p
+                            className={`w-max p-1 rounded-full ${totalPrice > 0 ? "bg-green-100 text-gray-700" : totalPrice < 0 ? "bg-red-100 text-red-800" : ""}`}
+                        >
                             <FormattedNumber value={totalPrice} scale={2} />
                         </p>
                     );
@@ -459,7 +474,7 @@ const Counterparty = () => {
 
     return (
         <div className="bg-white h-screen p-2 flex flex-col">
-            <div className="mb-2">
+            <div className="mb-2 flex items-center gap-x-3">
                 <NavigateButton content="Контрагенты" />
             </div>
             <div className="mb-3 flex items-center justify-between">
@@ -497,6 +512,17 @@ const Counterparty = () => {
                             control: (base) => ({ ...base, minWidth: 160 }),
                         }}
                     />
+                </div>
+                
+                <div className="flex items-center gap-x-3 text-xs font-medium">
+                    <div className="flex items-center gap-x-1.5 px-2.5 py-1 rounded-full bg-green-100 text-green-800">
+                        <span className="w-2.5 h-2.5 rounded-sm bg-green-600 inline-block" />
+                        Нам должны
+                    </div>
+                    <div className="flex items-center gap-x-1.5 px-2.5 py-1 rounded-full bg-red-100 text-red-800">
+                        <span className="w-2.5 h-2.5 rounded-sm bg-red-600 inline-block" />
+                        Мы должны
+                    </div>
                 </div>
 
                 <div className="flex gap-x-2">
@@ -617,7 +643,7 @@ const Counterparty = () => {
                 </div>
                 {/* 🔹 Pagination */}
                 <Pagination
-                    total={20}
+                    total={count}
                     pageSize={pagination.pageSize}
                     pageSizeOptions={[20, 50, 100, 1000]}
                     currentPage={pagination.pageIndex}

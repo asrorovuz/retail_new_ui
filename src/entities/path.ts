@@ -142,6 +142,7 @@ export const pathServices = {
         getFiscaldevice: "/api/fiscal-device/get",
         getPaymentPath: "/api/payment-provider/get",
         getContractorPath: "/api/contractor/get",
+        getContractorCountPath: "/api/contractor/get/count",
         updateSellPath: "/api/sale/update/",
         getPaymentDebts: "/api/payment/register",
         getPayoutDebts: "/api/payout/register",

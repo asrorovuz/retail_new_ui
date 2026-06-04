@@ -21,7 +21,7 @@ const Cashbox: FC<CashboxPropsType> = (props) => {
     const { data } = useContragentApi();
 
     const { data: dataById } = useContractorByIdApi(
-        type === "purchase" ? (localContractorId ?? null) : null,
+        type === "purchase" ? (localContractorId ?? null) : null
     );
 
     const contractor = useMemo(() => {
@@ -113,6 +113,7 @@ const Cashbox: FC<CashboxPropsType> = (props) => {
                                 (opt: any) => opt.value === localContractorId,
                             ) ?? null
                         }
+                        isSearchable={false}
                         isClearable
                         onChange={(val: any) => {
                             const id = val ? val.value : null;

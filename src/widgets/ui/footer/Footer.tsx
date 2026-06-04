@@ -12,7 +12,7 @@ import { LogoutSvg } from "@/shared/ui/svg/LogoutSvg";
 import { useEffect, useState } from "react";
 import { MdOutlineSettings } from "react-icons/md";
 import { TfiReload } from "react-icons/tfi";
-import { Link, useNavigate, useOutletContext } from "react-router-dom";
+import { Link, useOutletContext } from "react-router-dom";
 
 const PRICE_OPTIONS: { value: PriceDisplayMode; label: string }[] = [
     { value: "both", label: "Оба варианта" },
@@ -29,8 +29,6 @@ const Footer = ({ deleteDraft, draft }: any) => {
     const { logout } = useAuthContext();
     const setIsOpenNavigate =
         useOutletContext<React.Dispatch<React.SetStateAction<boolean>>>();
-
-    const navigate = useNavigate();
 
     const { activeShift, setActiveShift } = useSettingsStore();
     const { priceDisplayMode, setPriceDisplayMode } = useSaleSettingsStore();

@@ -4,7 +4,7 @@ import { useSettingsStore } from "@/app/store/useSettingsStore";
 import {
     useContractorApi,
     usePaymentDebtsApi,
-    usePayoutDebtsApi,
+    // usePayoutDebtsApi,
 } from "@/entities/sale/repository";
 import { showErrorMessage, showSuccessMessage } from "@/shared/lib/showMessage";
 import { Button, Dialog, FormItem, Input, Select } from "@/shared/ui/kit";
@@ -35,8 +35,6 @@ const PaymentDebtsModal = ({
 
     const { data, isPending } = useContractorApi(dobtModal, "");
     const { mutate, isPending: mutPending } = usePaymentDebtsApi();
-    const { mutate: payoutMutate, isPending: mutPayoutPending } =
-        usePayoutDebtsApi();
 
     const wareHouseId = useSettingsStore((s) => s.wareHouseId);
     const contractor = data?.find((item: any) => item?.id === contractorId);
@@ -87,33 +85,33 @@ const PaymentDebtsModal = ({
             notes: debitData?.notes,
         };
 
-        if (contractor?.is_supplier) {
-            payoutMutate(payload, {
-                onSuccess() {
-                    showSuccessMessage(
-                        messages.uz.SUCCESS_MESSAGE,
-                        messages.ru.SUCCESS_MESSAGE,
-                    );
-                    onCloseDebitModal();
-                },
-                onError(err) {
-                    showErrorMessage(err);
-                },
-            });
-        } else {
-            mutate(payload, {
-                onSuccess() {
-                    showSuccessMessage(
-                        messages.uz.SUCCESS_MESSAGE,
-                        messages.ru.SUCCESS_MESSAGE,
-                    );
-                    onCloseDebitModal();
-                },
-                onError(err) {
-                    showErrorMessage(err);
-                },
-            });
-        }
+        // if (contractor?.is_supplier) {
+        //     payoutMutate(payload, {
+        //         onSuccess() {
+        //             showSuccessMessage(
+        //                 messages.uz.SUCCESS_MESSAGE,
+        //                 messages.ru.SUCCESS_MESSAGE,
+        //             );
+        //             onCloseDebitModal();
+        //         },
+        //         onError(err) {
+        //             showErrorMessage(err);
+        //         },
+        //     });
+        // } else {
+        // }
+        mutate(payload, {
+            onSuccess() {
+                showSuccessMessage(
+                    messages.uz.SUCCESS_MESSAGE,
+                    messages.ru.SUCCESS_MESSAGE,
+                );
+                onCloseDebitModal();
+            },
+            onError(err) {
+                showErrorMessage(err);
+            },
+        });
     };
 
     useEffect(() => {
@@ -243,7 +241,7 @@ const PaymentDebtsModal = ({
                 <Button
                     type="button"
                     variant="solid"
-                    loading={mutPending || mutPayoutPending}
+                    loading={mutPending}
                     size="sm"
                     onClick={sendPaymentData}
                 >

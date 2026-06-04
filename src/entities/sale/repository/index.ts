@@ -4,6 +4,7 @@ import {
     createFiscalizedRefundApi,
     fiscalDeviceApi,
     getAllContractorApi,
+    getAllContractorCountApi,
     getSaleByIdApi,
     getTransferApi,
     paymentDebtsApi,
@@ -39,10 +40,24 @@ export const useContractorApi = (
     isOpen: boolean,
     search: string,
     params?: any,
+    pagination?: any
 ) => {
     return useQuery({
-        queryKey: ["contractor-all", isOpen, search, params],
-        queryFn: () => getAllContractorApi(search, params),
+        queryKey: ["contractor-all", isOpen, search, params, pagination],
+        queryFn: () => getAllContractorApi(search, params, pagination),
+        enabled: !!isOpen,
+    });
+};
+
+export const useContractorCountApi = (
+    isOpen: boolean,
+    search: string,
+    params?: any,
+    pagination?: any
+) => {
+    return useQuery({
+        queryKey: ["contractor-count", isOpen, search, params, pagination],
+        queryFn: () => getAllContractorCountApi(search, params, pagination),
         enabled: !!isOpen,
     });
 };
@@ -80,6 +95,7 @@ export const usePaymentDebtsApi = () => {
         mutationFn: (data: any) => paymentDebtsApi(data),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["contractor-all"] });
+            queryClient.invalidateQueries({ queryKey: ["contractor-count"] });
         },
     });
 };
@@ -91,6 +107,7 @@ export const usePayoutDebtsApi = () => {
         mutationFn: (data: any) => payoutDebtsApi(data),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["contractor-all"] });
+            queryClient.invalidateQueries({ queryKey: ["contractor-count"] });
         },
     });
 };
