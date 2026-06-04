@@ -22,6 +22,8 @@ AxiosBase.interceptors.request.use(
   (error) => Promise.reject(error),
 );
 
+const BINARY_PREFIX = "__binary__:";
+
 // IPC wrapper
 export const ipcFetch = async <T>(request: {
   url: string;
@@ -59,6 +61,23 @@ export const ipcFetch = async <T>(request: {
           }
 
           const { status_code, data } = message.payload;
+
+          // Binary response (base64-encoded by Go proxy)
+          if (typeof data === "string" && data.startsWith(BINARY_PREFIX)) {
+            if (status_code >= 400) {
+              return reject(new Error(`HTTP error ${status_code}`));
+            }
+            const base64 = data.slice(BINARY_PREFIX.length);
+            const binaryStr = atob(base64);
+            const bytes = new Uint8Array(binaryStr.length);
+            for (let i = 0; i < binaryStr.length; i++) {
+              bytes[i] = binaryStr.charCodeAt(i);
+            }
+            if (request.responseType === "blob") {
+              return resolve(new Blob([bytes]) as unknown as T);
+            }
+            return resolve(bytes.buffer as unknown as T);
+          }
 
           let result: any = message.payload;
           if (typeof data === "string") {
