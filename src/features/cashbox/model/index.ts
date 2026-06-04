@@ -5,6 +5,8 @@ import type { RevisionDraft } from "@/app/store/useRevision";
 
 type BaseProps = {
     activateDraft: (index: number) => void;
+    setLocalContractorId?: (val: number | null) => void;
+    localContractorId?: number | null;
 };
 
 export type CashboxPropsType =
@@ -28,5 +30,6 @@ export type CashboxPropsType =
 export type CashboxRevisionPropsType = {
     type: "revision";
     drafts: RevisionDraft[];
+
     addNewDraft: (payload: RevisionDraft) => void;
 } & BaseProps;

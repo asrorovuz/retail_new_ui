@@ -2,8 +2,7 @@ import { Button, Dialog } from "@/shared/ui/kit";
 import type {
     DraftSalePaymentAmountSchema,
     DraftSaleSchema,
-    RegisterSaleModel,
-    SaleItemModel,
+    RegisterSaleModel
 } from "@/@types/sale";
 import type { DraftRefundSchema, RegisterRefundModel } from "@/@types/refund";
 import { useEffect, useMemo, useState } from "react";
@@ -45,7 +44,10 @@ import {
     useRegisterPurchaseApi,
     useUpdatePurchasedApi,
 } from "@/entities/purchase/repository";
-import { useRegisterReturnPurchaseApi, useUpdateReturnPurchaseApi } from "@/entities/return-purchase/repository";
+import {
+    useRegisterReturnPurchaseApi,
+    useUpdateReturnPurchaseApi,
+} from "@/entities/return-purchase/repository";
 import type {
     // DraftPurchaseSchema,
     RegisterPurchaseModel,
@@ -56,7 +58,7 @@ import ContragentModal from "@/features/modals/ui/ContragentModal";
 import Alert from "@/shared/ui/kit-pro/alert/Alert";
 import { usePermission } from "@/shared/lib/controlActionWithPermission";
 import OperationItemModal from "@/features/modals/ui/OperationItemModal";
-// import { useDraftPurchaseStore } from "@/app/store/usePurchaseDraftStore";
+import { useDraftPurchaseStore } from "@/app/store/usePurchaseDraftStore";
 
 type OrderActionType = {
     type: "sale" | "refund" | "purchase" | "return_purchase";
@@ -74,6 +76,8 @@ type OrderActionType = {
         contragentId: number | null,
         comment: string,
     ) => void;
+    localContractorId: number | null;
+    setLocalContractorId: (val: number | null) => void;
 };
 
 const OrderActions = ({
@@ -88,6 +92,8 @@ const OrderActions = ({
     setActivePaymentSelectType,
     complateActiveDraft,
     setContractorIDStore,
+    setLocalContractorId,
+    localContractorId
 }: OrderActionType) => {
     const [ipOpenPayment, setIsOpenPayment] = useState(false);
     const [saleId, setSaleId] = useState<number | null>(null);
@@ -98,7 +104,7 @@ const OrderActions = ({
         useState<FizcalResponsetype | null>(null);
     const [sellDebit, setSellDebit] = useState(false);
     // const [isOpenContractModal, setIsOpenContractModal] = useState(false);
-    const [contractorId, setContractorId] = useState<number | null>(null);
+    const [contractorId, setContractorId] = useState<number | null>(localContractorId ?? null);
     const [shiftAlert, setShiftAlert] = useState(false);
     const [pendingAction, setPendingAction] = useState<(() => void) | null>(
         null,
@@ -114,14 +120,15 @@ const OrderActions = ({
     );
     const warehouseId = useSettingsStore((s) => s.wareHouseId);
     const { activeShift, setActiveShift } = useSettingsStore();
-    // const { draftPurchases } = useDraftPurchaseStore()
+    const { products: purchaseProducts } = useDraftPurchaseStore();
 
     const { data: cashboxData } = useCashboxApi();
     const { data: paymentData = [] } = usePaymentProviderApi();
     const { mutate: registerSaleMutate } = useRegisterSellApi();
     const { mutate: registerRefundMutate } = useRegisterRefundApi();
     const { mutate: registerPurchaseMutate } = useRegisterPurchaseApi();
-    const { mutate: registerReturnPurchaseMutate } = useRegisterReturnPurchaseApi();
+    const { mutate: registerReturnPurchaseMutate } =
+        useRegisterReturnPurchaseApi();
     const { mutate: createFiscalized, isPending: fiscalPending } =
         useCreateFiscalizedApi();
     const { mutate: createFiscalizedRefund, isPending: fiscalPendingRefund } =
@@ -191,7 +198,10 @@ const OrderActions = ({
 
     const totalPaymentAmount = useMemo<number>(() => {
         return (
-            (type === "sale" ? activeDraft?.payment : activeDraft?.payout)?.amounts.reduce(
+            (type === "sale"
+                ? activeDraft?.payment
+                : activeDraft?.payout
+            )?.amounts.reduce(
                 (acc: number, payment: DraftSalePaymentAmountSchema) =>
                     acc + +payment?.amount,
                 0,
@@ -350,7 +360,10 @@ const OrderActions = ({
         };
 
         const typesPayme =
-            (type === "sale" ? activeDraft?.payment : activeDraft?.payout)?.amounts
+            (type === "sale"
+                ? activeDraft?.payment
+                : activeDraft?.payout
+            )?.amounts
                 ?.filter((item) => Number(item?.amount) > 0)
                 ?.map((elem) => elem?.paymentType) || [];
 
@@ -379,16 +392,35 @@ const OrderActions = ({
                         ? draftItem?.priceAmoutBulk
                         : draftItem?.priceAmount;
 
-                const saleAndRefunItem: SaleItemModel = {
+                const purchasePrices =
+                    type === "purchase"
+                        ? purchaseProducts
+                              ?.find(
+                                  (p: any) =>
+                                      p.productId === draftItem.productId,
+                              )
+                              ?.prices?.map((p: any) => ({
+                                  amount: Number(p.amount) || 0,
+                                  currency_code:
+                                      p.currency?.code ??
+                                      nationalCurrency?.code,
+                                  price_type_id: p.product_price_type?.id,
+                              }))
+                        : undefined;
+
+                const saleAndRefunItem: any = {
                     product_id: draftItem.productId,
-                    warehouse_id: warehouseId ?? null, // todo set default warehouse id
+                    warehouse_id: warehouseId ?? null,
                     quantity: draftItem.quantity,
                     price: {
                         amount: priceAmount,
-                        currency_code: nationalCurrency?.code, // todo set national currency id
+                        currency_code: nationalCurrency?.code,
                     },
-                    price_type_id: draftItem.priceTypeId, // todo save price type id in store and set
+                    price_type_id: draftItem.priceTypeId,
                     marks: draftItem.marks,
+                    ...(purchasePrices?.length
+                        ? { prices: purchasePrices }
+                        : {}),
                 };
 
                 payload.items.push(saleAndRefunItem);
@@ -485,9 +517,11 @@ const OrderActions = ({
                         // addDrafts();
                         callback(true);
                         complateActiveDraft();
+                        setContractorId(null);
                         if (setContractorIDStore) {
                             setContractorIDStore(null, "");
                         }
+                        setLocalContractorId(null)
                         showSuccessMessage(
                             messages.uz.SUCCESS_MESSAGE,
                             messages.ru.SUCCESS_MESSAGE,
@@ -541,9 +575,11 @@ const OrderActions = ({
 
                     callback(true);
                     complateActiveDraft();
+                    setContractorId(null);
                     if (setContractorIDStore) {
                         setContractorIDStore(null, "");
                     }
+                    setLocalContractorId(null)
                     // addDrafts();
                     showSuccessMessage(
                         messages.uz.SUCCESS_MESSAGE,
@@ -632,7 +668,8 @@ const OrderActions = ({
             setIsOpenPayment(true);
         } else {
             if (type === "sale") setSellModal(true);
-            if (type === "refund" || type === "return_purchase") setIsOpenPayment(true);
+            if (type === "refund" || type === "return_purchase")
+                setIsOpenPayment(true);
         }
     };
 

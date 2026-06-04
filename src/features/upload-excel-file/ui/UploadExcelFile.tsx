@@ -8,9 +8,8 @@ import {
 import { useQueryClient } from "@tanstack/react-query";
 import {
     bulkCreateProductApi,
-    getBulkCreateStatusApi,
     bulkUpdateProductApi,
-    getBulkUpdateStatusApi,
+    getBulkJobStatusApi,
     type BulkJobFailure,
 } from "@/entities/products/api";
 import { convertFilesToBase64 } from "@/shared/lib/convertFilesToBase64";
@@ -402,7 +401,7 @@ const UploadExcelFile = ({ isOpen, setIsOpen }: any) => {
 
         const chunks = chunkArray(resultData, 1000);
         const submitApi = initialState.edit ? bulkUpdateProductApi : bulkCreateProductApi;
-        const getStatusApi = initialState.edit ? getBulkUpdateStatusApi : getBulkCreateStatusApi;
+        const getStatusApi = getBulkJobStatusApi;
 
         isCancelledRef.current = false;
         setOpenStatusBar(true);

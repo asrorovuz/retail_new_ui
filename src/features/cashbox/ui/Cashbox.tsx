@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type FC } from "react";
+import { useEffect, useMemo, useRef, type FC } from "react";
 import type { CashboxPropsType } from "../model";
 import Tabs from "@/shared/ui/kit-pro/tabs/Tabs";
 import { Select } from "@/shared/ui/kit";
@@ -8,6 +8,7 @@ import { useDraftPurchaseStore } from "@/app/store/usePurchaseDraftStore";
 import { showMeasurmentName } from "@/shared/lib/showMeausermentName";
 
 const Cashbox: FC<CashboxPropsType> = (props) => {
+    const { type, localContractorId, setLocalContractorId } = props;
     const {
         draftPurchases,
         setContractorId,
@@ -19,10 +20,8 @@ const Cashbox: FC<CashboxPropsType> = (props) => {
     const activeDraft = draftPurchases?.find((item) => item?.isActive);
     const { data } = useContragentApi();
 
-    const [localContractorId, setLocalContractorId] = useState<number | null>(null);
-
     const { data: dataById } = useContractorByIdApi(
-        props?.type === "purchase" ? localContractorId : null,
+        type === "purchase" ? (localContractorId ?? null) : null,
     );
 
     const contractor = useMemo(() => {
@@ -92,19 +91,19 @@ const Cashbox: FC<CashboxPropsType> = (props) => {
         <div className="p-1 rounded-lg flex items-center justify-between gap-x-2 bg-slate-200">
             <div className="w-full  flex items-center gap-x-2">
                 <span className="uppercase font-semibold text-slate-900">
-                    {props?.type === "sale"
+                    {type === "sale"
                         ? "Продажа"
-                        : props?.type === "refund"
+                        : type === "refund"
                           ? "Возврат"
                           : "Приход"}
                 </span>
-                {props?.type === "purchase" && (
+                {type === "purchase" && (
                     <p className="w-max flex gap-x-2 uppercase font-semibold text-orange-400">
                         <span>долг:</span>{" "}
                         {contractor?.debts?.[0]?.amount ?? "0"}
                     </p>
                 )}
-                {props?.type === "purchase" && (
+                {type === "purchase" && (
                     <Select
                         size="sm"
                         options={selectOption}
@@ -117,7 +116,9 @@ const Cashbox: FC<CashboxPropsType> = (props) => {
                         isClearable
                         onChange={(val: any) => {
                             const id = val ? val.value : null;
-                            setLocalContractorId(id);
+                            if (setLocalContractorId) {
+                                setLocalContractorId(id);
+                            }
                             setContractorId(id);
                         }}
                         styles={{

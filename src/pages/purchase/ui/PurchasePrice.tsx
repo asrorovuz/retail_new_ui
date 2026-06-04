@@ -48,6 +48,7 @@ const PurchasePrice = () => {
     const [activeSelectPaymetype, setActivePaymentSelectType] =
         useState<number>(1);
     const [search, setSearch] = useState("");
+    const [localContractorId, setLocalContractorId] = useState<number | null>(null);
 
     const checkPermission = useCheckPermission();
 
@@ -146,6 +147,8 @@ const PurchasePrice = () => {
                     addNewDraft={addDraftPurchase}
                     activateDraft={activateDraftPurchase}
                     payModal={payModal}
+                    setLocalContractorId={setLocalContractorId}
+                    localContractorId={localContractorId}
                 />
                 <PurchaseTable
                     type="purchase"
@@ -271,6 +274,8 @@ const PurchasePrice = () => {
                     setActivePaymentSelectType={setActivePaymentSelectType}
                     complateActiveDraft={completeActiveDraftPurchase}
                     setContractorIDStore={setContractorId}
+                    localContractorId={localContractorId}
+                    setLocalContractorId={setLocalContractorId}
                 />
             </div>
             {mark ? (

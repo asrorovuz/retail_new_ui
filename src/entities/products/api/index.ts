@@ -272,11 +272,11 @@ export const bulkCreateProductApi = async (payload: {
     });
 };
 
-export const getBulkCreateStatusApi = async (
+export const getBulkJobStatusApi = async (
     jobId: string,
 ): Promise<BulkJobStatus> => {
     return await apiRequest<BulkJobStatus>({
-        url: pathServices.products.bulkCreateProductStatus + jobId,
+        url: pathServices.products.bulkJobStatus + jobId,
         method: "GET",
     });
 };
@@ -288,15 +288,6 @@ export const bulkUpdateProductApi = async (payload: {
         url: pathServices.products.bulkUpdateProduct,
         method: "POST",
         data: payload,
-    });
-};
-
-export const getBulkUpdateStatusApi = async (
-    jobId: string,
-): Promise<BulkJobStatus> => {
-    return await apiRequest<BulkJobStatus>({
-        url: pathServices.products.bulkUpdateProductStatus + jobId,
-        method: "GET",
     });
 };
 

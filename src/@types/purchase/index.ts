@@ -114,6 +114,7 @@ export type PurchaseItemModel = {
     price_type_id: number;
     discount?: PurchaseItemDiscount;
     marks?: string[];
+    prices?: { amount: number; currency_code: number; price_type_id: number }[];
 };
 
 type PurchaseItemDiscount = {

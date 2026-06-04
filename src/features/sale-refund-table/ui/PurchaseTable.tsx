@@ -134,11 +134,11 @@ const PurchaseTable = ({
     // qaysi price tanlangan
     const selectedType = selectedRows?.[currentItem?.productId] ? 2 : 1;
 
-    // input value
+    // input value (string saqlaymiz — Number ga o'tkazmaymiz)
     const selectedPrice =
         selectedType === 1
-            ? Number(retailPrice?.amount)
-            : Number(bulkPrice?.amount);
+            ? (retailPrice?.amount ?? "0")
+            : (bulkPrice?.amount ?? "0");
 
     useEffect(() => {
         setLocalQuantity(String(currentItem?.quantity ?? 0));
@@ -686,22 +686,20 @@ const PurchaseTable = ({
                         type="number"
                         space={false}
                         className="!w-[135px] h-[30px] text-xs"
-                        value={String(selectedPrice ?? 0) ?? 0}
+                        value={selectedPrice}
                         onFocus={() => setActiveTypeKeyboard("numeric")}
                         onChange={(val) => {
-                            const newAmount = Number(val.target.value);
-
+                            const rawAmount = val.target.value;
                             const priceId =
                                 selectedType === 1
                                     ? retailPrice?.id
                                     : bulkPrice?.id;
-
                             updatePrices(
                                 {
                                     id: currentItem?.productId,
                                     price_id: priceId,
                                 },
-                                String(newAmount ?? 0),
+                                rawAmount || "0",
                             );
                         }}
                     />
@@ -801,58 +799,3 @@ const PurchaseTable = ({
 };
 
 export default PurchaseTable;
-{
-    /* {type === "sale" && activeDraft?.discountAmount ? (
-                <div className="flex justify-end gap-x-2 items-center px-2 py-2.5">
-                  <div className="text-sm font-medium text-slate-500">
-                    Скидка:{" "}
-                  </div>{" "}
-                  <div
-                    className={classNames(
-                      "text-sm font-semibold",
-                      type === "sale"
-                        ? "text-primary"
-                        : type === "refund"
-                          ? "text-red-500"
-                          : "text-green-600",
-                    )}
-                  >
-                    <FormattedNumber
-                      value={activeDraft?.discountAmount ?? 0}
-                      scale={2}
-                    />{" "}
-                  </div>
-                </div>
-              ) : (
-                ""
-              )} */
-}
-
-{
-    /* {type === "sale" && activeDraft?.discountAmount ? (
-                <div className="flex justify-end gap-x-2 items-center px-2 py-2.5">
-                  <div className="text-sm font-medium text-slate-500">
-                    Со скидкой:{" "}
-                  </div>{" "}
-                  <div
-                    className={classNames(
-                      "text-sm font-semibold",
-                      type === "sale"
-                        ? "text-primary"
-                        : type === "refund"
-                          ? "text-red-500"
-                          : "text-green-600",
-                    )}
-                  >
-                    <FormattedNumber
-                      value={
-                        totalPrice - Number(activeDraft?.discountAmount ?? 0)
-                      }
-                      scale={2}
-                    />{" "}
-                  </div>
-                </div>
-              ) : (
-                ""
-              )} */
-}
