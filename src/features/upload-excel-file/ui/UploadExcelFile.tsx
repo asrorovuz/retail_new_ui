@@ -69,6 +69,7 @@ interface StatusState {
 }
 
 const optionSelect = [
+    { label: "ID", value: "id" },
     { label: "Название", value: "name" },
     { label: "Цена продажи", value: "commonPrice" },
     { label: "Закупочная цена", value: "purchasePrice" },
@@ -292,9 +293,9 @@ const UploadExcelFile = ({ isOpen, setIsOpen }: any) => {
         });
 
         const resultData = noSelectData?.map((elem) => {
-            const product: any = productData?.find(
-                (p: any) => p?.name === elem?.name,
-            );
+            const product: any = elem?.id
+                ? productData?.find((p: any) => p?.id === Number(elem?.id))
+                : productData?.find((p: any) => p?.name === elem?.name);
             const category: any = categoryData?.find(
                 (p: any) => p?.name === elem?.category,
             );
@@ -307,7 +308,9 @@ const UploadExcelFile = ({ isOpen, setIsOpen }: any) => {
                 860;
 
             return {
-                id: initialState?.edit ? product?.id : undefined,
+                id: initialState?.edit
+                    ? (elem?.id ? Number(elem?.id) : product?.id)
+                    : undefined,
                 name: elem?.name || "",
                 purchase_price: {
                     amount:
