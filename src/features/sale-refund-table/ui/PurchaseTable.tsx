@@ -75,9 +75,16 @@ const PurchaseTable = ({
     const [marginByProduct, setMarginByProduct] = useState<
         Record<number, string>
     >({});
+    const [marginBulkByProduct, setMarginBulkByProduct] = useState<
+        Record<number, string>
+    >({});
     const marginPercent =
         currentItem?.productId != null
             ? (marginByProduct[currentItem.productId] ?? "")
+            : "";
+    const marginBulkPercent =
+        currentItem?.productId != null
+            ? (marginBulkByProduct[currentItem.productId] ?? "")
             : "";
     const [confirmDelete, setConfirmDelete] = useState(false);
     const onDeleteDraftItem = () => {
@@ -147,19 +154,34 @@ const PurchaseTable = ({
 
     const handleMarginChange = (raw: string) => {
         if (!currentItem) return;
-        setMarginByProduct((prev) => ({
-            ...prev,
-            [currentItem.productId]: raw,
-        }));
         const pct = Number(raw);
-        if (isNaN(pct) || !retailPrice?.id) return;
-        const newRetail = Math.round(
-            (currentItem.priceAmount ?? 0) * (1 + pct / 100),
-        );
-        updatePrices(
-            { id: currentItem.productId, price_id: retailPrice.id },
-            String(newRetail),
-        );
+        if (selectedType === 2) {
+            setMarginBulkByProduct((prev) => ({
+                ...prev,
+                [currentItem.productId]: raw,
+            }));
+            if (isNaN(pct) || !bulkPrice?.id) return;
+            const newBulk = Math.round(
+                (currentItem.priceAmount ?? 0) * (1 + pct / 100),
+            );
+            updatePrices(
+                { id: currentItem.productId, price_id: bulkPrice.id },
+                String(newBulk),
+            );
+        } else {
+            setMarginByProduct((prev) => ({
+                ...prev,
+                [currentItem.productId]: raw,
+            }));
+            if (isNaN(pct) || !retailPrice?.id) return;
+            const newRetail = Math.round(
+                (currentItem.priceAmount ?? 0) * (1 + pct / 100),
+            );
+            updatePrices(
+                { id: currentItem.productId, price_id: retailPrice.id },
+                String(newRetail),
+            );
+        }
     };
 
     // expandedRow almashganda editing panelni yopish
@@ -748,8 +770,7 @@ const PurchaseTable = ({
                         <Input
                             type="number"
                             placeholder="%"
-                            disabled={selectedType === 2}
-                            value={selectedType === 2 ? "" : marginPercent}
+                            value={selectedType === 2 ? marginBulkPercent : marginPercent}
                             onChange={(e) => handleMarginChange(e.target.value)}
                             onFocus={() => setActiveTypeKeyboard("numeric")}
                             className="!w-12 !h-8"
