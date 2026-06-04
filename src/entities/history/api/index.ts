@@ -94,6 +94,47 @@ export const getPurchaseIdApi = async (id: any): Promise<any> => {
     });
 };
 
+export const getReturnPurchaseApi = async (params: any): Promise<any> => {
+    const skip =
+        params?.pageIndex && params.pageSize
+            ? (params?.pageIndex - 1) * params?.pageSize
+            : 0;
+    const { pageSize, pageIndex, ...param } = params;
+    return await apiRequest<any>({
+        url: pathServices.returnPurchase.get,
+        params: {
+            limit: params?.pageSize ?? 20,
+            skip,
+            ...param,
+        },
+        method: "GET",
+    });
+};
+
+export const getReturnPurchaseIdApi = async (id: any): Promise<any> => {
+    return await apiRequest<any>({
+        url: pathServices.returnPurchase.getById + id,
+        method: "GET",
+    });
+};
+
+export const getReturnPurchaseCountApi = async (params: any): Promise<any> => {
+    const skip =
+        params?.pageIndex && params.pageSize
+            ? (params?.pageIndex - 1) * params?.pageSize
+            : 0;
+    const { pageSize, pageIndex, ...param } = params;
+    return await apiRequest<any>({
+        url: pathServices.returnPurchase.getCount,
+        params: {
+            limit: params?.pageSize ?? 20,
+            skip,
+            ...param,
+        },
+        method: "GET",
+    });
+};
+
 export const getOperationCountApi = async (
     params: any,
     type: "sale" | "refund" | "purchase",
@@ -117,14 +158,16 @@ export const getOperationCountApi = async (
 // DELETE
 export const deleteTransactionsApi = async (
     id: number,
-    type: "sale" | "purchase" | "refund",
+    type: "sale" | "purchase" | "refund" | "return_purchase",
 ): Promise<any> => {
     const pathEndPoint =
         type === "sale"
             ? pathServices.history.deleteSalePath
             : type === "refund"
               ? pathServices.history.deleteRefundPath
-              : pathServices.history.deletePurchasePath;
+              : type === "return_purchase"
+                ? pathServices.returnPurchase.delete
+                : pathServices.history.deletePurchasePath;
 
     return await apiRequest<any>({
         url: pathEndPoint + id,

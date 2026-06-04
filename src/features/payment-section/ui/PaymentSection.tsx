@@ -12,7 +12,7 @@ import { useEffect, useMemo } from "react";
 import { LuDelete } from "react-icons/lu";
 
 type PaymentSectionPropsType = {
-    type: "sale" | "refund" | "purchase";
+    type: "sale" | "refund" | "purchase" | "return_purchase";
     activeDraft: DraftSaleSchema & DraftRefundSchema;
     activeSelectPaymetype: number;
     value: string;
@@ -331,6 +331,7 @@ const PaymentSection = ({
                                 size="sm"
                                 type="button"
                                 variant="plain"
+                                disabled={type === "return_purchase" || type === "purchase"}
                                 onClick={() => setIsBlockSell?.(!isBlockSell)}
                                 className={classNames(
                                     "w-full text-sm text-white",

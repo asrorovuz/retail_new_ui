@@ -1,6 +1,7 @@
 import type { Product } from "@/@types/products";
 import { useDraftPurchaseStore } from "@/app/store/usePurchaseDraftStore";
 import { useDraftRefundStore } from "@/app/store/useRefundDraftStore";
+import { useReturnPurchaseDraftStore } from "@/app/store/useReturnPurchaseDraftStore";
 import { useRevisionStore } from "@/app/store/useRevision";
 import { useDraftSaleStore } from "@/app/store/useSaleDraftStore";
 import { useWriteOfStore } from "@/app/store/useWriteofStroe";
@@ -18,7 +19,13 @@ const buildPrice = (item: any) => ({
 
 type PropsType = {
     data: Product[] | [];
-    type?: "sale" | "refund" | "purchase" | "revision" | "writeof";
+    type?:
+        | "sale"
+        | "refund"
+        | "purchase"
+        | "revision"
+        | "writeof"
+        | "return_purchase";
     debouncedSearch: string;
     selectedRows?: any;
     setActiveType: React.Dispatch<
@@ -43,6 +50,8 @@ const SearchProductTable = ({
         useDraftPurchaseStore();
     const { updateDraftRevisionItem, draftRevisions } = useRevisionStore();
     const { updateDraftWriteOfItem, draftWriteOfs } = useWriteOfStore();
+    const { updateDraftReturnPurchaseItem, draftReturnPurchases } =
+        useReturnPurchaseDraftStore();
 
     const activeDraftSale = draftSales?.find((s) => s.isActive);
     const activeDraftRefund = draftRefunds?.find((s) => s.isActive);
@@ -62,6 +71,11 @@ const SearchProductTable = ({
             return {
                 active: draftRevisions[0],
                 update: updateDraftRevisionItem,
+            };
+        if (type === "return_purchase")
+            return {
+                active: draftReturnPurchases[0],
+                update: updateDraftReturnPurchaseItem,
             };
         if (type === "writeof")
             return { active: draftWriteOfs[0], update: updateDraftWriteOfItem };

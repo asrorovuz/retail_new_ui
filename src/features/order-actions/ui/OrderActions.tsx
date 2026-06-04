@@ -45,6 +45,7 @@ import {
     useRegisterPurchaseApi,
     useUpdatePurchasedApi,
 } from "@/entities/purchase/repository";
+import { useRegisterReturnPurchaseApi, useUpdateReturnPurchaseApi } from "@/entities/return-purchase/repository";
 import type {
     // DraftPurchaseSchema,
     RegisterPurchaseModel,
@@ -58,7 +59,7 @@ import OperationItemModal from "@/features/modals/ui/OperationItemModal";
 // import { useDraftPurchaseStore } from "@/app/store/usePurchaseDraftStore";
 
 type OrderActionType = {
-    type: "sale" | "refund" | "purchase";
+    type: "sale" | "refund" | "purchase" | "return_purchase";
     keyType: "numeric" | "qwerty" | "fullkey";
     draft: DraftSaleSchema[] & DraftRefundSchema[];
     activeDraft: DraftSaleSchema & DraftRefundSchema;
@@ -120,6 +121,7 @@ const OrderActions = ({
     const { mutate: registerSaleMutate } = useRegisterSellApi();
     const { mutate: registerRefundMutate } = useRegisterRefundApi();
     const { mutate: registerPurchaseMutate } = useRegisterPurchaseApi();
+    const { mutate: registerReturnPurchaseMutate } = useRegisterReturnPurchaseApi();
     const { mutate: createFiscalized, isPending: fiscalPending } =
         useCreateFiscalizedApi();
     const { mutate: createFiscalizedRefund, isPending: fiscalPendingRefund } =
@@ -131,13 +133,14 @@ const OrderActions = ({
     const { mutate: printCheck } = useCreatePrintApi();
 
     const { mutate: updatePurchase } = useUpdatePurchasedApi();
+    const { mutate: updateReturnPurchase } = useUpdateReturnPurchaseApi();
     const { mutate: updateRefund } = useUpdateRefundApi();
     const { mutate: updateSale } = useUpdateSellApi();
     const { mutate: createShiftMutate } = useCreateShiftApi();
 
     const { checkPermissionByAction } = usePermission();
 
-    const canCreate = checkPermissionByAction(type, "create");
+    const canCreate = checkPermissionByAction(type as any, "create");
 
     const checkShiftAndRun = (callback: () => void) => {
         if (activeShift) {
@@ -188,10 +191,7 @@ const OrderActions = ({
 
     const totalPaymentAmount = useMemo<number>(() => {
         return (
-            (type === "sale"
-                ? activeDraft?.payment
-                : activeDraft?.payout
-            )?.amounts.reduce(
+            (type === "sale" ? activeDraft?.payment : activeDraft?.payout)?.amounts.reduce(
                 (acc: number, payment: DraftSalePaymentAmountSchema) =>
                     acc + +payment?.amount,
                 0,
@@ -350,10 +350,7 @@ const OrderActions = ({
         };
 
         const typesPayme =
-            (type === "sale"
-                ? activeDraft?.payment
-                : activeDraft?.payout
-            )?.amounts
+            (type === "sale" ? activeDraft?.payment : activeDraft?.payout)?.amounts
                 ?.filter((item) => Number(item?.amount) > 0)
                 ?.map((elem) => elem?.paymentType) || [];
 
@@ -440,14 +437,18 @@ const OrderActions = ({
                 ? registerSaleMutate
                 : type === "refund"
                   ? registerRefundMutate
-                  : registerPurchaseMutate;
+                  : type === "return_purchase"
+                    ? registerReturnPurchaseMutate
+                    : registerPurchaseMutate;
 
         const updateRegister =
             type === "sale"
                 ? updateSale
                 : type === "refund"
                   ? updateRefund
-                  : updatePurchase;
+                  : type === "return_purchase"
+                    ? updateReturnPurchase
+                    : updatePurchase;
 
         // register sale
         if (activeDraft?.id) {
@@ -467,12 +468,14 @@ const OrderActions = ({
                         if (
                             data?.sale?.id ||
                             data?.purchase?.id ||
-                            data?.refund?.id
+                            data?.refund?.id ||
+                            data?.return_purchase?.id
                         ) {
                             setSaleId(
                                 data?.sale?.id ||
                                     data?.purchase?.id ||
-                                    data?.refund?.id,
+                                    data?.refund?.id ||
+                                    data?.return_purchase?.id,
                             );
                             if (typeButton) {
                                 onPrintCheck(data);
@@ -579,15 +582,20 @@ const OrderActions = ({
                         purchase_id: id ?? saleId,
                         printer_name: settings?.printer_name ?? "",
                     }
-                  : {
-                        refund_id: id ?? saleId,
-                        printer_name: settings?.printer_name ?? "",
-                    };
+                  : type === "return_purchase"
+                    ? {
+                          return_purchase_id: id ?? saleId,
+                          printer_name: settings?.printer_name ?? "",
+                      }
+                    : {
+                          refund_id: id ?? saleId,
+                          printer_name: settings?.printer_name ?? "",
+                      };
 
         printCheck(
             {
                 path: `${type}-receipt-${settings?.receipt_size || 80}`,
-                payload,
+                payload: payload as any,
             },
             {
                 onSuccess() {
@@ -610,6 +618,11 @@ const OrderActions = ({
             setSellDebit(true);
             return;
         }
+
+        if (type === "return_purchase" && !activeDraft?.contractor_id) {
+            showErrorLocalMessage("Выберите поставщика");
+            return;
+        }
         const debit =
             totalAmount -
                 Number(activeDraft?.discountAmount ?? 0) -
@@ -619,8 +632,7 @@ const OrderActions = ({
             setIsOpenPayment(true);
         } else {
             if (type === "sale") setSellModal(true);
-            // ✅ refund uchun to'g'ridan payment modal ochiladi
-            if (type === "refund") setIsOpenPayment(true);
+            if (type === "refund" || type === "return_purchase") setIsOpenPayment(true);
         }
     };
 
@@ -729,7 +741,7 @@ const OrderActions = ({
                 )}
 
                 <PaymentModal
-                    type={type}
+                    type={type as any}
                     totalAmount={totalAmount}
                     cashBackAmount={cashBackAmount}
                     totalPaymentAmount={totalPaymentAmount}
@@ -741,7 +753,7 @@ const OrderActions = ({
                 />
 
                 <PrinterModal
-                    type={type}
+                    type={type as any}
                     isOpen={!!saleId && printSelect}
                     size={settings?.receipt_size ?? "80"}
                     saleId={saleId}

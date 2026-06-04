@@ -2,7 +2,7 @@ import { useGetAllAcounts } from "@/entities/auth/repository";
 import {
   useContragentApi
 } from "@/entities/history/repository";
-import { useWarehouseApi } from "@/entities/init/repository";
+// import { useWarehouseApi } from "@/entities/init/repository";
 import { Button, Dialog, Form, Select } from "@/shared/ui/kit";
 import { useEffect, useMemo } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -18,7 +18,7 @@ interface ParamType {
 }
 
 interface PropsType {
-  type: "sale" | "refund" | "purchase";
+  type: "sale" | "refund" | "purchase" | "return_purchase";
   isOpenFilter: boolean;
   setIsOpenFilter: (val: boolean) => void;
   setParams: any;
@@ -42,10 +42,10 @@ const booleanOptions = [
   { value: true, label: "Да" },
   { value: false, label: "Нет" },
 ];
-const statusOptions = [
-  { value: true, label: "Одобренный" },
-  { value: false, label: "Неодобренный" },
-];
+// const statusOptions = [
+//   { value: true, label: "Одобренный" },
+//   { value: false, label: "Неодобренный" },
+// ];
 
 const Filter = ({
   type,
@@ -58,7 +58,7 @@ const Filter = ({
     defaultValues: initialValue,
   });
 
-  const { data: wareHouseData } = useWarehouseApi();
+  // const { data: wareHouseData } = useWarehouseApi();
   // const { data: employeeData } = useEmployeeApi(isOpenFilter);
   const { data: accountsData } = useGetAllAcounts()
   const { data: contragentData } = useContragentApi(isOpenFilter);
@@ -81,14 +81,14 @@ const Filter = ({
     });
   }, [contragentData]);
 
-  const wareHouseOption = useMemo(() => {
-    return wareHouseData?.map((item: any) => {
-      return {
-        label: item?.name,
-        value: item?.id,
-      };
-    });
-  }, [contragentData]);
+  // const wareHouseOption = useMemo(() => {
+  //   return wareHouseData?.map((item: any) => {
+  //     return {
+  //       label: item?.name,
+  //       value: item?.id,
+  //     };
+  //   });
+  // }, [contragentData]);
 
   const clearField = () => {
     reset(initialValue);
@@ -124,7 +124,7 @@ const Filter = ({
     >
       <Form onSubmit={handleSubmit(onSubmit)}>
         <div className="grid grid-cols-3 gap-5 mb-5">
-          <Controller
+          {/* <Controller
             name="is_approved"
             control={control}
             render={({ field }) => {
@@ -139,7 +139,7 @@ const Filter = ({
                 />
               );
             }}
-          />
+          /> */}
 
           {!countyparty && <Controller
             name="contractor_id"
@@ -157,7 +157,7 @@ const Filter = ({
             }}
           />}
 
-          <Controller
+          {/* <Controller
             name="used_warehouses"
             control={control}
             render={({ field }) => {
@@ -171,7 +171,7 @@ const Filter = ({
                 />
               );
             }}
-          />
+          /> */}
 
           <Controller
             name="employee_id"

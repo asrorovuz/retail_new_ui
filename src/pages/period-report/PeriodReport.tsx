@@ -65,7 +65,7 @@ const PeriodReport = () => {
             </div>
 
             {/* Tab Content */}
-            <div className="h-[calc(100vh-130px)]">{renderContent()}</div>
+            <div className="h-[calc(100vh-130px)] flex flex-col">{renderContent()}</div>
         </div>
     );
 };

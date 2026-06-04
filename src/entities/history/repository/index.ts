@@ -9,6 +9,9 @@ import {
   getPurchaseIdApi,
   getRefundApi,
   getRefundIdApi,
+  getReturnPurchaseApi,
+  getReturnPurchaseCountApi,
+  getReturnPurchaseIdApi,
   getSellApi,
   getSellIdApi,
 } from "../api";
@@ -81,6 +84,28 @@ export const usePurchaseIdApi = (id: any) => {
   });
 };
 
+export const useReturnPurchaseApi = (params: any) => {
+  return useQuery({
+    queryKey: ["history-return-purchase", params],
+    queryFn: () => getReturnPurchaseApi(params),
+  });
+};
+
+export const useReturnPurchaseIdApi = (id: any) => {
+  return useQuery({
+    queryKey: ["history-return-purchase-id", id],
+    queryFn: () => getReturnPurchaseIdApi(id),
+    enabled: !!id,
+  });
+};
+
+export const useReturnPurchaseCountApi = (params: any) => {
+  return useQuery({
+    queryKey: ["transaction-count-return-purchase", params],
+    queryFn: () => getReturnPurchaseCountApi(params),
+  });
+};
+
 export const useOperationCountApi = (
   params: any,
   type: "sale" | "refund" | "purchase"
@@ -92,13 +117,15 @@ export const useOperationCountApi = (
 };
 
 // DELETE
-export const useDeleteTransactions = (type: "sale" | "refund" | "purchase") => {
+export const useDeleteTransactions = (type: "sale" | "refund" | "purchase" | "return_purchase") => {
   const queryClient = useQueryClient();
   const ref =
     type === "sale"
       ? "history-sale"
       : type === "refund"
       ? "history-refund"
+      : type === "return_purchase"
+      ? "history-return-purchase"
       : "history-purchase";
 
   return useMutation({

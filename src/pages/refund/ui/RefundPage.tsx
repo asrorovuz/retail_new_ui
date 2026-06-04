@@ -268,12 +268,6 @@ const RefundPage = () => {
             </div>
             <div className="bg-white w-[35%] flex flex-col gap-y-2">
                 <Header />
-                <div
-                    className={classNames(
-                        "rounded-lg p-1 flex flex-col gap-2",
-                        activeType === "qwerty" && "h-full",
-                    )}
-                >
                     <SearchProduct
                         search={search}
                         activeType={activeType}
@@ -297,7 +291,6 @@ const RefundPage = () => {
                             />
                         </>
                     )}
-                </div>
                 {activeType === "numeric" && (
                     <>
                         <PaymeTypeCards

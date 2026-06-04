@@ -1,11 +1,13 @@
 import {
-    useOperationCountApi,
-    useRefundApi,
-    useRefundIdApi,
+    useReturnPurchaseApi,
+    useReturnPurchaseCountApi,
+    useReturnPurchaseIdApi,
 } from "@/entities/history/repository";
 import { Filter, TransactionModal } from "@/features/history";
-import TableHistory from "@/features/history/ui/Table";
+import { ReturnPurchaseHistoryTable } from "@/features/return-purchase";
+import { usePermission } from "@/shared/lib/controlActionWithPermission";
 import { Button, DatePicker, Dialog } from "@/shared/ui/kit";
+import NavigateButton from "@/shared/ui/kit-pro/navigate-button/NavigateButton";
 import Loading from "@/shared/ui/loading";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
@@ -14,32 +16,32 @@ import { FaPlus } from "react-icons/fa";
 import { VscListFilter } from "react-icons/vsc";
 import { useNavigate } from "react-router-dom";
 
-const Tab3 = ({ id }: any) => {
+const ReturPurchaseHistory = () => {
     const navigate = useNavigate();
+    const [isOpenFilter, setIsOpenFilter] = useState(false);
     const [params, setParams] = useState({
         pageIndex: 1,
         pageSize: 20,
-        contractor_id: id,
     });
-    const [isOpenFilter, setIsOpenFilter] = useState(false);
     const [viewModal, setViewModal] = useState({
         isOpen: false,
         id: null,
     });
-
-    const { data, isLoading } = useRefundApi(params);
-    const { data: count } = useOperationCountApi(params, "refund");
-    const { data: dataId, isPending: isLoadingId } = useRefundIdApi(
-        viewModal?.id,
-    );
-
     const { control, watch } = useForm({
         defaultValues: {
             date_start: null,
             date_end: null,
-            contractor_id: id,
         },
     });
+
+    const { checkPermissionByAction } = usePermission();
+    const canCreate = checkPermissionByAction("purchase", "create");
+
+    const { data, isLoading } = useReturnPurchaseApi(params);
+    const { data: dataId, isPending: isLoadingId } = useReturnPurchaseIdApi(
+        viewModal?.id,
+    );
+    const { data: count } = useReturnPurchaseCountApi(params);
 
     const closeModal = () => {
         setViewModal({ isOpen: false, id: null });
@@ -61,8 +63,9 @@ const Tab3 = ({ id }: any) => {
     }, [dateStart, dateEnd]);
 
     return (
-        <div className="bg-white h-full flex-1 rounded-lg p-2 flex flex-col">
-            <div className="flex justify-end mb-3">
+        <div className="bg-white h-screen rounded-lg p-3 flex flex-col">
+            <div className="flex justify-between mb-3">
+                <NavigateButton content="История возврата поставщику" />
                 <div className="flex gap-x-2">
                     <Controller
                         name="date_start"
@@ -108,47 +111,43 @@ const Tab3 = ({ id }: any) => {
                         icon={<VscListFilter size={20} />}
                         onClick={() => setIsOpenFilter(!isOpenFilter)}
                     />
-                    <Button
-                        icon={<FaPlus />}
-                        variant="solid"
-                        size="sm"
-                        onClick={() => navigate("/refund")}
-                    >
-                        Добавить
-                    </Button>
+                    {canCreate && (
+                        <Button
+                            icon={<FaPlus />}
+                            variant="solid"
+                            size="sm"
+                            onClick={() => navigate("/return-purchase")}
+                        >
+                            Добавить
+                        </Button>
+                    )}
                 </div>
             </div>
             <Filter
-                type="refund"
+                type="return_purchase"
                 isOpenFilter={isOpenFilter}
                 setIsOpenFilter={setIsOpenFilter}
                 setParams={setParams}
-                countyparty={true}
             />
-            <TableHistory
+            <ReturnPurchaseHistoryTable
                 data={data ?? []}
                 count={count}
                 loading={isLoading}
                 setParams={setParams}
                 setViewModal={setViewModal}
-                pay={true}
-                payKey={"payment"}
                 params={params}
-                type="refund"
-                countyparty={true}
             />
-
             <Dialog
                 onClose={closeModal}
-                title={`Возврат № ${dataId?.number}`}
+                title={`Возврат поставщику № ${dataId?.number}`}
                 isOpen={viewModal?.isOpen}
             >
                 {!isLoadingId ? (
                     <TransactionModal
                         data={dataId}
-                        payKey={"payment"}
+                        payKey={"payout"}
                         viewModal={viewModal}
-                        type={"refund"}
+                        type={"return_purchase"}
                     />
                 ) : (
                     <div className="h-[70vh]">
@@ -160,4 +159,4 @@ const Tab3 = ({ id }: any) => {
     );
 };
 
-export default Tab3;
+export default ReturPurchaseHistory;

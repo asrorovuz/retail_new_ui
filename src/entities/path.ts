@@ -169,6 +169,15 @@ export const pathServices = {
         updateOtherPurchasePricePath: "/api/product/price/update/",
     },
 
+    returnPurchase: {
+        register: "/api/return-purchase/register",
+        update: "/api/return-purchase/update/",
+        get: "/api/return-purchase/get",
+        getCount: "/api/return-purchase/get/count",
+        getById: "/api/return-purchase/",
+        delete: "/api/return-purchase/delete/",
+    },
+
     versions: {
         getVersions: "/api/auto-updater/current-version/get",
     },

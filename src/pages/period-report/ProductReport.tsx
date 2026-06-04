@@ -159,7 +159,7 @@ export default function ProductReport({ data }: any) {
     });
 
     return (
-        <Table className="table-fixed w-full border-separate border-spacing-0">
+        <Table className="table-fixed w-full">
             <THead className="sticky top-0 bg-white z-20">
                 {table.getHeaderGroups().map((headerGroup) => (
                     <Tr key={headerGroup.id}>

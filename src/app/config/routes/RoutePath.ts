@@ -49,3 +49,9 @@ export const AccountPage = lazy(() => import("@/pages/accounts"));
 export const ContractorById = lazy(
     () => import("@/pages/counterparty/ui/ContractorById"),
 );
+export const ReturnPurchaseOperation = lazy(
+    () => import("@/pages/return-purchase"),
+);
+export const ReturnPurchaseHistory = lazy(
+    () => import("@/pages/return-purchase/ui/ReturPurchaseHistory"),
+);

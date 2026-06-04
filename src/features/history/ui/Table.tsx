@@ -178,6 +178,7 @@ const TableHistory = ({
             }
             navigate("/purchase");
         }
+
     };
 
     const columns = useMemo(() => {
@@ -462,6 +463,31 @@ const TableHistory = ({
                       }),
                   ]
                 : []),
+            ...(type === "sale" || type === "refund" ? [columnHelper.accessor("status", {
+                id: "status",
+                enableSorting: false,
+                enableHiding: false,
+                meta: {
+                    bodyCellClassName: "font-bold truncate text-center",
+                },
+                header: () => "Фиск.",
+                cell: ({ row }) => {
+                    const status = row.original?.is_fiscalized;
+
+                    return (
+                        <div
+                            className={classNames(
+                                "px-2 py-1 rounded text-center",
+                                status
+                                    ? "bg-green-100 text-green-700"
+                                    : "bg-orange-100 text-orange-700",
+                            )}
+                        >
+                            {status ? "Фиск." : "Не фиск."}
+                        </div>
+                    );
+                },
+            })] : []),
 
             columnHelper.accessor("date", {
                 id: "date",

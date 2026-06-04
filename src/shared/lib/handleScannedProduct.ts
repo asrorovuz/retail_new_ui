@@ -2,10 +2,11 @@ import { useDraftSaleStore } from "@/app/store/useSaleDraftStore";
 import { useDraftRefundStore } from "@/app/store/useRefundDraftStore";
 import type { PriceType } from "@/widgets/ui/favourite-card/FavouriteCard";
 import { useDraftPurchaseStore } from "@/app/store/usePurchaseDraftStore";
+import { useReturnPurchaseDraftStore } from "@/app/store/useReturnPurchaseDraftStore";
 
 export const handleScannedProduct = (
     product: any,
-    type: "sale" | "refund" | "purchase",
+    type: "sale" | "refund" | "purchase" | "return_purchase",
     setExpandedId: any,
     selectedRows?: any,
     barcodeMark?: string,
@@ -15,31 +16,39 @@ export const handleScannedProduct = (
         useDraftRefundStore.getState();
     const { draftPurchases, updateDraftPurchaseItem } =
         useDraftPurchaseStore.getState();
+    const { draftReturnPurchases, updateDraftReturnPurchaseItem } =
+        useReturnPurchaseDraftStore();
 
     const activeDraftSale = draftSales.find((s) => s.isActive);
     const activeDraftRefund = draftRefunds.find((s) => s.isActive);
     const activeDraftPurchase = draftPurchases.find((s) => s.isActive);
+    const activeDraftReturnPurchase = draftReturnPurchases.find(
+        (s) => s.isActive,
+    );
 
     const active =
         type === "sale"
             ? activeDraftSale
             : type === "refund"
               ? activeDraftRefund
-              : activeDraftPurchase;
-
+              : type === "return_purchase"
+                ? activeDraftReturnPurchase
+                : activeDraftPurchase;
     const addDraftItem =
         type === "sale"
             ? updateDraftSaleItem
             : type === "refund"
               ? updateDraftRefundItem
-              : updateDraftPurchaseItem;
+              : type === "return_purchase"
+                ? updateDraftReturnPurchaseItem
+                : updateDraftPurchaseItem;
     if (!active) return;
 
     const operationItem = active.items.find((p) => p.productId === product?.id);
     const isSelectedBulk =
         selectedRows && type === "sale" ? !!selectedRows[product.id] : false;
     const packagePrice =
-        type === "purchase"
+        type === "purchase" || type === "return_purchase"
             ? onBuildPrice(product?.warehouse_items?.[0])
             : product?.prices?.find(
                   (p: PriceType) => p?.product_price_type?.is_primary,
@@ -77,7 +86,9 @@ export const handleScannedProduct = (
         productName: product?.name,
         productPackageName: product?.measurement_name,
         priceTypeId:
-            type === "purchase" ? 0 : packagePrice?.product_price_type?.id,
+            type === "purchase" || type === "return_purchase"
+                ? 0
+                : packagePrice?.product_price_type?.id,
         priceAmount: packagePrice?.amount,
         priceAmoutBulk: packagePriceBulk?.amount,
         quantity: quantity,
