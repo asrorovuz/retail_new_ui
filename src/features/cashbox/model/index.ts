@@ -1,3 +1,4 @@
+import type React from "react";
 import type { DraftPurchaseSchema } from "@/@types/purchase";
 import type { DraftRefundSchema } from "@/@types/refund";
 import type { DraftSaleSchema } from "@/@types/sale";
@@ -7,6 +8,7 @@ type BaseProps = {
     activateDraft: (index: number) => void;
     setLocalContractorId?: (val: number | null) => void;
     localContractorId?: number | null;
+    setExpandedId?: React.Dispatch<React.SetStateAction<number | null>>;
 };
 
 export type CashboxPropsType =

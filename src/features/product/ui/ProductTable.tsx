@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import FormattedNumber from "@/shared/ui/kit-pro/numeric-format/NumericFormat";
 import {
     useReactTable,
     getCoreRowModel,
@@ -178,9 +179,10 @@ const ProductTable = ({
                     const total = info.row.original.warehouse_items?.[0]?.state;
 
                     return (
-                        <p className="w-20 text-center">{`${
-                            total !== undefined ? total.toLocaleString() : "0"
-                        } ${showMeasurmentName(info.row.original.measurement_code)}`}</p>
+                        <p className="w-20 text-center flex items-center justify-center gap-x-1">
+                            {total !== undefined ? <FormattedNumber value={total} /> : "0"}
+                            {" "}{showMeasurmentName(info.row.original.measurement_code)}
+                        </p>
                     );
                 },
                 meta: {
@@ -201,9 +203,7 @@ const ProductTable = ({
                                   info.row.original.prices?.[0]?.amount;
                               return (
                                   <p className="w-[80px] text-right">
-                                      {price
-                                          ? `${price.toLocaleString()}`
-                                          : "-"}
+                                      {price ? <FormattedNumber value={price} /> : "-"}
                                   </p>
                               );
                           },
@@ -232,9 +232,7 @@ const ProductTable = ({
                                   info.row.original.prices?.[1]?.amount;
                               return (
                                   <p className="w-[100px] text-right">
-                                      {price
-                                          ? `${price.toLocaleString()}`
-                                          : "-"}
+                                      {price ? <FormattedNumber value={price} /> : "-"}
                                   </p>
                               );
                           },
@@ -265,9 +263,7 @@ const ProductTable = ({
                                       ?.purchase_price_amount;
                               return (
                                   <p className="w-[100px] text-right">
-                                      {price
-                                          ? `${price.toLocaleString()}`
-                                          : "-"}
+                                      {price ? <FormattedNumber value={price} /> : "-"}
                                   </p>
                               );
                           },

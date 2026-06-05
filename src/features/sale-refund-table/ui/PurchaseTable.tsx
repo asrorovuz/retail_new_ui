@@ -762,6 +762,23 @@ const PurchaseTable = ({
                                 },
                                 rawAmount || "0",
                             );
+                            const priceAmount = currentItem?.priceAmount ?? 0;
+                            if (priceAmount > 0 && currentItem?.productId != null) {
+                                const newMargin =
+                                    ((Number(rawAmount || "0") / priceAmount) - 1) * 100;
+                                const marginStr = String(Math.round(newMargin * 100) / 100);
+                                if (selectedType === 2) {
+                                    setMarginBulkByProduct((prev) => ({
+                                        ...prev,
+                                        [currentItem.productId]: marginStr,
+                                    }));
+                                } else {
+                                    setMarginByProduct((prev) => ({
+                                        ...prev,
+                                        [currentItem.productId]: marginStr,
+                                    }));
+                                }
+                            }
                         }}
                     />
 
@@ -773,7 +790,7 @@ const PurchaseTable = ({
                             value={selectedType === 2 ? marginBulkPercent : marginPercent}
                             onChange={(e) => handleMarginChange(e.target.value)}
                             onFocus={() => setActiveTypeKeyboard("numeric")}
-                            className="!w-12 !h-8"
+                            className="!w-20 !h-8"
                             size="sm"
                         />
                         <div className="flex flex-col w-full">

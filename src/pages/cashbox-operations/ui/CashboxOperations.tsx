@@ -1,4 +1,5 @@
 import { useCashboxStore } from "@/app/store/useCashbox";
+import FormattedNumber from "@/shared/ui/kit-pro/numeric-format/NumericFormat";
 import {
     useCashExpenseApi,
     useCashExpenseCountApi,
@@ -180,7 +181,7 @@ const CashboxOperations = () => {
 
                     return (
                         <span>
-                            {amounts[0].amount.toLocaleString()}{" "}
+                            <FormattedNumber value={amounts[0].amount} />{" "}
                             <CurrencyName currency={amounts[0]?.currency} />
                         </span>
                     );

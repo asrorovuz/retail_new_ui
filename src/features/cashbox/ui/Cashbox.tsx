@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, type FC } from "react";
+import FormattedNumber from "@/shared/ui/kit-pro/numeric-format/NumericFormat";
 import type { CashboxPropsType } from "../model";
 import Tabs from "@/shared/ui/kit-pro/tabs/Tabs";
 import { Select } from "@/shared/ui/kit";
@@ -8,7 +9,7 @@ import { useDraftPurchaseStore } from "@/app/store/usePurchaseDraftStore";
 import { showMeasurmentName } from "@/shared/lib/showMeausermentName";
 
 const Cashbox: FC<CashboxPropsType> = (props) => {
-    const { type, localContractorId, setLocalContractorId } = props;
+    const { type, localContractorId, setLocalContractorId, setExpandedId } = props;
     const {
         draftPurchases,
         setContractorId,
@@ -47,8 +48,10 @@ const Cashbox: FC<CashboxPropsType> = (props) => {
 
         if (!dataById?.length) return;
 
+        const firstProductId = dataById?.[0]?.product?.id ?? null;
+
         dataById?.forEach((item: any) => {
-            addProducts(item);
+            addProducts(item?.product);
 
             const existingItem = activeDraft?.items?.find(
                 (p) => p.productId === item?.product?.id,
@@ -85,6 +88,10 @@ const Cashbox: FC<CashboxPropsType> = (props) => {
 
             updateDraftPurchaseItem(newItem);
         });
+
+        if (firstProductId != null) {
+            setExpandedId?.(firstProductId);
+        }
     }, [dataById]);
 
     return (
@@ -100,7 +107,7 @@ const Cashbox: FC<CashboxPropsType> = (props) => {
                 {type === "purchase" && (
                     <p className="w-max flex gap-x-2 uppercase font-semibold text-orange-400">
                         <span>долг:</span>{" "}
-                        {contractor?.debts?.[0]?.amount ?? "0"}
+                        <FormattedNumber value={contractor?.debts?.[0]?.amount ?? 0} />
                     </p>
                 )}
                 {type === "purchase" && (

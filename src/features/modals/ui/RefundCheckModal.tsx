@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import FormattedNumber from "@/shared/ui/kit-pro/numeric-format/NumericFormat";
 import {
   useReactTable,
   getCoreRowModel,
@@ -90,7 +91,7 @@ const RefundCheckModal = ({
       {
         accessorKey: "price_amount",
         header: "Цена",
-        cell: ({ row }) => row.original.price_amount.toLocaleString(),
+        cell: ({ row }) => <FormattedNumber value={row.original.price_amount} />,
       },
       {
         accessorKey: "quantity",
@@ -101,7 +102,7 @@ const RefundCheckModal = ({
         accessorKey: "totalAmount",
         header: "Сумма",
         cell: ({ row }) =>
-          (row.original.price_amount * row.original.quantity).toLocaleString(),
+          <FormattedNumber value={row.original.price_amount * row.original.quantity} />,
       },
     ],
     [items, selectedIds]

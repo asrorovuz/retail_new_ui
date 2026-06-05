@@ -1,4 +1,5 @@
 import type { DraftRefundSchema } from "@/@types/refund";
+import FormattedNumber from "@/shared/ui/kit-pro/numeric-format/NumericFormat";
 import type {
     DraftSalePaymentAmountSchema,
     DraftSaleSchema,
@@ -259,9 +260,7 @@ const PaymentSection = ({
                                     <span>ОПЛАТA</span>
                                     <span>
                                         {value && activeSelectPaymetype
-                                            ? Number(value)?.toLocaleString(
-                                                  "ru-RU",
-                                              )
+                                            ? <FormattedNumber value={Number(value)} />
                                             : 0}
                                     </span>
                                 </div>
@@ -269,9 +268,7 @@ const PaymentSection = ({
                                     <span>Сумма к оплате</span>
                                     <span>
                                         {totalPaymentAmount
-                                            ? totalPaymentAmount?.toLocaleString(
-                                                  "ru-RU",
-                                              )
+                                            ? <FormattedNumber value={totalPaymentAmount} />
                                             : 0}
                                     </span>
                                 </div>
@@ -281,16 +278,14 @@ const PaymentSection = ({
                                             <span>Скидка</span>
                                             <span>
                                                 {activeDraft?.discountAmount
-                                                    ? Number(
-                                                          activeDraft?.discountAmount,
-                                                      )?.toLocaleString("ru-RU", { maximumFractionDigits: 3 })
+                                                    ? <FormattedNumber value={Number(activeDraft?.discountAmount)} />
                                                     : 0}
                                             </span>
                                         </div>
                                         <div className="flex justify-between text-slate-700 border-b text-[17px]">
                                             <span>В долг</span>
                                             <span>
-                                                {debetAmount ? debetAmount : 0}
+                                                {debetAmount ? <FormattedNumber value={debetAmount} /> : 0}
                                             </span>
                                         </div>
                                     </>
@@ -299,9 +294,7 @@ const PaymentSection = ({
                                     <span>Сдача</span>
                                     <span>
                                         {cashBackAmount
-                                            ? cashBackAmount.toLocaleString(
-                                                  "ru-RU",
-                                              )
+                                            ? <FormattedNumber value={cashBackAmount} />
                                             : 0}
                                     </span>
                                 </div>

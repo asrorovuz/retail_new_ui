@@ -1,4 +1,5 @@
 import { Card } from "@/shared/ui/kit";
+import FormattedNumber from "@/shared/ui/kit-pro/numeric-format/NumericFormat";
 import { FaBox } from "react-icons/fa";
 import TableRow from "./TableRow";
 
@@ -56,19 +57,19 @@ const ProductTable = ({
                   Итого:
                 </td>
                 <td className="px-4 py-3 text-center text-blue-700 font-bold">
-                  {totals?.[0]?.amount ?? 0}
+                  <FormattedNumber value={totals?.[0]?.amount ?? 0} />
                 </td>
                 <td colSpan={2} className="px-4 py-3 text-right text-slate-700">
                   Итого со скидкой:
                 </td>
                 <td className="px-4 py-3 text-center text-blue-700 font-bold">
-                  {(totals?.[0]?.amount - discount?.amount) || 0}
+                  <FormattedNumber value={(totals?.[0]?.amount - discount?.amount) || 0} />
                 </td>
                 <td colSpan={1} className="px-4 py-3 text-right text-slate-700">
                   Скидка:
                 </td>
                 <td className="px-4 py-3 text-center text-blue-700 font-bold">
-                  {discount?.amount ?? 0}
+                  <FormattedNumber value={discount?.amount ?? 0} />
                 </td>
                 <td colSpan={2}></td>
               </tr>

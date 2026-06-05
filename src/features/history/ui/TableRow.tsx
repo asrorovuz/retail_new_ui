@@ -30,7 +30,7 @@ const TableRow = ({
         {productPackage?.name ?? "-"}
       </td>
       <td className="px-4 py-3 text-center text-sm font-semibold text-slate-700">
-        <div className="w-[100px]">{item?.quantity ?? 0}</div>
+        <div className="w-[100px]"><FormattedNumber value={item?.quantity ?? 0} /></div>
       </td>
       <td className="px-4 py-3 text-center text-sm text-slate-600">
         <div className="w-[80px]">

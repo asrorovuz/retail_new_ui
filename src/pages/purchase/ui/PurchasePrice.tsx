@@ -149,6 +149,7 @@ const PurchasePrice = () => {
                     payModal={payModal}
                     setLocalContractorId={setLocalContractorId}
                     localContractorId={localContractorId}
+                    setExpandedId={setExpandedId}
                 />
                 <PurchaseTable
                     type="purchase"
