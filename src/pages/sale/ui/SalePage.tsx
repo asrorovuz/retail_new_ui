@@ -331,6 +331,8 @@ const SalePage = () => {
             <PaymentDebtsModal
                 dobtModal={dobtModal}
                 setDebitModal={setDebtModal}
+                debtsStatus={1}
+                setDebtsStatus={() => {}}
             />
         </div>
     );

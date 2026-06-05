@@ -77,6 +77,7 @@ const Counterparty = () => {
     const [type, setType] = useState<"add" | "edit">("add");
     const [deleteModal, setDeleteModal] = useState(false);
     const [dobtModal, setDebitModal] = useState(false);
+    const [debtsStatus, setDebtsStatus] = useState(1);
     const [contractorId, setContractorId] = useState<number | null>(null);
     const [contragent, setContragent] = useState<ContragentType | null>(null);
     const [products, setProducts] = useState<any>(null);
@@ -340,6 +341,7 @@ const Counterparty = () => {
                             onClick={() => {
                                 setDebitModal(true);
                                 setContractorId(row.original?.id);
+                                setDebtsStatus(1);
                             }}
                         >
                             <div className="w-full flex items-center gap-2 text-slate-700 rounded-xl">
@@ -364,6 +366,7 @@ const Counterparty = () => {
                                     onClick={() => {
                                         setDebitModal(true);
                                         setContractorId(row.original?.id);
+                                        setDebtsStatus(2);
                                     }}
                                 >
                                     <div className="w-full flex items-center gap-2 text-slate-700 rounded-xl">
@@ -513,7 +516,7 @@ const Counterparty = () => {
                         }}
                     />
                 </div>
-                
+
                 <div className="flex items-center gap-x-3 text-xs font-medium">
                     <div className="flex items-center gap-x-1.5 px-2.5 py-1 rounded-full bg-green-100 text-green-800">
                         <span className="w-2.5 h-2.5 rounded-sm bg-green-600 inline-block" />
@@ -672,6 +675,8 @@ const Counterparty = () => {
                 setDebitModal={setDebitModal}
                 contractorId={contractorId}
                 setContragentId={setContractorId}
+                debtsStatus={debtsStatus}
+                setDebtsStatus={setDebtsStatus}
             />
 
             <Dialog
