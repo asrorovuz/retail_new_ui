@@ -733,7 +733,7 @@ const OrderActions = ({
     }, [filterDataFiscal]);
 
     useEffect(() => {
-        setContractorId(localContractorId)
+        setContractorId(localContractorId ?? null)
     }, [localContractorId])
 
     return keyType === "numeric" ? (
