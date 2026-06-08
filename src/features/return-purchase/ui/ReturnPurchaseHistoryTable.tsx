@@ -59,6 +59,7 @@ const ReturnPurchaseHistoryTable = ({
         addDraftReturnPurchase,
         draftReturnPurchases,
         activateDraftReturnPurchase,
+        setReturnPurchaseContractorId,
     } = useReturnPurchaseDraftStore();
 
     const onCloseDeleteDialog = () => {
@@ -119,7 +120,8 @@ const ReturnPurchaseHistoryTable = ({
             items,
             isActive: true,
             discountAmount: data?.exact_discounts?.[0]?.amount,
-            payout: { amounts: paymentAmounts },
+            contractor_id: data?.contractor_id ?? null,
+            payment: { amounts: paymentAmounts },
         };
 
         if (!draftReturnPurchases?.some((item) => item.id === data?.id)) {
@@ -130,6 +132,7 @@ const ReturnPurchaseHistoryTable = ({
             );
             activateDraftReturnPurchase(index ?? 0);
         }
+        setReturnPurchaseContractorId(data?.contractor_id ?? null);
         navigate("/return-purchase");
     };
 
@@ -195,14 +198,14 @@ const ReturnPurchaseHistoryTable = ({
                 },
             }),
 
-            columnHelper.accessor("payout", {
-                id: "payout",
+            columnHelper.accessor("payment", {
+                id: "payment",
                 enableSorting: false,
                 enableHiding: false,
                 meta: { bodyCellClassName: "text-end min-w-[175px]" },
                 header: () => "Оплата",
                 cell: ({ row }) => {
-                    const { cash_box_states } = row.original?.payout || {};
+                    const { cash_box_states } = row.original?.payment || {};
                     return (
                         <div className="whitespace-nowrap text-nowrap">
                             {cash_box_states ? (

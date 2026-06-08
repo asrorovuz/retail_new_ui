@@ -253,6 +253,7 @@ export const pathServices = {
 
     contractor: {
         getActReport: "/api/contractor/act-report/",
+        getActReportExcel: "/api/excel/contractor-act-report/",
         getPaymentPath: "/api/payment/get",
         getPayoutPath: "/api/payout/get",
         getPaymentCountPath: "/api/payment/get/count",

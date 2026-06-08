@@ -93,6 +93,19 @@ export const getPayoutCount = async (params: any): Promise<any> => {
     });
 };
 
+export const getActReportExcelApi = async (
+    id: number | null,
+    params: any,
+): Promise<any> => {
+    const { pageSize, pageIndex, ...param } = params;
+    return await apiRequest<any>({
+        url: pathServices.contractor.getActReportExcel + id,
+        method: "POST",
+        data: { ...param },
+        responseType: "arraybuffer",
+    });
+};
+
 export const deletePayout = async (id: number): Promise<any> => {
   return await apiRequest<any>({
     url: pathServices.contractor.deletePayout + id,

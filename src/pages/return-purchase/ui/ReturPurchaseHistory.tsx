@@ -65,7 +65,7 @@ const ReturPurchaseHistory = () => {
     return (
         <div className="bg-white h-screen rounded-lg p-3 flex flex-col">
             <div className="flex justify-between mb-3">
-                <NavigateButton content="История возврата поставщику" />
+                <NavigateButton content="Ист. воз. поставщику" />
                 <div className="flex gap-x-2">
                     <Controller
                         name="date_start"

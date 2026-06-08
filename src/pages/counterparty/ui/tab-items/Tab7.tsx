@@ -1,4 +1,9 @@
-import { useActReport } from "@/entities/contractor/repository";
+import {
+    useActReport,
+    useActReportExcel,
+} from "@/entities/contractor/repository";
+import { exportToExcelApi } from "@/shared/lib/arrayToExcelConvert";
+import { showErrorMessage } from "@/shared/lib/showMessage";
 import classNames from "@/shared/lib/classNames";
 import { Button, Card, DatePicker, Table } from "@/shared/ui/kit";
 import Empty from "@/shared/ui/kit-pro/empty/Empty";
@@ -28,6 +33,8 @@ const Tab7 = ({ contractorId }: any) => {
     });
     const [actReportData, setActReportData] = useState<any>([]);
     const { mutate: actReportMutate } = useActReport();
+    const { mutate: excelMutate, isPending: excelPending } =
+        useActReportExcel();
 
     const { control, watch } = useForm({
         defaultValues: {
@@ -46,70 +53,111 @@ const Tab7 = ({ contractorId }: any) => {
     const columns = useMemo<ColumnDef<any>[]>(
         () => [
             {
+                id: "index",
                 header: "№",
                 cell: ({ row }) => row.index + 1,
             },
             {
+                id: "operation",
                 header: "Операции",
-                accessorKey: "operation",
-                // cell: ({ row }) => <span></span>,
+                cell: ({ row }) => {
+                    const type = row.original?.type;
+                    const config: Record<
+                        number,
+                        { label: string; className: string }
+                    > = {
+                        1: {
+                            label: "Оплата от клиента",
+                            className: "bg-green-100 text-green-800",
+                        },
+                        2: {
+                            label: "Выплата поставщику",
+                            className: "bg-blue-100 text-blue-800",
+                        },
+                        3: {
+                            label: "Продажа",
+                            className: "bg-purple-100 text-purple-800",
+                        },
+                        4: {
+                            label: "Приход",
+                            className: "bg-orange-100 text-orange-800",
+                        },
+                        5: {
+                            label: "Возврат средств",
+                            className: "bg-yellow-100 text-yellow-800",
+                        },
+                        6: {
+                            label: "Возврат поставщику",
+                            className: "bg-red-100 text-red-800",
+                        },
+                    };
+                    const item = config[type];
+                    if (!item) return <span className="text-slate-400">—</span>;
+                    return (
+                        <div
+                            className={classNames(
+                                "px-2 py-1 m-1 w-max rounded-full text-xs font-medium whitespace-nowrap",
+                                item.className,
+                            )}
+                        >
+                            {item.label}
+                        </div>
+                    );
+                },
             },
             {
+                id: "before_debts",
                 header: "Предыдущий долг",
-                accessorKey: "debts",
                 cell: ({ row }) => (
-                    <span>
-                        <FormattedNumber
-                            value={
-                                calcDebts(row?.original?.before_debts || []) ||
-                                0
-                            }
-                        />
-                    </span>
+                    <FormattedNumber
+                        value={calcDebts(
+                            row.original?.before_debt_states || [],
+                        )}
+                    />
                 ),
             },
             {
+                id: "increase",
                 header: "Увеличение задолженности",
-                accessorKey: "name",
-                cell: ({ row }) => (
-                    <span>
-                        <FormattedNumber
-                            value={
-                                calcDebts(row?.original?.after_debts || []) || 0
-                            }
-                        />
-                    </span>
-                ),
+                cell: ({ row }) => {
+                    const diff =
+                        calcDebts(row.original?.after_debt_states || []) -
+                        calcDebts(row.original?.before_debt_states || []);
+                    return <FormattedNumber value={diff > 0 ? diff : 0} />;
+                },
             },
             {
+                id: "decrease",
                 header: "Уменьшение задолженности",
-                accessorKey: "name",
-                // cell: ({ row }) => <span></span>,
+                cell: ({ row }) => {
+                    const diff =
+                        calcDebts(row.original?.before_debt_states || []) -
+                        calcDebts(row.original?.after_debt_states || []);
+                    return <FormattedNumber value={diff > 0 ? diff : 0} />;
+                },
             },
             {
+                id: "after_debts",
                 header: "Последующая задолженность",
-                accessorKey: "after_debts",
                 cell: ({ row }) => (
-                    <span>
-                        <FormattedNumber
-                            value={
-                                calcDebts(row?.original?.after_debts || []) || 0
-                            }
-                        />
-                    </span>
+                    <FormattedNumber
+                        value={calcDebts(row.original?.after_debt_states || [])}
+                    />
                 ),
             },
             {
+                id: "user",
                 header: "Пользователи",
-                accessorKey: "name",
-                // cell: ({ row }) => <span></span>,
+                cell: ({ row }) => (
+                    <div>{row.original?.cashbox?.user?.name ?? "—"}</div>
+                ),
             },
             {
+                id: "date",
                 header: "Дата",
-                accessorKey: "name",
                 cell: ({ row }) => (
                     <div className="w-max px-2">
-                        {dayjs(row?.original?.date).format("HH:mm YYYY-MM-DD")}
+                        {dayjs(row.original?.date).format("HH:mm YYYY-MM-DD")}
                     </div>
                 ),
             },
@@ -162,20 +210,8 @@ const Tab7 = ({ contractorId }: any) => {
     return (
         <Card className="py-2 h-full">
             <div className="flex flex-col gap-2">
-                <div className="flex gap-x-2 justify-between">
-                    <span>-</span>
+                <div className="flex gap-x-2 justify-end">
                     <div className="flex gap-x-2">
-                        <Button
-                            size="sm"
-                            variant="solid"
-                            icon={
-                                <>
-                                    <PiMicrosoftExcelLogoDuotone />
-                                </>
-                            }
-                        >
-                            Скачать в Excel
-                        </Button>
                         <Controller
                             name="date_start"
                             control={control}
@@ -215,6 +251,29 @@ const Tab7 = ({ contractorId }: any) => {
                                 );
                             }}
                         />
+
+                        <Button
+                            size="sm"
+                            variant="solid"
+                            loading={excelPending}
+                            className="bg-green-700 hover:bg-green-600"
+                            icon={<PiMicrosoftExcelLogoDuotone />}
+                            onClick={() =>
+                                excelMutate(
+                                    { id: contractorId, params },
+                                    {
+                                        onSuccess(res) {
+                                            exportToExcelApi(res, "act-sverka");
+                                        },
+                                        onError(err) {
+                                            showErrorMessage(err);
+                                        },
+                                    },
+                                )
+                            }
+                        >
+                            Скачать в Excel
+                        </Button>
                     </div>
                 </div>
 

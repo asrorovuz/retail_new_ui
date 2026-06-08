@@ -4,6 +4,8 @@ import {
     useReturnPurchaseCountApi,
 } from "@/entities/history/repository";
 import { Filter, TransactionModal } from "@/features/history";
+import { PaymentTypes } from "@/app/constants/payment.types";
+import { useReturnPurchaseDraftStore } from "@/app/store/useReturnPurchaseDraftStore";
 import { Button, DatePicker, Dialog } from "@/shared/ui/kit";
 import Loading from "@/shared/ui/loading";
 import dayjs from "dayjs";
@@ -16,6 +18,50 @@ import ReturnPurchaseTable from "./ReturnPurchaseTable";
 
 const Tab3 = ({ id }: any) => {
     const navigate = useNavigate();
+    const {
+        addDraftReturnPurchase,
+        draftReturnPurchases,
+        activateDraftReturnPurchase,
+        setReturnPurchaseContractorId,
+    } = useReturnPurchaseDraftStore();
+
+    const onEdit = (data: any) => {
+        const items = data?.items?.map((item: any) => ({
+            id: item?.id,
+            productId: item?.warehouse_operation_from?.product?.id,
+            productName: item?.warehouse_operation_from?.product?.name,
+            productPackageName: item?.warehouse_operation_from?.product?.package_name,
+            priceAmount: item?.price_amount,
+            priceTypeId: item?.price_type_id,
+            quantity: item?.quantity,
+            totalAmount: item?.quantity * item?.price_amount,
+            marks: item?.marks,
+            catalogCode: item?.warehouse_operation_from?.product?.catalog_code,
+            catalogName: item?.warehouse_operation_from?.product?.catalog_name,
+        }));
+        const cashBoxStates = data?.payout?.cash_box_states || [];
+        const paymentAmounts = PaymentTypes?.map((paymentType) => {
+            const founded = cashBoxStates?.find((s: any) => s?.type === paymentType?.type);
+            return { paymentType: paymentType.type, amount: founded ? founded.amount : 0 };
+        });
+        const payload = {
+            id: data?.id,
+            items,
+            isActive: true,
+            discountAmount: data?.exact_discounts?.[0]?.amount,
+            contractor_id: data?.contractor_id ?? null,
+            payout: { amounts: paymentAmounts },
+        };
+        if (!draftReturnPurchases?.some((item) => item.id === data?.id)) {
+            addDraftReturnPurchase(payload);
+        } else {
+            const index = draftReturnPurchases?.findIndex((item) => item?.id === data?.id);
+            activateDraftReturnPurchase(index ?? 0);
+        }
+        setReturnPurchaseContractorId(data?.contractor_id ?? null);
+        navigate("/return-purchase");
+    };
+
     const [params, setParams] = useState({
         pageIndex: 1,
         pageSize: 20,
@@ -114,7 +160,7 @@ const Tab3 = ({ id }: any) => {
                         icon={<FaPlus />}
                         variant="solid"
                         size="sm"
-                        onClick={() => navigate("/refund")}
+                        onClick={() => navigate("/return-purchase")}
                     >
                         Добавить
                     </Button>
@@ -134,6 +180,7 @@ const Tab3 = ({ id }: any) => {
                 setParams={setParams}
                 setViewModal={setViewModal}
                 params={params}
+                onEdit={onEdit}
             />
 
             <Dialog

@@ -49,14 +49,14 @@ const tabs = [
             </div>
         ),
     },
-    {
-        value: "tab6",
-        label: (
-            <div className="flex items-center gap-x-1 w-max">
-                <CgArrowsExchange /> Операции
-            </div>
-        ),
-    },
+    // {
+    //     value: "tab6",
+    //     label: (
+    //         <div className="flex items-center gap-x-1 w-max">
+    //             <CgArrowsExchange /> Операции
+    //         </div>
+    //     ),
+    // },
     {
         value: "tab7",
         label: (

@@ -15,7 +15,7 @@ const initialState: ReturnPurchaseStoreInitialState = {
             items: [],
             discountAmount: "0",
             contractor_id: null,
-            payout: {
+            payment: {
                 amounts: PaymentTypes.map((paymentType) => ({
                     amount: "0",
                     paymentType: paymentType.type,
@@ -73,7 +73,7 @@ export const useReturnPurchaseDraftStore = create<
                             isActive: true,
                             discountAmount: "0",
                             contractor_id: null,
-                            payout: {
+                            payment: {
                                 amounts: PaymentTypes.map((pt) => ({
                                     amount: "0",
                                     paymentType: pt.type,
@@ -183,7 +183,7 @@ export const useReturnPurchaseDraftStore = create<
         updateDraftReturnPurchasePayout: (payment) =>
             set((state) => {
                 const active = state.draftReturnPurchases.find((s) => s.isActive);
-                if (active) active.payout = { amounts: payment };
+                if (active) active.payment = { amounts: payment };
             }),
 
         updateDraftReturnPurchaseDiscount: (discountAmount: string) =>
@@ -200,7 +200,7 @@ export const useReturnPurchaseDraftStore = create<
                     contractor_id: null,
                     discountAmount: "0",
                     items: [],
-                    payout: {
+                    payment: {
                         amounts: PaymentTypes.map((pt) => ({
                             amount: "0",
                             paymentType: pt.type,

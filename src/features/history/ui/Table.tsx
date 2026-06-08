@@ -177,7 +177,6 @@ const TableHistory = ({
                 );
                 activateDraftPurchase(index ?? 0);
             }
-            console.log(data, "55");
             
             setContractorId(data?.contractor_id)
             navigate("/purchase");

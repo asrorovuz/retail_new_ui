@@ -45,6 +45,7 @@ interface Props {
     setParams: (fn: (p: any) => any) => void;
     setViewModal: any;
     params: any;
+    onEdit?: (data: any) => void;
 }
 
 const ReturnPurchaseTable = ({
@@ -54,6 +55,7 @@ const ReturnPurchaseTable = ({
     setParams,
     setViewModal,
     params,
+    onEdit,
 }: Props) => {
     const columns = useMemo<ColumnDef<ReturnRow>[]>(
         () => [
@@ -250,7 +252,7 @@ const ReturnPurchaseTable = ({
                         </DropdownItem>
 
                         <DropdownItem
-                            // onClick={() => onSubmit(row.original)}
+                            onClick={() => onEdit?.(row.original)}
                             className="h-auto!"
                         >
                             <div className="w-full flex items-center gap-2 text-orange-500 py-3 px-5 rounded-lg">
@@ -276,7 +278,7 @@ const ReturnPurchaseTable = ({
                 size: 40,
             },
         ],
-        [data, setViewModal],
+        [data, setViewModal, onEdit],
     );
 
     const totals = useMemo(() => {

@@ -11,7 +11,7 @@ import SuccessSvg from "@/shared/ui/svg/SuccessSvg";
 import { useState } from "react";
 
 type PaymentModalType = {
-    type: "sale" | "refund" | "purchase";
+    type: "sale" | "refund" | "purchase" | "return_purchase";
     cashBackAmount: number;
     totalPaymentAmount: number;
     isOpen: boolean;
@@ -93,7 +93,7 @@ const PaymentModal = ({
 
         let subtracted = false;
         onSubmitPaymentHandler(
-            (type === "sale"
+            (type === "sale" || type === "return_purchase"
                 ? activeDraft?.payment
                 : activeDraft?.payout
             )?.amounts?.map((item: any) => {
@@ -163,7 +163,7 @@ const PaymentModal = ({
                                 </div>
                             );
                         })()}
-                    {(type === "sale"
+                    {(type === "sale" || type === "return_purchase"
                         ? activeDraft?.payment
                         : activeDraft?.payout
                     )?.amounts?.map((payment) => {

@@ -2,7 +2,7 @@ export type DraftReturnPurchaseSchema = {
     id?: number;
     isActive: boolean;
     items: DraftReturnPurchaseItemSchema[];
-    payout?: DraftReturnPurchasePayoutSchema;
+    payment?: DraftReturnPurchasePayoutSchema;
     discountAmount?: string;
     contractor_id?: number | null;
 };

@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   deletePayout,
     getActReport,
+    getActReportExcelApi,
     getPayment,
     getPaymentCount,
     getPayout,
@@ -11,6 +12,12 @@ import {
 export const useActReport = () => {
     return useMutation({
         mutationFn: ({ id, params }: any) => getActReport(id, params),
+    });
+};
+
+export const useActReportExcel = () => {
+    return useMutation({
+        mutationFn: ({ id, params }: any) => getActReportExcelApi(id, params),
     });
 };
 
