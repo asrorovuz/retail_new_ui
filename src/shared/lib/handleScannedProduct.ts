@@ -17,7 +17,7 @@ export const handleScannedProduct = (
     const { draftPurchases, updateDraftPurchaseItem } =
         useDraftPurchaseStore.getState();
     const { draftReturnPurchases, updateDraftReturnPurchaseItem } =
-        useReturnPurchaseDraftStore();
+        useReturnPurchaseDraftStore.getState();
 
     const activeDraftSale = draftSales.find((s) => s.isActive);
     const activeDraftRefund = draftRefunds.find((s) => s.isActive);
