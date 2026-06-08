@@ -1,11 +1,24 @@
+import { messages } from "@/app/constants/message.request";
+import { useAuthContext } from "@/app/providers/AuthProvider";
 import {
-    usePaymentAll,
-    usePaymentCount,
+    useDeletePayout,
+    usePayoutAll,
+    usePayoutCount,
 } from "@/entities/contractor/repository";
+import PaymentDebtsModal from "@/features/modals/ui/PaymentDebtsModal";
 import classNames from "@/shared/lib/classNames";
-import {  DatePicker, Pagination, Table } from "@/shared/ui/kit";
+import { showErrorMessage, showSuccessMessage } from "@/shared/lib/showMessage";
+import {
+    Button,
+    DatePicker,
+    Dropdown,
+    Pagination,
+    Table,
+} from "@/shared/ui/kit";
+import ConfirmDialog from "@/shared/ui/kit-pro/confirm-dialog/ConfirmDialog";
 import Empty from "@/shared/ui/kit-pro/empty/Empty";
 import FormattedNumber from "@/shared/ui/kit-pro/numeric-format/NumericFormat";
+import DropdownItem from "@/shared/ui/kit/Dropdown/DropdownItem";
 import TBody from "@/shared/ui/kit/Table/TBody";
 import Td from "@/shared/ui/kit/Table/Td";
 import TFoot from "@/shared/ui/kit/Table/TFoot";
@@ -20,28 +33,68 @@ import {
 import dayjs from "dayjs";
 import { useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { FaPlus, FaRegEdit } from "react-icons/fa";
+import { HiOutlineDotsHorizontal } from "react-icons/hi";
+import { IoTrashOutline } from "react-icons/io5";
 
-const Tab4 = () => {
+const Tab4 = ({ id }: any) => {
     const [params, setParams] = useState({
         pageIndex: 1,
         pageSize: 20,
-        // contractor_id: +id,
+        contractor_id: id,
+        date_start: dayjs().startOf("day").format("YYYY-MM-DD HH:mm:ss"),
+        date_end: dayjs().endOf("day").format("YYYY-MM-DD HH:mm:ss"),
     });
-    // const [isOpenFilter, setIsOpenFilter] = useState(false);
+    const [deleteId, setDeleteId] = useState<any>(null);
+    const [dobtModal, setDebitModal] = useState(false);
+    const [localAmount, setLocalAmount] = useState(0);
+    const [debtsStatus, setDebtsStatus] = useState(2);
+    const [payoutId, setPayoutId] = useState<any>(null);
+    const [initialCashBoxStates, setInitialCashBoxStates] = useState<
+        { amount: number; type: number }[] | null
+    >(null);
 
-    const { data, isPending: loading } = usePaymentAll(params);
-    const { data: count } = usePaymentCount(params);
+    const { user } = useAuthContext();
+
+    const { data, isPending: loading } = usePayoutAll(params);
+    const { data: count } = usePayoutCount(params);
+    const { mutate: deletePayout, isPending: deleteLoading } =
+        useDeletePayout();
 
     const { control, watch } = useForm({
         defaultValues: {
-            date_start: null,
-            date_end: null,
-            // contractor_id: +id,
+            date_start: dayjs().startOf("day").toDate(),
+            date_end: dayjs().endOf("day").toDate(),
+            contractor_id: id,
         },
     });
 
     const dateStart = watch("date_start");
     const dateEnd = watch("date_end");
+
+    const onDelete = (id: any) => {
+        setDeleteId(id);
+    };
+
+    const onConfirmDelete = () => {
+        deletePayout(deleteId, {
+            onSuccess() {
+                showSuccessMessage(
+                    messages.uz.SUCCESS_MESSAGE,
+                    messages.ru.SUCCESS_MESSAGE,
+                );
+                setDeleteId(null); // dialogni yopadi
+            },
+            onError(err) {
+                showErrorMessage(err);
+                setDeleteId(null);
+            },
+        });
+    };
+
+    const onCloseDelete = () => {
+        setDeleteId(null);
+    };
 
     const columns = useMemo(() => {
         return [
@@ -53,10 +106,35 @@ const Tab4 = () => {
             {
                 header: "ТИП",
                 accessorKey: "turi",
+                cell: () => {
+                    return (
+                        <div className="bg-blue-100 text-blue-900 rounded-full p-1">
+                            Поставщик
+                        </div>
+                    );
+                },
             },
             {
                 header: "ОПЛАТА",
                 accessorKey: "tolov",
+                cell: ({ row }: any) => {
+                    return (
+                        <div className="flex flex-col items-end w-full">
+                            {row?.original?.cash_box_states?.map(
+                                (item: any) => {
+                                    return (
+                                        <div className="flex gap-x-1 justify-end w-max text-right">
+                                            <FormattedNumber
+                                                value={item?.amount ?? 0}
+                                            />
+                                            <span>Сум</span>
+                                        </div>
+                                    );
+                                },
+                            )}
+                        </div>
+                    );
+                },
             },
             {
                 // Bu header avtomatik ravishda o'z sub-columnlari
@@ -66,67 +144,245 @@ const Tab4 = () => {
                     {
                         header: "НАЛИЧНЫЕ",
                         accessorKey: "naqd",
+                        cell: ({ row }: any) => {
+                            const pay = row.original?.cash_box_states?.find(
+                                (item: any) => item?.type === 1,
+                            );
+                            return (
+                                <div className="flex justify-end">
+                                    <FormattedNumber value={pay?.amount ?? 0} />
+                                </div>
+                            );
+                        },
                     },
                     {
                         header: "UZCARD",
                         accessorKey: "uzcard",
+                        cell: ({ row }: any) => {
+                            const pay = row.original?.cash_box_states?.find(
+                                (item: any) => item?.type === 2,
+                            );
+                            return (
+                                <div className="flex justify-end">
+                                    <FormattedNumber value={pay?.amount ?? 0} />
+                                </div>
+                            );
+                        },
                     },
                     {
                         header: "HUMO",
                         accessorKey: "humo",
+                        cell: ({ row }: any) => {
+                            const pay = row.original?.cash_box_states?.find(
+                                (item: any) => item?.type === 3,
+                            );
+                            return (
+                                <div className="flex justify-end">
+                                    <FormattedNumber value={pay?.amount ?? 0} />
+                                </div>
+                            );
+                        },
                     },
                     {
                         header: "БАНКОВСКИЙ ПЕРЕВОД",
                         accessorKey: "bankOtkazmasi",
+                        cell: ({ row }: any) => {
+                            const pay = row.original?.cash_box_states?.find(
+                                (item: any) => item?.type === 4,
+                            );
+                            return (
+                                <div className="flex justify-end">
+                                    <FormattedNumber value={pay?.amount ?? 0} />
+                                </div>
+                            );
+                        },
                     },
                     {
                         header: "CLICK",
                         accessorKey: "click",
+                        cell: ({ row }: any) => {
+                            const pay = row.original?.cash_box_states?.find(
+                                (item: any) => item?.type === 5,
+                            );
+                            return (
+                                <div className="flex justify-end">
+                                    <FormattedNumber value={pay?.amount ?? 0} />
+                                </div>
+                            );
+                        },
                     },
                     {
                         header: "PAYME",
                         accessorKey: "payme",
+                        cell: ({ row }: any) => {
+                            const pay = row.original?.cash_box_states?.find(
+                                (item: any) => item?.type === 6,
+                            );
+                            return (
+                                <div className="flex justify-end">
+                                    <FormattedNumber value={pay?.amount ?? 0} />
+                                </div>
+                            );
+                        },
                     },
                     {
                         header: "VISA",
                         accessorKey: "visa",
+                        cell: ({ row }: any) => {
+                            const pay = row.original?.cash_box_states?.find(
+                                (item: any) => item?.type === 7,
+                            );
+                            return (
+                                <div className="flex justify-end">
+                                    <FormattedNumber value={pay?.amount ?? 0} />
+                                </div>
+                            );
+                        },
                     },
-                    {
-                        header: "UZUM",
-                        accessorKey: "uzum",
-                    },
-                    {
-                        header: "КЭШБЭК БОНУС",
-                        accessorKey: "cashbackBonus",
-                    },
+                    // {
+                    //     header: "UZUM",
+                    //     accessorKey: "uzum",
+                    //     cell: ({ row }: any) => {
+                    //         const pay = row.original?.cash_box_states?.find(
+                    //             (item: any) => item?.type === 1,
+                    //         );
+                    //         return (
+                    //             <div className="flex justify-end">
+                    //                 <FormattedNumber value={pay ?? 0} />
+                    //             </div>
+                    //         );
+                    //     },
+                    // },
                 ],
             },
             {
                 header: "ЗАКРЫТЫЙ ДОЛГ",
                 accessorKey: "yopilganQarz",
+                cell: ({ row }: any) => {
+                    const total = row.original.debt_states?.reduce(
+                        (sum: any, acc: any) => sum + acc.amount,
+                        0,
+                    );
+                    return (
+                        <div className="flex justify-end">
+                            <FormattedNumber value={total ?? 0} />
+                        </div>
+                    );
+                },
             },
-            {
-                header: "ИСТОЧНИК ДОХОДА",
-                accessorKey: "kirimManbasi",
-            },
+            // {
+            //     header: "ИСТОЧНИК ДОХОДА",
+            //     accessorKey: "kirimManbasi",
+            // },
             {
                 header: "ПОЛЬЗОВАТЕЛЬ",
                 accessorKey: "foydalanuvchi",
+                cell: () => {
+                    return (
+                        <div className="flex justify-center">{user?.name}</div>
+                    );
+                },
             },
             {
                 header: "КАССА",
                 accessorKey: "kassa",
+                cell: ({ row }: any) => {
+                    return (
+                        <div className="flex justify-center">
+                            {row.original?.cash_box?.name}
+                        </div>
+                    );
+                },
             },
             {
                 header: "ИНФОРМАЦИЯ",
                 accessorKey: "malumot",
+                cell: ({ row }: any) => {
+                    return (
+                        <div className="flex justify-center">
+                            {row.original?.notes}
+                        </div>
+                    );
+                },
             },
             {
                 header: "ДАТА",
                 accessorKey: "sana",
+                cell: ({ row }: any) => {
+                    return (
+                        <div className="flex justify-center w-max">
+                            {row.original?.date}
+                        </div>
+                    );
+                },
+            },
+            {
+                header: "",
+                accessorKey: "action",
+                cell: ({ row }) => {
+                    return (
+                        <Dropdown
+                            renderTitle={
+                                <div className="w-full h-full flex justify-center text-2xl text-slate-600">
+                                    <HiOutlineDotsHorizontal />
+                                </div>
+                            }
+                        >
+                            <DropdownItem
+                                onClick={() => {
+                                    setDebitModal(true);
+                                    setDebtsStatus(2);
+                                    setPayoutId(row.original?.id);
+                                    setInitialCashBoxStates(
+                                        row.original?.cash_box_states,
+                                    );
+                                }}
+                                className="h-auto!"
+                            >
+                                <div className="w-full flex items-center gap-2 text-orange-500 py-3 px-5 rounded-lg">
+                                    <FaRegEdit size={20} />
+                                    Редактировать
+                                </div>
+                            </DropdownItem>
+
+                            <DropdownItem
+                                onClick={() => onDelete(row.original?.id)}
+                                className="h-auto!"
+                            >
+                                <div className="w-full flex items-center gap-2 text-red-500 py-3 px-5 rounded-lg">
+                                    <IoTrashOutline size={20} />
+                                    Удалить
+                                </div>
+                            </DropdownItem>
+                        </Dropdown>
+                    );
+                },
             },
         ];
     }, []);
+
+    const summary = useMemo(() => {
+        return data?.reduce(
+            (acc: any, item: any) => {
+                item?.cash_box_states?.forEach((pay: any) => {
+                    acc.payments[pay.type] =
+                        (acc.payments[pay.type] || 0) + (pay.amount || 0);
+                });
+
+                acc.debt +=
+                    item?.debt_states?.reduce(
+                        (sum: number, debt: any) => sum + (debt.amount || 0),
+                        0,
+                    ) || 0;
+
+                return acc;
+            },
+            {
+                payments: {},
+                debt: 0,
+            },
+        );
+    }, [data]);
 
     const table = useReactTable({
         data,
@@ -189,11 +445,20 @@ const Tab4 = () => {
                             );
                         }}
                     />
-                    {/* <Button
+
+                    <Button
+                        onClick={() => {
+                            setDebitModal(true);
+                            setLocalAmount(0);
+                            setDebtsStatus(2);
+                            setInitialCashBoxStates(null);
+                        }}
+                        variant="solid"
                         size="sm"
-                        icon={<VscListFilter size={20} />}
-                        onClick={() => setIsOpenFilter(!isOpenFilter)}
-                    /> */}
+                        icon={<FaPlus />}
+                    >
+                        Добавить
+                    </Button>
                 </div>
             </div>
 
@@ -300,72 +565,75 @@ const Tab4 = () => {
                                     <Tr className="font-bold border">
                                         {/* № */}
                                         <Td>
-                                            <div className="px-4 py-1">
-                                                Итого
-                                            </div>
+                                            <div className="px-4 py-1">Итого</div>
                                         </Td>
-
-                                        {/* Номер */}
+                                        {/* ТИП */}
                                         <Td />
-
-                                        {/* Контрагент (agar pay bo‘lsa) */}
-                                        <Td />
-
-                                        {/* 🔹 ИТОГО */}
+                                        {/* ОПЛАТА */}
                                         <Td>
                                             <div className="px-4 text-end">
-                                                <p className="flex justify-end text-nowrap whitespace-nowrap gap-1">
-                                                    <FormattedNumber
-                                                        value={
-                                                            0
-                                                            // summary?.totalsAmount
-                                                        }
-                                                    />
-                                                    {/* <CurrencyName
-                                                    currency={summary?.currency}
-                                                /> */}
-                                                </p>
+                                                <FormattedNumber
+                                                    value={Object.values(summary?.payments ?? {}).reduce((s: number, v: any) => s + v, 0)}
+                                                />
                                             </div>
                                         </Td>
-
+                                        {/* НАЛИЧНЫЕ */}
                                         <Td>
                                             <div className="px-4 text-end">
-                                                <p className="flex justify-end text-nowrap h-full whitespace-nowrap gap-1">
-                                                    <FormattedNumber
-                                                        value={0}
-                                                    />
-                                                    {/* <CurrencyName
-                                                            currency={
-                                                                summary?.currency
-                                                            }
-                                                        /> */}
-                                                </p>
+                                                <FormattedNumber value={summary?.payments?.[1] ?? 0} />
                                             </div>
                                         </Td>
-
-                                        {/* 🔹 ДОЛГ */}
+                                        {/* UZCARD */}
                                         <Td>
                                             <div className="px-4 text-end">
-                                                <p className="flex justify-end text-nowrap whitespace-nowrap gap-1">
-                                                    <FormattedNumber
-                                                        value={0}
-                                                    />
-                                                    {/* <CurrencyName
-                                                            currency={
-                                                                summary?.currency
-                                                            }
-                                                        /> */}
-                                                </p>
+                                                <FormattedNumber value={summary?.payments?.[2] ?? 0} />
                                             </div>
                                         </Td>
-
-                                        {/* Касса */}
+                                        {/* HUMO */}
+                                        <Td>
+                                            <div className="px-4 text-end">
+                                                <FormattedNumber value={summary?.payments?.[3] ?? 0} />
+                                            </div>
+                                        </Td>
+                                        {/* БАНКОВСКИЙ ПЕРЕВОД */}
+                                        <Td>
+                                            <div className="px-4 text-end">
+                                                <FormattedNumber value={summary?.payments?.[4] ?? 0} />
+                                            </div>
+                                        </Td>
+                                        {/* CLICK */}
+                                        <Td>
+                                            <div className="px-4 text-end">
+                                                <FormattedNumber value={summary?.payments?.[5] ?? 0} />
+                                            </div>
+                                        </Td>
+                                        {/* PAYME */}
+                                        <Td>
+                                            <div className="px-4 text-end">
+                                                <FormattedNumber value={summary?.payments?.[6] ?? 0} />
+                                            </div>
+                                        </Td>
+                                        {/* VISA */}
+                                        <Td>
+                                            <div className="px-4 text-end">
+                                                <FormattedNumber value={summary?.payments?.[7] ?? 0} />
+                                            </div>
+                                        </Td>
+                                        {/* ЗАКРЫТЫЙ ДОЛГ */}
+                                        <Td>
+                                            <div className="px-4 text-end">
+                                                <FormattedNumber value={summary?.debt ?? 0} />
+                                            </div>
+                                        </Td>
+                                        {/* ПОЛЬЗОВАТЕЛЬ */}
                                         <Td />
-
-                                        {/* Employee */}
+                                        {/* КАССА */}
                                         <Td />
-
-                                        {/* Status */}
+                                        {/* ИНФОРМАЦИЯ */}
+                                        <Td />
+                                        {/* ДАТА */}
+                                        <Td />
+                                        {/* action */}
                                         <Td />
                                     </Tr>
                                 </TFoot>
@@ -390,6 +658,40 @@ const Tab4 = () => {
                     }
                 />
             </div>
+
+            <ConfirmDialog
+                type="danger"
+                className="w-[600px]"
+                title="Вы уверены, что хотите продолжить?"
+                isOpen={!!deleteId} // ✅ deleteId bo'lsa ochiq
+                confirmButtonProps={{
+                    loading: deleteLoading, // ✅ loading holati
+                    onClick: onConfirmDelete, // ✅ tasdiqlash
+                }}
+                cancelText="Отмена"
+                confirmText="Удалить"
+                onClose={onCloseDelete} // ✅ yopish
+                onRequestClose={onCloseDelete}
+                onCancel={onCloseDelete}
+            >
+                <p className="text-gray-600">
+                    Удаление записи. Это действие нельзя отменить.
+                </p>
+            </ConfirmDialog>
+
+            <PaymentDebtsModal
+                type={payoutId ? "edit" : "add"}
+                amount={localAmount}
+                dobtModal={dobtModal}
+                setDebitModal={setDebitModal}
+                contractorId={Number(id) ?? null}
+                setContragentId={() => {}}
+                debtsStatus={debtsStatus}
+                setDebtsStatus={setDebtsStatus}
+                payoutId={payoutId}
+                setPayoutId={setPayoutId}
+                cashBoxStates={initialCashBoxStates ?? undefined}
+            />
         </div>
     );
 };

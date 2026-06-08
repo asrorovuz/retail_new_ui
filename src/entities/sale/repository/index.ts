@@ -10,6 +10,7 @@ import {
     paymentDebtsApi,
     paymentProviderApi,
     payoutDebtsApi,
+    payoutUpdateDebtsApi,
     registerSaleApi,
     updateSellApi,
 } from "../api";
@@ -40,7 +41,7 @@ export const useContractorApi = (
     isOpen: boolean,
     search: string,
     params?: any,
-    pagination?: any
+    pagination?: any,
 ) => {
     return useQuery({
         queryKey: ["contractor-all", isOpen, search, params, pagination],
@@ -53,7 +54,7 @@ export const useContractorCountApi = (
     isOpen: boolean,
     search: string,
     params?: any,
-    pagination?: any
+    pagination?: any,
 ) => {
     return useQuery({
         queryKey: ["contractor-count", isOpen, search, params, pagination],
@@ -108,6 +109,21 @@ export const usePayoutDebtsApi = () => {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["contractor-all"] });
             queryClient.invalidateQueries({ queryKey: ["contractor-count"] });
+            queryClient.invalidateQueries({ queryKey: ["payout-all"] });
+            queryClient.invalidateQueries({ queryKey: ["payout-all-count"] });
+        },
+    });
+};
+
+export const usePayoutDebtsUpdateApi = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: ({ id, payload }: { id: any; payload: any }) =>
+            payoutUpdateDebtsApi(id, payload),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["payout-all"] });
+            queryClient.invalidateQueries({ queryKey: ["payout-all-count"] });
         },
     });
 };

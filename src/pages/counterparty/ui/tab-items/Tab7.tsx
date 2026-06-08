@@ -43,8 +43,6 @@ const Tab7 = ({ contractorId }: any) => {
         );
     };
 
-    console.log(actReportData, "act repoert");
-
     const columns = useMemo<ColumnDef<any>[]>(
         () => [
             {
@@ -53,12 +51,12 @@ const Tab7 = ({ contractorId }: any) => {
             },
             {
                 header: "Операции",
-                accessorKey: "name",
+                accessorKey: "operation",
                 // cell: ({ row }) => <span></span>,
             },
             {
                 header: "Предыдущий долг",
-                accessorKey: "name",
+                accessorKey: "debts",
                 cell: ({ row }) => (
                     <span>
                         <FormattedNumber
@@ -90,7 +88,7 @@ const Tab7 = ({ contractorId }: any) => {
             },
             {
                 header: "Последующая задолженность",
-                accessorKey: "name",
+                accessorKey: "after_debts",
                 cell: ({ row }) => (
                     <span>
                         <FormattedNumber

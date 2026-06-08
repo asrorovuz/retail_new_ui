@@ -114,6 +114,14 @@ export const payoutDebtsApi = async (payload: any) => {
     });
 };
 
+export const payoutUpdateDebtsApi = async (id: any, payload: any) => {
+    return await apiRequest({
+        url: pathServices.sale.getPayoutDebtsUpdate + id,
+        method: "POST",
+        data: payload,
+    });
+};
+
 // Update
 export const updateSellApi = async (id: number | null, payload: any) => {
     return await apiRequest({

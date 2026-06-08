@@ -1,10 +1,9 @@
 import {
-    useOperationCountApi,
-    useRefundApi,
     useRefundIdApi,
+    useReturnPurchaseApi,
+    useReturnPurchaseCountApi,
 } from "@/entities/history/repository";
 import { Filter, TransactionModal } from "@/features/history";
-import TableHistory from "@/features/history/ui/Table";
 import { Button, DatePicker, Dialog } from "@/shared/ui/kit";
 import Loading from "@/shared/ui/loading";
 import dayjs from "dayjs";
@@ -13,6 +12,7 @@ import { Controller, useForm } from "react-hook-form";
 import { FaPlus } from "react-icons/fa";
 import { VscListFilter } from "react-icons/vsc";
 import { useNavigate } from "react-router-dom";
+import ReturnPurchaseTable from "./ReturnPurchaseTable";
 
 const Tab3 = ({ id }: any) => {
     const navigate = useNavigate();
@@ -20,6 +20,8 @@ const Tab3 = ({ id }: any) => {
         pageIndex: 1,
         pageSize: 20,
         contractor_id: id,
+        date_start: dayjs().startOf("day").format("YYYY-MM-DD HH:mm:ss"),
+        date_end: dayjs().endOf("day").format("YYYY-MM-DD HH:mm:ss"),
     });
     const [isOpenFilter, setIsOpenFilter] = useState(false);
     const [viewModal, setViewModal] = useState({
@@ -27,16 +29,16 @@ const Tab3 = ({ id }: any) => {
         id: null,
     });
 
-    const { data, isLoading } = useRefundApi(params);
-    const { data: count } = useOperationCountApi(params, "refund");
+    const { data, isLoading } = useReturnPurchaseApi(params);
+    const { data: count } = useReturnPurchaseCountApi(params);
     const { data: dataId, isPending: isLoadingId } = useRefundIdApi(
         viewModal?.id,
     );
 
     const { control, watch } = useForm({
         defaultValues: {
-            date_start: null,
-            date_end: null,
+            date_start: dayjs().startOf("day").toDate(),
+            date_end: dayjs().endOf("day").toDate(),
             contractor_id: id,
         },
     });
@@ -125,17 +127,13 @@ const Tab3 = ({ id }: any) => {
                 setParams={setParams}
                 countyparty={true}
             />
-            <TableHistory
+            <ReturnPurchaseTable
                 data={data ?? []}
                 count={count}
                 loading={isLoading}
                 setParams={setParams}
                 setViewModal={setViewModal}
-                pay={true}
-                payKey={"payment"}
                 params={params}
-                type="refund"
-                countyparty={true}
             />
 
             <Dialog

@@ -146,6 +146,7 @@ export const pathServices = {
         updateSellPath: "/api/sale/update/",
         getPaymentDebts: "/api/payment/register",
         getPayoutDebts: "/api/payout/register",
+        getPayoutDebtsUpdate: "/api/payout/update/",
         getSaleById: "api/sale/",
 
         // CREATE
@@ -253,6 +254,9 @@ export const pathServices = {
     contractor: {
         getActReport: "/api/contractor/act-report/",
         getPaymentPath: "/api/payment/get",
-        getPaymentCountPath: "/api/payment/get/count"
+        getPayoutPath: "/api/payout/get",
+        getPaymentCountPath: "/api/payment/get/count",
+        getPayouttCountPath: "/api/payout/get/count",
+        deletePayout: "/api/payout/delete/"
     }
 };

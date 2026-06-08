@@ -54,8 +54,8 @@ export const handleScannedProduct = (
                   (p: PriceType) => p?.product_price_type?.is_primary,
               ) || product?.prices?.[0];
     const packagePriceBulk =
-        product?.prices?.find((p: PriceType) => p.product_price_type.is_bulk) ||
-        product.prices[1];
+        product?.prices?.find((p: PriceType) => p?.product_price_type?.is_bulk) ||
+        product?.prices?.[1];
     let quantity = operationItem?.quantity ?? 0;
     let marks: string[] = operationItem?.marks ?? [];
 

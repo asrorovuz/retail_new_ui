@@ -56,3 +56,46 @@ export const getPaymentCount = async (params: any): Promise<any> => {
         },
     });
 };
+
+export const getPayout = async (params: any): Promise<any> => {
+    const skip =
+        params?.pageIndex && params.pageSize
+            ? (params?.pageIndex - 1) * params?.pageSize
+            : 0;
+    const { pageSize, pageIndex, ...param } = params;
+
+    return await apiRequest<any>({
+        url: pathServices.contractor.getPayoutPath,
+        method: "GET",
+        params: {
+            limit: params?.pageSize ?? 20,
+            skip,
+            ...param,
+        },
+    });
+};
+
+export const getPayoutCount = async (params: any): Promise<any> => {
+    const skip =
+        params?.pageIndex && params.pageSize
+            ? (params?.pageIndex - 1) * params?.pageSize
+            : 0;
+    const { pageSize, pageIndex, ...param } = params;
+
+    return await apiRequest<any>({
+        url: pathServices.contractor.getPayouttCountPath,
+        method: "GET",
+        params: {
+            limit: params?.pageSize ?? 20,
+            skip,
+            ...param,
+        },
+    });
+};
+
+export const deletePayout = async (id: number): Promise<any> => {
+  return await apiRequest<any>({
+    url: pathServices.contractor.deletePayout + id,
+    method: "POST",
+  });
+};

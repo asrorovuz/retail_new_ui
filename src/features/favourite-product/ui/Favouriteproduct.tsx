@@ -61,12 +61,12 @@ const FavouriteProduct = ({
       type === "purchase"
         ? onBuildPrice(item?.product?.warehouse_items?.[0])
         : item?.product?.prices?.find(
-            (p: PriceType) => p.product_price_type.is_primary,
-          ) || item.product.prices[0];
+            (p: PriceType) => p?.product_price_type?.is_primary,
+          ) || item?.product?.prices?.[0];
     const packagePriceBulk =
       item?.product?.prices?.find(
-        (p: PriceType) => p.product_price_type.is_bulk,
-      ) || item.product.prices[1];
+        (p: PriceType) => p?.product_price_type?.is_bulk,
+      ) || item?.product?.prices?.[1];
     const quantity = operationItem?.quantity ?? 0;
     
     const newItem = {
