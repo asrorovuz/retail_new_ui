@@ -20,7 +20,9 @@ const Tab2 = ({ id }: any) => {
     const [params, setParams] = useState({
         pageIndex: 1,
         pageSize: 20,
-        contractor_id: id
+        contractor_id: id,
+        date_start: dayjs().startOf("day").format("YYYY-MM-DD HH:mm:ss"),
+        date_end: dayjs().endOf("day").format("YYYY-MM-DD HH:mm:ss"),
     });
     const [isOpenFilter, setIsOpenFilter] = useState(false);
     const [viewModal, setViewModal] = useState({
@@ -39,9 +41,9 @@ const Tab2 = ({ id }: any) => {
 
     const { control, watch } = useForm({
         defaultValues: {
-            date_start: null,
-            date_end: null,
-            contractor_id: id
+            date_start: dayjs().startOf("day").toDate(),
+            date_end: dayjs().endOf("day").toDate(),
+            contractor_id: id,
         },
     });
 

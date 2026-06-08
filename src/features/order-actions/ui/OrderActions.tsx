@@ -381,8 +381,11 @@ const OrderActions = ({
 
             // append sale and refund item
             const draftItems = activeDraft?.items ?? [];
+
             for (let i = 0; i < draftItems?.length; i++) {
                 const draftItem = draftItems[i];
+
+                if (type === "purchase" && draftItem.quantity <= 0) continue;
 
                 const isActiveBulk =
                     type === "sale" && !!selectedRows?.[draftItem?.productId];
@@ -653,6 +656,12 @@ const OrderActions = ({
 
     const onSubmit = () => {
         if (type === "purchase") {
+            const draftItems = activeDraft?.items ?? [];
+            const hasPositiveQty = draftItems.some((item) => item.quantity > 0);
+            if (!hasPositiveQty) {
+                showErrorLocalMessage("Увеличьте количество товаров");
+                return;
+            }
             setSellDebit(true);
             return;
         }

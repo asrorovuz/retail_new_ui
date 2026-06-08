@@ -98,6 +98,12 @@ const PurchasePrice = () => {
         draftPurchases?.find((s) => s.isActive) ?? draftPurchases[0];
 
     useEffect(() => {
+        if (activeDraft?.contractor_id) {
+            setLocalContractorId(activeDraft.contractor_id);
+        }
+    }, [activeDraft?.id]);
+
+    useEffect(() => {
         if (!payModal) {
             const onScan = eventBus.on("BARCODE_SCANNED", (code) => {
                 const val: string = handleBarcodeScanned(code);

@@ -68,7 +68,7 @@ const TableHistory = ({
     const { addDraftSale, draftSales, activateDraftSale } = useDraftSaleStore();
     const { addDraftRefund, draftRefunds, activateDraftRefund } =
         useDraftRefundStore();
-    const { addDraftPurchase, draftPurchases, activateDraftPurchase } =
+    const { addDraftPurchase, draftPurchases, activateDraftPurchase, setContractorId } =
         useDraftPurchaseStore();
 
     const onCloseDeleteProductDialog = () => {
@@ -138,6 +138,7 @@ const TableHistory = ({
             items: items,
             isActive: true,
             discountAmount: data?.exact_discounts?.[0]?.amount,
+            contractor_id: data?.contractor_id ?? null,
             [payKey]: {
                 amounts: paymentAmounts,
             },
@@ -176,6 +177,9 @@ const TableHistory = ({
                 );
                 activateDraftPurchase(index ?? 0);
             }
+            console.log(data, "55");
+            
+            setContractorId(data?.contractor_id)
             navigate("/purchase");
         }
 
