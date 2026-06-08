@@ -176,6 +176,26 @@ export const getAppConfig = (): Promise<AppConfigResponse> => {
   });
 };
 
+// scanServers — lokal tarmoqda HippoService ishlab turgan serverlarni qidiradi.
+export const scanServers = (): Promise<{ servers: string[] }> => {
+  return new Promise((resolve) => {
+    if (
+      !window?.astilectron ||
+      typeof window?.astilectron.sendMessage !== "function"
+    ) {
+      resolve({ servers: [] });
+      return;
+    }
+    window.astilectron.sendMessage(
+      { name: "hippo/servers/scan", payload: {} },
+      (message: any) => {
+        const parsed = parseIpcPayload(message);
+        resolve({ servers: parsed?.servers ?? [] });
+      },
+    );
+  });
+};
+
 // saveAppConfig — tanlangan rejim va IP ni saqlaydi.
 // Astilectron: Go ga yuboradi, config.json ga yoziladi.
 // Web: localStorage ga yozadi va kerak bo’lsa Axios baseURL ni yangilaydi.
