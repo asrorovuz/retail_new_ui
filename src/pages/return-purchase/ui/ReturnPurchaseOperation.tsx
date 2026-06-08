@@ -40,7 +40,6 @@ const ReturnPurchaseOperation = () => {
     const [barcode, setBarcode] = useState<string | null>(null);
     const [barcodeMark, setBarcodeMark] = useState("");
     const [payModal, setPayModal] = useState(false);
-    const [isBlockSell, setIsBlockSell] = useState(false);
 
     const debouncedSearch = useDebounce(search, 500);
 
@@ -236,8 +235,6 @@ const ReturnPurchaseOperation = () => {
                     setActiveType={setActiveType}
                     setActivePaymentSelectType={setActivePaymentSelectType}
                     updateDraftPayment={updateDraftReturnPurchasePayout}
-                    isBlockSell={isBlockSell}
-                    setIsBlockSell={setIsBlockSell}
                 />
 
                 <OrderActions

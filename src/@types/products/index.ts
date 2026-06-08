@@ -163,4 +163,5 @@ export type RegisterType = {
     warehouse_id: number | null;
     quantity: number;
   }[];
+  skip_active_shift_check?: boolean;
 };

@@ -146,6 +146,7 @@ const ProductForm: FC<ProductFormType> = ({
                         quantity: remainder,
                     },
                 ],
+                skip_active_shift_check: true,
             };
 
             createRegister(reminderData, {
@@ -271,9 +272,6 @@ const ProductForm: FC<ProductFormType> = ({
                                 product_id: res?.id,
                                 alert_on: +alertOn,
                             });
-                        }
-                        if (res?.id) {
-                            remenderSubmit(res?.id);
                         }
                         onClose();
                     },

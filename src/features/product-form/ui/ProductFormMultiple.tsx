@@ -572,6 +572,7 @@ const ProductFormMultiple: FC<Props> = ({
                                 quantity: item,
                             },
                         ],
+                        skip_active_shift_check: true,
                     },
                     { onError: console.log },
                 );

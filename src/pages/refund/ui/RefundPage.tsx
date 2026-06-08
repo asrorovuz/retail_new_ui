@@ -33,7 +33,7 @@ import { Button } from "@/shared/ui/kit";
 import { Header } from "@/widgets";
 import Footer from "@/widgets/ui/footer/Footer";
 import QuertyKeyboard from "@/widgets/ui/keyboard/QuertyKeyboard";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const RefundPage = () => {
@@ -52,8 +52,6 @@ const RefundPage = () => {
     );
     const [activeSelectPaymetype, setActivePaymentSelectType] =
         useState<number>(1);
-    const [isBlockSell, setIsBlockSell] = useState(false);
-    const isBlockSellRef = useRef(false);
     const [refundCheckModal, setRefundCheckModal] = useState<{
         isOpen: boolean;
         ids: number[];
@@ -161,10 +159,6 @@ const RefundPage = () => {
     };
 
     useEffect(() => {
-        isBlockSellRef.current = isBlockSell;
-    }, [isBlockSell]);
-
-    useEffect(() => {
         if (!payModal) {
             const onScan = eventBus.on("BARCODE_SCANNED", async (code) => {
                 if (code && code?.trim().startsWith("*")) {
@@ -174,7 +168,7 @@ const RefundPage = () => {
                     return;
                 }
                 const isMarking = !/^\d+$/.test(code) && code.length > 14;
-                if (isBlockSellRef.current && isMarking) {
+                if (isMarking) {
                     try {
                         const res = await getPackageInfoByMarkingApi(code);
                         const product = res.product;
@@ -351,8 +345,6 @@ const RefundPage = () => {
                     setActiveType={setActiveType}
                     setActivePaymentSelectType={setActivePaymentSelectType}
                     updateDraftPayment={updateDraftRefundPayout}
-                    isBlockSell={isBlockSell}
-                    setIsBlockSell={setIsBlockSell}
                 />
 
                 <OrderActions

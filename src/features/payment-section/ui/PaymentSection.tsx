@@ -23,8 +23,6 @@ type PaymentSectionPropsType = {
     updateDraftPayment: (val: DraftSalePaymentAmountSchema[]) => void;
     setActiveType: (val: "qwerty" | "numeric" | "fullkey") => void;
     setActivePaymentSelectType: (val: number) => void;
-    isBlockSell?: boolean;
-    setIsBlockSell?: (val: boolean) => void;
 };
 
 const PaymentSection = ({
@@ -37,9 +35,7 @@ const PaymentSection = ({
     value,
     setValue,
     // setActiveType,
-    setActivePaymentSelectType,
-    isBlockSell,
-    setIsBlockSell,
+    setActivePaymentSelectType
 }: PaymentSectionPropsType) => {
     const { backspace, clear } = useKeyboard();
 
@@ -325,22 +321,7 @@ const PaymentSection = ({
                                 icon={<MagnetSvg size={28} />}
                             />
                         </div>
-                        <div className="grid grid-cols-4 gap-1">
-                            <Button
-                                size="sm"
-                                type="button"
-                                variant="plain"
-                                disabled={type === "return_purchase" || type === "purchase"}
-                                onClick={() => setIsBlockSell?.(!isBlockSell)}
-                                className={classNames(
-                                    "w-full text-sm text-white",
-                                    isBlockSell
-                                        ? "bg-green-600 hover:bg-green-700"
-                                        : "bg-red-500 hover:bg-red-600",
-                                )}
-                            >
-                                Блок
-                            </Button>
+                        <div className="grid grid-cols-3 gap-1">
                             <Button
                                 size="sm"
                                 type="button"

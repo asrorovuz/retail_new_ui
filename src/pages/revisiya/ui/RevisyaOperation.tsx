@@ -74,6 +74,7 @@ const RevisyaOperation = () => {
         const data = {
             is_approved: true,
             items: items,
+            skip_active_shift_check: false,
         };
 
         createMutate(data, {
