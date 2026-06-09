@@ -48,6 +48,7 @@ import { HiDotsHorizontal } from "react-icons/hi";
 import { IoTrashOutline } from "react-icons/io5";
 import { MdOutlinePostAdd } from "react-icons/md";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export type ContragentType = {
     id: number;
@@ -65,6 +66,7 @@ export type ContragentType = {
 };
 
 const Counterparty = () => {
+    const { t } = useTranslation();
     const [search, setSearch] = useState("");
     const [searchFocus, setSearchFocus] = useState(false);
     const [searchContractor, setSearchContractor] = useState("");
@@ -213,7 +215,7 @@ const Counterparty = () => {
             }),
             columnHelper.display({
                 id: "name",
-                header: "НАЗВАНИЕ",
+                header: () => t("counterparty.name").toUpperCase(),
                 cell: ({ row }) =>
                     row.original.is_supplier ? (
                         <Link to={`/counterparties/${row.original.id}`}>
@@ -227,38 +229,38 @@ const Counterparty = () => {
             }),
             columnHelper.display({
                 id: "type",
-                header: "Тип",
+                header: () => t("counterparty.type"),
                 cell: ({ row }) => {
                     const types: string[] = [];
-                    if (row.original.is_customer) types.push("Клиент");
-                    if (row.original.is_supplier) types.push("Поставщик");
+                    if (row.original.is_customer) types.push(t("counterparty.client"));
+                    if (row.original.is_supplier) types.push(t("counterparty.supplier"));
 
                     if (!types.length) return <p className="w-[180px]">-</p>;
 
                     return (
                         <div className="flex flex-col gap-1 w-[180px]">
-                            {types.map((t) =>
+                            {types.map((typeLabel) =>
                                 row.original.is_supplier ? (
                                     <span
-                                        key={t}
+                                        key={typeLabel}
                                         className={`text-xs px-2 py-0.5 rounded-full w-fit font-medium ${
-                                            t === "Клиент"
+                                            typeLabel === t("counterparty.client")
                                                 ? "bg-blue-100 text-blue-700"
                                                 : "bg-orange-100 text-orange-700"
                                         }`}
                                     >
-                                        {t}
+                                        {typeLabel}
                                     </span>
                                 ) : (
                                     <span
-                                        key={t}
+                                        key={typeLabel}
                                         className={`text-xs px-2 py-0.5 rounded-full w-fit font-medium ${
-                                            t === "Клиент"
+                                            typeLabel === t("counterparty.client")
                                                 ? "bg-blue-100 text-blue-700"
                                                 : "bg-orange-100 text-orange-700"
                                         }`}
                                     >
-                                        {t}
+                                        {typeLabel}
                                     </span>
                                 ),
                             )}
@@ -268,7 +270,7 @@ const Counterparty = () => {
             }),
             columnHelper.display({
                 id: "price",
-                header: "Задолжность",
+                header: () => t("counterparty.debt"),
                 cell: ({ row }) => {
                     const totalPrice =
                         row.original?.debts?.reduce(
@@ -287,7 +289,7 @@ const Counterparty = () => {
             }),
             columnHelper.display({
                 id: "date",
-                header: "Дата операцы",
+                header: () => t("counterparty.debtDate"),
                 cell: ({ row }) => (
                     <p className="w-[120px]">
                         {dayjs(row.original.created_at).format(
@@ -298,7 +300,7 @@ const Counterparty = () => {
             }),
             columnHelper.display({
                 id: "phone",
-                header: "Тел. номер",
+                header: () => t("counterparty.phone"),
                 cell: ({ row }) => {
                     const contacts = row.original?.contacts || [];
 
@@ -345,7 +347,7 @@ const Counterparty = () => {
                             }}
                         >
                             <div className="w-full flex items-center gap-2 text-slate-700 rounded-xl">
-                                💰 Погасить долг
+                                💰 {t("counterparty.payDebt")}
                             </div>
                         </DropdownItem>
                         <DropdownItem
@@ -357,7 +359,7 @@ const Counterparty = () => {
                         >
                             <div className="w-full flex items-center gap-2 text-slate-700 rounded-xl">
                                 <FaRegEdit />
-                                Редактировать
+                                {t("common.edit")}
                             </div>
                         </DropdownItem>
                         {row?.original?.is_supplier && (
@@ -370,7 +372,7 @@ const Counterparty = () => {
                                     }}
                                 >
                                     <div className="w-full flex items-center gap-2 text-slate-700 rounded-xl">
-                                        💰 Оплата поставщику
+                                        💰 {t("counterparty.paySupplier")}
                                     </div>
                                 </DropdownItem>
                                 <DropdownItem
@@ -380,7 +382,7 @@ const Counterparty = () => {
                                 >
                                     <div className="w-full flex items-center gap-2 text-slate-700 rounded-xl">
                                         <MdOutlinePostAdd />
-                                        Товары поставщика
+                                        {t("counterparty.supplierProducts")}
                                     </div>
                                 </DropdownItem>
                             </>
@@ -394,14 +396,14 @@ const Counterparty = () => {
                         >
                             <div className="w-full flex items-center gap-2 text-red-500 rounded-xl">
                                 <IoTrashOutline />
-                                Удалить
+                                {t("common.delete")}
                             </div>
                         </DropdownItem>
                     </Dropdown>
                 ),
             }),
         ],
-        [pagination, search],
+        [pagination, search, t],
     );
 
     const onSelect = (id: number) => {
@@ -478,7 +480,7 @@ const Counterparty = () => {
     return (
         <div className="bg-white h-screen p-2 flex flex-col">
             <div className="mb-2 flex items-center gap-x-3">
-                <NavigateButton content="Контрагенты" />
+                <NavigateButton content={t("counterparty.title")} />
             </div>
             <div className="mb-3 flex items-center justify-between">
                 <div className="flex gap-x-2">
@@ -493,16 +495,16 @@ const Counterparty = () => {
                     <Select
                         isClearable
                         isSearchable={false}
-                        placeholder="Тип контрагента"
+                        placeholder={t("counterparty.type")}
                         options={[
-                            { value: "is_customer", label: "Клиент" },
-                            { value: "is_supplier", label: "Поставщик" },
+                            { value: "is_customer", label: t("counterparty.client") },
+                            { value: "is_supplier", label: t("counterparty.supplier") },
                         ]}
                         value={
                             filter.is_customer
-                                ? { value: "is_customer", label: "Клиент" }
+                                ? { value: "is_customer", label: t("counterparty.client") }
                                 : filter.is_supplier
-                                  ? { value: "is_supplier", label: "Поставщик" }
+                                  ? { value: "is_supplier", label: t("counterparty.supplier") }
                                   : null
                         }
                         onChange={(opt) => {
@@ -520,11 +522,11 @@ const Counterparty = () => {
                 <div className="flex items-center gap-x-3 text-xs font-medium">
                     <div className="flex items-center gap-x-1.5 px-2.5 py-1 rounded-full bg-green-100 text-green-800">
                         <span className="w-2.5 h-2.5 rounded-sm bg-green-600 inline-block" />
-                        Нам должны
+                        {t("counterparty.owes")}
                     </div>
                     <div className="flex items-center gap-x-1.5 px-2.5 py-1 rounded-full bg-red-100 text-red-800">
                         <span className="w-2.5 h-2.5 rounded-sm bg-red-600 inline-block" />
-                        Мы должны
+                        {t("counterparty.weOwe")}
                     </div>
                 </div>
 

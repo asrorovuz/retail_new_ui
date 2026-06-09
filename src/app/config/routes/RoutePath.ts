@@ -55,3 +55,4 @@ export const ReturnPurchaseOperation = lazy(
 export const ReturnPurchaseHistory = lazy(
     () => import("@/pages/return-purchase/ui/ReturPurchaseHistory"),
 );
+export const SmenaPage = lazy(() => import("@/pages/smena"));

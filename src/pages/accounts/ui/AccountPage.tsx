@@ -8,8 +8,10 @@ import { Button, Dialog } from "@/shared/ui/kit";
 import NavigateButton from "@/shared/ui/kit-pro/navigate-button/NavigateButton";
 import { useState } from "react";
 import { FaUserTie } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
 
 const AccountPage = () => {
+    const { t } = useTranslation();
     const [isOpen, setIsOpen] = useState(false);
 
     const { user } = useAuthContext();
@@ -24,7 +26,7 @@ const AccountPage = () => {
             <div className="bg-white p-6 rounded-2xl shadow-sm">
                 {/* Header */}
                 <div className="mb-2">
-                    <NavigateButton content="Аккаунт" />
+                    <NavigateButton content={t("nav.account")} />
                 </div>
 
                 {/* Card */}
@@ -42,11 +44,11 @@ const AccountPage = () => {
                                     onClick={() => setIsOpen(true)}
                                     size="sm"
                                 >
-                                    Изменить пароль
+                                    {t("account.changePassword")}
                                 </Button>
                             </li>
                             <li className="flex justify-between border-b pb-1">
-                                <span className="text-gray-500">Ф.И.О:</span>
+                                <span className="text-gray-500">{t("account.name")}:</span>
                                 <span className="font-medium text-gray-800">
                                     {user?.name || "-"}
                                 </span>
@@ -54,7 +56,7 @@ const AccountPage = () => {
 
                             <li className="flex justify-between border-b pb-1">
                                 <span className="text-gray-500">
-                                    Номер пользователя:
+                                    {t("account.phone")}:
                                 </span>
                                 <span className="font-medium text-gray-800">
                                     {formattedPhone(user?.username || "-")}
@@ -62,7 +64,7 @@ const AccountPage = () => {
                             </li>
 
                             <li className="flex justify-between">
-                                <span className="text-gray-500">Роль:</span>
+                                <span className="text-gray-500">{t("account.role")}:</span>
                                 <span className="font-semibold text-blue-600">
                                     {getRole(user?.type)}
                                 </span>

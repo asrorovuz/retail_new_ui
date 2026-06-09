@@ -6,15 +6,16 @@ import { useSellTransferApi } from "@/entities/sale/repository";
 import ProductReport from "./ProductReport";
 // import ContractorReport from "./ContractorReport";
 import Loading from "@/shared/ui/loading";
-
-const tabs = [
-    { value: "tab1", label: "Общие отчёты" },
-    { value: "tab2", label: "Отчёт по товарам за период" },
-    // { value: "tab3", label: "Отчёт по контрагентам за период" },
-];
+import { useTranslation } from "react-i18next";
 
 const PeriodReport = () => {
+    const { t } = useTranslation();
     const [activeTab, setActiveTab] = useState("tab1");
+
+    const tabs = [
+        { value: "tab1", label: t("report.salesReport") },
+        { value: "tab2", label: t("report.purchaseReport") },
+    ];
 
     const params = {
         start_date: dayjs().startOf("day").format("YYYY-MM-DD HH:mm"),
@@ -43,7 +44,7 @@ const PeriodReport = () => {
     return (
         <div className="bg-white h-screen p-3">
             <div className="mb-3">
-                <NavigateButton content="Отчет за период" />
+                <NavigateButton content={t("report.periodReport")} />
             </div>
 
             {/* Tab List */}

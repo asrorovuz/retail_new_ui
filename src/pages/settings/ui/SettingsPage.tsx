@@ -7,14 +7,16 @@ import TelegramBot from "@/features/settings/ui/TelegramBot";
 import { useCheckPermission } from "@/shared/lib/checkPermission";
 import { Tabs } from "@/shared/ui/kit";
 import NavigateButton from "@/shared/ui/kit-pro/navigate-button/NavigateButton";
+import { useTranslation } from "react-i18next";
 
 const SettingsPage = () => {
     const checkPermission = useCheckPermission();
+    const { t } = useTranslation();
 
     return (
         <div className="h-screen overflow-hidden bg-white flex flex-col">
             <div className="px-3 pt-3 pb-1 shrink-0">
-                <NavigateButton content="Настройки" />
+                <NavigateButton content={t("settings.title")} />
             </div>
             <Tabs
                 defaultValue="devices"
@@ -22,9 +24,9 @@ const SettingsPage = () => {
                 className="flex flex-col flex-1 overflow-hidden"
             >
                 <Tabs.TabList className="px-3 shrink-0 border-b border-slate-100">
-                    <Tabs.TabNav value="devices">Устройства</Tabs.TabNav>
-                    <Tabs.TabNav value="integration">Интеграция</Tabs.TabNav>
-                    <Tabs.TabNav value="other">Прочие настройки</Tabs.TabNav>
+                    <Tabs.TabNav value="devices">{t("settings.devices")}</Tabs.TabNav>
+                    <Tabs.TabNav value="integration">{t("settings.integration")}</Tabs.TabNav>
+                    <Tabs.TabNav value="other">{t("settings.other")}</Tabs.TabNav>
                 </Tabs.TabList>
 
                 <div className="flex-1 overflow-y-auto">

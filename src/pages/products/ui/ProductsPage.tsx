@@ -20,8 +20,10 @@ import { useDebounce } from "@/shared/lib/useDebounce";
 import NavigateButton from "@/shared/ui/kit-pro/navigate-button/NavigateButton";
 import FullKeyboard from "@/widgets/ui/keyboard/FullKeyboard";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 const ProductsPage = () => {
+    const { t } = useTranslation();
     const [search, setSearch] = useState("");
     const [searchFocus, setSearchFocus] = useState(false);
     const [barcode, setBarcode] = useState<string | null>(null);
@@ -86,7 +88,7 @@ const ProductsPage = () => {
                     AccountPermissions.AccountPermissionProductCreate,
                 )
             ) {
-                showErrorLocalMessage("Товар не найден");
+                showErrorLocalMessage(t("product.notFound"));
                 setBarcode(null);
             } else {
                 setIsAddOpen(true); // modal ochish
@@ -103,7 +105,7 @@ const ProductsPage = () => {
     return (
         <div className="bg-white h-screen p-2 flex flex-col">
             <div className="mb-2">
-                <NavigateButton content={"Товары"} />
+                <NavigateButton content={t("product.products")} />
             </div>
             <ProductHeader
                 search={search}

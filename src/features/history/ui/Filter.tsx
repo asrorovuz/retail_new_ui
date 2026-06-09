@@ -2,12 +2,12 @@ import { useGetAllAcounts } from "@/entities/auth/repository";
 import {
   useContragentApi
 } from "@/entities/history/repository";
-// import { useWarehouseApi } from "@/entities/init/repository";
 import { Button, Dialog, Form, Select } from "@/shared/ui/kit";
 import { useEffect, useMemo } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { FiSearch } from "react-icons/fi";
 import { MdClose } from "react-icons/md";
+import { useTranslation } from "react-i18next";
 
 interface ParamType {
   is_approved: any | OptionType;
@@ -38,15 +38,6 @@ const initialValue = {
   is_for_debt: null,
 };
 
-const booleanOptions = [
-  { value: true, label: "Да" },
-  { value: false, label: "Нет" },
-];
-// const statusOptions = [
-//   { value: true, label: "Одобренный" },
-//   { value: false, label: "Неодобренный" },
-// ];
-
 const Filter = ({
   type,
   isOpenFilter,
@@ -54,12 +45,16 @@ const Filter = ({
   setParams,
   countyparty=false
 }: PropsType) => {
+  const { t } = useTranslation();
   const { control, handleSubmit, reset } = useForm<ParamType>({
     defaultValues: initialValue,
   });
 
-  // const { data: wareHouseData } = useWarehouseApi();
-  // const { data: employeeData } = useEmployeeApi(isOpenFilter);
+  const booleanOptions = [
+    { value: true, label: t("common.yes") },
+    { value: false, label: t("common.no") },
+  ];
+
   const { data: accountsData } = useGetAllAcounts()
   const { data: contragentData } = useContragentApi(isOpenFilter);
 
@@ -80,15 +75,6 @@ const Filter = ({
       };
     });
   }, [contragentData]);
-
-  // const wareHouseOption = useMemo(() => {
-  //   return wareHouseData?.map((item: any) => {
-  //     return {
-  //       label: item?.name,
-  //       value: item?.id,
-  //     };
-  //   });
-  // }, [contragentData]);
 
   const clearField = () => {
     reset(initialValue);
@@ -115,7 +101,7 @@ const Filter = ({
 
   return (
     <Dialog
-      title={"Фильтр"}
+      title={t("common.filter")}
       width={"80vw"}
       isOpen={isOpenFilter}
       onRequestClose={() => setIsOpenFilter(false)}
@@ -124,23 +110,6 @@ const Filter = ({
     >
       <Form onSubmit={handleSubmit(onSubmit)}>
         <div className="grid grid-cols-3 gap-5 mb-5">
-          {/* <Controller
-            name="is_approved"
-            control={control}
-            render={({ field }) => {
-              return (
-                <Select
-                  size="sm"
-                  value={field.value}
-                  isClearable
-                  placeholder={"Статус"}
-                  options={statusOptions}
-                  onChange={field.onChange}
-                />
-              );
-            }}
-          /> */}
-
           {!countyparty && <Controller
             name="contractor_id"
             control={control}
@@ -149,29 +118,13 @@ const Filter = ({
                 <Select
                   size="sm"
                   value={field.value}
-                  placeholder={"Контрагент"}
+                  placeholder={t("counterparty.title")}
                   options={contragentOption}
                   onChange={field.onChange}
                 />
               );
             }}
           />}
-
-          {/* <Controller
-            name="used_warehouses"
-            control={control}
-            render={({ field }) => {
-              return (
-                <Select
-                  size="sm"
-                  value={field.value}
-                  options={wareHouseOption}
-                  placeholder={"Склад"}
-                  onChange={field.onChange}
-                />
-              );
-            }}
-          /> */}
 
           <Controller
             name="employee_id"
@@ -181,7 +134,7 @@ const Filter = ({
                 <Select
                   size="sm"
                   value={field.value}
-                  placeholder={"Сотрудник"}
+                  placeholder={t("common.employee")}
                   options={employeeOption}
                   onChange={field.onChange}
                 />
@@ -197,7 +150,7 @@ const Filter = ({
                 <Select
                   size="sm"
                   value={field.value}
-                  placeholder={"По долгу"}
+                  placeholder={t("sale.debt")}
                   options={booleanOptions}
                   onChange={field.onChange}
                 />
@@ -207,10 +160,10 @@ const Filter = ({
         </div>
         <div className="flex justify-end gap-x-2 w-full mb-5">
           <Button size="sm" icon={<MdClose />} onClick={clearField}>
-            Сбросить
+            {t("common.reset")}
           </Button>
           <Button size="sm" icon={<FiSearch />} variant="solid" type="submit">
-            Найти
+            {t("common.search")}
           </Button>
         </div>
       </Form>

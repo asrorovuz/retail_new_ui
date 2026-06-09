@@ -11,6 +11,7 @@ import MagnetSvg from "@/shared/ui/svg/MagnetSvg";
 import NumericKeyboard from "@/widgets/ui/keyboard/NumericKeyboard";
 import { useEffect, useMemo } from "react";
 import { LuDelete } from "react-icons/lu";
+import { useTranslation } from "react-i18next";
 
 type PaymentSectionPropsType = {
     type: "sale" | "refund" | "purchase" | "return_purchase";
@@ -38,6 +39,7 @@ const PaymentSection = ({
     setActivePaymentSelectType
 }: PaymentSectionPropsType) => {
     const { backspace, clear } = useKeyboard();
+    const { t } = useTranslation();
 
     const netPrice = useMemo<number>(() => {
         if (!activeDraft) return 0; // <— himoya
@@ -55,7 +57,7 @@ const PaymentSection = ({
 
     const totalPaymentAmount = useMemo<number>(() => {
         return (
-            (type === "sale"
+            (type === "sale" || type === "return_purchase"
                 ? activeDraft?.payment
                 : activeDraft?.payout
             )?.amounts.reduce(
@@ -65,7 +67,7 @@ const PaymentSection = ({
             ) ?? 0
         );
     }, [
-        (type === "sale" ? activeDraft?.payment : activeDraft?.payout)?.amounts,
+        (type === "sale" || type === "return_purchase" ? activeDraft?.payment : activeDraft?.payout)?.amounts,
     ]);
 
     const cashBackAmount = useMemo<number>(() => {
@@ -85,7 +87,7 @@ const PaymentSection = ({
         }
 
         const payments =
-            type === "sale"
+            type === "sale" || type === "return_purchase"
                 ? (activeDraft?.payment?.amounts ?? [])
                 : (activeDraft?.payout?.amounts ?? []);
 
@@ -112,7 +114,7 @@ const PaymentSection = ({
         }
 
         const payments =
-            type === "sale"
+            type === "sale" || type === "return_purchase"
                 ? (activeDraft?.payment?.amounts ?? [])
                 : (activeDraft?.payout?.amounts ?? []);
 
@@ -162,7 +164,7 @@ const PaymentSection = ({
         }
 
         const payments =
-            type === "sale"
+            type === "sale" || type === "return_purchase"
                 ? (activeDraft?.payment?.amounts ?? [])
                 : (activeDraft?.payout?.amounts ?? []);
 
@@ -213,7 +215,7 @@ const PaymentSection = ({
     };
 
     const amounts =
-        type === "sale"
+        type === "sale" || type === "return_purchase"
             ? activeDraft?.payment?.amounts
             : activeDraft?.payout?.amounts;
 
@@ -222,7 +224,7 @@ const PaymentSection = ({
             setValue(activeDraft?.discountAmount?.toString() || "0");
         } else {
             const current = (
-                type === "sale" ? activeDraft?.payment : activeDraft?.payout
+                type === "sale" || type === "return_purchase" ? activeDraft?.payment : activeDraft?.payout
             )?.amounts.find((p) => p?.paymentType === activeSelectPaymetype);
             setValue(current ? current?.amount?.toString() : "0");
         }
@@ -231,7 +233,7 @@ const PaymentSection = ({
     useEffect(() => {
         if (!activeDraft?.items?.length) {
             const payments =
-                type === "sale"
+                type === "sale" || type === "return_purchase"
                     ? (activeDraft?.payment?.amounts ?? [])
                     : (activeDraft?.payout?.amounts ?? []);
 
@@ -253,7 +255,7 @@ const PaymentSection = ({
                         <div className="py-3 px-4 flex justify-between">
                             <div className="w-full">
                                 <div className="flex justify-between text-slate-900 border-b text-2xl">
-                                    <span>ОПЛАТA</span>
+                                    <span>{t("payment.title")}</span>
                                     <span>
                                         {value && activeSelectPaymetype
                                             ? <FormattedNumber value={Number(value)} />
@@ -261,7 +263,7 @@ const PaymentSection = ({
                                     </span>
                                 </div>
                                 <div className="flex justify-between text-slate-700 border-b text-[17px]">
-                                    <span>Сумма к оплате</span>
+                                    <span>{t("payment.total")}</span>
                                     <span>
                                         {totalPaymentAmount
                                             ? <FormattedNumber value={totalPaymentAmount} />
@@ -271,7 +273,7 @@ const PaymentSection = ({
                                 {type !== "refund" && (
                                     <>
                                         <div className="flex justify-between text-slate-700 border-b text-[17px]">
-                                            <span>Скидка</span>
+                                            <span>{t("payment.discount")}</span>
                                             <span>
                                                 {activeDraft?.discountAmount
                                                     ? <FormattedNumber value={Number(activeDraft?.discountAmount)} />
@@ -279,7 +281,7 @@ const PaymentSection = ({
                                             </span>
                                         </div>
                                         <div className="flex justify-between text-slate-700 border-b text-[17px]">
-                                            <span>В долг</span>
+                                            <span>{t("payment.debt")}</span>
                                             <span>
                                                 {debetAmount ? <FormattedNumber value={debetAmount} /> : 0}
                                             </span>
@@ -287,7 +289,7 @@ const PaymentSection = ({
                                     </>
                                 )}
                                 <div className="flex justify-between text-slate-700 border-b text-[17px]">
-                                    <span>Сдача</span>
+                                    <span>{t("payment.change")}</span>
                                     <span>
                                         {cashBackAmount
                                             ? <FormattedNumber value={cashBackAmount} />
@@ -339,7 +341,7 @@ const PaymentSection = ({
                                         : "bg-blue-400 !text-white",
                                 )}
                             >
-                                Скидка
+                                {t("payment.discount")}
                             </Button>
                             <Button
                                 size="sm"
@@ -351,7 +353,7 @@ const PaymentSection = ({
                                 }}
                                 className="w-full !bg-slate-300 text-slate-700 text-sm px-0"
                             >
-                                Oчистить
+                                {t("payment.clear")}
                             </Button>
                             <Button
                                 size="sm"

@@ -93,11 +93,11 @@ const AddMoreProducts = ({
     };
 
     /* 🔹 modal ochilganda 1 ta product */
-    useEffect(() => {
-        if (isOpen && !barcode) {
-            setProducts([createEmptyProduct()]);
-        }
-    }, [isOpen]);
+    // useEffect(() => {
+    //     if (isOpen && !barcode) {
+    //         setProducts([createEmptyProduct()]);
+    //     }
+    // }, [isOpen]);
 
     const removeProduct = (index: number) => {
         setProducts((prev) =>

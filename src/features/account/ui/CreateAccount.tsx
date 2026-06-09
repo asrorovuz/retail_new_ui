@@ -6,8 +6,10 @@ import { Button, Dialog, Form, FormItem, Input } from "@/shared/ui/kit";
 import FullKeyboard from "@/widgets/ui/keyboard/FullKeyboard";
 import { useState } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 
 const CreateAccount = () => {
+    const { t } = useTranslation();
     const [isOpen, setIsOpen] = useState(false);
     const [isOpenCode, setIsOpenCode] = useState(false);
     const [response, setResponse] = useState<any>(null);
@@ -86,7 +88,7 @@ const CreateAccount = () => {
                 variant="solid"
                 size="sm"
             >
-                Создать пользователя
+                {t("account.create")}
             </Button>
             <Dialog width={"60vw"} height={"86vh"} onClose={onClose} isOpen={isOpen}>
                 <FormProvider {...form}>
@@ -105,7 +107,7 @@ const CreateAccount = () => {
                                 className="text-gray-700 font-medium rounded-xl"
                                 onClick={onClose}
                             >
-                                Назад
+                                {t("common.back")}
                             </Button>
                             <Button
                                 type="submit"
@@ -114,7 +116,7 @@ const CreateAccount = () => {
                                 loading={isPending}
                                 className="bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-xl"
                             >
-                                Далее
+                                {t("common.next")}
                             </Button>
                         </div>
                     </Form>
@@ -175,7 +177,7 @@ const CreateAccount = () => {
                         className="w-full bg-blue-500 hover:bg-blue-600 text-white rounded-xl"
                         onClick={onSubmit}
                     >
-                        Подтвердить
+                        {t("common.confirm")}
                     </Button>
                 </div>
                 <FullKeyboard />

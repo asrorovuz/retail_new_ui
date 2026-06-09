@@ -27,10 +27,12 @@ import { FileNotFoundSvg } from "@/shared/ui/svg";
 import TFoot from "@/shared/ui/kit/Table/TFoot";
 import { showErrorMessage, showSuccessMessage } from "@/shared/lib/showMessage";
 import { messages } from "@/app/constants/message.request";
+import { useTranslation } from "react-i18next";
 
 type PropsType = {
   isOpen: boolean;
   onClose: () => void;
+  onShiftClosed?: () => void;
 };
 
 type BalanceItem = {
@@ -44,7 +46,8 @@ export type ShiftUpdateFormData = {
   balances: BalanceItem[];
 };
 
-const UpdateShiftDialog = ({ isOpen, onClose }: PropsType) => {
+const UpdateShiftDialog = ({ isOpen, onClose, onShiftClosed }: PropsType) => {
+  const { t } = useTranslation();
   const {
     control,
     handleSubmit,
@@ -104,7 +107,8 @@ const UpdateShiftDialog = ({ isOpen, onClose }: PropsType) => {
   const columns: ColumnDef<(typeof fields)[0]>[] = useMemo(
     () => [
       {
-        header: "Типы платежей",
+        id: "paymentType",
+        header: () => t("shift.paymentTypes"),
         size: 100,
         cell: (info) => {
           const item = info.row.original;
@@ -120,10 +124,11 @@ const UpdateShiftDialog = ({ isOpen, onClose }: PropsType) => {
             </div>
           );
         },
-        footer: () => <div className="text-normal text-sm px-4 py-2">Итог</div>,
+        footer: () => <div className="text-normal text-sm px-4 py-2">{t("common.total")}</div>,
       },
       {
-        header: "Начало",
+        id: "start",
+        header: () => t("shift.start"),
         size: 100,
         cell: (info) => {
           const item = info.row.original;
@@ -149,7 +154,8 @@ const UpdateShiftDialog = ({ isOpen, onClose }: PropsType) => {
         },
       },
       {
-        header: "Приход",
+        id: "income",
+        header: () => t("shift.income"),
         size: 90,
         cell: (info) => {
           const item = info.row.original;
@@ -174,7 +180,8 @@ const UpdateShiftDialog = ({ isOpen, onClose }: PropsType) => {
         },
       },
       {
-        header: "Расход",
+        id: "expense",
+        header: () => t("shift.expense"),
         size: 90,
         cell: (info) => {
           const item = info.row.original;
@@ -199,7 +206,8 @@ const UpdateShiftDialog = ({ isOpen, onClose }: PropsType) => {
         },
       },
       {
-        header: "Ожидается",
+        id: "expected",
+        header: () => t("shift.expected"),
         size: 100,
         cell: (info) => {
           const item = info.row.original;
@@ -221,7 +229,8 @@ const UpdateShiftDialog = ({ isOpen, onClose }: PropsType) => {
         },
       },
       {
-        header: "Фактически",
+        id: "actual",
+        header: () => t("shift.actual"),
         size: 120,
         cell: (info) => {
           const index = info.row.index;
@@ -233,7 +242,7 @@ const UpdateShiftDialog = ({ isOpen, onClose }: PropsType) => {
                 <Controller
                   control={control}
                   name={`balances.${index}.amount`}
-                  rules={{ required: "Обязательное поле" }}
+                  rules={{ required: t("common.required") }}
                   render={({ field }) => {
                     // Qiymatni faqat verguldan keyingi 2 xonagacha kesib olish
                     const value =
@@ -245,7 +254,7 @@ const UpdateShiftDialog = ({ isOpen, onClose }: PropsType) => {
 
                     return (
                       <Input
-                        placeholder="Сумма"
+                        placeholder={t("common.amount")}
                         size="sm"
                         className="text-xs"
                         type="number"
@@ -305,7 +314,8 @@ const UpdateShiftDialog = ({ isOpen, onClose }: PropsType) => {
         },
       },
       {
-        header: "Разница",
+        id: "difference",
+        header: () => t("shift.difference"),
         size: 90,
         cell: (info) => {
           const index = info.row.index;
@@ -365,6 +375,7 @@ const UpdateShiftDialog = ({ isOpen, onClose }: PropsType) => {
           );
           setActiveShift(null);
           onClose();
+          onShiftClosed?.();
         },
         onError: (error) => {
           showErrorMessage(error);
@@ -388,7 +399,7 @@ const UpdateShiftDialog = ({ isOpen, onClose }: PropsType) => {
       width={"96vw"}
       isOpen={isOpen}
       onClose={onClose} //handleClose
-      title={"Закрыть смену"}
+      title={t("shift.closeShift")}
     >
       <div className="h-[75vh]">
         <div className="overflow-hidden">
@@ -399,7 +410,7 @@ const UpdateShiftDialog = ({ isOpen, onClose }: PropsType) => {
           )}
           {!activeShift && (
             <div className="py-24 text-center text-slate-500">
-              Нет активной смены
+              {t("shift.openShift")}
             </div>
           )}
 
@@ -411,7 +422,7 @@ const UpdateShiftDialog = ({ isOpen, onClose }: PropsType) => {
                     <MdDiscount size={22} />
                   </div>
                   <div className="flex flex-col gap-y-1">
-                    <p>Чеки</p>
+                    <p>{t("shift.receipts")}</p>
                     <p className="font-medium text-xl text-slate-800">
                       {shiftOperations?.sale_count ?? 0}
                     </p>
@@ -425,7 +436,7 @@ const UpdateShiftDialog = ({ isOpen, onClose }: PropsType) => {
                     </span>
                   </div>
                   <div className="flex flex-col gap-y-1">
-                    <p>Продажа</p>
+                    <p>{t("shift.sale")}</p>
                     <p className="font-medium text-xl text-slate-800">
                       <FormattedNumber
                         value={
@@ -444,7 +455,7 @@ const UpdateShiftDialog = ({ isOpen, onClose }: PropsType) => {
                     </span>
                   </div>
                   <div className="flex flex-col gap-y-1">
-                    <p>В долг</p>
+                    <p>{t("payment.debt")}</p>
                     <p className="font-medium text-xl text-slate-800">
                       <FormattedNumber
                         value={
@@ -463,7 +474,7 @@ const UpdateShiftDialog = ({ isOpen, onClose }: PropsType) => {
                     </span>
                   </div>
                   <div className="flex flex-col gap-y-1">
-                    <p>Средний чек</p>
+                    <p>{t("shift.averageCheck")}</p>
                     <p className="font-medium text-xl text-slate-800">
                       <FormattedNumber
                         value={
@@ -478,7 +489,7 @@ const UpdateShiftDialog = ({ isOpen, onClose }: PropsType) => {
 
               <div className="w-2/5 flex justify-between flex-col gap-y-4">
                 <div className="w-full flex flex-col items-center justify-center py-4 bg-blue-50 rounded-2xl">
-                  <p>Приход</p>
+                  <p>{t("shift.income")}</p>
                   <p className="font-medium text-xl text-slate-800">
                     <FormattedNumber
                       value={
@@ -490,7 +501,7 @@ const UpdateShiftDialog = ({ isOpen, onClose }: PropsType) => {
                   </p>
                 </div>
                 <div className="w-full flex flex-col items-center justify-center py-4 bg-blue-50 rounded-2xl">
-                  <p>Расход</p>
+                  <p>{t("shift.expense")}</p>
                   <p className="font-medium text-xl text-slate-800 mt-1">
                     <FormattedNumber
                       value={
@@ -583,10 +594,10 @@ const UpdateShiftDialog = ({ isOpen, onClose }: PropsType) => {
 
             <div className="fixed right-4 bottom-2 flex justify-end gap-2 mt-4 bg-white py-2">
               <Button type="button" onClick={onClose}>
-                Отменить
+                {t("common.cancel")}
               </Button>
               <Button type="submit" disabled={isClosing} variant="solid">
-                {isClosing ? "Закрытие..." : "Закрыть смену"}
+                {isClosing ? t("common.loading") : t("shift.closeShift")}
               </Button>
             </div>
           </form>

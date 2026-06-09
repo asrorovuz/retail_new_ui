@@ -18,8 +18,10 @@ import {
 } from "@/entities/cashbox/repository";
 import { showErrorLocalMessage,showSuccessMessage } from "@/shared/lib/showMessage";
 import { messages } from "@/app/constants/message.request";
+import { useTranslation } from "react-i18next";
 
 const Cashbox = () => {
+    const { t } = useTranslation();
     const [type, setType] = useState<number>(0);
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const { data } = useCashboxApi();
@@ -88,7 +90,7 @@ const Cashbox = () => {
         <div className="bg-white h-screen flex flex-col p-4">
             <div className="flex justify-between items-center mb-4">
                 <div className="mb-2">
-                    <NavigateButton content={"Касса"} />
+                    <NavigateButton content={t("cashbox.cashbox")} />
                 </div>
                 <div className="flex gap-x-1">
                     <Dropdown

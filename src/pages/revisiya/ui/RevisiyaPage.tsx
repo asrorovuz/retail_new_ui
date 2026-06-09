@@ -29,8 +29,10 @@ import { Controller, useForm } from "react-hook-form";
 import { FaEye, FaPlus } from "react-icons/fa";
 import { IoTrashOutline } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const RevisiyaPage = () => {
+    const { t } = useTranslation();
     const [pagination, setPagination] = useState({
         pageIndex: 1,
         pageSize: 20,
@@ -130,13 +132,13 @@ const RevisiyaPage = () => {
             {
                 id: "account",
                 accessorKey: "account.name",
-                header: "Сотрудник",
+                header: () => t("common.employee"),
                 cell: ({ row }) => row.original.account?.name ?? "—",
             },
 
             {
                 accessorKey: "date",
-                header: "Дата",
+                header: () => t("common.date"),
                 meta: {
                     headerClassName: "w-[150px]",
                     bodyCellClassName: "w-[150px]",
@@ -175,7 +177,7 @@ const RevisiyaPage = () => {
         ];
 
         return baseColumns;
-    }, [pagination, canDelete]);
+    }, [pagination, canDelete, t]);
 
     useEffect(() => {
         setParams((prev: any) => ({
@@ -198,7 +200,7 @@ const RevisiyaPage = () => {
     return (
         <div className="bg-white h-screen p-3 flex flex-col">
             <div className="flex justify-between mb-4 items-center">
-                <NavigateButton content="Ревизия" />
+                <NavigateButton content={t("revision.title")} />
                 <div className="flex gap-x-2">
                     <Controller
                         name="date_start"
@@ -209,7 +211,7 @@ const RevisiyaPage = () => {
                                     <DatePicker
                                         inputFormat="DD-MM-YYYY"
                                         size="sm"
-                                        placeholder={"Дата начала"}
+                                        placeholder={t("report.startDate")}
                                         closePickerOnChange={true}
                                         inputtable={true}
                                         onChange={field.onChange}
@@ -229,7 +231,7 @@ const RevisiyaPage = () => {
                                     <DatePicker
                                         inputFormat="DD-MM-YYYY"
                                         size="sm"
-                                        placeholder={"Дата окончания"}
+                                        placeholder={t("report.endDate")}
                                         closePickerOnChange={true}
                                         inputtable={true}
                                         onChange={field.onChange}
@@ -250,7 +252,7 @@ const RevisiyaPage = () => {
                                 navigate("/revisiya/operation");
                             }}
                         >
-                            Добавить
+                            {t("common.add")}
                         </Button>
                     )}
                 </div>
@@ -343,20 +345,20 @@ const RevisiyaPage = () => {
             <ConfirmDialog
                 type="danger"
                 className={"w-[600px]"}
-                title="Вы уверены, что хотите удалить этот ревизия?"
+                title={t("alert.confirmDelete")}
                 isOpen={isOpenDeleteModal}
                 confirmButtonProps={{
                     loading: deletePending,
                     onClick: onDeleteRevision,
                 }}
-                cancelText="Отмена"
-                confirmText="Удалить"
+                cancelText={t("common.cancel")}
+                confirmText={t("common.delete")}
                 onClose={onCloseDeleteProductDialog}
                 onRequestClose={onCloseDeleteProductDialog}
                 onCancel={onCloseDeleteProductDialog}
             >
                 <p className="text-gray-600">
-                    После удаления, восстановить ревизия будет невозможно.
+                    {t("alert.cannotUndo")}
                 </p>
             </ConfirmDialog>
 
@@ -365,7 +367,7 @@ const RevisiyaPage = () => {
                     width={"80vw"}
                     title={
                         <div className="flex gap-x-2 items-center">
-                            Ревизия{" "}
+                            {t("revision.title")}{" "}
                             <p className="bg-blue-300 rounded-lg h-10 w-10 flex justify-center items-center font-bold">
                                 {itemModal?.number}
                             </p>
@@ -379,13 +381,13 @@ const RevisiyaPage = () => {
                         <div className="flex gap-x-6 text-sm text-slate-600 border-b pb-3">
                             <div className="flex items-center gap-x-2">
                                 <span className="font-medium text-slate-700">
-                                    Сотрудник:
+                                    {t("common.employee")}:
                                 </span>
                                 <span>{itemModal?.account?.name ?? "—"}</span>
                             </div>
                             <div className="flex items-center gap-x-2">
                                 <span className="font-medium text-slate-700">
-                                    Дата:
+                                    {t("common.date")}:
                                 </span>
                                 <span>
                                     {dayjs(itemModal?.date).format(
@@ -405,10 +407,10 @@ const RevisiyaPage = () => {
                                                 №
                                             </th>
                                             <th className="text-left px-4 py-2 font-medium text-slate-700 border-b border-slate-200">
-                                                Наименование товара
+                                                {t("product.name")}
                                             </th>
                                             <th className="text-left px-4 py-2 font-medium text-slate-700 border-b border-slate-200 w-[220px]">
-                                                Количество
+                                                {t("common.quantity")}
                                             </th>
                                             {/* <th className="text-left px-4 py-2 font-medium text-slate-700 border-b border-slate-200 w-[150px]">
                                                 Склад (откуда)

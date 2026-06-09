@@ -19,8 +19,10 @@ import { useDraftRefundStore } from "@/app/store/useRefundDraftStore";
 import { useDraftPurchaseStore } from "@/app/store/usePurchaseDraftStore";
 import { useNavigate } from "react-router-dom";
 import { PaymentTypes } from "@/app/constants/payment.types";
+import { useTranslation } from "react-i18next";
 
 const TransactionModal = ({ data, payKey, type, viewModal }: any) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [printerStatus, setPrinterStatus] = useState({
     isOpen: false,
@@ -215,31 +217,31 @@ const TransactionModal = ({ data, payKey, type, viewModal }: any) => {
       <div className="sticky top-0 bg-white mb-5">
         <div className="flex justify-between items-center">
           <p className="flex gap-x-2">
-            <span>Создано:</span>
+            <span>{t("common.date")}:</span>
             {data?.created_at
               ? new Date(data.created_at).toLocaleString("ru-RU")
-              : "Неизвестно"}
+              : t("common.notFound")}
           </p>
           <div className="flex items-center gap-x-3">
             <Dropdown
               renderTitle={
                 <Button icon={<FaPrint className="size-4" />}>
-                  <span className="font-medium">Распечатать</span>
+                  <span className="font-medium">{t("common.print")}</span>
                 </Button>
               }
             >
               <div className="px-3 py-1 text-sm font-semibold text-slate-500 ml-1.5">
-                Накладной распечатка
+                {t("common.print")}
               </div>
               <Dropdown.Item
                 disabled={isOverheadMutating}
                 onClick={handlePrintDefault}
               >
-                Распечатать накладную
+                {t("common.print")} A4
               </Dropdown.Item>
 
               <div className="px-3 py-1 text-sm font-semibold text-slate-500 border-t mt-1 ml-1.5">
-                Чек распечатка
+                {t("common.print")}
               </div>
 
               <Dropdown.Item
@@ -247,8 +249,8 @@ const TransactionModal = ({ data, payKey, type, viewModal }: any) => {
                 onClick={() => showPrintModal("58")}
               >
                 {printLoading
-                  ? "Распечатать чек (58mm)..."
-                  : "Распечатать чек (58mm)"}
+                  ? `${t("common.print")} (58mm)...`
+                  : `${t("common.print")} (58mm)`}
               </Dropdown.Item>
 
               <Dropdown.Item
@@ -256,12 +258,12 @@ const TransactionModal = ({ data, payKey, type, viewModal }: any) => {
                 onClick={() => showPrintModal("80")}
               >
                 {printLoading
-                  ? "Распечатать чек (80mm)..."
-                  : "Распечатать чек (80mm)"}
+                  ? `${t("common.print")} (80mm)...`
+                  : `${t("common.print")} (80mm)`}
               </Dropdown.Item>
             </Dropdown>
             <Button onClick={onSubmit} icon={<FaEdit />} variant="solid">
-              Редактировать
+              {t("common.edit")}
             </Button>
           </div>
         </div>

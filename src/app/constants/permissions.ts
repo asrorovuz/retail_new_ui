@@ -142,6 +142,77 @@ export const PermissionLabels = {
     AccountPermissionViewPeriodReport: "Hisobotlarni ko‘rish",
   },
 
+  oz: {
+    AccountPermissionProductCreate: "Маҳсулот яратиш",
+    AccountPermissionProductUpdate: "Маҳсулотни таҳрирлаш",
+    AccountPermissionProductDelete: "Маҳсулотни ўчириш",
+    AccountPermissionProductView: "Маҳсулотларни кўриш",
+    AccountPermissionViewProductPurchasePrice: "Таннарх нархини кўриш",
+    AccountPermissionViewProductCommonPrice: "Сотув нархини кўриш",
+    AccountPermissionViewProductBulkPrice: "Улгуржи нархни кўриш",
+
+    AccountPermissionSaleView: "Сотувларни кўриш",
+    AccountPermissionSaleCreate: "Сотув яратиш",
+    AccountPermissionSaleUpdate: "Сотувни таҳрирлаш",
+    AccountPermissionSaleDelete: "Сотувни ўчириш",
+    AccountPermissionSaleOperationProductDelete: "Сотувдан маҳсулотни ўчириш",
+
+    AccountPermissionPurchaseView: "Харидларни кўриш",
+    AccountPermissionPurchaseCreate: "Харид яратиш",
+    AccountPermissionPurchaseUpdate: "Харидни таҳрирлаш",
+    AccountPermissionPurchaseDelete: "Харидни ўчириш",
+
+    AccountPermissionRefundView: "Қайтаримларни кўриш",
+    AccountPermissionRefundCreate: "Қайтарим яратиш",
+    AccountPermissionRefundUpdate: "Қайтаримни таҳрирлаш",
+    AccountPermissionRefundDelete: "Қайтаримни ўчириш",
+
+    AccountPermissionRevisionView: "Инвентаризацияни кўриш",
+    AccountPermissionRevisionCreate: "Инвентаризация яратиш",
+    AccountPermissionRevisionUpdate: "Инвентаризацияни таҳрирлаш",
+    AccountPermissionRevisionDelete: "Инвентаризацияни ўчириш",
+
+    AccountPermissionContractorView: "Контрагентларни кўриш",
+    AccountPermissionContractorCreate: "Контрагент яратиш",
+    AccountPermissionContractorUpdate: "Контрагентни таҳрирлаш",
+    AccountPermissionContractorDelete: "Контрагентни ўчириш",
+    AccountPermissionViewContractorDebt: "Қарздорликни кўриш",
+
+    AccountPermissionContractorPaymentView: "Тўловларни кўриш",
+    AccountPermissionContractorPaymentCreate: "Тўлов яратиш",
+    AccountPermissionContractorPaymentUpdate: "Тўловни таҳрирлаш",
+    AccountPermissionContractorPaymentDelete: "Тўловни ўчириш",
+
+    AccountPermissionPayoutView: "Чиқимларни кўриш",
+    AccountPermissionPayoutCreate: "Чиқим яратиш",
+    AccountPermissionPayoutUpdate: "Чиқимни таҳрирлаш",
+    AccountPermissionPayoutDelete: "Чиқимни ўчириш",
+
+    AccountPermissionTelegramBotCreate: "Telegram бот яратиш",
+    AccountPermissionTelegramBotUpdate: "Telegram ботни таҳрирлаш",
+    AccountPermissionTelegramBotDelete: "Telegram ботни ўчириш",
+    AccountPermissionTelegramBotView: "Telegram ботни кўриш",
+
+    AccountPermissionCashBoxView: "Кассани кўриш",
+
+    AccountPermissionCashBoxCashInCreate: "Кассага кирим қилиш",
+    AccountPermissionCashBoxCashInUpdate: "Киримни таҳрирлаш",
+    AccountPermissionCashBoxCashInDelete: "Киримни ўчириш",
+    AccountPermissionCashBoxCashInView: "Киримларни кўриш",
+
+    AccountPermissionCashBoxCashOutCreate: "Кассадан чиқим қилиш",
+    AccountPermissionCashBoxCashOutUpdate: "Чиқимни таҳрирлаш",
+    AccountPermissionCashBoxCashOutDelete: "Чиқимни ўчириш",
+    AccountPermissionCashBoxCashOutView: "Чиқимларни кўриш",
+
+    AccountPermissionCashBoxExpenseCreate: "Харажат яратиш",
+    AccountPermissionCashBoxExpenseUpdate: "Харажатни таҳрирлаш",
+    AccountPermissionCashBoxExpenseDelete: "Харажатни ўчириш",
+    AccountPermissionCashBoxExpenseView: "Харажатларни кўриш",
+
+    AccountPermissionViewPeriodReport: "Ҳисоботларни кўриш",
+  },
+
   ru: {
     AccountPermissionProductCreate: "Создание товара",
     AccountPermissionProductUpdate: "Редактирование товара",
@@ -322,6 +393,117 @@ export const PermissionGroups = {
     },
     {
       label: "Hisobotlar",
+      keys: ["AccountPermissionViewPeriodReport"],
+    },
+  ],
+
+  oz: [
+    {
+      label: "Маҳсулотлар",
+      keys: [
+        "AccountPermissionProductView",
+        "AccountPermissionProductCreate",
+        "AccountPermissionProductUpdate",
+        "AccountPermissionProductDelete",
+        "AccountPermissionViewProductPurchasePrice",
+        "AccountPermissionViewProductCommonPrice",
+        "AccountPermissionViewProductBulkPrice",
+      ],
+    },
+    {
+      label: "Сотувлар",
+      keys: [
+        "AccountPermissionSaleView",
+        "AccountPermissionSaleCreate",
+        "AccountPermissionSaleUpdate",
+        "AccountPermissionSaleDelete",
+        "AccountPermissionSaleOperationProductDelete",
+      ],
+    },
+    {
+      label: "Харидлар",
+      keys: [
+        "AccountPermissionPurchaseView",
+        "AccountPermissionPurchaseCreate",
+        "AccountPermissionPurchaseUpdate",
+        "AccountPermissionPurchaseDelete",
+      ],
+    },
+    {
+      label: "Қайтаримлар",
+      keys: [
+        "AccountPermissionRefundView",
+        "AccountPermissionRefundCreate",
+        "AccountPermissionRefundUpdate",
+        "AccountPermissionRefundDelete",
+      ],
+    },
+    {
+      label: "Инвентаризация",
+      keys: [
+        "AccountPermissionRevisionView",
+        "AccountPermissionRevisionCreate",
+        "AccountPermissionRevisionUpdate",
+        "AccountPermissionRevisionDelete",
+      ],
+    },
+    {
+      label: "Контрагентлар",
+      keys: [
+        "AccountPermissionContractorView",
+        "AccountPermissionContractorCreate",
+        "AccountPermissionContractorUpdate",
+        "AccountPermissionContractorDelete",
+        "AccountPermissionViewContractorDebt",
+      ],
+    },
+    {
+      label: "Тўловлар",
+      keys: [
+        "AccountPermissionContractorPaymentView",
+        "AccountPermissionContractorPaymentCreate",
+        "AccountPermissionContractorPaymentUpdate",
+        "AccountPermissionContractorPaymentDelete",
+      ],
+    },
+    {
+      label: "Чиқимлар",
+      keys: [
+        "AccountPermissionPayoutView",
+        "AccountPermissionPayoutCreate",
+        "AccountPermissionPayoutUpdate",
+        "AccountPermissionPayoutDelete",
+      ],
+    },
+    {
+      label: "Касса",
+      keys: [
+        "AccountPermissionCashBoxView",
+        "AccountPermissionCashBoxCashInView",
+        "AccountPermissionCashBoxCashInCreate",
+        "AccountPermissionCashBoxCashInUpdate",
+        "AccountPermissionCashBoxCashInDelete",
+        "AccountPermissionCashBoxCashOutView",
+        "AccountPermissionCashBoxCashOutCreate",
+        "AccountPermissionCashBoxCashOutUpdate",
+        "AccountPermissionCashBoxCashOutDelete",
+        "AccountPermissionCashBoxExpenseView",
+        "AccountPermissionCashBoxExpenseCreate",
+        "AccountPermissionCashBoxExpenseUpdate",
+        "AccountPermissionCashBoxExpenseDelete",
+      ],
+    },
+    {
+      label: "Telegram бот",
+      keys: [
+        "AccountPermissionTelegramBotView",
+        "AccountPermissionTelegramBotCreate",
+        "AccountPermissionTelegramBotUpdate",
+        "AccountPermissionTelegramBotDelete",
+      ],
+    },
+    {
+      label: "Ҳисоботлар",
       keys: ["AccountPermissionViewPeriodReport"],
     },
   ],

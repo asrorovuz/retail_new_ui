@@ -8,6 +8,7 @@ import { showErrorMessage, showSuccessMessage } from "@/shared/lib/showMessage";
 import { Button, Form, FormItem, Select, Switcher } from "@/shared/ui/kit";
 import { useEffect, useState } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 
 const ReceiptSizeOptions = [
     { type: "80mm", value: "80" },
@@ -15,6 +16,7 @@ const ReceiptSizeOptions = [
 ];
 
 const DeviceSettings = () => {
+    const { t } = useTranslation();
     const { data: settingsData } = useSettingsApi();
     const { data: printerData = [] } = usePrinterApi();
     const { mutate: updateSettings, isPending } = useUpdateSettings();
@@ -138,19 +140,19 @@ const DeviceSettings = () => {
                 <Form onSubmit={form.handleSubmit(onSubmit)}>
                     <div className="bg-white rounded-lg border p-4 mb-4">
                         <h3 className="text-base font-medium mb-4">
-                            Настройки печати
+                            {t("settings.devices")}
                         </h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <Controller
                                 name="printer_name"
                                 control={form.control}
                                 render={({ field }) => (
-                                    <FormItem label="Принтер" className="mb-0">
+                                    <FormItem label={t("settings.printerName")} className="mb-0">
                                         <Select
                                             {...field}
                                             options={[
                                                 {
-                                                    type: "Не требуется",
+                                                    type: "—",
                                                     value: "",
                                                 },
                                                 ...(printerData.map((i) => ({
@@ -162,7 +164,7 @@ const DeviceSettings = () => {
                                             isSearchable={false}
                                             getOptionLabel={(o) => o.type}
                                             getOptionValue={(o) => o.value}
-                                            placeholder="Выбрать"
+                                            placeholder={t("common.select")}
                                             className="border border-slate-300 rounded-xl text-sm"
                                         />
                                     </FormItem>
@@ -173,7 +175,7 @@ const DeviceSettings = () => {
                                 control={form.control}
                                 render={({ field }) => (
                                     <FormItem
-                                        label="Размер чека"
+                                        label={t("settings.receiptSize")}
                                         className="mb-0"
                                     >
                                         <Select
@@ -183,7 +185,7 @@ const DeviceSettings = () => {
                                             isSearchable={false}
                                             getOptionLabel={(o) => o.type}
                                             getOptionValue={(o) => o.value}
-                                            placeholder="Выбрать"
+                                            placeholder={t("common.select")}
                                             className="border border-slate-300 rounded-xl text-sm"
                                         />
                                     </FormItem>
@@ -197,7 +199,7 @@ const DeviceSettings = () => {
                                 render={({ field }) => (
                                     <div className="flex items-center gap-x-2 py-2">
                                         <label className="text-sm font-medium text-slate-700">
-                                            Автоматическая распечатать
+                                            {t("settings.autoPrint")}
                                         </label>
                                         <Switcher
                                             {...field}
@@ -216,7 +218,7 @@ const DeviceSettings = () => {
                             loading={isPending}
                             className="min-w-[120px]"
                         >
-                            Сохранить
+                            {t("common.save")}
                         </Button>
                     </div>
                 </Form>

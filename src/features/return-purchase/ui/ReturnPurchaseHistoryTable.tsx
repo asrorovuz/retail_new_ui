@@ -3,7 +3,7 @@ import { GetPaymentLabel, PaymentTypes } from "@/app/constants/payment.types";
 import { useReturnPurchaseDraftStore } from "@/app/store/useReturnPurchaseDraftStore";
 import { useDeleteTransactions } from "@/entities/history/repository";
 import classNames from "@/shared/lib/classNames";
-import { usePermission } from "@/shared/lib/controlActionWithPermission";
+// import { usePermission } from "@/shared/lib/controlActionWithPermission";
 import CurrencyName from "@/shared/lib/CurrencyName";
 import payment from "@/shared/lib/payment";
 import { showErrorMessage, showSuccessMessage } from "@/shared/lib/showMessage";
@@ -31,6 +31,7 @@ import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { IoTrashOutline } from "react-icons/io5";
 import { TbEye } from "react-icons/tb";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const ReturnPurchaseHistoryTable = ({
     data,
@@ -47,6 +48,7 @@ const ReturnPurchaseHistoryTable = ({
     params: any;
     loading: boolean;
 }) => {
+    const { t } = useTranslation();
     const [id, setId] = useState(null);
     const [isOpenDelete, setIsOpenDelete] = useState(false);
     const navigate = useNavigate();
@@ -67,10 +69,10 @@ const ReturnPurchaseHistoryTable = ({
         setId(null);
     };
 
-    const { checkPermissionByAction } = usePermission();
-    const canUpdate = checkPermissionByAction("purchase", "update");
-    const canDelete = checkPermissionByAction("purchase", "delete");
-    const canView = checkPermissionByAction("purchase", "view");
+    // const { checkPermissionByAction } = usePermission();
+    // const canUpdate = checkPermissionByAction("purchase", "update");
+    // const canDelete = checkPermissionByAction("purchase", "delete");
+    // const canView = checkPermissionByAction("purchase", "view");
 
     const onDeleteFunc = () => {
         if (!id) return;
@@ -167,7 +169,7 @@ const ReturnPurchaseHistoryTable = ({
                 enableSorting: false,
                 enableHiding: false,
                 meta: { bodyCellClassName: "font-bold truncate text-center" },
-                header: () => "Контрагент",
+                header: () => t("counterparty.title"),
             }),
 
             columnHelper.accessor("totals", {
@@ -175,11 +177,11 @@ const ReturnPurchaseHistoryTable = ({
                 enableSorting: false,
                 enableHiding: false,
                 meta: { bodyCellClassName: "text-end" },
-                header: () => "Итого",
+                header: () => t("common.total"),
                 cell: ({ row }) => {
                     const totals = row.original?.totals;
                     return (
-                        <div className="whitespace-nowrap">
+                        <div className="whitespace-nowrap flex justify-end">
                             {totals ? (
                                 totals.map((item: any, index: number) => (
                                     <p
@@ -187,7 +189,9 @@ const ReturnPurchaseHistoryTable = ({
                                         className="heading-text font-bold whitespace-nowrap flex gap-x-1"
                                     >
                                         <FormattedNumber value={item?.amount} />
-                                        <CurrencyName currency={item?.currency} />
+                                        <CurrencyName
+                                            currency={item?.currency}
+                                        />
                                     </p>
                                 ))
                             ) : (
@@ -203,11 +207,11 @@ const ReturnPurchaseHistoryTable = ({
                 enableSorting: false,
                 enableHiding: false,
                 meta: { bodyCellClassName: "text-end min-w-[175px]" },
-                header: () => "Оплата",
+                header: () => t("sale.payment"),
                 cell: ({ row }) => {
                     const { cash_box_states } = row.original?.payment || {};
                     return (
-                        <div className="whitespace-nowrap text-nowrap">
+                        <div className="whitespace-nowrap text-nowrap flex justify-end">
                             {cash_box_states ? (
                                 payment
                                     ?.calculateToPay(cash_box_states)
@@ -217,25 +221,38 @@ const ReturnPurchaseHistoryTable = ({
                                             className="flex gap-1 items-center"
                                         >
                                             <p className="heading-text font-bold whitespace-nowrap flex gap-x-1">
-                                                <FormattedNumber value={item?.amount} />
-                                                <CurrencyName currency={item.currency} />
+                                                <FormattedNumber
+                                                    value={item?.amount}
+                                                />
+                                                <CurrencyName
+                                                    currency={item.currency}
+                                                />
                                             </p>
                                             <Tooltip
                                                 title={
                                                     <div className="flex flex-col gap-y-2 min-w-[200px]">
                                                         {cash_box_states?.map(
-                                                            (item: any, i: number) => (
+                                                            (
+                                                                item: any,
+                                                                i: number,
+                                                            ) => (
                                                                 <div
                                                                     key={i}
                                                                     className="flex justify-between text-sm"
                                                                 >
                                                                     <span>
-                                                                        {GetPaymentLabel(item?.type)}
+                                                                        {GetPaymentLabel(
+                                                                            item?.type,
+                                                                        )}
                                                                     </span>
                                                                     <span className="font-medium">
                                                                         <FormattedNumber
-                                                                            value={item?.amount}
-                                                                            scale={2}
+                                                                            value={
+                                                                                item?.amount
+                                                                            }
+                                                                            scale={
+                                                                                2
+                                                                            }
                                                                         />
                                                                     </span>
                                                                 </div>
@@ -258,59 +275,40 @@ const ReturnPurchaseHistoryTable = ({
                 },
             }),
 
-            // columnHelper.accessor("discount", {
-            //     id: "discount",
-            //     enableSorting: false,
-            //     enableHiding: false,
-            //     meta: { bodyCellClassName: "text-end" },
-            //     header: () => "Скидка",
-            //     cell: ({ row }) => {
-            //         const totals =
-            //             row.original?.exact_discounts ?? row.original?.exact_discount;
-            //         return (
-            //             <div className="whitespace-nowrap">
-            //                 {totals ? (
-            //                     totals.map((item: any, index: number) => (
-            //                         <p
-            //                             key={index}
-            //                             className="heading-text font-bold whitespace-nowrap flex gap-x-1"
-            //                         >
-            //                             <FormattedNumber value={item?.amount} />
-            //                             <CurrencyName currency={item?.currency} />
-            //                         </p>
-            //                     ))
-            //                 ) : (
-            //                     <p className="heading-text font-bold">0</p>
-            //                 )}
-            //             </div>
-            //         );
-            //     },
-            //     maxSize: 150,
-            //     minSize: 150,
-            // }),
-
             columnHelper.accessor("debt", {
                 id: "debt",
                 enableSorting: false,
                 enableHiding: false,
                 meta: { bodyCellClassName: "text-end min-w-[175px]" },
-                header: () => "Долг",
+                header: () => t("sale.debt"),
                 cell: ({ row }) => {
-                    const debts = row.original?.debts;
+                    const totalsSum = (row.original?.totals ?? []).reduce(
+                        (acc: number, t: any) => acc + Number(t?.amount || 0),
+                        0,
+                    );
+                    const cashBoxStates =
+                        row.original?.payment?.cash_box_states ?? [];
+                    const paidSum =
+                        payment
+                            .calculateToPay(cashBoxStates)
+                            ?.reduce(
+                                (acc: number, p: any) =>
+                                    acc + Number(p?.amount || 0),
+                                0,
+                            ) ?? 0;
+                    const debtAmount = totalsSum - paidSum;
+
                     return (
-                        <div>
-                            {debts ? (
-                                payment
-                                    .calculateToPay(debts)
-                                    ?.map((item: any, index: number) => (
-                                        <p
-                                            key={index}
-                                            className="heading-text font-bold text-nowrap whitespace-nowrap flex gap-x-1"
-                                        >
-                                            <FormattedNumber value={item?.amount} />
-                                            <CurrencyName currency={item.currency} />
-                                        </p>
-                                    ))
+                        <div className="flex justify-end">
+                            {debtAmount > 0 ? (
+                                <p className="heading-text font-bold text-nowrap whitespace-nowrap flex gap-x-1">
+                                    <FormattedNumber value={debtAmount} />
+                                    <CurrencyName
+                                        currency={
+                                            row.original?.totals?.[0]?.currency
+                                        }
+                                    />
+                                </p>
                             ) : (
                                 <p className="heading-text font-bold">0</p>
                             )}
@@ -326,7 +324,7 @@ const ReturnPurchaseHistoryTable = ({
                 enableSorting: false,
                 enableHiding: false,
                 meta: { bodyCellClassName: "font-bold truncate text-center" },
-                header: () => "Сотрудник",
+                header: () => t("common.employee"),
             }),
 
             columnHelper.accessor("date", {
@@ -334,7 +332,7 @@ const ReturnPurchaseHistoryTable = ({
                 enableSorting: false,
                 enableHiding: false,
                 meta: { bodyCellClassName: "font-bold truncate text-center" },
-                header: () => "Дата",
+                header: () => t("common.date"),
                 cell: ({ row }) => (
                     <div>{new Date(row.original?.date).toLocaleString()}</div>
                 ),
@@ -352,59 +350,54 @@ const ReturnPurchaseHistoryTable = ({
                             </div>
                         }
                     >
-                        {canView && (
-                            <DropdownItem
-                                onClick={() =>
-                                    setViewModal({
-                                        isOpen: true,
-                                        id: row.original?.id,
-                                    })
-                                }
-                                className="h-auto!"
-                            >
-                                <div className="w-full flex items-center gap-2 text-slate-700 py-3 px-5 rounded-lg">
-                                    <TbEye size={22} />
-                                    Посмотреть
-                                </div>
-                            </DropdownItem>
-                        )}
-                        {canUpdate && (
-                            <DropdownItem
-                                onClick={() => onEdit(row.original)}
-                                className="h-auto!"
-                            >
-                                <div className="w-full flex items-center gap-2 text-orange-500 py-3 px-5 rounded-lg">
-                                    <FaRegEdit size={20} />
-                                    Редактировать
-                                </div>
-                            </DropdownItem>
-                        )}
-                        {canDelete && (
-                            <DropdownItem
-                                onClick={() => {
-                                    setId(row.original.id);
-                                    setIsOpenDelete(true);
-                                }}
-                                className="h-auto!"
-                            >
-                                <div className="w-full flex items-center gap-2 text-red-500 py-3 px-5 rounded-lg">
-                                    <IoTrashOutline size={20} />
-                                    Удалить
-                                </div>
-                            </DropdownItem>
-                        )}
+                        <DropdownItem
+                            onClick={() =>
+                                setViewModal({
+                                    isOpen: true,
+                                    id: row.original?.id,
+                                })
+                            }
+                            className="h-auto!"
+                        >
+                            <div className="w-full flex items-center gap-2 text-slate-700 py-3 px-5 rounded-lg">
+                                <TbEye size={22} />
+                                {t("common.view")}
+                            </div>
+                        </DropdownItem>
+
+                        <DropdownItem
+                            onClick={() => onEdit(row.original)}
+                            className="h-auto!"
+                        >
+                            <div className="w-full flex items-center gap-2 text-orange-500 py-3 px-5 rounded-lg">
+                                <FaRegEdit size={20} />
+                                {t("common.edit")}
+                            </div>
+                        </DropdownItem>
+
+                        <DropdownItem
+                            onClick={() => {
+                                setId(row.original.id);
+                                setIsOpenDelete(true);
+                            }}
+                            className="h-auto!"
+                        >
+                            <div className="w-full flex items-center gap-2 text-red-500 py-3 px-5 rounded-lg">
+                                <IoTrashOutline size={20} />
+                                {t("common.delete")}
+                            </div>
+                        </DropdownItem>
                     </Dropdown>
                 ),
             }),
         ],
         // eslint-disable-next-line react-hooks/exhaustive-deps
-        [data, params],
+        [data, params, t],
     );
 
     const summary = useMemo(() => {
         let totalsAmount = 0;
         let payAmount = 0;
-        let debtAmount = 0;
         let currency: any = null;
 
         data?.forEach((row) => {
@@ -413,22 +406,21 @@ const ReturnPurchaseHistoryTable = ({
                 if (!currency && t.currency) currency = t.currency;
             });
 
-            const payData = row?.payout?.cash_box_states;
+            const payData = row?.payment?.cash_box_states;
             if (payData) {
                 payment.calculateToPay(payData)?.forEach((p: any) => {
                     payAmount += Number(p.amount || 0);
-                    if (!currency && p.currency) currency = p.currency;
                 });
             }
-
-            row?.debts &&
-                payment.calculateToPay(row.debts)?.forEach((d: any) => {
-                    debtAmount += Number(d.amount || 0);
-                    if (!currency && d.currency) currency = d.currency;
-                });
         });
 
-        return { totalsAmount, payAmount, debtAmount, currency };
+        const debtAmount = totalsAmount - payAmount;
+        return {
+            totalsAmount,
+            payAmount,
+            debtAmount: debtAmount > 0 ? debtAmount : 0,
+            currency,
+        };
     }, [data]);
 
     const table = useReactTable({
@@ -456,14 +448,16 @@ const ReturnPurchaseHistoryTable = ({
                                         {headerGroup.headers.map((header) => (
                                             <Th
                                                 className={classNames(
-                                                    header.column.columnDef.meta?.color,
+                                                    header.column.columnDef.meta
+                                                        ?.color,
                                                     "border bg-white",
                                                 )}
                                                 key={header.id}
                                             >
                                                 <div className="px-4 py-2 text-left font-medium text-xs xl:text-sm text-slate-800">
                                                     {flexRender(
-                                                        header.column.columnDef.header,
+                                                        header.column.columnDef
+                                                            .header,
                                                         header.getContext(),
                                                     )}
                                                 </div>
@@ -481,19 +475,23 @@ const ReturnPurchaseHistoryTable = ({
                                         {row.getVisibleCells().map((cell) => (
                                             <Td
                                                 className={classNames(
-                                                    cell.column.columnDef.meta?.color || "#fff",
+                                                    cell.column.columnDef.meta
+                                                        ?.color || "#fff",
                                                     "border",
                                                 )}
                                                 key={cell.id}
                                             >
                                                 <div
                                                     className={classNames(
-                                                        cell.column.columnDef.meta?.bodyCellClassName,
+                                                        cell.column.columnDef
+                                                            .meta
+                                                            ?.bodyCellClassName,
                                                         "text-xs xl:text-sm px-1",
                                                     )}
                                                 >
                                                     {flexRender(
-                                                        cell.column.columnDef.cell,
+                                                        cell.column.columnDef
+                                                            .cell,
                                                         cell.getContext(),
                                                     )}
                                                 </div>
@@ -505,23 +503,31 @@ const ReturnPurchaseHistoryTable = ({
                             <TFoot>
                                 <Tr className="font-bold border">
                                     <Td>
-                                        <div className="px-4 py-1">Итого</div>
+                                        <div className="px-4 py-1">{t("common.total")}</div>
                                     </Td>
                                     <Td />
                                     <Td />
                                     <Td>
                                         <div className="px-4 text-end">
                                             <p className="flex justify-end text-nowrap whitespace-nowrap gap-1">
-                                                <FormattedNumber value={summary.totalsAmount} />
-                                                <CurrencyName currency={summary.currency} />
+                                                <FormattedNumber
+                                                    value={summary.totalsAmount}
+                                                />
+                                                <CurrencyName
+                                                    currency={summary.currency}
+                                                />
                                             </p>
                                         </div>
                                     </Td>
                                     <Td>
                                         <div className="px-4 text-end">
                                             <p className="flex justify-end text-nowrap h-full whitespace-nowrap gap-1">
-                                                <FormattedNumber value={summary.payAmount} />
-                                                <CurrencyName currency={summary.currency} />
+                                                <FormattedNumber
+                                                    value={summary.payAmount}
+                                                />
+                                                <CurrencyName
+                                                    currency={summary.currency}
+                                                />
                                             </p>
                                         </div>
                                     </Td>
@@ -529,8 +535,12 @@ const ReturnPurchaseHistoryTable = ({
                                     <Td>
                                         <div className="px-4 text-end">
                                             <p className="flex justify-end text-nowrap whitespace-nowrap gap-1">
-                                                <FormattedNumber value={summary.debtAmount} />
-                                                <CurrencyName currency={summary.currency} />
+                                                <FormattedNumber
+                                                    value={summary.debtAmount}
+                                                />
+                                                <CurrencyName
+                                                    currency={summary.currency}
+                                                />
                                             </p>
                                         </div>
                                     </Td>
@@ -563,20 +573,20 @@ const ReturnPurchaseHistoryTable = ({
             <ConfirmDialog
                 type="danger"
                 className={"w-[600px]"}
-                title="Вы уверены, что хотите продолжить?"
+                title={t("alert.confirmDelete")}
                 isOpen={isOpenDelete}
                 confirmButtonProps={{
                     loading: deletePending,
                     onClick: onDeleteFunc,
                 }}
-                cancelText="Отмена"
-                confirmText="Удалить"
+                cancelText={t("common.cancel")}
+                confirmText={t("common.delete")}
                 onClose={onCloseDeleteDialog}
                 onRequestClose={onCloseDeleteDialog}
                 onCancel={onCloseDeleteDialog}
             >
                 <p className="text-gray-600">
-                    Удаление записи. Это действие нельзя отменить.
+                    {t("alert.cannotUndo")}
                 </p>
             </ConfirmDialog>
         </div>

@@ -33,6 +33,7 @@ import classNames from "@/shared/lib/classNames";
 import { showMeasurmentName } from "@/shared/lib/showMeausermentName";
 import { AccountPermissions } from "@/app/constants/permissions";
 import { useCheckPermission } from "@/shared/lib/checkPermission";
+import { useTranslation } from "react-i18next";
 
 const ProductTable = ({
     data,
@@ -61,6 +62,7 @@ const ProductTable = ({
     productPriceType: ProductPriceType[];
     setSearch: (val: string) => void;
 }) => {
+    const { t } = useTranslation();
     const [confirmProductId, setConfirmProductId] = useState<number | null>(
         null,
     );
@@ -120,7 +122,7 @@ const ProductTable = ({
                 ),
             }),
             columnHelper.accessor("name", {
-                header: "НАЗВАНИЕ",
+                header: () => t("product.name").toUpperCase(),
                 cell: ({ row }) => {
                     const item = row?.original;
                     return (
@@ -129,35 +131,35 @@ const ProductTable = ({
                             <div className="flex gap-x-2 text-[11px] mt-0.5">
                                 {item?.category && (
                                     <span className="bg-blue-200 p-0.5 rounded-md text-black">
-                                        <Tooltip title="Категория">
+                                        <Tooltip title={t("product.category")}>
                                             {item?.category?.name}
                                         </Tooltip>
                                     </span>
                                 )}
                                 {(item?.barcodes?.length ?? 0) > 0 && (
                                     <span className="bg-purple-300 p-0.5 rounded-md text-black">
-                                        <Tooltip title="Штрих-код">
+                                        <Tooltip title={t("product.barcode")}>
                                             {item?.barcodes?.[0]?.value}
                                         </Tooltip>
                                     </span>
                                 )}
                                 {item?.catalog_code && (
                                     <span className="bg-green-300 p-0.5 rounded-md text-black">
-                                        <Tooltip title="ИКПУ-код">
+                                        <Tooltip title={t("product.ikpu")}>
                                             {item?.catalog_code}
                                         </Tooltip>
                                     </span>
                                 )}
                                 {item?.sku && (
                                     <span className="bg-orange-300 p-0.5 rounded-md text-black">
-                                        <Tooltip title="Артикул">
+                                        <Tooltip title={t("product.sku")}>
                                             {item?.sku}
                                         </Tooltip>
                                     </span>
                                 )}
                                 {item?.code && (
                                     <span className="bg-amber-300 p-0.5 rounded-md text-black">
-                                        <Tooltip title="Код">
+                                        <Tooltip title={t("product.code")}>
                                             {item?.code}
                                         </Tooltip>
                                     </span>
@@ -174,7 +176,7 @@ const ProductTable = ({
             }),
             columnHelper.display({
                 id: "totalRemainder",
-                header: () => <div className="text-center">ОСТАТОК</div>,
+                header: () => <div className="text-center">{t("product.stock").toUpperCase()}</div>,
                 cell: (info) => {
                     const total = info.row.original.warehouse_items?.[0]?.state;
 
@@ -197,7 +199,7 @@ const ProductTable = ({
                 ? [
                       columnHelper.display({
                           id: "price",
-                          header: () => <div className="text-center">РОЗ.ЦЕНА</div>,
+                          header: () => <div className="text-center">{t("product.retailPrice").toUpperCase()}</div>,
                           cell: (info) => {
                               const price =
                                   info.row.original.prices?.[0]?.amount;
@@ -224,7 +226,7 @@ const ProductTable = ({
                           id: "bulkPrice",
                           header: () => (
                               <div className="text-nowrap text-center">
-                                  ОПТ.ЦЕНА
+                                  {t("product.wholesalePrice").toUpperCase()}
                               </div>
                           ),
                           cell: (info) => {
@@ -254,7 +256,7 @@ const ProductTable = ({
                           id: "purchesPrice",
                           header: () => (
                               <div className="text-nowrap text-center">
-                                  ЗАК.ЦЕНА
+                                  {t("product.purchasePrice").toUpperCase()}
                               </div>
                           ),
                           cell: (info) => {
@@ -323,7 +325,7 @@ const ProductTable = ({
                                 >
                                     <div className="w-full flex items-center gap-2 text-slate-600 py-2 px-3 rounded-lg hover:text-slate-800">
                                         <FaRegEdit />
-                                        Редактировать
+                                        {t("common.edit")}
                                     </div>
                                 </DropdownItem>
                             )}
@@ -337,7 +339,7 @@ const ProductTable = ({
                             >
                                 <div className="w-full flex items-center gap-2 text-slate-600 py-2 px-3 rounded-lg hover:text-slate-800">
                                     <ShtrixCod />
-                                    Печать штрих код товара
+                                    {t("product.printBarcode")}
                                 </div>
                             </DropdownItem>
 
@@ -355,7 +357,7 @@ const ProductTable = ({
                                 >
                                     <div className="w-full flex items-center gap-2 text-red-500 py-2 px-3 rounded-lg">
                                         <IoTrashOutline size={20} />
-                                        Удалить
+                                        {t("common.delete")}
                                     </div>
                                 </DropdownItem>
                             )}
@@ -364,7 +366,7 @@ const ProductTable = ({
                 ),
             }),
         ],
-        [pagination, tableSettings],
+        [pagination, tableSettings, t],
     );
 
     const table = useReactTable({
@@ -507,20 +509,20 @@ const ProductTable = ({
             <ConfirmDialog
                 type="danger"
                 className={"w-[600px]"}
-                title="Вы уверены, что хотите удалить этот продукт?"
+                title={t("alert.confirmDelete")}
                 isOpen={deleteModalOpen}
                 confirmButtonProps={{
                     loading: productDeleteLoading,
                     onClick: onDeleteProduct,
                 }}
-                cancelText="Отмена"
-                confirmText="Удалить"
+                cancelText={t("common.cancel")}
+                confirmText={t("common.delete")}
                 onClose={onCloseDeleteProductDialog}
                 onRequestClose={onCloseDeleteProductDialog}
                 onCancel={onCloseDeleteProductDialog}
             >
                 <p className="text-gray-600">
-                    После удаления, восстановить продукт будет невозможно.
+                    {t("alert.cannotUndo")}
                 </p>
             </ConfirmDialog>
 

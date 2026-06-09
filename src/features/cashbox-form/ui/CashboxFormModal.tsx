@@ -36,6 +36,7 @@ import dayjs from "dayjs";
 import { useEffect } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { FaPlus, FaTrashAlt } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
 
 const CashboxFormModal = ({
     cashId,
@@ -52,6 +53,7 @@ const CashboxFormModal = ({
     cashbox: CashboxType[];
     modalType?: "add" | "edit";
 }) => {
+    const { t } = useTranslation();
     const { data: categoryData } = useCashboxCategoryApi();
     const { data: currencies } = useCurrancyApi();
     const { data: cashboxDataById } = useCashboxByIdApi(
@@ -244,7 +246,7 @@ const CashboxFormModal = ({
             width={"70vw"}
             isOpen={!!type && isOpen}
             onClose={onCloseModal}
-            title="Касса"
+            title={t("cashbox.cashbox")}
         >
             <Form onSubmit={handleSubmit(onSubmit)}>
                 <div className="max-h-[35vh] overflow-y-auto">
@@ -256,7 +258,7 @@ const CashboxFormModal = ({
                             control={control}
                             render={({ field, fieldState }) => (
                                 <FormItem
-                                    label={"Дата"}
+                                    label={t("common.date")}
                                     invalid={Boolean(fieldState.error)}
                                     asterisk={true}
                                 >
@@ -268,7 +270,7 @@ const CashboxFormModal = ({
                                             inputtable={true}
                                             inputFormat={"DD-MM-YYYY"}
                                             closePickerOnChange={true}
-                                            placeholder={"Выберите дату"}
+                                            placeholder={t("common.date")}
                                         />
                                     </div>
                                 </FormItem>
@@ -280,7 +282,7 @@ const CashboxFormModal = ({
                             control={control}
                             render={({ field, fieldState }) => {
                                 return (
-                                    <FormItem label={"Касса"} asterisk={true}>
+                                    <FormItem label={t("cashbox.cashbox")} asterisk={true}>
                                         <Select
                                             {...field}
                                             size={"sm"}
@@ -294,7 +296,7 @@ const CashboxFormModal = ({
                                             getOptionValue={(option) =>
                                                 option.id
                                             }
-                                            placeholder={"Касса"}
+                                            placeholder={t("cashbox.cashbox")}
                                         />
                                     </FormItem>
                                 );
@@ -306,7 +308,7 @@ const CashboxFormModal = ({
                                 name="expenseCategory"
                                 control={control}
                                 render={({ field, fieldState }) => (
-                                    <FormItem label={"Категория расходов"}>
+                                    <FormItem label={t("cashbox.expenses")}>
                                         <Select
                                             {...field}
                                             size={"sm"}
@@ -321,7 +323,7 @@ const CashboxFormModal = ({
                                             getOptionValue={(option) =>
                                                 option.id
                                             }
-                                            placeholder={"Категория расходов"}
+                                            placeholder={t("cashbox.expenses")}
                                         />
                                     </FormItem>
                                 )}
@@ -347,7 +349,7 @@ const CashboxFormModal = ({
                         <div className="col-span-2">
                             <div className="flex justify-between items-center">
                                 <span className={"text-[1.25rem] bold"}>
-                                    Оплата
+                                    {t("sale.payment")}
                                 </span>
                                 <Button
                                     type={"button"}
@@ -488,7 +490,7 @@ const CashboxFormModal = ({
                                                                 }
                                                                 autoComplete="off"
                                                                 placeholder={
-                                                                    "Цена"
+                                                                    t("common.price")
                                                                 }
                                                                 value={
                                                                     field.value ||
@@ -611,7 +613,7 @@ const CashboxFormModal = ({
                 </div>
                 <div className="mt-5 flex justify-end gap-x-3">
                     <Button type="button" onClick={onCloseModal}>
-                        Отменить
+                        {t("common.cancel")}
                     </Button>
                     <Button
                         loading={
@@ -626,7 +628,7 @@ const CashboxFormModal = ({
                         variant="solid"
                         className="self-end"
                     >
-                        Сохранить
+                        {t("common.save")}
                     </Button>
                 </div>
             </Form>

@@ -1,5 +1,6 @@
 import classNames from "@/shared/lib/classNames";
 import FormattedNumber from "@/shared/ui/kit-pro/numeric-format/NumericFormat";
+import { useTranslation } from "react-i18next";
 import {
     flexRender,
     getCoreRowModel,
@@ -15,6 +16,7 @@ import Empty from "@/shared/ui/kit-pro/empty/Empty";
 import { useColumns } from "./table/table";
 
 const AllReport = ({ data }: { data: any }) => {
+    const { t } = useTranslation();
     const table1 = useReactTable({
         data: data?.overall_period_report?.sales_items_summary || [],
         columns: useColumns(1),
@@ -49,11 +51,11 @@ const AllReport = ({ data }: { data: any }) => {
                 <div className="flex flex-col gap-4 col-span-1">
                     <div className="border border-slate-200 rounded-lg p-4">
                         <h3 className="text-sm font-medium mb-3">
-                            Отчёты по продажам
+                            {t("report.salesReport")}
                         </h3>
                         <div className="grid grid-cols-2 gap-3">
                             <div className="p-4 bg-slate-200 rounded-md flex flex-col gap-y-0.5">
-                                <span className="text-xs">Прибыль</span>
+                                <span className="text-xs">{t("sale.profit")}</span>
                                 <span className="text-base font-medium text-slate-800">
                                     <FormattedNumber
                                         value={
@@ -65,7 +67,7 @@ const AllReport = ({ data }: { data: any }) => {
                                 </span>
                             </div>
                             <div className="p-4 bg-slate-200 rounded-md flex flex-col gap-y-0.5">
-                                <span className="text-xs">Долг</span>
+                                <span className="text-xs">{t("sale.debt")}</span>
                                 <span className="text-base font-medium text-slate-800">
                                     <FormattedNumber
                                         value={
@@ -77,7 +79,7 @@ const AllReport = ({ data }: { data: any }) => {
                                 </span>
                             </div>
                             <div className="p-4 bg-slate-200 rounded-md flex flex-col gap-y-0.5">
-                                <span className="text-xs">Продажи</span>
+                                <span className="text-xs">{t("shift.sale")}</span>
                                 <span className="text-base font-medium text-slate-800">
                                     <FormattedNumber
                                         value={
@@ -89,7 +91,7 @@ const AllReport = ({ data }: { data: any }) => {
                                 </span>
                             </div>
                             <div className="p-4 bg-slate-200 rounded-md flex flex-col gap-y-0.5">
-                                <span className="text-xs">Скидка</span>
+                                <span className="text-xs">{t("sale.discount")}</span>
                                 <span className="text-base font-medium text-slate-800">
                                     <FormattedNumber
                                         value={
@@ -104,11 +106,11 @@ const AllReport = ({ data }: { data: any }) => {
                     </div>
                     <div className="border border-slate-200 rounded-lg p-4">
                         <h3 className="text-sm font-medium mb-3">
-                            Отчёты по приходу и возвратам
+                            {t("report.purchaseReport")}
                         </h3>
                         <div className="grid grid-cols-2 gap-3">
                             <div className="p-4 bg-slate-200 rounded-md flex flex-col gap-y-0.5">
-                                <span className="text-xs">Приходы</span>
+                                <span className="text-xs">{t("sale.purchase")}</span>
                                 <span className="text-base font-medium text-slate-800">
                                     <FormattedNumber
                                         value={
@@ -120,7 +122,7 @@ const AllReport = ({ data }: { data: any }) => {
                                 </span>
                             </div>
                             <div className="p-4 bg-slate-200 rounded-md flex flex-col gap-y-0.5">
-                                <span className="text-xs">Возврат</span>
+                                <span className="text-xs">{t("sale.refund")}</span>
                                 <span className="text-base font-medium text-slate-800">
                                     <FormattedNumber
                                         value={
@@ -133,7 +135,7 @@ const AllReport = ({ data }: { data: any }) => {
                             </div>
                             <div className="p-4 bg-slate-200 rounded-md flex flex-col gap-y-0.5">
                                 <span className="text-xs">
-                                    Возвраты поставщику
+                                    {t("nav.returnToSupplier")}
                                 </span>
                                 <span className="text-base font-medium text-slate-800">
                                     <FormattedNumber
@@ -149,11 +151,11 @@ const AllReport = ({ data }: { data: any }) => {
                     </div>
                     <div className="border border-slate-200 rounded-lg p-4">
                         <h3 className="text-sm font-medium mb-3">
-                            Отчёты по платежам
+                            {t("sale.payment")}
                         </h3>
                         <div className="grid grid-cols-2 gap-3">
                             <div className="p-4 bg-slate-200 rounded-md flex flex-col gap-y-0.5">
-                                <span className="text-xs">Оплата</span>
+                                <span className="text-xs">{t("sale.payment")}</span>
                                 <span className="text-base font-medium text-slate-800">
                                     <FormattedNumber
                                         value={
@@ -165,7 +167,7 @@ const AllReport = ({ data }: { data: any }) => {
                                 </span>
                             </div>
                             <div className="p-4 bg-slate-200 rounded-md flex flex-col gap-y-0.5">
-                                <span className="text-xs">Выплата</span>
+                                <span className="text-xs">{t("cashbox.cashPayout")}</span>
                                 <span className="text-base font-medium text-slate-800">
                                     <FormattedNumber
                                         value={
@@ -177,7 +179,7 @@ const AllReport = ({ data }: { data: any }) => {
                                 </span>
                             </div>
                             <div className="p-4 bg-slate-200 rounded-md flex flex-col gap-y-0.5">
-                                <span className="text-xs">Общие расходы</span>
+                                <span className="text-xs">{t("cashbox.expenses")}</span>
                                 <span className="text-base font-medium text-slate-800">
                                     <FormattedNumber
                                         value={
@@ -194,7 +196,7 @@ const AllReport = ({ data }: { data: any }) => {
                 <div className="flex flex-col gap-4 col-span-2">
                     <div className="w-full">
                         <h3 className="text-sm font-medium mb-3">
-                            Топ-10 самых прибыльных товаров
+                            {t("report.top10Profitable")}
                         </h3>
                         <div className="border border-slate-200 rounded-lg">
                             <Table
@@ -317,7 +319,7 @@ const AllReport = ({ data }: { data: any }) => {
                     </div>
                     <div className="w-full">
                         <h3 className="text-sm font-medium mb-3">
-                            Топ-10 самых продаваемых товаров
+                            {t("report.top10BestSelling")}
                         </h3>
                         <div className="border border-slate-200 rounded-lg">
                             <Table
@@ -433,7 +435,7 @@ const AllReport = ({ data }: { data: any }) => {
                     </div>
                     <div className="w-full">
                         <h3 className="text-sm font-medium mb-3">
-                            Топ-10 самых прибыльных клиентов
+                            {t("report.top10ProfitableClients")}
                         </h3>
                         <div className="border border-slate-200 rounded-lg">
                             <Table
@@ -556,7 +558,7 @@ const AllReport = ({ data }: { data: any }) => {
                     </div>
                     <div className="w-full">
                         <h3 className="text-sm font-medium mb-3">
-                            Топ-10 клиентов с наибольшими продажами
+                            {t("report.top10TopSalesClients")}
                         </h3>
                         <div className="border border-slate-200 rounded-xl">
                             <Table

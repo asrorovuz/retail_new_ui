@@ -30,6 +30,7 @@ import {
     ContractorById,
     ReturnPurchaseOperation,
     ReturnPurchaseHistory,
+    SmenaPage,
 } from "./RoutePath";
 import { PrivateRoute, PublicRoute } from "./PrivateRoute";
 import Counterparty from "@/pages/counterparty";
@@ -130,6 +131,7 @@ export const AppRouter = () => (
                             element={<PeriodReport />}
                         />
                         <Route path="/account" element={<AccountPage />} />
+                        <Route path="/smena" element={<SmenaPage />} />
                     </Route>
                 </Route>
 

@@ -33,6 +33,7 @@ import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { IoTrashOutline } from "react-icons/io5";
 import { TbEye } from "react-icons/tb";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const TableHistory = ({
     data,
@@ -57,6 +58,7 @@ const TableHistory = ({
     type: "sale" | "refund" | "purchase";
     countyparty?: boolean;
 }) => {
+    const { t } = useTranslation();
     const [id, setId] = useState(null);
     const [isOpenDelete, setIsOpenDelete] = useState(false);
     const navigate = useNavigate();
@@ -229,7 +231,7 @@ const TableHistory = ({
                               bodyCellClassName:
                                   "font-bold truncate text-center",
                           },
-                          header: () => "Контрагент",
+                          header: () => t("counterparty.title"),
                       }),
                   ]
                 : []),
@@ -241,7 +243,7 @@ const TableHistory = ({
                 meta: {
                     bodyCellClassName: "text-end",
                 },
-                header: () => "Итого",
+                header: () => t("common.total"),
                 cell: ({ row }) => {
                     const totals = row.original?.totals;
                     return (
@@ -275,7 +277,7 @@ const TableHistory = ({
                           meta: {
                               bodyCellClassName: "text-end min-w-[175px]",
                           },
-                          header: () => "Оплата",
+                          header: () => t("sale.payment"),
                           cell: ({ row }) => {
                               const { [payKey as string]: payData } =
                                   row.original as any;
@@ -369,7 +371,7 @@ const TableHistory = ({
                           meta: {
                               bodyCellClassName: "text-end",
                           },
-                          header: () => "Скидка",
+                          header: () => t("sale.discount"),
                           cell: ({ row }) => {
                               const totals = row.original?.exact_discounts;
                               console.log(row.original);
@@ -412,7 +414,7 @@ const TableHistory = ({
                           meta: {
                               bodyCellClassName: "text-end min-w-[175px]",
                           },
-                          header: () => "Долг",
+                          header: () => t("sale.debt"),
                           cell: ({ row }) => {
                               const debts = row.original?.debts;
                               return (
@@ -462,7 +464,7 @@ const TableHistory = ({
                               bodyCellClassName:
                                   "font-bold truncate text-center",
                           },
-                          header: () => "Сотрудник",
+                          header: () => t("common.employee"),
                       }),
                   ]
                 : []),
@@ -473,7 +475,7 @@ const TableHistory = ({
                 meta: {
                     bodyCellClassName: "font-bold truncate text-center",
                 },
-                header: () => "Фиск.",
+                header: () => t("sale.fiscalized"),
                 cell: ({ row }) => {
                     const status = row.original?.is_fiscalized;
 
@@ -486,7 +488,7 @@ const TableHistory = ({
                                     : "bg-orange-100 text-orange-700",
                             )}
                         >
-                            {status ? "Фиск." : "Не фиск."}
+                            {status ? t("sale.fiscalized") : t("sale.notFiscalized")}
                         </div>
                     );
                 },
@@ -499,7 +501,7 @@ const TableHistory = ({
                 meta: {
                     bodyCellClassName: "font-bold truncate text-center",
                 },
-                header: () => "Дата",
+                header: () => t("common.date"),
                 cell: ({ row }) => {
                     const date = row.original?.date;
                     return <div>{new Date(date).toLocaleString()}</div>;
@@ -532,7 +534,7 @@ const TableHistory = ({
                             >
                                 <div className="w-full flex items-center gap-2 text-slate-700 py-3 px-5 rounded-lg">
                                     <TbEye size={22} />
-                                    Посмотреть
+                                    {t("common.view")}
                                 </div>
                             </DropdownItem>
                         )}
@@ -543,7 +545,7 @@ const TableHistory = ({
                             >
                                 <div className="w-full flex items-center gap-2 text-orange-500 py-3 px-5 rounded-lg">
                                     <FaRegEdit size={20} />
-                                    Редактировать
+                                    {t("common.edit")}
                                 </div>
                             </DropdownItem>
                         )}
@@ -557,7 +559,7 @@ const TableHistory = ({
                             >
                                 <div className="w-full flex items-center gap-2 text-red-500 py-3 px-5 rounded-lg">
                                     <IoTrashOutline size={20} />
-                                    Удалить
+                                    {t("common.delete")}
                                 </div>
                             </DropdownItem>
                         )}
@@ -566,7 +568,7 @@ const TableHistory = ({
             }),
         ];
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [data, params]);
+    }, [data, params, t]);
 
     const summary = useMemo(() => {
         let totalsAmount = 0;
@@ -712,7 +714,7 @@ const TableHistory = ({
                                 <Tr className="font-bold border">
                                     {/* № */}
                                     <Td>
-                                        <div className="px-4 py-1">Итого</div>
+                                        <div className="px-4 py-1">{t("common.total")}</div>
                                     </Td>
 
                                     {/* Номер */}
@@ -811,20 +813,20 @@ const TableHistory = ({
             <ConfirmDialog
                 type="danger"
                 className={"w-[600px]"}
-                title="Вы уверены, что хотите продолжить?"
+                title={t("alert.confirmDelete")}
                 isOpen={isOpenDelete}
                 confirmButtonProps={{
                     loading: deletePending,
                     onClick: onDeleteFunc,
                 }}
-                cancelText="Отмена"
-                confirmText="Удалить"
+                cancelText={t("common.cancel")}
+                confirmText={t("common.delete")}
                 onClose={onCloseDeleteProductDialog}
                 onRequestClose={onCloseDeleteProductDialog}
                 onCancel={onCloseDeleteProductDialog}
             >
                 <p className="text-gray-600">
-                    Удаление записи. Это действие нельзя отменить.
+                    {t("alert.cannotUndo")}
                 </p>
             </ConfirmDialog>
 

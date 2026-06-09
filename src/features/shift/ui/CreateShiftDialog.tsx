@@ -22,6 +22,7 @@ import {
 } from "@tanstack/react-table";
 import { useMemo } from "react";
 import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
 
 type PropsType = {
   isOpen: boolean;
@@ -38,6 +39,7 @@ export const paymentTypes = {
 };
 
 const CreateShiftDialog = ({ isOpen, onClose }: PropsType) => {
+  const { t } = useTranslation();
   const { data: cashboxs, isPending } = useCashboxApi(isOpen);
   const { mutate: createShiftMutate, isPending: createShiftPending } =
     useCreateShiftApi();
@@ -71,7 +73,7 @@ const CreateShiftDialog = ({ isOpen, onClose }: PropsType) => {
     () => [
       {
         accessorKey: "type",
-        header: () => <p className="font-normal text-left">Типы платежей</p>,
+        header: () => <p className="font-normal text-left">{t("shift.paymentTypes")}</p>,
         cell: (info) => {
           const item = info.row.original;
           return (
@@ -89,7 +91,7 @@ const CreateShiftDialog = ({ isOpen, onClose }: PropsType) => {
       },
       {
         accessorKey: "sum",
-        header: () => <p className="font-normal text-left">Сумма</p>,
+        header: () => <p className="font-normal text-left">{t("common.amount")}</p>,
         cell: (info) => {
           const item = info.row.original;
           return (
@@ -117,7 +119,7 @@ const CreateShiftDialog = ({ isOpen, onClose }: PropsType) => {
       width={480}
       onClose={onClose}
       isOpen={isOpen}
-      title={"Открыть смену"}
+      title={t("shift.openShift")}
     >
       <div className="flex flex-col h-full max-h-[70vh]">
         {/* <p className="text-sm text-slate-500">Остатки с последней смены</p> */}
@@ -130,8 +132,8 @@ const CreateShiftDialog = ({ isOpen, onClose }: PropsType) => {
           {!isPending && !cashboxs?.[0]?.amounts?.length ? (
             <div className="border border-slate-200 rounded-2xl">
               <div className="grid grid-cols-2 py-2 px-3 border-b">
-                <p>ТИП ПЛАТЕЖИ</p>
-                <p>СУММА</p>
+                <p>{t("shift.paymentTypes")}</p>
+                <p>{t("common.amount")}</p>
               </div>
               <div className="h-[256px] flex justify-center items-center">
                 <Empty
@@ -187,7 +189,7 @@ const CreateShiftDialog = ({ isOpen, onClose }: PropsType) => {
 
               <div className="p-3 bg-white border border-slate-200 rounded-b-2xl">
                 <div className="flex justify-between items-center">
-                  <span className="text-base font-medium">Общая сумма:</span>
+                  <span className="text-base font-medium">{t("common.total")}:</span>
                   <span className="font-medium text-primary flex gap-x-1">
                     <FormattedNumber
                       value={cashboxs?.[0]?.amounts.reduce(
@@ -205,14 +207,14 @@ const CreateShiftDialog = ({ isOpen, onClose }: PropsType) => {
 
         <div className="flex gap-2 justify-end mt-6">
           <Button onClick={onClose} disabled={createShiftPending}>
-            Отменить
+            {t("common.cancel")}
           </Button>
           <Button
             variant="solid"
             onClick={() => handleShiftCreate()}
             disabled={createShiftPending}
           >
-            {createShiftPending ? "Открытие..." : "Открыть смену"}
+            {createShiftPending ? t("common.loading") : t("shift.openShift")}
           </Button>
         </div>
       </div>

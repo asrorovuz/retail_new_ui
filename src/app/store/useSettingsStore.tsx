@@ -19,7 +19,8 @@ const initialState: SettingsStoreInitialState = {
   ],
   wareHouseId: null,
   warhouse: null,
-  permissionList: []
+  permissionList: [],
+  pendingShiftOpen: false,
 };
 
 export const useSettingsStore = create<SettingsStoreInitialState & SettingsStoreActions>(
@@ -32,6 +33,7 @@ export const useSettingsStore = create<SettingsStoreInitialState & SettingsStore
     setWareHouse: (payload: number) => set({warhouse: payload}),
     setActiveShift: (payload: Shift | null) =>
         set(() => ({ activeShift: payload })),
-    setPermissionList: (payload: number[]) => set({permissionList: payload})
+    setPermissionList: (payload: number[]) => set({permissionList: payload}),
+    setPendingShiftOpen: (payload: boolean) => set({ pendingShiftOpen: payload }),
   })
 );

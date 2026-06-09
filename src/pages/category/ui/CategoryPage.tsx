@@ -25,6 +25,7 @@ import {
 } from "@/shared/lib/showMessage";
 import ConfirmDialog from "@/shared/ui/kit-pro/confirm-dialog/ConfirmDialog";
 import { messages } from "@/app/constants/message.request";
+import { useTranslation } from "react-i18next";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -45,6 +46,7 @@ const columnHelper = createColumnHelper<Category>();
 // ─── Component ────────────────────────────────────────────────────────────────
 
 const CategoryPage = () => {
+    const { t } = useTranslation();
     const { data = [] } = useCategoryTreeApi();
     const [expanded, setExpanded] = useState<ExpandedState>({});
     const [modals, setModals] = useState<any[]>([]);
@@ -60,7 +62,7 @@ const CategoryPage = () => {
     const columns = useMemo(
         () => [
             columnHelper.accessor("name", {
-                header: "Наименование ",
+                header: () => t("common.name"),
                 cell: ({ row, getValue }) => {
                     const depth = row.depth;
                     const hasChildren = row.original.children?.length > 0;
@@ -133,7 +135,7 @@ const CategoryPage = () => {
                 size: 140,
             }),
         ],
-        [],
+        [t],
     );
 
     const onCloseDeleteProductDialog = () => {
@@ -213,7 +215,7 @@ const CategoryPage = () => {
         <div className="bg-white h-screen p-2 flex flex-col gap-y-2">
             {/* Header */}
             <div className="flex items-center justify-between">
-                <NavigateButton content={"КАТЕГОРИЯ ТОВАРОВ"} />
+                <NavigateButton content={t("category.title")} />
                 <Button
                     onClick={() =>
                         handleShowAdd({
@@ -226,7 +228,7 @@ const CategoryPage = () => {
                     size="sm"
                     variant="solid"
                 >
-                    + Добавить категорию
+                    + {t("category.addCategory")}
                 </Button>
             </div>
 
@@ -258,7 +260,7 @@ const CategoryPage = () => {
                                     colSpan={columns.length}
                                     className="text-center py-12 text-sm"
                                 >
-                                    Категории не найдены
+                                    {t("category.notFound")}
                                 </td>
                             </tr>
                         ) : (
@@ -325,20 +327,20 @@ const CategoryPage = () => {
             <ConfirmDialog
                 type="danger"
                 className={"w-[600px]"}
-                title="Вы уверены, что хотите удалить эту категорию?"
+                title={t("alert.confirmDelete")}
                 isOpen={deleteModalOpen}
                 confirmButtonProps={{
                     loading: productDeleteLoading,
                     onClick: onDeleteProduct,
                 }}
-                cancelText="Отмена"
-                confirmText="Удалить"
+                cancelText={t("common.cancel")}
+                confirmText={t("common.delete")}
                 onClose={onCloseDeleteProductDialog}
                 onRequestClose={onCloseDeleteProductDialog}
                 onCancel={onCloseDeleteProductDialog}
             >
                 <p className="text-gray-600">
-                    После удаления восстановить категорию будет невозможно.
+                    {t("alert.cannotUndo")}
                 </p>
             </ConfirmDialog>
         </div>

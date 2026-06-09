@@ -38,6 +38,7 @@ import { AccountPermissions } from "@/app/constants/permissions";
 import { useCheckPermission } from "@/shared/lib/checkPermission";
 import { useCategoryApi } from "@/entities/categories/repository";
 import { IoTrashOutline } from "react-icons/io5";
+import { useTranslation } from "react-i18next";
 
 const ProductHeader = ({
     search,
@@ -51,6 +52,7 @@ const ProductHeader = ({
     setBarcode,
     setIsOpenExcel,
 }: any) => {
+    const { t } = useTranslation();
     const [openFilter, setOpenFilter] = useState(false);
     const [showInformation, setShowInformation] = useState(false);
     const [isUpdateCatalogCodeOpen, setIsUpdateCatalogCodeOpen] =
@@ -80,7 +82,7 @@ const ProductHeader = ({
                 exportToExcelApi(data, "products");
             },
             onError() {
-                showErrorLocalMessage("Ошибка при экспорте");
+                showErrorLocalMessage(t("common.exportError"));
             },
         });
     };
@@ -108,7 +110,7 @@ const ProductHeader = ({
                 <Select
                     className="w-[200px]"
                     options={stateOptions}
-                    placeholder="Остатки товары"
+                    placeholder={t("product.stock")}
                     isSearchable={false}
                     value={stateOptions.find(
                         (opt) => opt.value === filterParams?.state,
@@ -125,7 +127,7 @@ const ProductHeader = ({
                 />
                 <Select
                     options={categoryItemOptions}
-                    placeholder="Выберите категорию"
+                    placeholder={t("product.category")}
                     value={
                         categoryItemOptions.find(
                             (opt) => opt.value === filterParams.category_id,
@@ -162,7 +164,7 @@ const ProductHeader = ({
                     className="text-sm font-medium"
                     onClick={() => setShowInformation(true)}
                 >
-                    Отчёт
+                    {t("common.report")}
                 </Button>
 
                 <DownloadFileForScales handleExport={handleExport} />
@@ -171,7 +173,7 @@ const ProductHeader = ({
                     toggleClassName="text-base text-slate-600 flex justify-center"
                     renderTitle={
                         <Button variant="solid" size="sm">
-                            + Добавить
+                            + {t("common.add")}
                         </Button>
                     }
                 >
@@ -191,7 +193,7 @@ const ProductHeader = ({
                                     <span className="text-green-700">
                                         <CiSquarePlus size={20} />
                                     </span>{" "}
-                                    Добавить товар
+                                    {t("product.addProduct")}
                                 </div>
                             </DropdownItem>
                             <DropdownItem
@@ -204,7 +206,7 @@ const ProductHeader = ({
                                     <span className="text-green-700">
                                         <CiSquarePlus size={20} />
                                     </span>{" "}
-                                    Добавить несколько товаров
+                                    {t("product.addMultiple")}
                                 </div>
                             </DropdownItem>
                             <DropdownItem
@@ -215,7 +217,7 @@ const ProductHeader = ({
                                     <span className="text-green-700">
                                         <PiMicrosoftExcelLogo size={20} />
                                     </span>{" "}
-                                    Импорт из Excel
+                                    {t("product.importExcel")}
                                 </div>
                             </DropdownItem>
 
@@ -230,7 +232,7 @@ const ProductHeader = ({
                                         <span className="text-red-500">
                                             <IoTrashOutline size={20} />
                                         </span>{" "}
-                                        Массовое удаление
+                                        {t("product.deleteSelected")}
                                     </div>
                                 </DropdownItem>
                             )}
@@ -245,7 +247,7 @@ const ProductHeader = ({
                             <span className="text-orange-700">
                                 <FiRefreshCw size={20} />
                             </span>{" "}
-                            Обновить код ИКПУ
+                            {t("product.updateIkpu")}
                         </div>
                     </DropdownItem>
                 </Dropdown>
@@ -273,11 +275,11 @@ const ProductHeader = ({
                 width={"80vw"}
                 overlayClassName={"!backdrop-filter-none"}
                 onRequestClose={() => setOpenFilter(false)}
-                title={"Фильтр"}
+                title={t("common.filter")}
             >
                 <div className="grid grid-cols-4 gap-4 mb-5">
                     <div className="flex flex-col col-span-1 gap-1">
-                        <label className="text-sm text-slate-600">Товар</label>
+                        <label className="text-sm text-slate-600">{t("product.products")}</label>
                         <Select
                             options={isLegalOptions}
                             value={isLegalOptions.find(
@@ -300,11 +302,11 @@ const ProductHeader = ({
                     {/* Категория */}
                     <div className="flex flex-col col-span-1 gap-1">
                         <label className="text-sm text-slate-600">
-                            Категория
+                            {t("product.category")}
                         </label>
                         <Select
                             options={categoryOptions}
-                            placeholder="Выберите"
+                            placeholder={t("common.select")}
                             value={categoryOptions.find(
                                 (opt) =>
                                     opt.value === filterParams.category_exists,
@@ -334,11 +336,11 @@ const ProductHeader = ({
                     {/* Единица измерения */}
                     <div className="flex flex-col gap-1">
                         <label className="text-sm text-slate-600">
-                            Единица измерения
+                            {t("product.unit")}
                         </label>
                         <Select
                             options={measurmentOptions}
-                            placeholder="Выберите"
+                            placeholder={t("common.select")}
                             value={
                                 measurmentOptions.find(
                                     (opt) =>
@@ -367,11 +369,11 @@ const ProductHeader = ({
                     {/* Артикул */}
                     <div className="flex flex-col gap-1">
                         <label className="text-sm text-slate-600">
-                            Артикул
+                            {t("product.sku")}
                         </label>
                         <Select
                             options={artiklOptions}
-                            placeholder="Выберите"
+                            placeholder={t("common.select")}
                             value={artiklOptions.find(
                                 (opt) => opt.value === filterParams.sku_exists,
                             )}
@@ -392,12 +394,12 @@ const ProductHeader = ({
                     {/* Штрих-код */}
                     <div className="flex flex-col gap-1">
                         <label className="text-sm text-slate-600">
-                            Штрих-код
+                            {t("product.barcode")}
                         </label>
 
                         <Select
                             options={barcodeOptions}
-                            placeholder="Выберите"
+                            placeholder={t("common.select")}
                             value={barcodeOptions.find(
                                 (opt) =>
                                     opt.value === filterParams.barcode_exists,
@@ -421,12 +423,12 @@ const ProductHeader = ({
                     {/* МХИК */}
                     <div className="flex flex-col gap-1">
                         <label className="text-sm text-slate-600">
-                            Код МХИК
+                            {t("product.catalogCode")}
                         </label>
 
                         <Select
                             options={mxikOptions}
-                            placeholder="Выберите"
+                            placeholder={t("common.select")}
                             value={mxikOptions.find(
                                 (opt) =>
                                     opt.value ===
@@ -451,12 +453,12 @@ const ProductHeader = ({
                     {/* Код упаковки */}
                     <div className="flex flex-col gap-1">
                         <label className="text-sm text-slate-600">
-                            Код упаковки
+                            {t("product.code")}
                         </label>
 
                         <Select
                             options={packageCodeOptions}
-                            placeholder="Выберите"
+                            placeholder={t("common.select")}
                             value={packageCodeOptions.find(
                                 (opt) => opt.value === filterParams.code_exists,
                             )}
@@ -479,12 +481,12 @@ const ProductHeader = ({
                     {/* Saralash */}
                     <div className="flex flex-col col-span-2 gap-1">
                         <label className="text-sm text-slate-600">
-                            Сортировка
+                            {t("common.sort")}
                         </label>
 
                         <Select
                             options={sortOptions}
-                            placeholder="Выберите"
+                            placeholder={t("common.select")}
                             value={sortOptions.find(
                                 (opt) => opt.value === filterParams.sort,
                             )}
@@ -506,15 +508,15 @@ const ProductHeader = ({
                     {/* Кирим нархи сотув нархидан каттами */}
                     <div className="flex flex-col gap-1">
                         <label
-                            title="Закупочная цена выше продажной"
+                            title={t("product.purchaseAboveSale")}
                             className="text-sm text-ellipsis line-clamp-1 text-slate-600"
                         >
-                            Закупочная цена выше продажной
+                            {t("product.purchaseAboveSale")}
                         </label>
 
                         <Select
                             options={purchaseGreaterThanSaleOptions}
-                            placeholder="Выберите"
+                            placeholder={t("common.select")}
                             value={purchaseGreaterThanSaleOptions.find(
                                 (opt) =>
                                     opt.value ===
@@ -542,7 +544,7 @@ const ProductHeader = ({
                             variant="solid"
                             onClick={() => setFilterParams(defaultParams)}
                         >
-                            Сбросить
+                            {t("common.reset")}
                         </Button>
                     </div>
                 </div>

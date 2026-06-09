@@ -9,7 +9,7 @@ import {
     Form,
     FormItem,
     Input,
-    // Select,
+    Select,
     Switcher,
 } from "@/shared/ui/kit";
 import { useEffect } from "react";
@@ -17,6 +17,7 @@ import { Controller, FormProvider, useForm } from "react-hook-form";
 
 const LanguageOptions = [
     { label: "O'zbekcha", value: "uz" },
+    { label: "Ўзбекча (Кирил)", value: "oz" },
     { label: "Русский", value: "ru" },
 ];
 
@@ -27,7 +28,7 @@ const OtherSettings = () => {
     const form = useForm();
 
     const onSubmit = async (values: any) => {
-        const lang = values.lang?.value ?? "ru";
+        const lang = values.lang?.value ?? "uz";
         updateSettings(
             {
                 ...settingsData,
@@ -72,14 +73,16 @@ const OtherSettings = () => {
         <div className="p-3 rounded-lg bg-white w-full">
             <FormProvider {...form}>
                 <Form onSubmit={form.handleSubmit(onSubmit)}>
-                    {/* <div className="bg-white rounded-lg border p-4 mb-4">
-                        <h3 className="text-base font-medium mb-4">Язык</h3>
+                    <div className="bg-white rounded-lg border p-4 mb-4">
+                        <h3 className="text-base font-medium mb-4">
+                            Til / Язык / Тил
+                        </h3>
                         <Controller
                             name="lang"
                             control={form.control}
                             render={({ field }) => (
                                 <FormItem
-                                    label="Язык интерфейса"
+                                    label="Interfeys tili / Язык интерфейса"
                                     className="mb-0"
                                 >
                                     <Select
@@ -89,13 +92,13 @@ const OtherSettings = () => {
                                         isSearchable={false}
                                         getOptionLabel={(o) => o.label}
                                         getOptionValue={(o) => o.value}
-                                        placeholder="Выбрать"
+                                        placeholder="Tanlash / Выбрать"
                                         className="border border-slate-300 rounded-xl text-sm"
                                     />
                                 </FormItem>
                             )}
                         />
-                    </div> */}
+                    </div>
 
                     <div className="bg-white rounded-lg border p-4 mb-4">
                         <h3 className="text-base font-medium mb-4">

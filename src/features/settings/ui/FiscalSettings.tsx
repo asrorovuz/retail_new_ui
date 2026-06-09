@@ -16,8 +16,10 @@ import ProductSelectionTable from "./ProductSelectionTable";
 import { useSettingsStore } from "@/app/store/useSettingsStore";
 import CatalogSelectorFiscal from "@/features/catalog-selector/ui/CatalogSelectorFiscal";
 import { FiscalizedSection } from "@/features/fiscalized";
+import { useTranslation } from "react-i18next";
 
 const FiscalizationSettings = () => {
+    const { t } = useTranslation();
     const [selectionDialogShow, setSelectionDialogShow] = useState(false);
     const [packageNames, setPackageNames] = useState<Package[] | []>();
     const [show, setShow] = useState(false);
@@ -68,17 +70,17 @@ const FiscalizationSettings = () => {
             const item = data.fiscalization_default_items;
 
             if (!item?.product_name) {
-                showErrorLocalMessage("Название продукта обязательно");
+                showErrorLocalMessage(t("settings.productNameRequired"));
                 return;
             }
 
             if (!item?.catalog) {
-                showErrorLocalMessage("ИКПУ код обязателен");
+                showErrorLocalMessage(t("settings.ikpuRequired"));
                 return;
             }
 
             if (!item?.package) {
-                showErrorLocalMessage("Код упаковки обязателен");
+                showErrorLocalMessage(t("settings.packageRequired"));
                 return;
             }
         }
@@ -132,7 +134,7 @@ const FiscalizationSettings = () => {
         <>
             <Card className="p-3 rounded-lg bg-white w-full select-none">
                 <h2 className="text-lg font-semibold text-slate-800 mb-5">
-                    Настройки фискализации
+                    {t("settings.fiscalization")}
                 </h2>
 
                 <form onSubmit={handleSubmit(onSubmit)}>
@@ -150,7 +152,7 @@ const FiscalizationSettings = () => {
                                 }}
                             />
                             <label className="text-base text-slate-700 select-none">
-                                Фискализировать только белых товаров
+                                {t("settings.fiscalizeOnlyLegal")}
                             </label>
                         </div>
 
@@ -167,7 +169,7 @@ const FiscalizationSettings = () => {
                                 }}
                             />
                             <label className="text-base text-slate-700 select-none">
-                                Фискализировать только продукт по умолчанию
+                                {t("settings.fiscalizeOnlyDefault")}
                             </label>
                         </div>
                     </div>
@@ -182,7 +184,7 @@ const FiscalizationSettings = () => {
                             htmlFor="product-name"
                             className="text-slate-700 font-medium text-sm pt-2"
                         >
-                            Название
+                            {t("common.name")}
                         </label>
                         <div className="flex flex-col">
                             <div className="flex items-center space-x-2">
@@ -193,7 +195,7 @@ const FiscalizationSettings = () => {
                                         <Input
                                             id="product-name"
                                             size="sm"
-                                            placeholder="Введите название"
+                                            placeholder={t("common.name")}
                                             {...field}
                                             value={field.value ?? ""}
                                         />
@@ -207,7 +209,7 @@ const FiscalizationSettings = () => {
                                     type="button"
                                     onClick={() => setSelectionDialogShow(true)}
                                 >
-                                    Выбрать
+                                    {t("common.select")}
                                 </Button>
                             </div>
                             <FieldErrorMsg name="product_name" />
@@ -217,7 +219,7 @@ const FiscalizationSettings = () => {
                             htmlFor="catalog-code"
                             className="text-slate-700 font-medium text-sm pt-2"
                         >
-                            ИКПУ-код
+                            {t("product.ikpu")}
                         </label>
                         <div className="flex flex-col">
                             <Controller
@@ -227,7 +229,7 @@ const FiscalizationSettings = () => {
                                     return (
                                         <CatalogSelectorFiscal
                                             {...field}
-                                            placeholder={"Введите ИКПУ-код"}
+                                            placeholder={t("product.ikpu")}
                                             value={field.value}
                                             setValue={setValue}
                                             getValues={getValues}
@@ -245,7 +247,7 @@ const FiscalizationSettings = () => {
                             htmlFor="package-code"
                             className="text-slate-700 font-medium text-sm pt-2"
                         >
-                            Код упаковки
+                            {t("product.code")}
                         </label>
                         <div className="flex flex-col">
                             <Controller
@@ -257,7 +259,7 @@ const FiscalizationSettings = () => {
                                         options={packageNames || []}
                                         value={field?.value}
                                         setValue={setValue}
-                                        placeholder={"Введите Ед. изм."}
+                                        placeholder={t("product.unit")}
                                         onChange={field.onChange}
                                     />
                                 )}
@@ -268,7 +270,7 @@ const FiscalizationSettings = () => {
                             htmlFor="nds-rate"
                             className="text-slate-700 font-medium text-sm pt-2"
                         >
-                            НДС ставка
+                            {t("settings.ndsRate")}
                         </label>
                         <div className="flex flex-col">
                             <Controller
@@ -277,11 +279,11 @@ const FiscalizationSettings = () => {
                                 render={({ field }) => (
                                     <Select
                                         id="nds-rate"
-                                        placeholder="Выберите ставку"
+                                        placeholder={t("common.select")}
                                         isSearchable={false}
                                         size="sm"
                                         options={[
-                                            { label: "Без НДС", value: null },
+                                            { label: t("settings.noNds"), value: null },
                                             { label: "0%", value: 0 },
                                             { label: "12%", value: 12 },
                                             { label: "15%", value: 15 },
@@ -289,7 +291,7 @@ const FiscalizationSettings = () => {
                                         value={
                                             [
                                                 {
-                                                    label: "Без НДС",
+                                                    label: t("settings.noNds"),
                                                     value: null,
                                                 },
                                                 { label: "0%", value: 0 },
@@ -328,14 +330,14 @@ const FiscalizationSettings = () => {
                             size="sm"
                             loading={isPending}
                         >
-                            Сохранить
+                            {t("common.save")}
                         </Button>
                     </div>
 
                     <Dialog
                         closable
                         isOpen={selectionDialogShow}
-                        title={"Выбрать продукт"}
+                        title={t("settings.selectProduct")}
                         className={"max-w-[99vw] min-w-[99vw] h-[90vh]"}
                         onClose={() => setSelectionDialogShow(false)}
                     >
@@ -350,7 +352,7 @@ const FiscalizationSettings = () => {
             <Card className="p-3 rounded-lg bg-white w-full select-none">
                 <div className="flex justify-between">
                     <h2 className="text-lg font-semibold text-slate-800">
-                        Список кассовых аппаратов
+                        {t("settings.cashboxMachines")}
                     </h2>
                     <Button
                         type="button"
@@ -358,7 +360,7 @@ const FiscalizationSettings = () => {
                         size="sm"
                         variant="solid"
                     >
-                        + Добавить ККМ
+                        {t("settings.addCashboxMachine")}
                     </Button>
                 </div>
                 <FiscalizedSection show={show} handleShow={setShow} />

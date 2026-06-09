@@ -1,31 +1,34 @@
 import { Card } from "@/shared/ui/kit";
+import { useTranslation } from "react-i18next";
 
 const InfoGrid = ({ data }: { data: any }) => {
+  const { t } = useTranslation();
+
   const infoItems = [
     {
-      label: "Клиент",
-      value: data?.employee?.name ?? "Не указан",
+      label: t("counterparty.title"),
+      value: data?.employee?.name ?? t("common.notFound"),
       icon: "👤",
     },
     {
-      label: "Касса",
-      value: data?.cash_box?.name ?? "Не указана",
+      label: t("cashbox.cashbox"),
+      value: data?.cash_box?.name ?? t("common.notFound"),
       icon: "💰",
     },
     {
-      label: "Дата продажи",
+      label: t("common.date"),
       value: data?.date
         ? new Date(data.date).toLocaleDateString("ru-RU", {
             day: "2-digit",
             month: "long",
             year: "numeric",
           })
-        : "Не указана",
+        : t("common.notFound"),
       icon: "📅",
     },
     {
-      label: "Сотрудник",
-      value: data?.employee?.name ?? "Не указан",
+      label: t("common.employee"),
+      value: data?.employee?.name ?? t("common.notFound"),
       icon: "👔",
     },
   ];
@@ -35,7 +38,7 @@ const InfoGrid = ({ data }: { data: any }) => {
       <Card className="p-6 shadow-md hover:shadow-lg transition-shadow">
         <h4 className="text-lg font-semibold text-slate-700 mb-4 flex items-center gap-2">
           <span className="text-2xl">ℹ️</span>
-          Информация о продаже
+          {t("sale.sale")}
         </h4>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {infoItems?.map((item, index) => (

@@ -2,9 +2,11 @@ import type { ColumnDef } from "@tanstack/react-table";
 import FormattedNumber from "@/shared/ui/kit-pro/numeric-format/NumericFormat";
 import { truncateText } from "@/shared/lib/truncateText";
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 
 // columns funksiyasi, tashqaridan num qiymati qabul qiladi
 export const useColumns = (num: number) => {
+    const { t } = useTranslation();
     const columns = useMemo<ColumnDef<any>[]>(() => {
         const baseColumns: ColumnDef<any>[] = [
             {
@@ -25,7 +27,7 @@ export const useColumns = (num: number) => {
             baseColumns.push({
                 header: () => (
                     <div className="text-xs text-left font-medium text-slate-900">
-                        Название продукта
+                        {t("product.name")}
                     </div>
                 ),
                 accessorKey: "productName",
@@ -37,7 +39,7 @@ export const useColumns = (num: number) => {
             baseColumns.push({
                 header: () => (
                     <div className="text-xs text-left font-medium text-slate-900">
-                        Прибыль
+                        {t("sale.profit")}
                     </div>
                 ),
                 accessorKey: "amount",
@@ -59,7 +61,7 @@ export const useColumns = (num: number) => {
             baseColumns.push({
                 header: () => (
                     <div className="text-xs text-left font-medium text-slate-900">
-                        Название продукта
+                        {t("product.name")}
                     </div>
                 ),
                 accessorKey: "productName",
@@ -71,7 +73,7 @@ export const useColumns = (num: number) => {
             baseColumns.push({
                 header: () => (
                     <div className="text-xs text-left font-medium text-slate-900">
-                        Количество
+                        {t("common.quantity")}
                     </div>
                 ),
                 accessorKey: "amount",
@@ -88,7 +90,7 @@ export const useColumns = (num: number) => {
             baseColumns.push({
                 header: () => (
                     <div className="text-xs text-left font-medium text-slate-900">
-                        Название продукта
+                        {t("product.name")}
                     </div>
                 ),
                 accessorKey: "productName",
@@ -100,7 +102,7 @@ export const useColumns = (num: number) => {
             baseColumns.push({
                 header: () => (
                     <div className="text-xs font-medium text-slate-900">
-                        Прибыль
+                        {t("sale.profit")}
                     </div>
                 ),
                 accessorKey: "amount",
@@ -121,7 +123,7 @@ export const useColumns = (num: number) => {
             baseColumns.push({
                 header: () => (
                     <div className="text-xs text-left font-medium text-slate-900">
-                        Клиент
+                        {t("counterparty.title")}
                     </div>
                 ),
                 accessorKey: "productName",
@@ -133,7 +135,7 @@ export const useColumns = (num: number) => {
             baseColumns.push({
                 header: () => (
                     <div className="text-xs text-left font-medium text-slate-900">
-                        Сумма покупок
+                        {t("common.amount")}
                     </div>
                 ),
                 accessorKey: "amount",
@@ -153,7 +155,7 @@ export const useColumns = (num: number) => {
         }
 
         return baseColumns;
-    }, [num]);
+    }, [num, t]);
 
     return columns;
 };

@@ -15,6 +15,7 @@ import { useCurrencyStore } from "../store/useCurrencyStore";
 import { useVersionStore } from "../store/useVersionStore";
 import { usePermissionIdApi } from "@/entities/settings/repository";
 import { useAuthContext } from "./AuthProvider";
+import { useShiftCheck } from "@/features/shift";
 
 export const InitProvider = ({ children }: { children: ReactNode }) => {
     const {
@@ -34,6 +35,8 @@ export const InitProvider = ({ children }: { children: ReactNode }) => {
     const { data: currency } = useCurrancyApi();
     const { data: versions } = useVersionApi();
     const { data: permission } = usePermissionIdApi(user?.id);
+
+    useShiftCheck();
 
     // 📦 Ilova versiyalarini o‘rnatish
     useEffect(() => {

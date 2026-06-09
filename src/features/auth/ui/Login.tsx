@@ -11,6 +11,7 @@ import PhoneInput from "@/shared/ui/kit-pro/phone-input/PhoneInput";
 import ForgotPassord from "./ForgotPassord";
 import { useConfirmCode, useResetPass } from "@/entities/auth/repository";
 import FullKeyboard from "@/widgets/ui/keyboard/FullKeyboard";
+import { useTranslation } from "react-i18next";
 
 type OutletContextType = {
     refetch: any;
@@ -18,6 +19,7 @@ type OutletContextType = {
 };
 
 const Login = () => {
+    const { t } = useTranslation();
     const { login, loading } = useAuthContext();
     const { isRegistered } = useOutletContext<OutletContextType>();
     const navigate = useNavigate();
@@ -205,8 +207,7 @@ const Login = () => {
                                     <div className="flex flex-col items-center gap-6 px-6 pt-2 pb-6">
                                         <div className="text-center">
                                             <p className="text-base text-gray-500 mt-1">
-                                                Введите 6-значный код,
-                                                отправленный на ваш номер
+                                                {t("auth.enterOtpCode")}
                                             </p>
                                         </div>
 
@@ -262,7 +263,7 @@ const Login = () => {
                                             className="w-full h-11 bg-blue-500 hover:bg-blue-600 text-white rounded-xl"
                                             onClick={onResetPass}
                                         >
-                                            Подтвердить
+                                            {t("common.confirm")}
                                         </Button>
                                     </div>
                                     <FullKeyboard />
@@ -275,16 +276,15 @@ const Login = () => {
                                     name="username"
                                     control={form.control}
                                     rules={{
-                                        required: "Поле телефона обязательно",
+                                        required: t("auth.phoneRequired"),
                                         minLength: {
                                             value: 12,
-                                            message:
-                                                "Введите полный номер телефона",
+                                            message: t("auth.enterFullPhone"),
                                         },
                                     }}
                                     render={({ field, fieldState }) => (
                                         <FormItem
-                                            label="Телефон"
+                                            label={t("auth.phone")}
                                             labelClass="text-gray-700 text-base font-medium"
                                             className="mb-6"
                                             errorClassName="text-red-500"
@@ -305,10 +305,10 @@ const Login = () => {
                                 <Controller
                                     name="password"
                                     control={form.control}
-                                    rules={{ required: "Введите пароль" }}
+                                    rules={{ required: t("auth.passwordRequired") }}
                                     render={({ field, fieldState }) => (
                                         <FormItem
-                                            label="Пароль"
+                                            label={t("auth.password")}
                                             labelClass="text-gray-700 text-base font-medium"
                                             className="!mb-4"
                                             errorClassName="text-red-500"
@@ -322,7 +322,7 @@ const Login = () => {
                                                             ? "text"
                                                             : "password"
                                                     }
-                                                    placeholder="Пароль"
+                                                    placeholder={t("auth.password")}
                                                 />
                                                 <Button
                                                     type="button"
@@ -350,7 +350,7 @@ const Login = () => {
                                                     className="bg-transparent !text-blue-500 p-0"
                                                     variant="plain"
                                                 >
-                                                    Forgot password
+                                                    {t("auth.forgotPassword")}
                                                 </Button>
                                             </div>
                                         </FormItem>
@@ -366,7 +366,7 @@ const Login = () => {
                                         loading={loading}
                                         className="h-12 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-xl mt-2"
                                     >
-                                        Войти
+                                        {t("auth.loginButton")}
                                     </Button>
                                 </FormItem>
                             </>
@@ -381,7 +381,7 @@ const Login = () => {
                     href="https://t.me/hippo_uz"
                     rel="noreferrer"
                 >
-                    Телеграм канал
+                    {t("auth.telegramChannel")}
                 </a>
             </div>
         </div>

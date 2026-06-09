@@ -14,6 +14,7 @@ import {
 } from "@/entities/categories/repository";
 import type { CategoryResponse } from "@/@types/products";
 import FullKeyboard from "@/widgets/ui/keyboard/FullKeyboard";
+import { useTranslation } from "react-i18next";
 
 interface ModalCategoryProps {
     id: number;
@@ -51,6 +52,7 @@ const ModalCategory = ({
     setEndSelectCategory,
     allCategory,
 }: ModalCategoryProps) => {
+    const { t } = useTranslation();
     const [loading, setLoading] = useState(false);
     const { mutateAsync: createCategory } = useCreateCategory();
     const { mutateAsync: updateCategory } = useUpdateCategory();
@@ -154,8 +156,8 @@ const ModalCategory = ({
                 width={"60vw"}
                 title={
                     type === "add"
-                        ? "Добавить подкатегорию"
-                        : "Редактировать категорию"
+                        ? t("category.addCategory")
+                        : t("category.editCategory")
                 }
                 isOpen={isOpen}
                 onClose={() => onClose(id)}
@@ -167,13 +169,13 @@ const ModalCategory = ({
                             methods.handleSubmit(onSubmit)(e);
                         }}
                     >
-                        <FormItem asterisk={true} label="Название">
+                        <FormItem asterisk={true} label={t("common.name")}>
                             <Controller
                                 name="name"
                                 control={methods.control}
                                 render={({ field }) => (
                                     <Input
-                                        placeholder="Введите название"
+                                        placeholder={t("common.name")}
                                         size="sm"
                                         className="bg-white border-slate-300 font-medium rounded"
                                         {...field}
@@ -183,14 +185,14 @@ const ModalCategory = ({
                         </FormItem>
 
                         <div className="flex items-center justify-between gap-x-1">
-                            <FormItem className="w-full" label="Подкатегория">
+                            <FormItem className="w-full" label={t("category.parentCategory")}>
                                 <Controller
                                     name="parent_id"
                                     control={methods.control}
                                     render={({ field }) => (
                                         <Select
                                             {...field}
-                                            placeholder="Выбрать"
+                                            placeholder={t("common.select")}
                                             isSearchable={false}
                                             size="sm"
                                             value={
@@ -254,7 +256,7 @@ const ModalCategory = ({
                                 size="sm"
                                 onClick={() => onClose(id)}
                             >
-                                Отмена
+                                {t("common.cancel")}
                             </Button>
                             <Button
                                 variant="solid"
@@ -262,7 +264,7 @@ const ModalCategory = ({
                                 type="submit"
                                 disabled={loading}
                             >
-                                {loading ? "Сохранение..." : "Сохранить"}
+                                {loading ? `${t("common.loading")}` : t("common.save")}
                             </Button>
                         </div>
                     </Form>

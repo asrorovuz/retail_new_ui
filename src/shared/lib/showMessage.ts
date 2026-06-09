@@ -10,9 +10,12 @@ type ErrorResponse = {
     data?: any;
 } & Record<string, any>;
 
-export const showSuccessMessage = (msgUz: string, msgRu?: string) => {
+export const showSuccessMessage = (msgUz: string, msgRu?: string, msgOz?: string) => {
     const lang = i18next.language;
-    const message = lang === "ru" ? msgRu || msgUz : msgUz;
+    const message =
+        lang === "ru" ? (msgRu ?? msgUz) :
+        lang === "oz" ? (msgOz ?? msgUz) :
+        msgUz;
 
     toast.success(message, {
         position: "bottom-right",
@@ -30,7 +33,12 @@ export const showErrorLocalMessage = (message: string) => {
 export const showErrorMessage = (err: ErrorResponse | any) => {
     const lang = i18next.language;
 
-    // const status_code = err?.response?.status || err?.status_code;
+    const msg = (ru: string, uz: string, oz?: string): string => {
+        if (lang === "ru") return ru;
+        if (lang === "oz") return oz ?? uz;
+        return uz;
+    };
+
     const error: ErrorResponse = err?.response?.data ||
         err?.data ||
         err || { message: "Unknown error" };
@@ -38,194 +46,192 @@ export const showErrorMessage = (err: ErrorResponse | any) => {
 
     if (typeof error === "string" && statusCode === 404) {
         return toast.error(
-            lang === "ru"
-                ? "Такая страница не найдена"
-                : "Bunday sahifa mavjud emas",
-            {
-                position: "bottom-left",
-                closeOnClick: true,
-                draggable: true,
-            },
+            msg(
+                "Такая страница не найдена",
+                "Bunday sahifa mavjud emas",
+                "Бундай саҳифа мавжуд эмас",
+            ),
+            { position: "bottom-left", closeOnClick: true, draggable: true },
         );
     }
 
-    // 2️⃣ - API dan kelgan javob
     if (typeof error === "object" && error !== null) {
 
         if (error.invalid_username_or_password) {
-            return toast.error(
-                lang === "ru"
-                    ? "Неверный логин или пароль"
-                    : "Login yoki parol noto‘g‘ri",
-            );
+            return toast.error(msg(
+                "Неверный логин или пароль",
+                "Login yoki parol noto'g'ri",
+                "Логин ёки парол нотўғри",
+            ));
         }
 
         if (error.currency_not_found) {
-            return toast.error(
-                lang === "ru" ? "Валюта не найдена" : "Valyuta topilmadi",
-            );
+            return toast.error(msg(
+                "Валюта не найдена",
+                "Valyuta topilmadi",
+                "Валюта топилмади",
+            ));
         }
 
         if (error.sale_not_found) {
-            return toast.error(
-                lang === "ru" ? "Продажа не найдена" : "Sotuv topilmadi",
-            );
+            return toast.error(msg(
+                "Продажа не найдена",
+                "Sotuv topilmadi",
+                "Сотув топилмади",
+            ));
         }
 
         if (error.name_exist) {
-            return toast.error(
-                lang === "ru"
-                    ? "Такое название товара уже существует"
-                    : "Bunday mahsulot nomi allaqachon mavjud",
-            );
+            return toast.error(msg(
+                "Такое название товара уже существует",
+                "Bunday mahsulot nomi allaqachon mavjud",
+                "Бундай маҳсулот номи аллақачон мавжуд",
+            ));
         }
 
         if (error.active_shift_not_found) {
-            return toast.error(
-                lang === "ru"
-                    ? "Активная смена не найдена"
-                    : "Faol smena topilmadi",
-            );
+            return toast.error(msg(
+                "Активная смена не найдена",
+                "Faol smena topilmadi",
+                "Фаол смена топилмади",
+            ));
         }
 
         if (error.already_exist) {
-            return toast.error(
-                lang === "ru"
-                    ? "Товар с таким названием уже существует"
-                    : "Bu nomdagi mahsulot allaqachon mavjud",
-            );
+            return toast.error(msg(
+                "Товар с таким названием уже существует",
+                "Bu nomdagi mahsulot allaqachon mavjud",
+                "Бу номдаги маҳсулот аллақачон мавжуд",
+            ));
         }
 
         if (error.bot_exists) {
-            return toast.error(
-                lang === "ru" ? "Есть такой токен" : "Bunday token mavjud.",
-            );
+            return toast.error(msg(
+                "Есть такой токен",
+                "Bunday token mavjud.",
+                "Бундай токен мавжуд.",
+            ));
         }
 
         if (error.is_not_bot) {
-            return toast.error(
-                lang === "ru"
-                    ? "Бота с таким токеном не найдено"
-                    : "Bunday tokenga bog'langan bot mavjud emas.",
-            );
+            return toast.error(msg(
+                "Бота с таким токеном не найдено",
+                "Bunday tokenga bog'langan bot mavjud emas.",
+                "Бундай токенга боғланган бот мавжуд эмас.",
+            ));
         }
 
         if (error.not_allowed) {
-            return toast.error(
-                lang === "ru"
-                    ? "У вас нет прав для удаления этого пользователя"
-                    : "Sizda ushbu foydalanuvchini o‘chirish uchun ruxsat yo‘q.",
-            );
+            return toast.error(msg(
+                "У вас нет прав для удаления этого пользователя",
+                "Sizda ushbu foydalanuvchini o'chirish uchun ruxsat yo'q.",
+                "Сизда ушбу фойдаланувчини ўчириш учун рухсат йўқ.",
+            ));
         }
 
         if (error.login_or_password_incorrect) {
-            return toast.error(
-                lang === "ru"
-                    ? "Логин или пароль неверный."
-                    : "Login yoki parol noto‘g‘ri.",
-            );
+            return toast.error(msg(
+                "Логин или пароль неверный.",
+                "Login yoki parol noto'g'ri.",
+                "Логин ёки парол нотўғри.",
+            ));
         }
 
         if (error.organization_already_exist) {
-            return toast.error(
-                lang === "ru"
-                    ? "Организация с таким наименованием уже существует!"
-                    : "",
-            );
+            return toast.error(msg(
+                "Организация с таким наименованием уже существует!",
+                "Bunday nomli tashkilot allaqachon mavjud!",
+                "Бундай номли ташкилот аллақачон мавжуд!",
+            ));
         }
 
         if (error.barcode_exist) {
-            return toast.error(
-                lang === "ru"
-                    ? "Товар с таким штрих-кодом уже существует"
-                    : "Bu shtrix-kodli mahsulot allaqachon mavjud",
-            );
+            return toast.error(msg(
+                "Товар с таким штрих-кодом уже существует",
+                "Bu shtrix-kodli mahsulot allaqachon mavjud",
+                "Бу штрих-кодли маҳсулот аллақачон мавжуд",
+            ));
         }
 
         if (error.barcode_duplicated) {
-            return toast.error(
-                lang === "ru"
-                    ? "Товар с таким штрих-кодом уже существует"
-                    : lang === "en"
-                      ? "A product with this barcode already exists"
-                      : "Bu shtrix-kodli mahsulot allaqachon mavjud",
-            );
+            return toast.error(msg(
+                "Товар с таким штрих-кодом уже существует",
+                "Bu shtrix-kodli mahsulot allaqachon mavjud",
+                "Бу штрих-кодли маҳсулот аллақачон мавжуд",
+            ));
         }
 
         if (error.product_sku_duplicated) {
-            return toast.error(
-                lang === "ru"
-                    ? "Такой артикул уже существует"
-                    : "Bunday artikul allaqachon mavjud",
-            );
+            return toast.error(msg(
+                "Такой артикул уже существует",
+                "Bunday artikul allaqachon mavjud",
+                "Бундай артикул аллақачон мавжуд",
+            ));
         }
 
         if (error.code_exist) {
-            return toast.error(
-                lang === "ru"
-                    ? "Такой артикул уже существует"
-                    : "Bunday kod allaqachon mavjud",
-            );
+            return toast.error(msg(
+                "Такой артикул уже существует",
+                "Bunday kod allaqachon mavjud",
+                "Бундай код аллақачон мавжуд",
+            ));
         }
 
         if (error.sale_item_catalog_not_found) {
-            return toast.error(
-                lang === "ru"
-                    ? "Единица измерения не найдена"
-                    : "Bunday o‘lchov birligi (package) topilmadi",
-            );
+            return toast.error(msg(
+                "Единица измерения не найдена",
+                "Bunday o'lchov birligi (package) topilmadi",
+                "Бундай ўлчов бирлиги топилмади",
+            ));
         }
 
         if (error.warehouse_not_found) {
-            return toast.error(
-                lang === "ru" ? "Склад не найден" : "Ombor topilmadi",
-            );
+            return toast.error(msg(
+                "Склад не найден",
+                "Ombor topilmadi",
+                "Омбор топилмади",
+            ));
         }
 
         if (error.shift_disabled) {
-            return toast.error(
-                lang === "ru"
-                    ? "Доступ ограничен. Смотрите «Настройки»."
-                    : "Shift ochishga ruxsat yo‘q",
-            );
+            return toast.error(msg(
+                "Доступ ограничен. Смотрите «Настройки».",
+                "Shift ochishga ruxsat yo'q",
+                "Смена очишга рухсат йўқ",
+            ));
         }
 
         if (error?.error_timeout || error?.message === "Network Error") {
-            const message =
-                lang === "ru"
-                    ? "Ошибка соединения."
-                    : "Tarmoq bilan bog‘lanishda xatolik.";
-
-            toast.error(message, {
-                position: "bottom-left",
-                closeOnClick: true,
-                draggable: true,
-            });
-
+            toast.error(
+                msg(
+                    "Ошибка соединения.",
+                    "Tarmoq bilan bog'lanishda xatolik.",
+                    "Тармоқ билан боғланишда хатолик.",
+                ),
+                { position: "bottom-left", closeOnClick: true, draggable: true },
+            );
             return;
         }
 
         if (error.message) {
-            return toast.error(
-                lang === "ru"
-                    ? `Ошибка: ${error.message}`
-                    : `Xatolik: ${error.message}`,
-            );
+            return toast.error(msg(
+                `Ошибка: ${error.message}`,
+                `Xatolik: ${error.message}`,
+                `Хатолик: ${error.message}`,
+            ));
         }
 
         if (error.error) {
-            return toast.error(
-                lang === "ru"
-                    ? `Ошибка: ${error.error}`
-                    : `Xatolik: ${error.error}`,
-            );
+            return toast.error(msg(
+                `Ошибка: ${error.error}`,
+                `Xatolik: ${error.error}`,
+                `Хатолик: ${error.error}`,
+            ));
         }
     }
 
-    // 3️⃣ - noma’lum xatolik
-    toast.error(lang === "ru" ? "Неизвестная ошибка" : "Noma’lum xatolik", {
-        position: "bottom-left",
-        closeOnClick: true,
-        draggable: true,
-    });
+    toast.error(
+        msg("Неизвестная ошибка", "Noma'lum xatolik", "Номаълум хатолик"),
+        { position: "bottom-left", closeOnClick: true, draggable: true },
+    );
 };

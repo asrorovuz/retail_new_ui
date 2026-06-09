@@ -1,11 +1,14 @@
 import classNames from "@/shared/lib/classNames";
 import { Card } from "@/shared/ui/kit";
 import FormattedNumber from "@/shared/ui/kit-pro/numeric-format/NumericFormat";
+import { useTranslation } from "react-i18next";
 
 const TotalsBlock = ({ data, payKey }: { data: any, payKey: any }) => {
+  const { t } = useTranslation();
+
   const totalItems = [
     {
-      label: "Общая сумма",
+      label: t("common.total"),
       value: data?.totals?.[0]?.amount ?? 0,
       currency: data?.totals?.[0]?.currency?.name,
       bg: "bg-gradient-to-r from-green-100 to-green-200",
@@ -13,14 +16,14 @@ const TotalsBlock = ({ data, payKey }: { data: any, payKey: any }) => {
       icon: "💵",
     },
     {
-      label: "Скидка",
+      label: t("sale.discount"),
       value: data?.exact_discounts?.[0]?.amount ?? 0,
       bg: "bg-gradient-to-r from-yellow-100 to-yellow-200",
       textColor: "text-yellow-800",
       icon: "🏷️",
     },
     {
-      label: "Сумма со скидкой",
+      label: t("common.total"),
       value: data?.net_price?.[0]?.amount ?? 0,
       currency: data?.totals?.[0]?.currency?.name,
       bg: "bg-gradient-to-r from-emerald-100 to-emerald-200",
@@ -28,7 +31,7 @@ const TotalsBlock = ({ data, payKey }: { data: any, payKey: any }) => {
       icon: "✅",
     },
     {
-      label: "Оплачено",
+      label: t("sale.payment"),
       value: data?.[payKey]?.debt_states?.[0]?.amount ?? 0,
       currency: data?.[payKey]?.debt_states?.[0]?.currency?.name,
       bg: "bg-gradient-to-r from-blue-100 to-blue-200",
@@ -36,7 +39,7 @@ const TotalsBlock = ({ data, payKey }: { data: any, payKey: any }) => {
       icon: "💳",
     },
     {
-      label: "Долг",
+      label: t("sale.debt"),
       value: data?.debts?.[0]?.amount ?? 0,
       currency: data?.debts?.[0]?.currency?.name,
       bg: "bg-gradient-to-r from-red-100 to-red-200",
@@ -50,7 +53,7 @@ const TotalsBlock = ({ data, payKey }: { data: any, payKey: any }) => {
       <Card className="p-6 shadow-md">
         <h4 className="text-lg font-semibold text-slate-700 mb-4 flex items-center gap-2">
           <span className="text-2xl">🧮</span>
-          Финансовая сводка
+          {t("report.salesReport")}
         </h4>
         <div className="space-y-3">
           {totalItems?.map((item, index) => (

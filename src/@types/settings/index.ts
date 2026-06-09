@@ -28,6 +28,7 @@ export type SettingsStoreInitialState = {
     activeShift: Shift | null;
     warhouse: any;
     permissionList: number[];
+    pendingShiftOpen: boolean;
 };
 
 export type SettingsStoreActions = {
@@ -37,6 +38,7 @@ export type SettingsStoreActions = {
     setWareHouse: (payload: any) => void;
     setActiveShift: (payload: Shift | null) => void;
     setPermissionList: (payload: number[]) => void;
+    setPendingShiftOpen: (payload: boolean) => void;
 };
 
 export type WareHouseDataType = {

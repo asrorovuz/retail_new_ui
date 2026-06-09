@@ -56,7 +56,7 @@ const AccountsSection = ({ users }: { users: User[] }) => {
 
     const { permissionList } = useSettingsStore();
     const { i18n } = useTranslation();
-    const lang = i18n.language as "uz" | "ru";
+    const lang = i18n.language as "uz" | "ru" | "oz";
     const { mutate } = useUpdatePermission();
 
     const { mutate: deleteMutate, isPending } = useDeleteAccount();

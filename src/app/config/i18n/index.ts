@@ -6,20 +6,24 @@ import HttpBackend from "i18next-http-backend";
 // Agar JSON fayllarni o‘zingiz yuklamoqchi bo‘lsangiz, shunday ham bo‘ladi
 import uzTranslation from "./locales/uz/translation.json";
 import ruTranslation from "./locales/ru/translation.json";
+import ozTranslation from "./locales/oz/translation.json";
 
 i18n
   .use(initReactI18next)
   .use(LanguageDetector)
   .use(HttpBackend)
   .init({
-    fallbackLng: "ru", // default til
+    fallbackLng: "uz",
     debug: false,
     interpolation: {
-      escapeValue: false, // React avtomatik escape qiladi
+      escapeValue: false,
     },
     resources: {
       uz: {
         translation: uzTranslation,
+      },
+      oz: {
+        translation: ozTranslation,
       },
       ru: {
         translation: ruTranslation,

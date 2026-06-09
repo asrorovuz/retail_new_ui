@@ -1,8 +1,10 @@
 import { PaymentTypes } from "@/app/constants/payment.types";
 import FormattedNumber from "@/shared/ui/kit-pro/numeric-format/NumericFormat";
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 
 const CashboxPaymentCard = ({ data }: any) => {
+    const { t } = useTranslation();
 
     const totalSumCash = useMemo(() => {
         return (
@@ -34,15 +36,15 @@ const CashboxPaymentCard = ({ data }: any) => {
         <div>
             <div className="grid grid-cols-3 gap-x-1 items-start mb-3">
                 <div className="border p-3 rounded-xl flex justify-between text-sm text-slate-800">
-                    <span className="text-xs">Общая сумма кассы:</span>
+                    <span className="text-xs">{t("cashbox.balance")}:</span>
                     <FormattedNumber value={totalSumCash} scale={3} />
                 </div>
                 <div className="border p-3 rounded-xl flex justify-between text-sm text-slate-800">
-                    <span>Наличные средства:</span>
+                    <span>{t("payment.cash")}:</span>
                     <FormattedNumber value={totalNetSum} scale={3} />
                 </div>
                 <div className="border p-3 rounded-xl flex justify-between text-sm text-slate-800">
-                    <span>Итоговая сумма:</span>
+                    <span>{t("common.total")}:</span>
                     <FormattedNumber value={totalSumCash} scale={3} />
                 </div>
             </div>

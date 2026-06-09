@@ -33,8 +33,10 @@ import { Controller, useForm } from "react-hook-form";
 import { FaEye, FaPlus } from "react-icons/fa";
 import { IoTrashOutline } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const WriteOffPage = () => {
+    const { t } = useTranslation();
     const [pagination, setPagination] = useState({
         pageIndex: 1,
         pageSize: 20,
@@ -128,13 +130,13 @@ const WriteOffPage = () => {
             {
                 id: "account",
                 accessorKey: "account.name",
-                header: "Сотрудник",
+                header: () => t("common.employee"),
                 cell: ({ row }) => row.original.account?.name ?? "—",
             },
 
             {
                 accessorKey: "date",
-                header: "Дата",
+                header: () => t("common.date"),
                 meta: {
                     headerClassName: "w-[150px]",
                     bodyCellClassName: "w-[150px]",
@@ -171,7 +173,7 @@ const WriteOffPage = () => {
                 ),
             },
         ],
-        [pagination],
+        [pagination, t],
     );
 
     useEffect(() => {
@@ -195,7 +197,7 @@ const WriteOffPage = () => {
     return (
         <div className="bg-white h-screen p-3 flex flex-col">
             <div className="flex justify-between mb-4 items-center">
-                <NavigateButton content="Списать товар" />
+                <NavigateButton content={t("nav.writeOff")} />
                 <div className="flex gap-x-2">
                     <Controller
                         name="date_start"
@@ -206,7 +208,7 @@ const WriteOffPage = () => {
                                     <DatePicker
                                         inputFormat="DD-MM-YYYY"
                                         size="sm"
-                                        placeholder={"Дата начала"}
+                                        placeholder={t("report.startDate")}
                                         closePickerOnChange={true}
                                         inputtable={true}
                                         onChange={field.onChange}
@@ -226,7 +228,7 @@ const WriteOffPage = () => {
                                     <DatePicker
                                         inputFormat="DD-MM-YYYY"
                                         size="sm"
-                                        placeholder={"Дата окончания"}
+                                        placeholder={t("report.endDate")}
                                         closePickerOnChange={true}
                                         inputtable={true}
                                         onChange={field.onChange}
@@ -246,7 +248,7 @@ const WriteOffPage = () => {
                             navigate("/writeoff/operation");
                         }}
                     >
-                        Добавить
+                        {t("common.add")}
                     </Button>
                 </div>
             </div>
@@ -330,20 +332,20 @@ const WriteOffPage = () => {
             <ConfirmDialog
                 type="danger"
                 className={"w-[600px]"}
-                title="Вы уверены, что хотите удалить этот ревизия?"
+                title={t("alert.confirmDelete")}
                 isOpen={isOpenDeleteModal}
                 confirmButtonProps={{
                     loading: deletePending,
                     onClick: onDeleteWriteoff,
                 }}
-                cancelText="Отмена"
-                confirmText="Удалить"
+                cancelText={t("common.cancel")}
+                confirmText={t("common.delete")}
                 onClose={onCloseDeleteProductDialog}
                 onRequestClose={onCloseDeleteProductDialog}
                 onCancel={onCloseDeleteProductDialog}
             >
                 <p className="text-gray-600">
-                    После удаления, восстановить ревизия будет невозможно.
+                    {t("alert.cannotUndo")}
                 </p>
             </ConfirmDialog>
         </div>

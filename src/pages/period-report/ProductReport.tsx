@@ -14,8 +14,10 @@ import {
     type ColumnDef,
 } from "@tanstack/react-table";
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 
 export default function ProductReport({ data }: any) {
+    const { t } = useTranslation();
     const salesItemsSummary = data?.overall_period_report?.sales_items_summary;
 
     const safeAmount = (v?: number) => v || 0;
@@ -32,7 +34,7 @@ export default function ProductReport({ data }: any) {
             },
 
             {
-                header: "Название продукта",
+                header: () => t("product.name"),
                 accessorKey: "name",
                 cell: ({ row }) => (
                     <span>{truncateText(row.original.name, 20, 20)}</span>
@@ -41,10 +43,10 @@ export default function ProductReport({ data }: any) {
 
             // ---------------- SALES ----------------
             {
-                header: "Продажа",
+                header: () => t("sale.sale"),
                 columns: [
                     {
-                        header: "Количество",
+                        header: () => t("common.quantity"),
                         cell: ({ row }) => (
                             <FormattedNumber
                                 value={safeAmount(row.original.quantity)}
@@ -53,7 +55,7 @@ export default function ProductReport({ data }: any) {
                         ),
                     },
                     {
-                        header: "Цена",
+                        header: () => t("common.price"),
                         cell: ({ row }) => (
                             <FormattedNumber
                                 value={safeDivide(
@@ -65,7 +67,7 @@ export default function ProductReport({ data }: any) {
                         ),
                     },
                     {
-                        header: "Сумма",
+                        header: () => t("common.amount"),
                         cell: ({ row }) => (
                             <FormattedNumber
                                 value={getAmount(row.original.net_price)}
@@ -78,10 +80,10 @@ export default function ProductReport({ data }: any) {
 
             // ---------------- PURCHASE ----------------
             {
-                header: "Приход",
+                header: () => t("sale.purchase"),
                 columns: [
                     {
-                        header: "Цена",
+                        header: () => t("common.price"),
                         cell: ({ row }) => (
                             <FormattedNumber
                                 value={safeDivide(
@@ -93,7 +95,7 @@ export default function ProductReport({ data }: any) {
                         ),
                     },
                     {
-                        header: "Сумма",
+                        header: () => t("common.amount"),
                         cell: ({ row }) => (
                             <FormattedNumber
                                 value={getAmount(
@@ -108,10 +110,10 @@ export default function ProductReport({ data }: any) {
 
             // ---------------- PROFIT ----------------
             {
-                header: "Прибыль",
+                header: () => t("sale.profit"),
                 columns: [
                     {
-                        header: "С единицы",
+                        header: () => t("sale.perUnit"),
                         cell: ({ row }) => (
                             <FormattedNumber
                                 value={safeDivide(
@@ -125,7 +127,7 @@ export default function ProductReport({ data }: any) {
                         ),
                     },
                     {
-                        header: "Общая",
+                        header: () => t("common.total"),
                         cell: ({ row }) => (
                             <FormattedNumber
                                 value={getAmount(
@@ -140,7 +142,7 @@ export default function ProductReport({ data }: any) {
 
             // ---------------- STOCK ----------------
             {
-                header: "Остаток",
+                header: () => t("product.stock"),
                 cell: ({ row }) => (
                     <FormattedNumber
                         value={getAmount(row.original.purchase_net_price)}
@@ -149,7 +151,7 @@ export default function ProductReport({ data }: any) {
                 ),
             },
         ],
-        [],
+        [t],
     );
 
     const table = useReactTable({

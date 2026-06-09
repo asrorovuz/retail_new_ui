@@ -13,25 +13,28 @@ import { useEffect, useState } from "react";
 import { MdOutlineSettings } from "react-icons/md";
 import { TfiReload } from "react-icons/tfi";
 import { Link, useOutletContext } from "react-router-dom";
-
-const PRICE_OPTIONS: { value: PriceDisplayMode; label: string }[] = [
-    { value: "both", label: "Оба варианта" },
-    { value: "retail", label: "Только цена продажи" },
-    { value: "bulk", label: "Только оптовая цена" },
-];
+import { useTranslation } from "react-i18next";
 
 const Footer = ({ deleteDraft, draft }: any) => {
     const [showAlert, setShowAlert] = useState(false);
     const [showWindow, setShowWindow] = useState(false);
     const [shiftAddModal, setShiftAddModal] = useState(false);
     const [shiftUpdateModal, setShiftUpdateModal] = useState(false);
+    const [pendingLogout, setPendingLogout] = useState(false);
     const { data, error } = useShiftApi(shiftAddModal || shiftUpdateModal);
     const { logout } = useAuthContext();
+    const { t } = useTranslation();
     const setIsOpenNavigate =
         useOutletContext<React.Dispatch<React.SetStateAction<boolean>>>();
 
-    const { activeShift, setActiveShift } = useSettingsStore();
+    const { activeShift, setActiveShift, pendingShiftOpen, setPendingShiftOpen } = useSettingsStore();
     const { priceDisplayMode, setPriceDisplayMode } = useSaleSettingsStore();
+
+    const PRICE_OPTIONS: { value: PriceDisplayMode; label: string }[] = [
+        { value: "both", label: t("footer.priceMode.both") },
+        { value: "retail", label: t("footer.priceMode.retail") },
+        { value: "bulk", label: t("footer.priceMode.bulk") },
+    ];
 
     const onDeleteActivedraft = () => {
         const findIndex = draft?.findIndex((item: any) => item?.isActive);
@@ -45,6 +48,13 @@ const Footer = ({ deleteDraft, draft }: any) => {
         else setActiveShift(null);
     }, [data, error, setActiveShift]);
 
+    useEffect(() => {
+        if (pendingShiftOpen) {
+            setShiftAddModal(true);
+            setPendingShiftOpen(false);
+        }
+    }, [pendingShiftOpen]);
+
     return (
         <div className="flex justify-between items-center">
             <div className="flex items-center gap-x-2">
@@ -55,7 +65,7 @@ const Footer = ({ deleteDraft, draft }: any) => {
                     size="sm"
                     icon={<LogoutSvg height={20} width={20} />}
                 >
-                    Выход
+                    {t("footer.logout")}
                 </Button>
                 <Button
                     variant="default"
@@ -64,7 +74,7 @@ const Footer = ({ deleteDraft, draft }: any) => {
                     onClick={() => setShowWindow(true)}
                     className="!text-red-500 h-8 py-0 ring-0 hover:ring-0 active:ring-0 hover:border-red-500 active:border-red-500 active:text-red-600"
                 >
-                    Удалить окно
+                    {t("footer.deleteWindow")}
                 </Button>
             </div>
             <div className="flex items-center gap-x-2">
@@ -85,13 +95,13 @@ const Footer = ({ deleteDraft, draft }: any) => {
                             className="flex items-center gap-x-2 px-2 py-2 rounded hover:bg-slate-100 text-sm text-slate-700 w-full"
                         >
                             <MdOutlineSettings size={15} />
-                            Настройки
+                            {t("footer.settings")}
                         </Link>
                     </Dropdown.Item>
                     <Dropdown.Item variant="divider" />
                     <Dropdown.Item variant="header">
                         <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide px-2 py-1">
-                            Настройки продаж
+                            {t("footer.saleSettings")}
                         </p>
                     </Dropdown.Item>
                     {PRICE_OPTIONS.map((opt) => (
@@ -121,7 +131,7 @@ const Footer = ({ deleteDraft, draft }: any) => {
                     size="sm"
                     type="button"
                 >
-                    Другие
+                    {t("footer.others")}
                 </Button>
                 <div className="relative">
                     <Button
@@ -136,7 +146,7 @@ const Footer = ({ deleteDraft, draft }: any) => {
                         variant="solid"
                         type="button"
                     >
-                        Смена
+                        {t("footer.shift")}
                     </Button>
                     {activeShift && (
                         <span className="absolute -top-1 -right-1 block size-3 rounded-full bg-green-500 border border-white" />
@@ -146,12 +156,17 @@ const Footer = ({ deleteDraft, draft }: any) => {
             {showAlert && (
                 <Alert
                     type="warning"
-                    title="Выход из системы"
-                    content="Вы действительно хотите выйти из системы?"
+                    title={t("alert.logoutTitle")}
+                    content={t("alert.logoutContent")}
                     onCancel={() => setShowAlert(false)}
                     onConfirm={() => {
-                        logout();
                         setShowAlert(false);
+                        if (activeShift) {
+                            setPendingLogout(true);
+                            setShiftUpdateModal(true);
+                        } else {
+                            logout();
+                        }
                     }}
                 />
             )}
@@ -159,10 +174,10 @@ const Footer = ({ deleteDraft, draft }: any) => {
             {showWindow && (
                 <Alert
                     type="warning"
-                    title="Окно кассы"
-                    content="Вы действительно хотите закрыть это окно?"
-                    onCancel={() => setShowWindow(false)} // Кнопка "Отмена" просто закрывает окно
-                    onConfirm={onDeleteActivedraft} // Кнопка "Подтвердить" тоже только закрывает окно
+                    title={t("alert.closeWindowTitle")}
+                    content={t("alert.closeWindowContent")}
+                    onCancel={() => setShowWindow(false)}
+                    onConfirm={onDeleteActivedraft}
                 />
             )}
 
@@ -179,7 +194,9 @@ const Footer = ({ deleteDraft, draft }: any) => {
                 onClose={() => {
                     setShiftUpdateModal(false);
                     setShiftAddModal(false);
+                    setPendingLogout(false);
                 }}
+                onShiftClosed={pendingLogout ? logout : undefined}
             />
         </div>
     );

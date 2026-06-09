@@ -8,6 +8,7 @@ import { MdOutlineCheckBox, MdOutlineCheckBoxOutlineBlank } from "react-icons/md
 import ConfirmDialog from "@/shared/ui/kit-pro/confirm-dialog/ConfirmDialog";
 import Loading from "@/shared/ui/loading";
 import FullKeyboard from "@/widgets/ui/keyboard/FullKeyboard";
+import { useTranslation } from "react-i18next";
 
 interface SelectedProduct {
     id: number;
@@ -21,6 +22,7 @@ const BulkDeleteModal = ({
     isOpen: boolean;
     setIsOpen: (v: boolean) => void;
 }) => {
+    const { t } = useTranslation();
     const [search, setSearch] = useState("");
     const [debouncedSearch, setDebouncedSearch] = useState("");
     const [selected, setSelected] = useState<SelectedProduct[]>([]);
@@ -82,7 +84,7 @@ const BulkDeleteModal = ({
     return (
         <>
             <Dialog
-                title="Массовое удаление товаров"
+                title={t("product.deleteSelected")}
                 isOpen={isOpen}
                 onClose={onClose}
                 width="80vw"
@@ -110,7 +112,7 @@ const BulkDeleteModal = ({
                     {/* Left: search + results */}
                     <div className="flex flex-col flex-1 min-w-0">
                         <Input
-                            placeholder="Поиск товаров..."
+                            placeholder={t("product.searchPlaceholder")}
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                             className="mb-2 shrink-0"
@@ -140,7 +142,7 @@ const BulkDeleteModal = ({
                                 })
                             ) : (
                                 <div className="flex justify-center items-center h-24 text-sm text-slate-400">
-                                    {debouncedSearch ? "Товар не найден" : "Введите название для поиска"}
+                                    {debouncedSearch ? t("product.notFound") : t("product.enterToSearch")}
                                 </div>
                             )}
                         </div>
@@ -149,7 +151,7 @@ const BulkDeleteModal = ({
                     {/* Right: selected */}
                     <div className="w-72 shrink-0 flex flex-col">
                         <div className="mb-2 flex items-center justify-between shrink-0">
-                            <span className="text-sm font-medium text-slate-700">Выбрано для удаления</span>
+                            <span className="text-sm font-medium text-slate-700">{t("product.selectedForDelete")}</span>
                             <span className="bg-red-100 text-red-600 text-xs font-semibold px-2 py-0.5 rounded-full">
                                 {selected.length}
                             </span>
@@ -172,7 +174,7 @@ const BulkDeleteModal = ({
                                 ))
                             ) : (
                                 <div className="flex justify-center items-center h-24 text-sm text-slate-400">
-                                    Не выбрано
+                                    {t("product.notSelected")}
                                 </div>
                             )}
                         </div>
@@ -180,7 +182,7 @@ const BulkDeleteModal = ({
                 </div>
 
                 <div className="flex justify-end gap-2 pt-3 my-3 border-t border-slate-200">
-                    <Button size="sm" onClick={onClose}>Закрыть</Button>
+                    <Button size="sm" onClick={onClose}>{t("common.close")}</Button>
                     <Button
                         size="sm"
                         variant="solid"
@@ -189,7 +191,7 @@ const BulkDeleteModal = ({
                         onClick={() => setConfirmOpen(true)}
                         icon={<IoTrashOutline size={16} />}
                     >
-                        Удалить ({selected.length})
+                        {t("common.delete")} ({selected.length})
                     </Button>
                 </div>
 
@@ -199,16 +201,16 @@ const BulkDeleteModal = ({
             <ConfirmDialog
                 type="danger"
                 className="w-[480px]"
-                title={`Удалить ${selected.length} товаров?`}
+                title={`${t("common.delete")} ${selected.length} ${t("product.products")}?`}
                 isOpen={confirmOpen}
                 confirmButtonProps={{ loading: isPending, onClick: handleDelete }}
-                cancelText="Отмена"
-                confirmText="Удалить"
+                cancelText={t("common.cancel")}
+                confirmText={t("common.delete")}
                 onClose={() => setConfirmOpen(false)}
                 onRequestClose={() => setConfirmOpen(false)}
                 onCancel={() => setConfirmOpen(false)}
             >
-                <p className="text-gray-600">После удаления восстановить товары будет невозможно.</p>
+                <p className="text-gray-600">{t("alert.cannotUndo")}</p>
             </ConfirmDialog>
         </>
     );

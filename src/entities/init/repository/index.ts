@@ -66,6 +66,17 @@ export const useShiftApi = (isOpen: boolean) => {
   });
 };
 
+export const useInitialShiftCheckApi = () => {
+  return useQuery({
+    queryKey: ["shift-init-check"],
+    queryFn: getShiftApi,
+    retry: false,
+    gcTime: 0,
+    staleTime: 0,
+    refetchOnWindowFocus: false,
+  });
+};
+
 export const useCloseShiftApi = () => {
   const queryClient = useQueryClient();
 
