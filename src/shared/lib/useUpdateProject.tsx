@@ -28,6 +28,7 @@ export const useUpdateProject = () => {
                     os_type: payload.os_type,
                     version: payload.version,
                     release_notes: payload.release_notes,
+                    is_critical: payload.is_critical,
                 };
 
                 setUpdates((prev) => {
